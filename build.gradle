@@ -1,0 +1,45 @@
+buildscript {
+  repositories {
+    mavenCentral()
+  }
+  dependencies {
+    classpath("org.springframework.boot:spring-boot-gradle-plugin:1.1.4.RELEASE")
+  }
+}
+
+apply plugin: 'groovy'
+apply plugin: 'spring-boot'
+
+jar {
+  baseName = 'omh-shims'
+  version = '0.1.0'
+}
+
+springBoot {
+  mainClass = "org.openmhealth.shim.Application"
+}
+
+repositories {
+  mavenLocal()
+  mavenCentral()
+}
+dependencies {
+  compile 'org.codehaus.groovy:groovy-all:2.3.3'
+
+  // tag::jetty[]
+  compile("org.springframework.boot:spring-boot-starter-web") {
+    exclude module: "spring-boot-starter-tomcat"
+  }
+  compile "org.springframework.boot:spring-boot-starter-jetty"
+  // end::jetty[]
+
+  compile "org.springframework.security.oauth:spring-security-oauth:2.0.1.RELEASE"
+  compile "org.springframework.security.oauth:spring-security-oauth2:2.0.1.RELEASE"
+
+  testCompile("junit:junit")
+}
+
+
+task wrapper(type: Wrapper) {
+  gradleVersion = '1.11'
+}
