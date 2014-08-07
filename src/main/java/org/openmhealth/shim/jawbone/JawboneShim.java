@@ -89,13 +89,7 @@ public class JawboneShim implements Shim, OAuth2Shim {
     }
 
     @Override
-    public ShimDataResponse getData(String dataTypeKey,
-                                    AccessParameters accessParameters,
-                                    DateTime startDate,
-                                    DateTime endDate,
-                                    List<String> columnList,
-                                    Long numToSkip,
-                                    Long numToReturn) {
+    public ShimDataResponse getData(ShimDataRequest shimDataRequest) {
         return ShimDataResponse.result(
             getData(restTemplate(), Collections.<String, Object>emptyMap()));
     }

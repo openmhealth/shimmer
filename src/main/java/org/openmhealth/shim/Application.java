@@ -37,11 +37,12 @@ public class Application extends WebSecurityConfigurerAdapter {
     /**
      * Endpoint for triggering domain approval.
      *
-     * @param domain - The toolmaker domain to approve
-     * @return - AuthorizationRequest parameters, including a boolean flag if already authorized.
+     * @param shim - The shim registry key of the shim we're approving
+     * @return - AuthorizationRequest parameters, including a boolean
+     * flag if already authorized.
      */
-    @RequestMapping("/authorize/{domain}")
-    public ResponseEntity<AuthorizationRequestParameters> authorize(@PathVariable("domain") String domain) {
+    @RequestMapping("/authorize/{shim}")
+    public ResponseEntity<AuthorizationRequestParameters> authorize(@PathVariable("shim") String shim) {
         return new ResponseEntity<AuthorizationRequestParameters>(
             jawboneShim.getAuthorizationRequestParameters(Collections.<String, String>emptyMap())
             , HttpStatus.OK);
@@ -51,9 +52,10 @@ public class Application extends WebSecurityConfigurerAdapter {
      * Endpoint for handling approvals from external data providers
      *
      * @param servletRequest - Request posted by the external data provider.
-     * @return - AuthorizationResponse object with details and result: authorize, error, or denied.
+     * @return - AuthorizationResponse object with details
+     * and result: authorize, error, or denied.
      */
-    @RequestMapping(value = "/authorize/{domain}/callback",
+    @RequestMapping(value = "/authorize/{shim}/callback",
         method = {RequestMethod.POST, RequestMethod.GET})
     public ResponseEntity<AuthorizationResponse> approve(HttpServletRequest servletRequest) {
         return new ResponseEntity<AuthorizationResponse>(
@@ -61,13 +63,15 @@ public class Application extends WebSecurityConfigurerAdapter {
     }
 
     /**
-     * Endpoint for
+     * Endpoint for retrieving data from shims.
      *
-     * @return
+     * @return - The shim data response wrapper with data from the shim.
      */
-    @RequestMapping("/jawbone/data")
-    public ResponseEntity<ShimDataResponse> home() {
+    @RequestMapping(value = "/data/{shim}/{dataType}", produces = "application/json")
+    public ResponseEntity<ShimDataResponse> data(HttpServletRequest servletRequest) {
+        ShimDataRequest shimDataRequest =
+            ShimDataRequest.fromHttpRequest(servletRequest);
         return new ResponseEntity<ShimDataResponse>(
-            jawboneShim.getData(null, null, null, null, null, 0l, 1000l), HttpStatus.OK);
+            jawboneShim.getData(shimDataRequest), HttpStatus.OK);
     }
 }

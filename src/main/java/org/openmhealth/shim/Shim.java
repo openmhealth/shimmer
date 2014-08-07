@@ -46,22 +46,8 @@ public interface Shim {
     /**
      * Obtain data from the external data provider using access parameters
      *
-     * @param dataTypeKey      - Identifier for the type of data being retrieved
-     * @param accessParameters - parameters required for acessing data, this
-     *                         will likely be oauth token + any extras or some
-     *                         kind of trusted access.
-     * @param startDate        - The start date for the data being retrieved
-     * @param endDate          - The end date for the data being retrieved
-     * @param columnList       - List of columns required
-     * @param numToSkip        - The starting row for the data (for pagination purposes)
-     * @param numToReturn      - Number of rows to return
+     * @param shimDataRequest - Data request to be full-filled by the shim.
      * @return Generic object wrapper including timestamp, shim, and results
      */
-    ShimDataResponse getData(final String dataTypeKey,
-                             final AccessParameters accessParameters,
-                             final DateTime startDate,
-                             final DateTime endDate,
-                             final List<String> columnList,
-                             final Long numToSkip,
-                             final Long numToReturn);
+    ShimDataResponse getData(final ShimDataRequest shimDataRequest);
 }
