@@ -8,8 +8,6 @@ import org.springframework.security.oauth2.client.token.grant.code.Authorization
  */
 class JawboneAuthorizationCodeAccessTokenProvider extends AuthorizationCodeAccessTokenProvider{
 
-
-
   @Override
   protected HttpMethod getHttpMethod() {
     return HttpMethod.GET
