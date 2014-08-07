@@ -1,17 +1,20 @@
 package org.openmhealth.shim
 
-import org.springframework.security.oauth2.client.OAuth2RestTemplate
-
-import javax.servlet.http.HttpServletRequest
+import org.springframework.http.ResponseEntity
+import org.springframework.security.oauth2.client.OAuth2RestOperations
+import org.springframework.security.oauth2.client.resource.OAuth2ProtectedResourceDetails
+import org.springframework.security.oauth2.client.resource.UserRedirectRequiredException
+import org.springframework.security.oauth2.client.token.grant.code.AuthorizationCodeAccessTokenProvider
 
 public interface OAuth2Shim {
 
-  AuthorizationRequestParameters getAuthorizationRequestParameters()
+  OAuth2ProtectedResourceDetails getResource()
 
-  void grantCallbackHandler(HttpServletRequest request)
+  void trigger(OAuth2RestOperations restTemplate)
 
-  OAuth2RestTemplate getAuthorizationRestTemplate()
+  AuthorizationRequestParameters getAuthorizationRequestParameters(UserRedirectRequiredException exception)
 
-  OAuth2RestTemplate getAuthorization
+  ResponseEntity<Object> getData(OAuth2RestOperations restTemplate, Map<String, Object> params)
 
+  AuthorizationCodeAccessTokenProvider getAuthorizationCodeAccessTokenProvider()
 }

@@ -1,5 +1,6 @@
 package org.openmhealth.shim
 
+import org.openmhealth.shim.jawbone.JawboneShim
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.context.annotation.Configuration
@@ -43,7 +44,7 @@ public class Application extends WebSecurityConfigurerAdapter {
    * @return
    */
   @RequestMapping("/authorize/{domain}")
-  public ResponseEntity<String> authorize(@PathVariable("domain") String domain) {
+  public ResponseEntity<Object> authorize(@PathVariable("domain") String domain) {
     def restTemplate = restTemplate()
     try {
       jawboneShim.trigger(restTemplate)
@@ -57,8 +58,9 @@ public class Application extends WebSecurityConfigurerAdapter {
               restTemplate.OAuth2ClientContext.accessTokenRequest
       String stateKey = accessTokenRequest.getStateKey()
       ACCESS_REQUEST_REPO[stateKey] = accessTokenRequest
-      return new ResponseEntity<String>(
-              jawboneShim.getAuthorizationRequiredUrl(e), HttpStatus.OK)
+
+      return new ResponseEntity<AuthorizationRequestParameters>(
+              jawboneShim.getAuthorizationRequestParameters(e), HttpStatus.OK)
     }
   }
 
@@ -79,8 +81,8 @@ public class Application extends WebSecurityConfigurerAdapter {
   }
 
   @RequestMapping("/jawbone")
-  public ResponseEntity<String> home() {
-    return jawboneShim.getData(restTemplate())
+  public ResponseEntity<Object> home() {
+    return jawboneShim.getData(restTemplate(), [:])
   }
 
   private OAuth2RestOperations restTemplate(String stateKey = null, String code = null) {
@@ -98,10 +100,7 @@ public class Application extends WebSecurityConfigurerAdapter {
     }
     def restTemplate = new OAuth2RestTemplate(jawboneShim.getResource(), context)
     def tokenProviderChain = new AccessTokenProviderChain([
-            new JawboneAuthorizationCodeAccessTokenProvider(
-                    tokenRequestEnhancer: new JawboneTokenRequestEnhancer()
-            )]
-    )
+            jawboneShim.getAuthorizationCodeAccessTokenProvider()])
     tokenProviderChain.clientTokenServices = new InMemoryTokenRepo()
     restTemplate.accessTokenProvider = tokenProviderChain
     return restTemplate

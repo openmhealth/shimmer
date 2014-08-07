@@ -1,24 +1,59 @@
 package org.openmhealth.shim
 
-import org.springframework.web.bind.annotation.RequestMethod
+import org.springframework.http.HttpMethod
 
 class AuthorizationRequestParameters {
 
-  RequestMethod method = RequestMethod.POST
+  HttpMethod httpMethod = HttpMethod.POST
 
-  Map<String, String> headers = [:] RequestMethod getMethod() {
-    return method
+  String stateKey
+
+  String redirectUri
+
+  Map<String, String> requestParams
+
+  String authorizationUrl
+
+  //TODO: May be required later
+  //Map<String, String> headers
+
+  String getAuthorizationUrl() {
+    return authorizationUrl
   }
 
-  void setMethod(RequestMethod method) {
-    this.method = method
+  void setAuthorizationUrl(String authorizationUrl) {
+    this.authorizationUrl = authorizationUrl
   }
 
-  Map<String, String> getHeaders() {
-    return headers
+  HttpMethod getHttpMethod() {
+    return httpMethod
   }
 
-  void setHeaders(Map<String, String> headers) {
-    this.headers = headers
+  void setHttpMethod(HttpMethod httpMethod) {
+    this.httpMethod = httpMethod
+  }
+
+  String getStateKey() {
+    return stateKey
+  }
+
+  void setStateKey(String stateKey) {
+    this.stateKey = stateKey
+  }
+
+  String getRedirectUri() {
+    return redirectUri
+  }
+
+  void setRedirectUri(String redirectUri) {
+    this.redirectUri = redirectUri
+  }
+
+  Map<String, String> getRequestParams() {
+    return requestParams
+  }
+
+  void setRequestParams(Map<String, String> requestParams) {
+    this.requestParams = requestParams
   }
 }
