@@ -3,6 +3,7 @@ package org.openmhealth.shim
 import org.springframework.http.HttpHeaders
 import org.springframework.security.oauth2.client.resource.OAuth2ProtectedResourceDetails
 import org.springframework.security.oauth2.client.token.AccessTokenRequest
+import org.springframework.security.oauth2.client.token.ClientTokenServices
 import org.springframework.security.oauth2.client.token.RequestEnhancer
 import org.springframework.util.MultiValueMap
 
@@ -28,5 +29,8 @@ class JawboneTokenRequestEnhancer implements RequestEnhancer {
     form.set("client_id",resource.clientId)
     form.set("client_secret",resource.clientSecret)
     form.set("grant_type",resource.grantType)
+
+    ClientTokenServices
+
   }
 }
