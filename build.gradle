@@ -35,6 +35,8 @@ dependencies {
   compile "org.springframework.security.oauth:spring-security-oauth:2.0.1.RELEASE"
   compile "org.springframework.security.oauth:spring-security-oauth2:2.0.1.RELEASE"
 
+  compile "joda-time:joda-time:2.4"
+
   testCompile("junit:junit")
 }
 

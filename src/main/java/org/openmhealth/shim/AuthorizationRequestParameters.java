@@ -5,6 +5,22 @@ import org.springframework.http.HttpMethod;
 import java.util.Map;
 
 public class AuthorizationRequestParameters {
+
+    private HttpMethod httpMethod = HttpMethod.POST;
+    private String stateKey;
+    private String redirectUri;
+    private Map<String, String> requestParams;
+    private String authorizationUrl;
+    private boolean isAuthorized = true;
+
+    public boolean getIsAuthorized() {
+        return isAuthorized;
+    }
+
+    public void setAuthorized(boolean isAuthorized) {
+        this.isAuthorized = isAuthorized;
+    }
+
     public String getAuthorizationUrl() {
         return authorizationUrl;
     }
@@ -45,9 +61,9 @@ public class AuthorizationRequestParameters {
         this.requestParams = requestParams;
     }
 
-    private HttpMethod httpMethod = HttpMethod.POST;
-    private String stateKey;
-    private String redirectUri;
-    private Map<String, String> requestParams;
-    private String authorizationUrl;
+    public static AuthorizationRequestParameters authorized() {
+        AuthorizationRequestParameters params = new AuthorizationRequestParameters();
+        params.setAuthorized(true);
+        return params;
+    }
 }
