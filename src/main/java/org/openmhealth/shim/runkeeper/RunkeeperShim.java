@@ -45,16 +45,29 @@ public class RunkeeperShim extends OAuth2ShimBase {
         return SHIM_KEY;
     }
 
-    public OAuth2ProtectedResourceDetails getResource() {
-        AuthorizationCodeResourceDetails resource = new AuthorizationCodeResourceDetails();
-        resource.setAccessTokenUri(TOKEN_URL);
-        resource.setUserAuthorizationUri(AUTHORIZE_URL);
-        resource.setClientId(RUNKEEPER_CLIENT_ID);
-        resource.setClientSecret(RUNKEEPER_CLIENT_SECRET);
-        resource.setTokenName("access_token");
-        resource.setGrantType("authorization_code");
-        resource.setUseCurrentUri(true);
-        return resource;
+    @Override
+    public String getClientSecret() {
+        return RUNKEEPER_CLIENT_SECRET;
+    }
+
+    @Override
+    public String getClientId() {
+        return RUNKEEPER_CLIENT_ID;
+    }
+
+    @Override
+    public String getBaseAuthorizeUrl() {
+        return AUTHORIZE_URL;
+    }
+
+    @Override
+    public String getBaseTokenUrl() {
+        return TOKEN_URL;
+    }
+
+    @Override
+    public List<String> getScopes() {
+        return RUNKEEPER_SCOPES;
     }
 
     public AuthorizationCodeAccessTokenProvider getAuthorizationCodeAccessTokenProvider() {

@@ -5,16 +5,21 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.client.DefaultOAuth2ClientContext;
 import org.springframework.security.oauth2.client.OAuth2RestOperations;
 import org.springframework.security.oauth2.client.OAuth2RestTemplate;
+import org.springframework.security.oauth2.client.resource.OAuth2ProtectedResourceDetails;
 import org.springframework.security.oauth2.client.resource.UserRedirectRequiredException;
 import org.springframework.security.oauth2.client.token.AccessTokenProviderChain;
 import org.springframework.security.oauth2.client.token.AccessTokenRequest;
 import org.springframework.security.oauth2.client.token.DefaultAccessTokenRequest;
+import org.springframework.security.oauth2.client.token.grant.code.AuthorizationCodeResourceDetails;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.common.exceptions.OAuth2Exception;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
+/**
+ * Common code for all OAuth2.0 based shims.
+ */
 public abstract class OAuth2ShimBase implements Shim, OAuth2Shim {
 
     public static LinkedHashMap<String, AccessTokenRequest> ACCESS_REQUEST_REPO = new LinkedHashMap<>();
@@ -43,6 +48,19 @@ public abstract class OAuth2ShimBase implements Shim, OAuth2Shim {
             ACCESS_REQUEST_REPO.put(stateKey, accessTokenRequest);
             return getAuthorizationRequestParameters(username, e);
         }
+    }
+
+    public OAuth2ProtectedResourceDetails getResource() {
+        AuthorizationCodeResourceDetails resource = new AuthorizationCodeResourceDetails();
+        resource.setAccessTokenUri(getBaseTokenUrl());
+        resource.setUserAuthorizationUri(getBaseAuthorizeUrl());
+        resource.setClientId(getClientId());
+        resource.setScope(getScopes());
+        resource.setClientSecret(getClientSecret());
+        resource.setTokenName("access_token");
+        resource.setGrantType("authorization_code");
+        resource.setUseCurrentUri(true);
+        return resource;
     }
 
     @Override

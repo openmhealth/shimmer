@@ -17,7 +17,44 @@ public interface Shim {
      *
      * @return - value of identifier ('jawbone', 'fitbit', etc).
      */
-    public String getShimKey();
+    String getShimKey();
+
+    /**
+     * Secret code provided by the external data provider.
+     *
+     * @return - String value
+     */
+    String getClientSecret();
+
+    /**
+     * Client id provided by the external data provider.
+     *
+     * @return - String value
+     */
+    String getClientId();
+
+    /**
+     * Base of the URL to which the user will
+     * be sent to authenticate.
+     *
+     * @return - Absolute URL for authorizing.
+     */
+    String getBaseAuthorizeUrl();
+
+    /**
+     * Base of the URL queried to request an access token.
+     *
+     * @return - Absolute URL for getting an access token
+     */
+    String getBaseTokenUrl();
+
+    /**
+     * List of 'scopes' to which the shim will request
+     * access from the external data provider.
+     *
+     * @return - a list of strings representing scopes.
+     */
+    List<String> getScopes();
 
     /**
      * Retrieve authorization parameter object so that an external

@@ -17,6 +17,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * Utilities for common OAuth1 tasks.
@@ -46,14 +47,14 @@ public class OAuth1Utils {
     public static Map<String, String> parseRequestTokenResponse(
         HttpResponse requestTokenResponse) throws ShimException {
 
-        String tokenString = null;
+        String tokenString;
         try {
             tokenString = IOUtils.toString(requestTokenResponse.getEntity().getContent(), "UTF-8");
         } catch (IOException e) {
             throw new ShimException("Error reading request token", e);
         }
         HttpParameters responseParams = OAuth.decodeForm(tokenString);
-        Map<String, String> token = new HashMap<String, String>();
+        Map<String, String> token = new HashMap<>();
         token.put(
             OAuth.OAUTH_TOKEN,
             responseParams.getFirst(OAuth.OAUTH_TOKEN));
@@ -61,6 +62,15 @@ public class OAuth1Utils {
             OAuth.OAUTH_TOKEN_SECRET,
             responseParams.getFirst(OAuth.OAUTH_TOKEN_SECRET));
         return token;
+    }
+
+    /**
+     * Return a state key identifier for access requests.
+     *
+     * @return - random UUID String
+     */
+    public static String generateStateKey() {
+        return UUID.randomUUID().toString();
     }
 
     /**
@@ -100,7 +110,7 @@ public class OAuth1Utils {
         }
 
         // Sign the URL.
-        URL url = null;
+        URL url;
         try {
             UrlStringRequestAdapter adapter = new UrlStringRequestAdapter(unsignedUrl);
             consumer.sign(adapter);

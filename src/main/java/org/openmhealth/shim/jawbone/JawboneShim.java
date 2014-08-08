@@ -48,17 +48,29 @@ public class JawboneShim extends OAuth2ShimBase {
         return SHIM_KEY;
     }
 
-    public OAuth2ProtectedResourceDetails getResource() {
-        AuthorizationCodeResourceDetails resource = new AuthorizationCodeResourceDetails();
-        resource.setAccessTokenUri(TOKEN_URL);
-        resource.setUserAuthorizationUri(AUTHORIZE_URL);
-        resource.setClientId(JAWBONE_CLIENT_ID);
-        resource.setClientSecret(JAWBONE_CLIENT_SECRET);
-        resource.setScope(JAWBONE_SCOPES);
-        resource.setTokenName("access_token");
-        resource.setGrantType("authorization_code");
-        resource.setUseCurrentUri(true);
-        return resource;
+    @Override
+    public String getClientSecret() {
+        return JAWBONE_CLIENT_SECRET;
+    }
+
+    @Override
+    public String getClientId() {
+        return JAWBONE_CLIENT_ID;
+    }
+
+    @Override
+    public String getBaseAuthorizeUrl() {
+        return AUTHORIZE_URL;
+    }
+
+    @Override
+    public String getBaseTokenUrl() {
+        return TOKEN_URL;
+    }
+
+    @Override
+    public List<String> getScopes() {
+        return JAWBONE_SCOPES;
     }
 
     public AuthorizationCodeAccessTokenProvider getAuthorizationCodeAccessTokenProvider() {
@@ -91,7 +103,7 @@ public class JawboneShim extends OAuth2ShimBase {
             + resource.getClientId()
             + "&response_type=code"
             + "&scope=" + StringUtils.collectionToDelimitedString(resource.getScope(), " ")
-            + "&redirect_uri=http://localhost:8080/authorize/"+ getShimKey() + "/callback";
+            + "&redirect_uri=http://localhost:8080/authorize/" + getShimKey() + "/callback";
         AuthorizationRequestParameters parameters = new AuthorizationRequestParameters();
         parameters.setRedirectUri(exception.getRedirectUri());
         parameters.setStateKey(exception.getStateKey());
