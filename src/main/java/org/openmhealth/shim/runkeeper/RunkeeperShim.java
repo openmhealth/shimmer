@@ -107,6 +107,7 @@ public class RunkeeperShim extends OAuth2ShimBase {
     }
 
     protected AuthorizationRequestParameters getAuthorizationRequestParameters(
+        final String username,
         final UserRedirectRequiredException exception) {
         final OAuth2ProtectedResourceDetails resource = getResource();
         String authorizationUrl = exception.getRedirectUri()
@@ -115,7 +116,7 @@ public class RunkeeperShim extends OAuth2ShimBase {
             + "&client_id="
             + resource.getClientId()
             + "&response_type=code"
-            + "&redirect_uri=http://localhost:8080/authorize/" + getShimKey() + "/callback";//TODO: Move this to outside
+            + "&redirect_uri=http://localhost:8080/authorize/" + getShimKey() + "/callback";
         AuthorizationRequestParameters parameters = new AuthorizationRequestParameters();
         parameters.setRedirectUri(exception.getRedirectUri());
         parameters.setStateKey(exception.getStateKey());

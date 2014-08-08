@@ -7,4 +7,4 @@ spring:
   #context_path: /client
 security:
   basic:
-    enabled: true
+    enabled: false

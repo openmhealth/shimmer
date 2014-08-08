@@ -60,4 +60,11 @@ public class AuthorizationResponse {
         response.setType(Type.AUTHORIZED);
         return response;
     }
+
+    public static AuthorizationResponse authorized(AccessParameters accessParameters) {
+        AuthorizationResponse response = new AuthorizationResponse();
+        response.setAccessParameters(accessParameters);
+        response.setType(Type.AUTHORIZED);
+        return response;
+    }
 }

@@ -16,22 +16,27 @@ public class InMemoryTokenRepo implements ClientTokenServices {
     @Override
     public OAuth2AccessToken getAccessToken(OAuth2ProtectedResourceDetails resource,
                                             Authentication authentication) {
-        String principalStr = authentication.getPrincipal().toString();
-        return tokensByAuthenticationMap.containsKey(principalStr) ?
-            tokensByAuthenticationMap.get(principalStr) : null;
+        String tokenKey = getTokenKey(authentication);
+        return tokensByAuthenticationMap.containsKey(tokenKey) ?
+            tokensByAuthenticationMap.get(tokenKey) : null;
     }
 
     @Override
     public void saveAccessToken(OAuth2ProtectedResourceDetails resource,
                                 Authentication authentication, OAuth2AccessToken accessToken) {
-        String principalStr = authentication.getPrincipal().toString();
-        tokensByAuthenticationMap.put(principalStr, accessToken);
+        String tokenKey = getTokenKey(authentication);
+        tokensByAuthenticationMap.put(tokenKey, accessToken);
     }
 
     @Override
     public void removeAccessToken(OAuth2ProtectedResourceDetails resource, Authentication authentication) {
-        String principalStr = authentication.getPrincipal().toString();
-        if (tokensByAuthenticationMap.containsKey(principalStr))
-            tokensByAuthenticationMap.remove(principalStr);
+        String tokenKey = getTokenKey(authentication);
+        if (tokensByAuthenticationMap.containsKey(tokenKey))
+            tokensByAuthenticationMap.remove(tokenKey);
+    }
+
+    private String getTokenKey(Authentication authentication) {
+        return authentication.getPrincipal().toString()
+            + ":" + authentication.getDetails();
     }
 }

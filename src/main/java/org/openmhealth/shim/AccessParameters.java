@@ -9,6 +9,8 @@ import java.util.Map;
  */
 public class AccessParameters {
 
+    private String username;
+
     private String clientId;
 
     private String clientSecret;
@@ -16,6 +18,24 @@ public class AccessParameters {
     private String accessToken;
 
     private String tokenSecret;
+
+    private String stateKey;
+
+    public String getStateKey() {
+        return stateKey;
+    }
+
+    public void setStateKey(String stateKey) {
+        this.stateKey = stateKey;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
 
     private Map<String, Object> additionalParameters = new LinkedHashMap<String, Object>();
 

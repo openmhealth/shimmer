@@ -28,7 +28,8 @@ public interface Shim {
      * @return AuthorizationParameters needed to iniate oauth flow.
      */
     AuthorizationRequestParameters getAuthorizationRequestParameters(
-        final Map<String, String> addlParameters);
+        final String username,
+        final Map<String, String> addlParameters) throws ShimException;
 
     /**
      * Handles the authorization response from the external data provider.
@@ -41,7 +42,7 @@ public interface Shim {
      * @return Authorization response.
      */
     AuthorizationResponse handleAuthorizationResponse(
-        final HttpServletRequest servletRequest);
+        final HttpServletRequest servletRequest) throws ShimException;
 
     /**
      * Obtain data from the external data provider using access parameters

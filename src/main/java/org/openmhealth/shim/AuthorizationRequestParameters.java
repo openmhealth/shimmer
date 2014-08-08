@@ -6,12 +6,21 @@ import java.util.Map;
 
 public class AuthorizationRequestParameters {
 
+    private String username;
     private HttpMethod httpMethod = HttpMethod.POST;
     private String stateKey;
     private String redirectUri;
     private Map<String, String> requestParams;
     private String authorizationUrl;
-    private boolean isAuthorized = true;
+    private boolean isAuthorized = false;
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
 
     public boolean getIsAuthorized() {
         return isAuthorized;
