@@ -27,7 +27,7 @@ import java.util.*;
  */
 public class JawboneShim extends OAuth2ShimBase {
 
-    private static final String SHIM_KEY = "jawbone";
+    public static final String SHIM_KEY = "jawbone";
 
     private static final String DATA_URL = "https://jawbone.com/nudge/api/v.1.1/users/@me/";
 
@@ -90,7 +90,7 @@ public class JawboneShim extends OAuth2ShimBase {
             + resource.getClientId()
             + "&response_type=code"
             + "&scope=" + StringUtils.collectionToDelimitedString(resource.getScope(), " ")
-            + "&redirect_uri=http://localhost:8080/authorize/jawbone/callback";//TODO: Move this to outside
+            + "&redirect_uri=http://localhost:8080/authorize/" + getShimKey() + "/callback";//TODO: Move this to outside
         AuthorizationRequestParameters parameters = new AuthorizationRequestParameters();
         parameters.setRedirectUri(exception.getRedirectUri());
         parameters.setStateKey(exception.getStateKey());

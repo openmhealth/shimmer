@@ -1,11 +1,10 @@
 package org.openmhealth.shim;
 
 import org.openmhealth.shim.jawbone.JawboneShim;
+import org.openmhealth.shim.runkeeper.RunkeeperShim;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -13,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 
 @Configuration
 @EnableAutoConfiguration
@@ -20,7 +20,10 @@ import java.util.Collections;
 @RestController
 public class Application extends WebSecurityConfigurerAdapter {
 
-    private Shim jawboneShim = new JawboneShim();
+    private LinkedHashMap<String, Shim> shimRegistry = new LinkedHashMap<String, Shim>() {{
+        put(JawboneShim.SHIM_KEY, new JawboneShim());
+        put(RunkeeperShim.SHIM_KEY, new RunkeeperShim());
+    }};
 
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
@@ -42,7 +45,7 @@ public class Application extends WebSecurityConfigurerAdapter {
     public
     @ResponseBody
     AuthorizationRequestParameters authorize(@PathVariable("shim") String shim) {
-        return jawboneShim.getAuthorizationRequestParameters(
+        return shimRegistry.get(shim).getAuthorizationRequestParameters(
             Collections.<String, String>emptyMap());
     }
 
@@ -57,8 +60,9 @@ public class Application extends WebSecurityConfigurerAdapter {
         method = {RequestMethod.POST, RequestMethod.GET})
     public
     @ResponseBody
-    AuthorizationResponse approve(HttpServletRequest servletRequest) {
-        return jawboneShim.handleAuthorizationResponse(servletRequest);
+    AuthorizationResponse approve(@PathVariable("shim") String shim,
+                                  HttpServletRequest servletRequest) {
+        return shimRegistry.get(shim).handleAuthorizationResponse(servletRequest);
     }
 
     /**
@@ -69,9 +73,10 @@ public class Application extends WebSecurityConfigurerAdapter {
     @RequestMapping(value = "/data/{shim}/{dataType}", produces = "application/json")
     public
     @ResponseBody
-    ShimDataResponse data(HttpServletRequest servletRequest) {
+    ShimDataResponse data(@PathVariable("shim") String shim,
+                          HttpServletRequest servletRequest) {
         ShimDataRequest shimDataRequest =
             ShimDataRequest.fromHttpRequest(servletRequest);
-        return jawboneShim.getData(shimDataRequest);
+        return shimRegistry.get(shim).getData(shimDataRequest);
     }
 }
