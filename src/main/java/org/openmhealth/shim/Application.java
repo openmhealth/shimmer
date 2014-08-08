@@ -9,10 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Collections;
@@ -42,10 +39,11 @@ public class Application extends WebSecurityConfigurerAdapter {
      * flag if already authorized.
      */
     @RequestMapping("/authorize/{shim}")
-    public ResponseEntity<AuthorizationRequestParameters> authorize(@PathVariable("shim") String shim) {
-        return new ResponseEntity<AuthorizationRequestParameters>(
-            jawboneShim.getAuthorizationRequestParameters(Collections.<String, String>emptyMap())
-            , HttpStatus.OK);
+    public
+    @ResponseBody
+    AuthorizationRequestParameters authorize(@PathVariable("shim") String shim) {
+        return jawboneShim.getAuthorizationRequestParameters(
+            Collections.<String, String>emptyMap());
     }
 
     /**
@@ -57,9 +55,10 @@ public class Application extends WebSecurityConfigurerAdapter {
      */
     @RequestMapping(value = "/authorize/{shim}/callback",
         method = {RequestMethod.POST, RequestMethod.GET})
-    public ResponseEntity<AuthorizationResponse> approve(HttpServletRequest servletRequest) {
-        return new ResponseEntity<AuthorizationResponse>(
-            jawboneShim.handleAuthorizationResponse(servletRequest), HttpStatus.OK);
+    public
+    @ResponseBody
+    AuthorizationResponse approve(HttpServletRequest servletRequest) {
+        return jawboneShim.handleAuthorizationResponse(servletRequest);
     }
 
     /**
@@ -68,10 +67,11 @@ public class Application extends WebSecurityConfigurerAdapter {
      * @return - The shim data response wrapper with data from the shim.
      */
     @RequestMapping(value = "/data/{shim}/{dataType}", produces = "application/json")
-    public ResponseEntity<ShimDataResponse> data(HttpServletRequest servletRequest) {
+    public
+    @ResponseBody
+    ShimDataResponse data(HttpServletRequest servletRequest) {
         ShimDataRequest shimDataRequest =
             ShimDataRequest.fromHttpRequest(servletRequest);
-        return new ResponseEntity<ShimDataResponse>(
-            jawboneShim.getData(shimDataRequest), HttpStatus.OK);
+        return jawboneShim.getData(shimDataRequest);
     }
 }
