@@ -50,5 +50,5 @@ public interface Shim {
      * @param shimDataRequest - Data request to be full-filled by the shim.
      * @return Generic object wrapper including timestamp, shim, and results
      */
-    ShimDataResponse getData(final ShimDataRequest shimDataRequest);
+    ShimDataResponse getData(final ShimDataRequest shimDataRequest) throws ShimException;
 }

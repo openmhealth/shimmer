@@ -1,11 +1,16 @@
 package org.openmhealth.shim.fatsecret;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import oauth.signpost.OAuth;
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClients;
+import org.joda.time.DateTime;
+import org.joda.time.Days;
+import org.joda.time.MutableDateTime;
 import org.openmhealth.shim.*;
 import org.springframework.http.HttpMethod;
 import org.springframework.web.client.HttpClientErrorException;
@@ -14,10 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Encapsulates parameters specific to fatsecret api.
@@ -28,11 +30,11 @@ public class FatsecretShim implements Shim {
 
     private static final String DATA_URL = "http://platform.fatsecret.com/rest/server.api";
 
-    private static final String REQUEST_TOKEN_URL = "http://www.fatsecret.com/oauth/token";
+    private static final String REQUEST_TOKEN_URL = "http://www.fatsecret.com/oauth/request_token";
 
     private static final String AUTHORIZE_URL = "http://www.fatsecret.com/oauth/authorize";
 
-    private static final String TOKEN_URL = "http://www.fatsecret.com/oauth/authorize/";
+    private static final String TOKEN_URL = "http://www.fatsecret.com/oauth/access_token";
 
     public static final String FATSECRET_CLIENT_ID = "d1c59d7f9c8243f0b2eaef9ea43278a0";
 
@@ -61,7 +63,7 @@ public class FatsecretShim implements Shim {
         try {
             String callbackUrl =
                 URLEncoder.encode("http://localhost:8080/authorize/fatsecret/callback" +
-                    "?state=" + stateKey + "&username=" + username, "UTF-8");
+                    "?state=" + stateKey, "UTF-8");
 
             Map<String, String> requestTokenParameters = new HashMap<>();
             requestTokenParameters.put("oauth_callback", callbackUrl);
@@ -84,6 +86,7 @@ public class FatsecretShim implements Shim {
              * Build the auth parameters entity to return
              */
             AuthorizationRequestParameters parameters = new AuthorizationRequestParameters();
+            parameters.setUsername(username);
             parameters.setRedirectUri(callbackUrl);
             parameters.setStateKey(stateKey);
             parameters.setHttpMethod(HttpMethod.GET);
@@ -110,7 +113,6 @@ public class FatsecretShim implements Shim {
     public AuthorizationResponse handleAuthorizationResponse(HttpServletRequest servletRequest) throws ShimException {
 
         // Fetch the access token.
-        String username = servletRequest.getParameter("username");
         String stateKey = servletRequest.getParameter("state");
         String requestToken = servletRequest.getParameter(OAuth.OAUTH_TOKEN);
         final String requestVerifier = servletRequest.getParameter(OAuth.OAUTH_VERIFIER);
@@ -134,6 +136,7 @@ public class FatsecretShim implements Shim {
             response = httpClient.execute(new HttpGet(signedUrl.toString()));
         } catch (IOException e) {
             e.printStackTrace();
+            throw new ShimException("Could not retrieve response from token URL");
         }
 
         System.out.println("Signed URL for access token is: \n\n" + signedUrl);
@@ -142,7 +145,10 @@ public class FatsecretShim implements Shim {
         String accessTokenSecret = accessTokenParameters.get(OAuth.OAUTH_TOKEN_SECRET);
 
         AccessParameters accessParameters = new AccessParameters();
-        accessParameters.setUsername(username);
+        accessParameters.setClientId(FATSECRET_CLIENT_ID);
+        accessParameters.setClientSecret(FATSECRET_CLIENT_SECRET);
+        accessParameters.setStateKey(stateKey);
+        accessParameters.setUsername(authParams.getUsername());
         accessParameters.setAccessToken(accessToken);
         accessParameters.setTokenSecret(accessTokenSecret);
         accessParameters.setAdditionalParameters(new HashMap<String, Object>() {{
@@ -153,11 +159,55 @@ public class FatsecretShim implements Shim {
     }
 
     @Override
-    public ShimDataResponse getData(ShimDataRequest shimDataRequest) {
-        return null;
+    public ShimDataResponse getData(ShimDataRequest shimDataRequest) throws ShimException {
+
+        long numToSkip = 0;
+        long numToReturn = 3;
+
+        Calendar cal = Calendar.getInstance();
+        cal.set(2014, Calendar.AUGUST, 1);
+        Date endDate = new Date(cal.getTimeInMillis());
+        cal.add(Calendar.DATE, -1);
+        Date startDate = new Date(cal.getTimeInMillis());
+
+        DateTime startTime = new DateTime(startDate.getTime());
+        DateTime endTime = new DateTime(endDate.getTime());
+
+        MutableDateTime epoch = new MutableDateTime();
+        epoch.setDate(0);
+
+        int days = 16283; //Days.daysBetween(epoch, new DateTime()).getDays() - 1;
+
+        String endPoint = "food_entries.get";
+
+        String accessToken = shimDataRequest.getAccessParameters().getAccessToken();
+        String tokenSecret = shimDataRequest.getAccessParameters().getTokenSecret();
+
+        URL url = signUrl(DATA_URL + "?date=" + days + "&format=json&method=" + endPoint,
+            accessToken, tokenSecret, null);
+        System.out.println("Signed URL is: \n\n" + url);
+
+        // Fetch and decode the JSON data.
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode jsonData = null;
+
+        HttpGet get = new HttpGet(url.toString());
+        HttpResponse response;
+        try {
+            response = httpClient.execute(get);
+            HttpEntity responseEntity = response.getEntity();
+            jsonData = objectMapper.readTree(responseEntity.getContent());
+            return ShimDataResponse.result(jsonData);
+
+        } catch (IOException e) {
+            throw new ShimException("Could not fetch data", e);
+        }
     }
 
-    protected URL signUrl(String unsignedUrl, String token, String tokenSecret, Map<String, String> oauthParams)
+    protected URL signUrl(String unsignedUrl,
+                          String token,
+                          String tokenSecret,
+                          Map<String, String> oauthParams)
         throws ShimException {
         return OAuth1Utils.buildSignedUrl(
             unsignedUrl,
