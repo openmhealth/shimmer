@@ -39,6 +39,7 @@ dependencies {
 
   compile "commons-io:commons-io:2.4"
   compile "oauth.signpost:signpost-core:1.2.1.2"
+  compile "oauth.signpost:signpost-commonshttp4:1.2.1.2"
 
   testCompile("junit:junit")
 }

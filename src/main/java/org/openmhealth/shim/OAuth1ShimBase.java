@@ -4,6 +4,8 @@ import oauth.signpost.OAuth;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.impl.client.HttpClients;
 import org.springframework.http.HttpMethod;
 import org.springframework.web.client.HttpClientErrorException;
@@ -25,6 +27,7 @@ public abstract class OAuth1ShimBase implements Shim, OAuth1Shim {
 
     private static Map<String, AuthorizationRequestParameters> AUTH_PARAMS_REPO = new LinkedHashMap<>();
 
+
     @Override
     @SuppressWarnings("unchecked")
     public AuthorizationRequestParameters getAuthorizationRequestParameters(
@@ -43,9 +46,9 @@ public abstract class OAuth1ShimBase implements Shim, OAuth1Shim {
             requestTokenParameters.put("oauth_callback", callbackUrl);
 
             String initiateAuthUrl = getBaseRequestTokenUrl();
-            URL signedURL = signUrl(initiateAuthUrl, null, null, requestTokenParameters);
 
-            HttpResponse response = httpClient.execute(new HttpGet(signedURL.toString()));
+            HttpResponse response = httpClient.execute(
+                getRequestTokenRequest(initiateAuthUrl, null, null, requestTokenParameters));
 
             Map<String, String> tokenParameters = OAuth1Utils.parseRequestTokenResponse(response);
 
@@ -100,20 +103,16 @@ public abstract class OAuth1ShimBase implements Shim, OAuth1Shim {
         // Get the token secret from the original access request.
         String requestTokenSecret = authParams.getRequestParams().get(OAuth.OAUTH_TOKEN_SECRET);
 
-        URL signedUrl = signUrl(getBaseTokenUrl(),
-            requestToken, requestTokenSecret, new HashMap<String, String>() {{
-                put(OAuth.OAUTH_VERIFIER, requestVerifier);
-            }});
-
         HttpResponse response;
         try {
-            response = httpClient.execute(new HttpGet(signedUrl.toString()));
+            response = httpClient.execute(getAccessTokenRequest(getBaseTokenUrl(),
+                requestToken, requestTokenSecret, new HashMap<String, String>() {{
+                    put(OAuth.OAUTH_VERIFIER, requestVerifier);
+                }}));
         } catch (IOException e) {
             e.printStackTrace();
             throw new ShimException("Could not retrieve response from token URL");
         }
-
-        System.out.println("Signed URL for access token is: \n\n" + signedUrl);
         Map<String, String> accessTokenParameters = OAuth1Utils.parseRequestTokenResponse(response);
         String accessToken = accessTokenParameters.get(OAuth.OAUTH_TOKEN);
         String accessTokenSecret = accessTokenParameters.get(OAuth.OAUTH_TOKEN_SECRET);
@@ -139,6 +138,17 @@ public abstract class OAuth1ShimBase implements Shim, OAuth1Shim {
         //noop, override if additional parameters must be set here
     }
 
+    protected HttpPost getSignedPostRequest(String unsignedUrl,
+                                            String token,
+                                            String tokenSecret,
+                                            Map<String, String> oauthParams) throws ShimException {
+        return OAuth1Utils.getSignedPostRequest(
+            unsignedUrl,
+            getClientId(),
+            getClientSecret(),
+            token, tokenSecret, oauthParams);
+    }
+
     protected URL signUrl(String unsignedUrl,
                           String token,
                           String tokenSecret,
@@ -149,5 +159,59 @@ public abstract class OAuth1ShimBase implements Shim, OAuth1Shim {
             getClientId(),
             getClientSecret(),
             token, tokenSecret, oauthParams);
+    }
+
+    /**
+     * Some external data providers require POST vs GET.
+     * In which case the signing of the requests may differ.
+     *
+     * @param unsignedUrl - The unsigned URL for the request.
+     * @param token       - The request token or access token.
+     * @param tokenSecret - The token secret, if any.
+     * @param oauthParams - Any additional Oauth params.
+     * @return - The appropriate request, signed.
+     * @throws ShimException
+     */
+    protected HttpRequestBase getRequestTokenRequest(String unsignedUrl,
+                                                     String token,
+                                                     String tokenSecret,
+                                                     Map<String, String> oauthParams) throws ShimException {
+        if (HttpMethod.GET == getRequestTokenMethod()) {
+            return new HttpGet(signUrl(unsignedUrl, token, tokenSecret, oauthParams).toString());
+        } else {
+            return getSignedPostRequest(unsignedUrl, token, tokenSecret, oauthParams);
+        }
+    }
+
+    /**
+     * NOTE: Same as getRequestTokenRequest with difference being that this is for access tokens.
+     * <p/>
+     * Some external data providers require POST vs GET.
+     * In which case the signing of the requests may differ.
+     *
+     * @param unsignedUrl - The unsigned URL for the request.
+     * @param token       - The request token or access token.
+     * @param tokenSecret - The token secret, if any.
+     * @param oauthParams - Any additional Oauth params.
+     * @return - The appropriate request, signed.
+     * @throws ShimException
+     */
+    protected HttpRequestBase getAccessTokenRequest(String unsignedUrl,
+                                                    String token,
+                                                    String tokenSecret,
+                                                    Map<String, String> oauthParams) throws ShimException {
+        if (HttpMethod.GET == getAccessTokenMethod()) {
+            return new HttpGet(signUrl(unsignedUrl, token, tokenSecret, oauthParams).toString());
+        } else {
+            return getSignedPostRequest(unsignedUrl, token, tokenSecret, oauthParams);
+        }
+    }
+
+    protected HttpMethod getRequestTokenMethod() {
+        return HttpMethod.GET;
+    }
+
+    protected HttpMethod getAccessTokenMethod() {
+        return HttpMethod.GET;
     }
 }

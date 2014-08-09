@@ -4,6 +4,7 @@ import oauth.signpost.OAuth;
 import oauth.signpost.OAuthConsumer;
 import oauth.signpost.basic.DefaultOAuthConsumer;
 import oauth.signpost.basic.UrlStringRequestAdapter;
+import oauth.signpost.commonshttp.CommonsHttpOAuthConsumer;
 import oauth.signpost.exception.OAuthCommunicationException;
 import oauth.signpost.exception.OAuthExpectationFailedException;
 import oauth.signpost.exception.OAuthMessageSignerException;
@@ -11,6 +12,7 @@ import oauth.signpost.http.HttpParameters;
 import oauth.signpost.signature.QueryStringSigningStrategy;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpPost;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -71,6 +73,41 @@ public class OAuth1Utils {
      */
     public static String generateStateKey() {
         return UUID.randomUUID().toString();
+    }
+
+    /**
+     * Signs an HTTP post request for cases where OAuth 1.0 posts are
+     * required instead of GET.
+     *
+     * @param unsignedUrl     - The unsigned URL
+     * @param clientId        - The external provider assigned client id
+     * @param clientSecret    - The external provider assigned client secret
+     * @param token           - The access token
+     * @param tokenSecret     - The 'secret' parameter to be used (Note: token secret != client secret)
+     * @param oAuthParameters - Any additional parameters
+     * @return
+     */
+    public static HttpPost getSignedPostRequest(String unsignedUrl,
+                                                String clientId,
+                                                String clientSecret,
+                                                String token,
+                                                String tokenSecret,
+                                                Map<String, String> oAuthParameters) throws ShimException {
+        HttpPost postRequest = new HttpPost(unsignedUrl);
+        CommonsHttpOAuthConsumer consumer = new CommonsHttpOAuthConsumer(clientId,
+            clientSecret);
+        consumer.setSendEmptyTokens(false);
+        consumer.setTokenWithSecret(token, tokenSecret);
+        try {
+            consumer.sign(postRequest);
+            return postRequest;
+        } catch (
+            OAuthMessageSignerException
+                | OAuthExpectationFailedException
+                | OAuthCommunicationException e) {
+            e.printStackTrace();
+            throw new ShimException("Could not sign POST request, cannot continue");
+        }
     }
 
     /**

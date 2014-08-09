@@ -1,6 +1,7 @@
 package org.openmhealth.shim;
 
 import org.openmhealth.shim.fatsecret.FatsecretShim;
+import org.openmhealth.shim.fitbit.FitbitShim;
 import org.openmhealth.shim.jawbone.JawboneShim;
 import org.openmhealth.shim.runkeeper.RunkeeperShim;
 import org.openmhealth.shim.withings.WithingsShim;
@@ -28,6 +29,7 @@ public class Application extends WebSecurityConfigurerAdapter {
         put(RunkeeperShim.SHIM_KEY, new RunkeeperShim());
         put(FatsecretShim.SHIM_KEY, new FatsecretShim());
         put(WithingsShim.SHIM_KEY, new WithingsShim());
+        put(FitbitShim.SHIM_KEY, new FitbitShim());
     }};
 
     private LinkedHashMap<String, AccessParameters> ACCESS_PARAM_REPO = new LinkedHashMap<>();
