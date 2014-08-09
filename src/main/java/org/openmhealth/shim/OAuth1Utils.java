@@ -98,22 +98,18 @@ public class OAuth1Utils {
                                                        String token,
                                                        String tokenSecret,
                                                        Map<String, String> oAuthParameters) throws ShimException {
+
+        URL requestUrl = buildSignedUrl(unsignedUrl, clientId, clientSecret, token, tokenSecret, oAuthParameters);
+        String[] signedParams = requestUrl.toString().split("\\?")[1].split("&");
+
         HttpPost postRequest = new HttpPost(unsignedUrl);
-        if (!CollectionUtils.isEmpty(oAuthParameters)) {
-            List<NameValuePair> params = new ArrayList<>();
-            try {
-                postRequest.setEntity(new UrlEncodedFormEntity(params));
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-                throw new ShimException("Could not sign POST request, URL Encoding of parameters failed");
-            }
+        String oauthHeader = "";
+        for (String signedParam : signedParams) {
+            String[] parts = signedParam.split("=");
+            oauthHeader += parts[0] + "=\"" + parts[1] + "\",";
         }
-        try {
-            postRequest.setURI(new URI(unsignedUrl));
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-            throw new ShimException("Cannot sign request, Invalid URI.");
-        }
+        oauthHeader = "OAuth " + oauthHeader.substring(0, oauthHeader.length() - 1);
+        postRequest.setHeader("Authorization", oauthHeader);
         CommonsHttpOAuthConsumer consumer = new CommonsHttpOAuthConsumer(clientId, clientSecret);
         consumer.setSendEmptyTokens(false);
         if (token != null) {
@@ -121,12 +117,12 @@ public class OAuth1Utils {
         }
         try {
             consumer.sign(postRequest);
-            String base = "\n";
+            /*String base = "\n";
             base += postRequest.getMethod() + "\n";
             base += StringUtils.collectionToDelimitedString(Arrays.asList(postRequest.getAllHeaders()), "\n");
             base += "\n";
             System.out.println(base);
-            System.out.println("\n\n\n" + postRequest.toString() + "\n\n\n");
+            System.out.println("\n\n\n" + postRequest.toString() + "\n\n\n");*/
             return postRequest;
         } catch (
             OAuthMessageSignerException

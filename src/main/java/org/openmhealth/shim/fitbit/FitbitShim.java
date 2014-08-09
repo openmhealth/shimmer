@@ -19,7 +19,7 @@ public class FitbitShim extends OAuth1ShimBase {
 
     private static final String REQUEST_TOKEN_URL = "https://api.fitbit.com/oauth/request_token";
 
-    private static final String AUTHORIZE_URL = "https://www.fitbit.com/oauth/authorize";
+    private static final String AUTHORIZE_URL = "https://www.fitbit.com/oauth/authenticate";
 
     private static final String TOKEN_URL = "https://api.fitbit.com/oauth/access_token";
 
