@@ -90,12 +90,12 @@ public class OAuth1Utils {
      * @param oAuthParameters - Any additional parameters
      * @return The request to be signed and sent to external data provider.
      */
-    public static HttpRequestBase getSignedPostRequest(String unsignedUrl,
-                                                       String clientId,
-                                                       String clientSecret,
-                                                       String token,
-                                                       String tokenSecret,
-                                                       Map<String, String> oAuthParameters) throws ShimException {
+    public static HttpRequestBase getSignedRequest(String unsignedUrl,
+                                                   String clientId,
+                                                   String clientSecret,
+                                                   String token,
+                                                   String tokenSecret,
+                                                   Map<String, String> oAuthParameters) throws ShimException {
 
         URL requestUrl = buildSignedUrl(unsignedUrl, clientId, clientSecret, token, tokenSecret, oAuthParameters);
         String[] signedParams = requestUrl.toString().split("\\?")[1].split("&");

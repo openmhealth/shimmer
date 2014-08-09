@@ -4,14 +4,11 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.openmhealth.shim.*;
 import org.springframework.http.HttpMethod;
 
 import java.io.IOException;
-import java.net.URL;
 import java.util.List;
 
 public class FitbitShim extends OAuth1ShimBase {
@@ -83,7 +80,7 @@ public class FitbitShim extends OAuth1ShimBase {
         endPointUrl += "/1/user/-/activities/date/2014-07-13.json";
 
         HttpRequestBase dataRequest =
-            OAuth1Utils.getSignedPostRequest(
+            OAuth1Utils.getSignedRequest(
                 endPointUrl, getClientId(), getClientSecret(), accessToken, tokenSecret, null);
 
         // Fetch and decode the JSON data.

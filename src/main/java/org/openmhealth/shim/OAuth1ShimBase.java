@@ -36,10 +36,6 @@ public abstract class OAuth1ShimBase implements Shim, OAuth1Shim {
         String stateKey = OAuth1Utils.generateStateKey();
 
         try {
-            /*String callbackUrl =
-                URLEncoder.encode("http://localhost:8080/authorize/" + getShimKey() + "/callback" +
-                    "?state=" + stateKey, "UTF-8");*/
-
             String callbackUrl =
                 "http://localhost:8080/authorize/" + getShimKey() + "/callback?state=" + stateKey;
 
@@ -55,6 +51,10 @@ public abstract class OAuth1ShimBase implements Shim, OAuth1Shim {
 
             String token = tokenParameters.get(OAuth.OAUTH_TOKEN);
             String tokenSecret = tokenParameters.get(OAuth.OAUTH_TOKEN_SECRET);
+
+            if (tokenSecret == null) {
+                throw new ShimException("Request token could not be retrieved");
+            }
 
             URL authorizeUrl = signUrl(getBaseAuthorizeUrl(), token, tokenSecret, null);
             System.out.println("The authorization url is: ");
@@ -118,6 +118,10 @@ public abstract class OAuth1ShimBase implements Shim, OAuth1Shim {
         String accessToken = accessTokenParameters.get(OAuth.OAUTH_TOKEN);
         String accessTokenSecret = accessTokenParameters.get(OAuth.OAUTH_TOKEN_SECRET);
 
+        if (accessToken == null) {
+            throw new ShimException("Access token could not be retrieved");
+        }
+
         AccessParameters accessParameters = new AccessParameters();
         accessParameters.setClientId(getClientId());
         accessParameters.setClientSecret(getClientSecret());
@@ -143,7 +147,7 @@ public abstract class OAuth1ShimBase implements Shim, OAuth1Shim {
                                                String token,
                                                String tokenSecret,
                                                Map<String, String> oauthParams) throws ShimException {
-        return OAuth1Utils.getSignedPostRequest(
+        return OAuth1Utils.getSignedRequest(
             unsignedUrl,
             getClientId(),
             getClientSecret(),
