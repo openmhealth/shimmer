@@ -41,6 +41,9 @@ dependencies {
   compile "oauth.signpost:signpost-core:1.2.1.2"
   compile "oauth.signpost:signpost-commonshttp4:1.2.1.2"
 
+  compile "com.microsoft.hsg:hv-jaxb:1.6"
+  compile "com.microsoft.hsg:hv-sdk:1.6"
+
   testCompile("junit:junit")
 }
 
