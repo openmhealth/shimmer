@@ -128,8 +128,15 @@ public abstract class OAuth1ShimBase implements Shim, OAuth1Shim {
         accessParameters.setAdditionalParameters(new HashMap<String, Object>() {{
             put(OAuth.OAUTH_VERIFIER, requestVerifier);
         }});
-
+        loadAdditionalAccessParameters(servletRequest, accessParameters);
         return AuthorizationResponse.authorized(accessParameters);
+    }
+
+    protected void loadAdditionalAccessParameters(
+        HttpServletRequest request,
+        AccessParameters accessParameters
+    ) {
+        //noop, override if additional parameters must be set here
     }
 
     protected URL signUrl(String unsignedUrl,

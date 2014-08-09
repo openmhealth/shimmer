@@ -3,6 +3,7 @@ package org.openmhealth.shim;
 import org.openmhealth.shim.fatsecret.FatsecretShim;
 import org.openmhealth.shim.jawbone.JawboneShim;
 import org.openmhealth.shim.runkeeper.RunkeeperShim;
+import org.openmhealth.shim.withings.WithingsShim;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Configuration;
@@ -26,6 +27,7 @@ public class Application extends WebSecurityConfigurerAdapter {
         put(JawboneShim.SHIM_KEY, new JawboneShim());
         put(RunkeeperShim.SHIM_KEY, new RunkeeperShim());
         put(FatsecretShim.SHIM_KEY, new FatsecretShim());
+        put(WithingsShim.SHIM_KEY, new WithingsShim());
     }};
 
     private LinkedHashMap<String, AccessParameters> ACCESS_PARAM_REPO = new LinkedHashMap<>();
