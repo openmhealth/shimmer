@@ -15,13 +15,13 @@ import java.util.List;
 public class FitbitShim extends OAuth1ShimBase {
     public static final String SHIM_KEY = "fitbit";
 
-    private static final String DATA_URL = "https://api.fitbit.com ";
+    private static final String DATA_URL = "https://api.fitbit.com";
 
-    private static final String REQUEST_TOKEN_URL = "https://www.fitbit.com/oauth/request_token";
+    private static final String REQUEST_TOKEN_URL = "https://api.fitbit.com/oauth/request_token";
 
     private static final String AUTHORIZE_URL = "https://www.fitbit.com/oauth/authorize";
 
-    private static final String TOKEN_URL = "https://www.fitbit.com/oauth/access_token";
+    private static final String TOKEN_URL = "https://api.fitbit.com/oauth/access_token";
 
     public static final String FITBIT_CLIENT_ID = "7da3c2e5e74d4492ab6bb3286fc32c6b";
 
@@ -39,12 +39,12 @@ public class FitbitShim extends OAuth1ShimBase {
 
     @Override
     public String getClientSecret() {
-        return FITBIT_CLIENT_ID;
+        return FITBIT_CLIENT_SECRET;
     }
 
     @Override
     public String getClientId() {
-        return FITBIT_CLIENT_SECRET;
+        return FITBIT_CLIENT_ID;
     }
 
     @Override

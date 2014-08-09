@@ -12,14 +12,19 @@ import oauth.signpost.http.HttpParameters;
 import oauth.signpost.signature.QueryStringSigningStrategy;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.message.BasicNameValuePair;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.io.UnsupportedEncodingException;
+import java.net.*;
+import java.util.*;
 
 /**
  * Utilities for common OAuth1 tasks.
@@ -87,19 +92,41 @@ public class OAuth1Utils {
      * @param oAuthParameters - Any additional parameters
      * @return
      */
-    public static HttpPost getSignedPostRequest(String unsignedUrl,
-                                                String clientId,
-                                                String clientSecret,
-                                                String token,
-                                                String tokenSecret,
-                                                Map<String, String> oAuthParameters) throws ShimException {
+    public static HttpRequestBase getSignedPostRequest(String unsignedUrl,
+                                                       String clientId,
+                                                       String clientSecret,
+                                                       String token,
+                                                       String tokenSecret,
+                                                       Map<String, String> oAuthParameters) throws ShimException {
         HttpPost postRequest = new HttpPost(unsignedUrl);
-        CommonsHttpOAuthConsumer consumer = new CommonsHttpOAuthConsumer(clientId,
-            clientSecret);
+        if (!CollectionUtils.isEmpty(oAuthParameters)) {
+            List<NameValuePair> params = new ArrayList<>();
+            try {
+                postRequest.setEntity(new UrlEncodedFormEntity(params));
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+                throw new ShimException("Could not sign POST request, URL Encoding of parameters failed");
+            }
+        }
+        try {
+            postRequest.setURI(new URI(unsignedUrl));
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+            throw new ShimException("Cannot sign request, Invalid URI.");
+        }
+        CommonsHttpOAuthConsumer consumer = new CommonsHttpOAuthConsumer(clientId, clientSecret);
         consumer.setSendEmptyTokens(false);
-        consumer.setTokenWithSecret(token, tokenSecret);
+        if (token != null) {
+            consumer.setTokenWithSecret(token, tokenSecret);
+        }
         try {
             consumer.sign(postRequest);
+            String base = "\n";
+            base += postRequest.getMethod() + "\n";
+            base += StringUtils.collectionToDelimitedString(Arrays.asList(postRequest.getAllHeaders()), "\n");
+            base += "\n";
+            System.out.println(base);
+            System.out.println("\n\n\n" + postRequest.toString() + "\n\n\n");
             return postRequest;
         } catch (
             OAuthMessageSignerException
@@ -139,11 +166,20 @@ public class OAuth1Utils {
 
         // Add any additional parameters.
         if (oAuthParameters != null) {
-            HttpParameters httpParameters = new HttpParameters();
-            for (String key : oAuthParameters.keySet()) {
-                httpParameters.put(key, oAuthParameters.get(key));
+            try {
+                HttpParameters httpParameters = new HttpParameters();
+                for (String key : oAuthParameters.keySet()) {
+                    if (key.equals(OAuth.OAUTH_CALLBACK)) {
+                        httpParameters.put(key, URLEncoder.encode(oAuthParameters.get(key), "UTF-8"));
+                    } else {
+                        httpParameters.put(key, oAuthParameters.get(key));
+                    }
+                }
+                consumer.setAdditionalParameters(httpParameters);
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+                throw new ShimException("Could not URL Encode callbackUrl, cannot continue");
             }
-            consumer.setAdditionalParameters(httpParameters);
         }
 
         // Sign the URL.

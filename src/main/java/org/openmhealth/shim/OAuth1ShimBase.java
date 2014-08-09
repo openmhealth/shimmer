@@ -4,7 +4,6 @@ import oauth.signpost.OAuth;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.impl.client.HttpClients;
 import org.springframework.http.HttpMethod;
@@ -13,7 +12,6 @@ import org.springframework.web.client.HttpClientErrorException;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.net.URL;
-import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -38,9 +36,12 @@ public abstract class OAuth1ShimBase implements Shim, OAuth1Shim {
         String stateKey = OAuth1Utils.generateStateKey();
 
         try {
-            String callbackUrl =
+            /*String callbackUrl =
                 URLEncoder.encode("http://localhost:8080/authorize/" + getShimKey() + "/callback" +
-                    "?state=" + stateKey, "UTF-8");
+                    "?state=" + stateKey, "UTF-8");*/
+
+            String callbackUrl =
+                "http://localhost:8080/authorize/" + getShimKey() + "/callback?state=" + stateKey;
 
             Map<String, String> requestTokenParameters = new HashMap<>();
             requestTokenParameters.put("oauth_callback", callbackUrl);
@@ -138,10 +139,10 @@ public abstract class OAuth1ShimBase implements Shim, OAuth1Shim {
         //noop, override if additional parameters must be set here
     }
 
-    protected HttpPost getSignedPostRequest(String unsignedUrl,
-                                            String token,
-                                            String tokenSecret,
-                                            Map<String, String> oauthParams) throws ShimException {
+    protected HttpRequestBase getSignedRequest(String unsignedUrl,
+                                               String token,
+                                               String tokenSecret,
+                                               Map<String, String> oauthParams) throws ShimException {
         return OAuth1Utils.getSignedPostRequest(
             unsignedUrl,
             getClientId(),
@@ -179,7 +180,7 @@ public abstract class OAuth1ShimBase implements Shim, OAuth1Shim {
         if (HttpMethod.GET == getRequestTokenMethod()) {
             return new HttpGet(signUrl(unsignedUrl, token, tokenSecret, oauthParams).toString());
         } else {
-            return getSignedPostRequest(unsignedUrl, token, tokenSecret, oauthParams);
+            return getSignedRequest(unsignedUrl, token, tokenSecret, oauthParams);
         }
     }
 
@@ -203,7 +204,7 @@ public abstract class OAuth1ShimBase implements Shim, OAuth1Shim {
         if (HttpMethod.GET == getAccessTokenMethod()) {
             return new HttpGet(signUrl(unsignedUrl, token, tokenSecret, oauthParams).toString());
         } else {
-            return getSignedPostRequest(unsignedUrl, token, tokenSecret, oauthParams);
+            return getSignedRequest(unsignedUrl, token, tokenSecret, oauthParams);
         }
     }
 
