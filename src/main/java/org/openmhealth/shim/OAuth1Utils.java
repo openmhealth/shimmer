@@ -12,19 +12,17 @@ import oauth.signpost.http.HttpParameters;
 import oauth.signpost.signature.QueryStringSigningStrategy;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
-import org.apache.http.message.BasicNameValuePair;
-import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.net.*;
-import java.util.*;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * Utilities for common OAuth1 tasks.
@@ -90,7 +88,7 @@ public class OAuth1Utils {
      * @param token           - The access token
      * @param tokenSecret     - The 'secret' parameter to be used (Note: token secret != client secret)
      * @param oAuthParameters - Any additional parameters
-     * @return
+     * @return The request to be signed and sent to external data provider.
      */
     public static HttpRequestBase getSignedPostRequest(String unsignedUrl,
                                                        String clientId,
@@ -117,12 +115,6 @@ public class OAuth1Utils {
         }
         try {
             consumer.sign(postRequest);
-            /*String base = "\n";
-            base += postRequest.getMethod() + "\n";
-            base += StringUtils.collectionToDelimitedString(Arrays.asList(postRequest.getAllHeaders()), "\n");
-            base += "\n";
-            System.out.println(base);
-            System.out.println("\n\n\n" + postRequest.toString() + "\n\n\n");*/
             return postRequest;
         } catch (
             OAuthMessageSignerException
