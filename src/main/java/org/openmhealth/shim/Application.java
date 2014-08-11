@@ -118,10 +118,17 @@ public class Application extends WebSecurityConfigurerAdapter {
     @ResponseBody
     ShimDataResponse data(@RequestParam(value = "username") String username,
                           @PathVariable("shim") String shim,
+                          @PathVariable("dataType") String dataTypeKey,
+                          @RequestParam(value = "normalize",
+                              required = false, defaultValue = "") String normalize,
                           HttpServletRequest servletRequest) throws ShimException {
         setPassThroughAuthentication(username, shim);
+
         ShimDataRequest shimDataRequest =
             ShimDataRequest.fromHttpRequest(servletRequest);
+        shimDataRequest.setDataTypeKey(dataTypeKey);
+        shimDataRequest.setNormalize(!"".equals(normalize));
+
         AccessParameters accessParameters = ACCESS_PARAM_REPO.get(username + ":" + shim);
         if (accessParameters == null) {
             throw new ShimException("User '"

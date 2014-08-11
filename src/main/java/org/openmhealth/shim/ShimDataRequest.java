@@ -49,6 +49,13 @@ public class ShimDataRequest {
      */
     private Long numToReturn;
 
+    /**
+     * If true, returns normalized results
+     * from the external data provider, otherwise
+     * returns raw data.
+     */
+    private boolean normalize = false;
+
     public ShimDataRequest() {
     }
 
@@ -58,7 +65,8 @@ public class ShimDataRequest {
                            DateTime endDate,
                            List<String> columnList,
                            Long numToSkip,
-                           Long numToReturn) {
+                           Long numToReturn,
+                           boolean normalize) {
         this.dataTypeKey = dataTypeKey;
         this.accessParameters = accessParameters;
         this.startDate = startDate;
@@ -66,6 +74,7 @@ public class ShimDataRequest {
         this.columnList = columnList;
         this.numToSkip = numToSkip;
         this.numToReturn = numToReturn;
+        this.normalize = false;
     }
 
     public void setDataTypeKey(String dataTypeKey) {
@@ -122,6 +131,14 @@ public class ShimDataRequest {
 
     public Long getNumToReturn() {
         return numToReturn;
+    }
+
+    public boolean getNormalize() {
+        return normalize;
+    }
+
+    public void setNormalize(boolean normalize) {
+        this.normalize = normalize;
     }
 
     public static ShimDataRequest fromHttpRequest(HttpServletRequest request) {

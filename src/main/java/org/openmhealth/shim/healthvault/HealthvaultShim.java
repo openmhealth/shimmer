@@ -1,16 +1,51 @@
 package org.openmhealth.shim.healthvault;
 
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import com.jayway.jsonpath.JsonPath;
 import com.microsoft.hsg.*;
+import com.sun.org.apache.xerces.internal.dom.DocumentImpl;
+import net.minidev.json.JSONObject;
+import org.apache.commons.io.IOUtils;
+import org.codehaus.jackson.type.TypeReference;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+import org.openmhealth.schema.pojos.Activity;
+import org.openmhealth.schema.pojos.BodyWeight;
+import org.openmhealth.schema.pojos.NumberOfSteps;
+import org.openmhealth.schema.pojos.base.DurationUnitValue;
+import org.openmhealth.schema.pojos.base.LengthUnitValue;
+import org.openmhealth.schema.pojos.base.MassUnitValue;
+import org.openmhealth.schema.pojos.base.TimeFrame;
 import org.openmhealth.shim.*;
+import org.springframework.util.CollectionUtils;
+import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringWriter;
+import java.math.BigDecimal;
 import java.util.*;
 
 /**
@@ -35,6 +70,8 @@ public class HealthvaultShim implements Shim {
 
     private static Map<String, AuthorizationRequestParameters> AUTH_PARAMS_REPO = new LinkedHashMap<>();
 
+    private static DateTimeFormatter formatterMins = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm");
+
     @Override
     public String getShimKey() {
         return SHIM_KEY;
@@ -50,39 +87,175 @@ public class HealthvaultShim implements Shim {
         return AUTHORIZE_URL;
     }
 
-    @Override
-    public ShimDataResponse getData(ShimDataRequest shimDataRequest) throws ShimException {
-        final List<WeightInfo> weightList = new ArrayList<>();
+    public enum HealthVaultDataType implements ShimDataType {
 
-        Request request = new Request();
-        request.setMethodName("GetThings");
-        request.setInfo("<info><group max=\"30\"><filter><type-id>" +
-            WeightInfo.WeightType +
-            "</type-id></filter><format><section>core</section><xml/></format></group></info>");
+        WEIGHT(
+            "3d34d87e-7fc1-4153-800f-f56592cb0d17",
+            new JsonDeserializer<ShimDataResponse>() {
 
-        RequestTemplate template = new RequestTemplate(connection);
-        List<WeightInfo> weightInfoList = template.makeRequest(shimDataRequest.getAccessParameters(),
-            request, new Marshaller<List<WeightInfo>>() {
-                public List<WeightInfo> marshal(InputStream istream) throws Exception {
-                    InputSource isource = new InputSource(istream);
-                    XPath xpath = XPathFactory.newInstance().newXPath();
-                    String exp = "//thing";
-                    NodeList things = (NodeList) xpath.evaluate(exp,
-                        isource,
-                        XPathConstants.NODESET);
+                @Override
+                public ShimDataResponse deserialize(JsonParser jsonParser, DeserializationContext ctxt)
+                    throws IOException {
 
-                    int count = Math.min(50, things.getLength());
-                    for (int i = 0; i < count; i++) {
-                        Node thing = things.item(i);
-                        String weight = xpath.evaluate("data-xml/weight/value/display", thing);
-                        String id = xpath.evaluate("thing-id", thing);
-                        weightList.add(new WeightInfo(id, weight));
+                    JsonNode responseNode = jsonParser.getCodec().readTree(jsonParser);
+                    String rawJson = responseNode.toString();
+
+                    List<BodyWeight> bodyWeights = new ArrayList<>();
+                    JsonPath bodyWeightsPath = JsonPath.compile("$.things[*].data-xml.weight");
+
+                    List<Object> hvWeights = JsonPath.read(rawJson, bodyWeightsPath.getPath());
+                    if (CollectionUtils.isEmpty(hvWeights)) {
+                        return ShimDataResponse.result(null);
                     }
-                    return weightList;
+                    ObjectMapper mapper = new ObjectMapper();
+                    for (Object fva : hvWeights) {
+                        JsonNode hvWeight = mapper.readTree(((JSONObject) fva).toJSONString());
+
+                        BodyWeight bodyWeight = new BodyWeight();
+                        MassUnitValue massUnitValue = new MassUnitValue();
+                        massUnitValue.setValue(new BigDecimal(hvWeight.get("value").get("display").get("").asText()));
+                        massUnitValue.setUnit(MassUnitValue.MassUnit.lb);
+                        bodyWeight.setMassUnitValue(massUnitValue);
+
+                        TimeFrame timeFrame = new TimeFrame();
+
+                        JsonNode dateNode = hvWeight.get("when").get("date");
+                        JsonNode timeNode = hvWeight.get("when").get("time");
+
+                        String dateString = dateNode.get("y").asText()
+                            + "-" + dateNode.get("m").asText() + "-" + dateNode.get("d").asText();
+                        String timeString = timeNode.get("h").asText() + ":" + timeNode.get("m").asText();
+
+                        timeFrame.setStartTime(formatterMins.parseDateTime(dateString + " " + timeString));
+                        bodyWeight.setEffectiveTimeFrame(timeFrame);
+
+                        bodyWeights.add(bodyWeight);
+                    }
+                    return ShimDataResponse.result(bodyWeights);
                 }
             });
 
-        return ShimDataResponse.result(weightInfoList);
+        private String dataTypeId;
+
+        private JsonDeserializer<ShimDataResponse> normalizer;
+
+        HealthVaultDataType(String dataTypeId, JsonDeserializer<ShimDataResponse> normalizer) {
+            this.dataTypeId = dataTypeId;
+            this.normalizer = normalizer;
+        }
+
+        public String getDataTypeId() {
+            return dataTypeId;
+        }
+
+        public JsonDeserializer<ShimDataResponse> getNormalizer() {
+            return normalizer;
+        }
+    }
+
+    @Override
+    public ShimDataResponse getData(final ShimDataRequest shimDataRequest) throws ShimException {
+        final HealthVaultDataType healthVaultDataType;
+        try {
+            healthVaultDataType = HealthVaultDataType.valueOf(
+                shimDataRequest.getDataTypeKey().trim().toUpperCase());
+        } catch (NullPointerException | IllegalArgumentException e) {
+            throw new ShimException("Null or Invalid data type parameter: "
+                + shimDataRequest.getDataTypeKey()
+                + " in shimDataRequest, cannot retrieve data.");
+        }
+
+        Request request = new Request();
+        request.setMethodName("GetThings");
+        request.setInfo(
+            "<info>" +
+                "<group max=\"30\">" +
+                "<filter>" +
+                "<type-id>" + healthVaultDataType.getDataTypeId() + "</type-id>" +
+                "<eff-date-min>2014-08-04T00:00:00</eff-date-min>" +
+                "<eff-date-max>2014-08-10T23:59:00</eff-date-max>" +
+                "</filter>" +
+                "<format>" +
+                "<section>core</section>" +
+                "<xml/>" +
+                "</format>" +
+                "</group>" +
+                "</info>");
+
+        RequestTemplate template = new RequestTemplate(connection);
+        return template.makeRequest(shimDataRequest.getAccessParameters(),
+            request, new Marshaller<ShimDataResponse>() {
+                public ShimDataResponse marshal(InputStream istream) throws Exception {
+
+                    /**
+                     * XML Document mappings to JSON don't respect repeatable
+                     * tags, they don't get properly serialized into collections.
+                     * Thus, we pickup the 'things' via the 'group' root tag
+                     * and create a new JSON document.
+                     */
+                    XmlMapper xmlMapper = new XmlMapper();
+                    DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+                    DocumentBuilder builder = factory.newDocumentBuilder();
+                    Document doc = builder.parse(istream);
+                    NodeList nodeList = doc.getElementsByTagName("thing");
+
+                    /**
+                     * Collect JsonNode from each 'thing' xml dnode.
+                     */
+                    List<JsonNode> thingList = new ArrayList<>();
+                    for (int i = 0; i < nodeList.getLength(); i++) {
+                        Node node = nodeList.item(i);
+                        Document thingDoc = builder.newDocument();
+                        Node newNode = thingDoc.importNode(node, true);
+                        thingDoc.appendChild(newNode);
+                        thingList.add(xmlMapper.readTree(convertDocumentToString(thingDoc)));
+                    }
+
+                    /**
+                     * Rebuild JSON document structure to pass to deserializer.
+                     */
+                    String thingsJson = "{\"things\":[";
+                    for (JsonNode thingNode : thingList) {
+                        thingsJson += thingNode.toString() + ",";
+                    }
+                    thingsJson = thingsJson.substring(0, thingsJson.length() - 1);
+                    thingsJson += "]}";
+
+                    /**
+                     * Return raw re-built 'things' or a normalized JSON document.
+                     */
+                    ObjectMapper objectMapper = new ObjectMapper();
+                    if (shimDataRequest.getNormalize()) {
+                        SimpleModule module = new SimpleModule();
+                        module.addDeserializer(ShimDataResponse.class, healthVaultDataType.getNormalizer());
+                        objectMapper.registerModule(module);
+                        return ShimDataResponse.result(objectMapper.readValue(thingsJson, ShimDataResponse.class));
+                    } else {
+                        return ShimDataResponse.result(objectMapper.readTree(thingsJson));
+                    }
+                }
+            });
+    }
+
+    /**
+     * Utility method for getting XML fragments required
+     * for parsing XML docs from microsoft.
+     *
+     * @param doc - XML document fragment.
+     * @return - Raw XML String.
+     */
+    private static String convertDocumentToString(Document doc) {
+        TransformerFactory tf = TransformerFactory.newInstance();
+        Transformer transformer;
+        try {
+            transformer = tf.newTransformer();
+            StringWriter writer = new StringWriter();
+            transformer.transform(new DOMSource(doc), new StreamResult(writer));
+            return writer.getBuffer().toString();
+        } catch (TransformerException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
 

@@ -1,0 +1,65 @@
+<response>
+    <status>
+        <code>0</code>
+    </status>
+    <wc:info xmlns:wc="urn:com.microsoft.wc.methods.response.GetThings">
+        <group>
+            <thing>
+                <thing-id version-stamp="fa45d565-02d9-4724-9220-73ddf475b648">527bd77f-f60f-4899-a866-04d9c3c479aa
+                </thing-id>
+                <type-id name="Weight Measurement">3d34d87e-7fc1-4153-800f-f56592cb0d17</type-id>
+                <thing-state>Active</thing-state>
+                <flags>0</flags>
+                <eff-date>2014-08-10T13:00:00</eff-date>
+                <data-xml>
+                    <weight>
+                        <when>
+                            <date>
+                                <y>2014</y>
+                                <m>8</m>
+                                <d>10</d>
+                            </date>
+                            <time>
+                                <h>13</h>
+                                <m>0</m>
+                            </time>
+                        </when>
+                        <value>
+                            <kg>81.646626601806375</kg>
+                            <display units="lbs" units-code="lb">180</display>
+                        </value>
+                    </weight>
+                    <common/>
+                </data-xml>
+            </thing>
+            <thing>
+                <thing-id version-stamp="9e99fd3f-9595-4d1a-acaa-79e653e545e2">d38b1fda-4f70-4062-a987-28b3df79f654
+                </thing-id>
+                <type-id name="Weight Measurement">3d34d87e-7fc1-4153-800f-f56592cb0d17</type-id>
+                <thing-state>Active</thing-state>
+                <flags>0</flags>
+                <eff-date>2014-08-05T20:12:00</eff-date>
+                <data-xml>
+                    <weight>
+                        <when>
+                            <date>
+                                <y>2014</y>
+                                <m>8</m>
+                                <d>5</d>
+                            </date>
+                            <time>
+                                <h>20</h>
+                                <m>12</m>
+                            </time>
+                        </when>
+                        <value>
+                            <kg>83.914588451856559</kg>
+                            <display units="lbs" units-code="lb">185</display>
+                        </value>
+                    </weight>
+                    <common/>
+                </data-xml>
+            </thing>
+        </group>
+    </wc:info>
+</response>
