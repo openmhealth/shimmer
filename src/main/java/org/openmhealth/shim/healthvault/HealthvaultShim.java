@@ -1,6 +1,7 @@
 package org.openmhealth.shim.healthvault;
 
 import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -10,9 +11,12 @@ import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.jayway.jsonpath.JsonPath;
 import com.microsoft.hsg.*;
 import net.minidev.json.JSONObject;
+import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+import org.openmhealth.schema.build.BloodPressureBuilder;
 import org.openmhealth.schema.build.BodyWeightBuilder;
+import org.openmhealth.schema.pojos.BloodPressure;
 import org.openmhealth.schema.pojos.BodyWeight;
 import org.openmhealth.schema.pojos.generic.MassUnitValue;
 import org.openmhealth.shim.*;
@@ -35,6 +39,7 @@ import javax.xml.xpath.XPathFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
+import java.math.BigDecimal;
 import java.util.*;
 
 /**
@@ -60,6 +65,7 @@ public class HealthvaultShim implements Shim {
     private static Map<String, AuthorizationRequestParameters> AUTH_PARAMS_REPO = new LinkedHashMap<>();
 
     private static DateTimeFormatter formatterMins = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm");
+    private static DateTimeFormatter formatterDate = DateTimeFormat.forPattern("yyyy-MM-dd");
 
     @Override
     public String getShimKey() {
@@ -77,6 +83,42 @@ public class HealthvaultShim implements Shim {
     }
 
     public enum HealthVaultDataType implements ShimDataType {
+
+        BLOOD_PRESSURE(
+            "ca3c57f4-f4c1-4e15-be67-0a3caf5414ed",
+            new JsonDeserializer<ShimDataResponse>() {
+                @Override
+                public ShimDataResponse deserialize(JsonParser jsonParser, DeserializationContext ctxt)
+                    throws IOException {
+
+                    JsonNode responseNode = jsonParser.getCodec().readTree(jsonParser);
+                    String rawJson = responseNode.toString();
+
+                    List<BloodPressure> bloodPressures = new ArrayList<>();
+                    JsonPath bloodPressurePath = JsonPath.compile("$.things[*].data-xml.blood-pressure");
+
+                    List<Object> hvBloodPressures = JsonPath.read(rawJson, bloodPressurePath.getPath());
+                    if (CollectionUtils.isEmpty(hvBloodPressures)) {
+                        return ShimDataResponse.result(null);
+                    }
+                    ObjectMapper mapper = new ObjectMapper();
+                    for (Object fva : hvBloodPressures) {
+                        JsonNode hvBloodPressure = mapper.readTree(((JSONObject) fva).toJSONString());
+
+                        DateTime dateTimeWhen =
+                            parseDateTimeFromWhenNode(hvBloodPressure.get("when"));
+
+                        bloodPressures.add(new BloodPressureBuilder()
+                            .setTimeTaken(dateTimeWhen)
+                            .setValues(
+                                new BigDecimal(hvBloodPressure.get("systolic").asText()),
+                                new BigDecimal(hvBloodPressure.get("diastolic").asText())
+                            ).build());
+                    }
+                    return ShimDataResponse.result(bloodPressures);
+                }
+            }
+        ),
 
         WEIGHT(
             "3d34d87e-7fc1-4153-800f-f56592cb0d17",
@@ -100,17 +142,13 @@ public class HealthvaultShim implements Shim {
                     for (Object fva : hvWeights) {
                         JsonNode hvWeight = mapper.readTree(((JSONObject) fva).toJSONString());
 
-                        JsonNode dateNode = hvWeight.get("when").get("date");
-                        JsonNode timeNode = hvWeight.get("when").get("time");
-
-                        String dateString = dateNode.get("y").asText()
-                            + "-" + dateNode.get("m").asText() + "-" + dateNode.get("d").asText();
-                        String timeString = timeNode.get("h").asText() + ":" + timeNode.get("m").asText();
+                        DateTime dateTimeWhen = parseDateTimeFromWhenNode(hvWeight.get("when"));
 
                         BodyWeight bodyWeight = new BodyWeightBuilder()
-                            .setWeight(hvWeight.get("value").get("display").get("").asText(),
+                            .setWeight(
+                                hvWeight.get("value").get("display").get("").asText(),
                                 MassUnitValue.MassUnit.lb.toString())
-                            .setTimeTaken(formatterMins.parseDateTime(dateString + " " + timeString)).build();
+                            .setTimeTaken(dateTimeWhen).build();
 
                         bodyWeights.add(bodyWeight);
                     }
@@ -323,6 +361,29 @@ public class HealthvaultShim implements Shim {
             throw he;
         } catch (Exception e) {
             throw new HVException(e);
+        }
+    }
+
+    /**
+     * Utility for parsing a dateTime from 'when' xml node from
+     * health vault.
+     *
+     * @param whenNode - The 'when' node of a 'thing' document.
+     * @return - Joda DateTime corresponding to when node.
+     */
+    private static DateTime parseDateTimeFromWhenNode(JsonNode whenNode) {
+        if (whenNode == null) {
+            return null;
+        }
+        JsonNode dateNode = whenNode.get("date");
+        JsonNode timeNode = whenNode.get("time");
+        String dateString = dateNode.get("y").asText()
+            + "-" + dateNode.get("m").asText() + "-" + dateNode.get("d").asText();
+        if (timeNode != null) {
+            String timeString = timeNode.get("h").asText() + ":" + timeNode.get("m").asText();
+            return formatterMins.parseDateTime(dateString + " " + timeString);
+        } else {
+            return formatterDate.parseDateTime(dateString);
         }
     }
 
