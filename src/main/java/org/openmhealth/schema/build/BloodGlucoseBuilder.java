@@ -29,12 +29,18 @@ public class BloodGlucoseBuilder implements SchemaPojoBuilder<BloodGlucose> {
     }
 
     public BloodGlucoseBuilder setMealContext(String mealContext) {
-        bloodGlucose.setMealContext(BloodGlucose.MealContext.valueOf(mealContext));
+        if (mealContext != null) {
+            bloodGlucose.setMealContext(
+                BloodGlucose.MealContext.valueOf(mealContext));
+        }
         return this;
     }
 
     public BloodGlucoseBuilder setMeasureContext(String measureContext) {
-        bloodGlucose.setMeasureContext(BloodGlucose.MeasureContext.valueOf(measureContext));
+        if (measureContext != null) {
+            bloodGlucose.setMeasureContext(
+                BloodGlucose.MeasureContext.valueOf(measureContext));
+        }
         return this;
     }
 

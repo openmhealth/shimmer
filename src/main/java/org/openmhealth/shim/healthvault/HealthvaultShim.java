@@ -273,7 +273,7 @@ public class HealthvaultShim implements Shim {
                             .setValue(hvBloodGlucose.get("value").
                                 get("display").get("").asText())
                             .setMeasureContext(hvMeasureType)
-                            .setMealContext(mealContext.toString())
+                            .setMealContext(mealContext != null ? mealContext.toString() : null)
                             .build());
                     }
                     Map<String, Object> results = new HashMap<>();
