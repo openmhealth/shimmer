@@ -1,4 +1,4 @@
-package org.openmhealth.schema.pojos.base;
+package org.openmhealth.schema.pojos.generic;
 
 
 import com.fasterxml.jackson.annotation.JsonProperty;

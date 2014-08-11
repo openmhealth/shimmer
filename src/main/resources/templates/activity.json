@@ -1,0 +1,9 @@
+{
+    "activity-name": /*@activity-name@*/,
+    "distance": {
+        "value": /*@distance:value*/,
+        "unit": "/*@distance:unit*/"
+    },
+    "reported-activity-intensity": /*@reported-activity-intensity@*/
+    "effective-time-frame": /*@effective-time-frame@*/
+}

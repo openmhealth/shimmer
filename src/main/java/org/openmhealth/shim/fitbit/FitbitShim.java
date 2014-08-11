@@ -14,20 +14,18 @@ import org.apache.http.client.methods.HttpRequestBase;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+import org.openmhealth.schema.build.ActivityBuilder;
+import org.openmhealth.schema.build.NumberOfStepsBuilder;
 import org.openmhealth.schema.pojos.Activity;
 import org.openmhealth.schema.pojos.NumberOfSteps;
-import org.openmhealth.schema.pojos.base.DurationUnitValue;
-import org.openmhealth.schema.pojos.base.LengthUnitValue;
-import org.openmhealth.schema.pojos.base.TimeFrame;
+import org.openmhealth.schema.pojos.generic.DurationUnitValue;
+import org.openmhealth.schema.pojos.generic.LengthUnitValue;
 import org.openmhealth.shim.*;
 import org.springframework.http.HttpMethod;
 import org.springframework.util.CollectionUtils;
 
 import java.io.IOException;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 public class FitbitShim extends OAuth1ShimBase {
     public static final String SHIM_KEY = "fitbit";
@@ -104,46 +102,36 @@ public class FitbitShim extends OAuth1ShimBase {
                     JsonNode responseNode = jsonParser.getCodec().readTree(jsonParser);
                     String rawJson = responseNode.toString();
 
-                    System.out.println("The JSON ingested is: \n\n" + rawJson + "\n\n");
-
                     List<Activity> activities = new ArrayList<>();
                     List<NumberOfSteps> numberOfStepsList = new ArrayList<>();
 
                     JsonPath activityPath = JsonPath.compile("$.activities[*]");
 
-                    List<Object> fitbitActivities = JsonPath.read(rawJson, activityPath.getPath());
+                    final List<Object> fitbitActivities = JsonPath.read(rawJson, activityPath.getPath());
                     if (CollectionUtils.isEmpty(fitbitActivities)) {
                         return ShimDataResponse.result(null);
                     }
                     ObjectMapper mapper = new ObjectMapper();
                     for (Object fva : fitbitActivities) {
-                        JsonNode fitbitActivity = mapper.readTree(((JSONObject) fva).toJSONString());
-
-                        Activity activity = new Activity();
-                        activity.setActivityName(fitbitActivity.get("activityParentName").asText());
-
-                        LengthUnitValue distance = new LengthUnitValue();
-                        distance.setValue(new BigDecimal(fitbitActivity.get("distance").asText()));
-                        distance.setUnit(LengthUnitValue.LengthUnit.mi);
-                        activity.setDistance(distance);
-
-                        TimeFrame timeFrame = new TimeFrame();
-                        DurationUnitValue durationUnitValue = new DurationUnitValue();
-                        durationUnitValue.setValue(new BigDecimal(fitbitActivity.get("duration").asText()));
-                        durationUnitValue.setUnit(DurationUnitValue.DurationUnit.ms);
-
-                        timeFrame.setDuration(durationUnitValue);
+                        final JsonNode fitbitActivity = mapper.readTree(((JSONObject) fva).toJSONString());
 
                         String dateString = fitbitActivity.get("startDate").asText()
                             + (fitbitActivity.get("startTime") != null ?
                             " " + fitbitActivity.get("startTime").asText() : "");
 
-                        timeFrame.setStartTime(formatterMins.parseDateTime(dateString));
-                        activity.setEffectiveTimeFrame(timeFrame);
+                        DateTime startTime = formatterMins.parseDateTime(dateString);
 
-                        NumberOfSteps numberOfSteps = new NumberOfSteps();
-                        numberOfSteps.setValue(fitbitActivity.get("steps").asInt());
-                        numberOfSteps.setEffectiveTimeFrame(timeFrame);
+                        Activity activity = new ActivityBuilder()
+                            .setActivityName(fitbitActivity.get("activityParentName").asText())
+                            .setDistance(fitbitActivity.get("distance").asText(),
+                                LengthUnitValue.LengthUnit.m.toString())
+                            .setDuration(fitbitActivity.get("duration").asText(),
+                                DurationUnitValue.DurationUnit.ms.toString())
+                            .setStartTime(startTime).build();
+
+                        NumberOfSteps numberOfSteps = new NumberOfStepsBuilder()
+                            .setSteps(fitbitActivity.get("steps").asInt()).build();
+                        numberOfSteps.setEffectiveTimeFrame(activity.getEffectiveTimeFrame());
 
                         activities.add(activity);
                         numberOfStepsList.add(numberOfSteps);
@@ -156,6 +144,7 @@ public class FitbitShim extends OAuth1ShimBase {
                     return ShimDataResponse.result(results);
                 }
             }
+
         );
 
         private JsonDeserializer<ShimDataResponse> normalizer;
@@ -168,6 +157,7 @@ public class FitbitShim extends OAuth1ShimBase {
         public JsonDeserializer<ShimDataResponse> getNormalizer() {
             return normalizer;
         }
+
     }
 
     @Override

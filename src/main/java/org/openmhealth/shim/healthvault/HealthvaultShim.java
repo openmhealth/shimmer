@@ -1,7 +1,6 @@
 package org.openmhealth.shim.healthvault;
 
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -10,20 +9,12 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.jayway.jsonpath.JsonPath;
 import com.microsoft.hsg.*;
-import com.sun.org.apache.xerces.internal.dom.DocumentImpl;
 import net.minidev.json.JSONObject;
-import org.apache.commons.io.IOUtils;
-import org.codehaus.jackson.type.TypeReference;
-import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
-import org.openmhealth.schema.pojos.Activity;
+import org.openmhealth.schema.build.BodyWeightBuilder;
 import org.openmhealth.schema.pojos.BodyWeight;
-import org.openmhealth.schema.pojos.NumberOfSteps;
-import org.openmhealth.schema.pojos.base.DurationUnitValue;
-import org.openmhealth.schema.pojos.base.LengthUnitValue;
-import org.openmhealth.schema.pojos.base.MassUnitValue;
-import org.openmhealth.schema.pojos.base.TimeFrame;
+import org.openmhealth.schema.pojos.generic.MassUnitValue;
 import org.openmhealth.shim.*;
 import org.springframework.util.CollectionUtils;
 import org.w3c.dom.Document;
@@ -40,12 +31,10 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
-import java.math.BigDecimal;
 import java.util.*;
 
 /**
@@ -111,14 +100,6 @@ public class HealthvaultShim implements Shim {
                     for (Object fva : hvWeights) {
                         JsonNode hvWeight = mapper.readTree(((JSONObject) fva).toJSONString());
 
-                        BodyWeight bodyWeight = new BodyWeight();
-                        MassUnitValue massUnitValue = new MassUnitValue();
-                        massUnitValue.setValue(new BigDecimal(hvWeight.get("value").get("display").get("").asText()));
-                        massUnitValue.setUnit(MassUnitValue.MassUnit.lb);
-                        bodyWeight.setMassUnitValue(massUnitValue);
-
-                        TimeFrame timeFrame = new TimeFrame();
-
                         JsonNode dateNode = hvWeight.get("when").get("date");
                         JsonNode timeNode = hvWeight.get("when").get("time");
 
@@ -126,8 +107,10 @@ public class HealthvaultShim implements Shim {
                             + "-" + dateNode.get("m").asText() + "-" + dateNode.get("d").asText();
                         String timeString = timeNode.get("h").asText() + ":" + timeNode.get("m").asText();
 
-                        timeFrame.setStartTime(formatterMins.parseDateTime(dateString + " " + timeString));
-                        bodyWeight.setEffectiveTimeFrame(timeFrame);
+                        BodyWeight bodyWeight = new BodyWeightBuilder()
+                            .setWeight(hvWeight.get("value").get("display").get("").asText(),
+                                MassUnitValue.MassUnit.lb.toString())
+                            .setTimeTaken(formatterMins.parseDateTime(dateString + " " + timeString)).build();
 
                         bodyWeights.add(bodyWeight);
                     }

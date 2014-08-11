@@ -1,7 +1,7 @@
 package org.openmhealth.schema.pojos;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.openmhealth.schema.pojos.base.TimeFrame;
+import org.openmhealth.schema.pojos.generic.TimeFrame;
 
 public class NumberOfSteps {
 

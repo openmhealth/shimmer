@@ -1,0 +1,12 @@
+{
+    "mass-unit-value": {
+        "value": 180,
+        "unit": "lb"
+    },
+    "effective-time-frame": {
+        "start-time": "2014-08-10 01:00:00",
+        "end-time": null,
+        "duration": null,
+        "part-of-day": null
+    }
+}
