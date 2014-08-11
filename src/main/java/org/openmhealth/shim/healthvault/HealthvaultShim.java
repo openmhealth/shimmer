@@ -14,10 +14,16 @@ import net.minidev.json.JSONObject;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+import org.openmhealth.schema.build.ActivityBuilder;
 import org.openmhealth.schema.build.BloodPressureBuilder;
 import org.openmhealth.schema.build.BodyWeightBuilder;
+import org.openmhealth.schema.build.NumberOfStepsBuilder;
+import org.openmhealth.schema.pojos.Activity;
 import org.openmhealth.schema.pojos.BloodPressure;
 import org.openmhealth.schema.pojos.BodyWeight;
+import org.openmhealth.schema.pojos.NumberOfSteps;
+import org.openmhealth.schema.pojos.generic.DurationUnitValue;
+import org.openmhealth.schema.pojos.generic.LengthUnitValue;
 import org.openmhealth.schema.pojos.generic.MassUnitValue;
 import org.openmhealth.shim.*;
 import org.springframework.util.CollectionUtils;
@@ -83,6 +89,61 @@ public class HealthvaultShim implements Shim {
     }
 
     public enum HealthVaultDataType implements ShimDataType {
+
+        ACTIVITY(
+            "85a21ddb-db20-4c65-8d30-33c899ccf612",
+            new JsonDeserializer<ShimDataResponse>() {
+                @Override
+                public ShimDataResponse deserialize(JsonParser jsonParser,
+                                                    DeserializationContext ctxt)
+                    throws IOException {
+                    JsonNode responseNode = jsonParser.getCodec().readTree(jsonParser);
+                    String rawJson = responseNode.toString();
+
+                    List<Activity> activities = new ArrayList<>();
+                    List<NumberOfSteps> numberOfStepsList = new ArrayList<>();
+
+                    JsonPath activityPath = JsonPath.compile("$.things[*].data-xml.aerobic-session");
+
+                    final List<Object> hvActivities = JsonPath.read(rawJson, activityPath.getPath());
+                    if (CollectionUtils.isEmpty(hvActivities)) {
+                        return ShimDataResponse.result(null);
+                    }
+
+                    ObjectMapper mapper = new ObjectMapper();
+                    for (Object fva : hvActivities) {
+                        final JsonNode hvActivity = mapper.readTree(((JSONObject) fva).toJSONString());
+
+                        DateTime startTime = parseDateTimeFromWhenNode(hvActivity.get("when"));
+
+                        JsonNode sessionNode = hvActivity.get("session");
+
+                        Activity activity = new ActivityBuilder()
+                            .setActivityName(sessionNode.get("mode").get("text").asText())
+                            .setDistance(
+                                sessionNode.get("distance").get("display").get("").asText(),
+                                LengthUnitValue.LengthUnit.m.toString())
+                            .setDuration(
+                                sessionNode.get("minutes").asText(),
+                                DurationUnitValue.DurationUnit.min.toString())
+                            .setStartTime(startTime).build();
+
+                        NumberOfSteps numberOfSteps = new NumberOfStepsBuilder()
+                            .setSteps(sessionNode.get("number-of-steps").asInt()).build();
+                        numberOfSteps.setEffectiveTimeFrame(activity.getEffectiveTimeFrame());
+
+                        activities.add(activity);
+                        numberOfStepsList.add(numberOfSteps);
+                    }
+
+                    Collection<Object> results = new ArrayList<>();
+                    results.addAll(activities);
+                    results.addAll(numberOfStepsList);
+
+                    return ShimDataResponse.result(results);
+                }
+            }
+        ),
 
         BLOOD_PRESSURE(
             "ca3c57f4-f4c1-4e15-be67-0a3caf5414ed",

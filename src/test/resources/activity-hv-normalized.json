@@ -1,0 +1,93 @@
+{"shim": null, "timeStamp": 1407771610, "body": {
+    "shim": null,
+    "timeStamp": 1407771610,
+    "body": [
+        {
+            "activity-name": "Walking",
+            "distance": {
+                "value": 2,
+                "unit": "m"
+            },
+            "reported-activity-intensity": null,
+            "effective-time-frame": {
+                "start-time": "2014-08-09 07:15:00",
+                "end-time": null,
+                "duration": {
+                    "value": 30,
+                    "unit": "min"
+                },
+                "part-of-day": null
+            }
+        },
+        {
+            "activity-name": "Jogging",
+            "distance": {
+                "value": 4,
+                "unit": "m"
+            },
+            "reported-activity-intensity": null,
+            "effective-time-frame": {
+                "start-time": "2014-08-07 05:23:00",
+                "end-time": null,
+                "duration": {
+                    "value": 45,
+                    "unit": "min"
+                },
+                "part-of-day": null
+            }
+        },
+        {
+            "activity-name": "running",
+            "distance": {
+                "value": 3,
+                "unit": "m"
+            },
+            "reported-activity-intensity": null,
+            "effective-time-frame": {
+                "start-time": "2014-08-06 12:00:00",
+                "end-time": null,
+                "duration": {
+                    "value": 55,
+                    "unit": "min"
+                },
+                "part-of-day": null
+            }
+        },
+        {
+            "value": 7800,
+            "effective-time-frame": {
+                "start-time": "2014-08-09 07:15:00",
+                "end-time": null,
+                "duration": {
+                    "value": 30,
+                    "unit": "min"
+                },
+                "part-of-day": null
+            }
+        },
+        {
+            "value": 17979,
+            "effective-time-frame": {
+                "start-time": "2014-08-07 05:23:00",
+                "end-time": null,
+                "duration": {
+                    "value": 45,
+                    "unit": "min"
+                },
+                "part-of-day": null
+            }
+        },
+        {
+            "value": 4543,
+            "effective-time-frame": {
+                "start-time": "2014-08-06 12:00:00",
+                "end-time": null,
+                "duration": {
+                    "value": 55,
+                    "unit": "min"
+                },
+                "part-of-day": null
+            }
+        }
+    ]
+}}
