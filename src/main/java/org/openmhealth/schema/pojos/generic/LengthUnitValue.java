@@ -1,9 +1,11 @@
 package org.openmhealth.schema.pojos.generic;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.math.BigDecimal;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class LengthUnitValue {
 
     @JsonProperty(value = "value", required = true)

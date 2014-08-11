@@ -1,13 +1,17 @@
 package org.openmhealth.schema.pojos;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.openmhealth.schema.pojos.generic.NumericDescriptor;
 import org.openmhealth.schema.pojos.generic.TimeFrame;
 
+import java.math.BigDecimal;
+
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class BloodGlucose {
 
     @JsonProperty(value = "value", required = true)
-    private Double value;
+    private BigDecimal value;
 
     @JsonProperty(value = "unit", required = true)
     private Unit unit;
@@ -27,16 +31,16 @@ public class BloodGlucose {
     @JsonProperty(value = "measure-context", required = false)
     private MeasureContext measureContext;
 
-    private enum MealContext {fasting, not_fasting, before_meal, after_meal}
+    public enum MealContext {fasting, not_fasting, before_meal, after_meal}
 
-    private enum MeasureContext {whole_blood, plasma}
+    public enum MeasureContext {whole_blood, plasma}
 
-    private enum Unit {mgdL, mmolL}
+    public enum Unit {mgdL, mmolL}
 
     public BloodGlucose() {
     }
 
-    public BloodGlucose(Double value, Unit unit) {
+    public BloodGlucose(BigDecimal value, Unit unit) {
         this.value = value;
         this.unit = unit;
     }
@@ -81,11 +85,11 @@ public class BloodGlucose {
         this.measureContext = measureContext;
     }
 
-    public Double getValue() {
+    public BigDecimal getValue() {
         return value;
     }
 
-    public void setValue(Double value) {
+    public void setValue(BigDecimal value) {
         this.value = value;
     }
 

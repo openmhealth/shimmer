@@ -1,9 +1,11 @@
 package org.openmhealth.schema.pojos;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.math.BigDecimal;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class SystolicBloodPressure {
 
     @JsonProperty(value = "value", required = true)

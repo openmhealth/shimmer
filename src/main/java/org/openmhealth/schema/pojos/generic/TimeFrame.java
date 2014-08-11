@@ -1,10 +1,12 @@
 package org.openmhealth.schema.pojos.generic;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.joda.time.DateTime;
 import org.openmhealth.schema.pojos.serialize.JodaTimeDateSerializer;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class TimeFrame {
 
     @JsonProperty(value = "start-time", required = false)

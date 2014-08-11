@@ -1,9 +1,11 @@
 package org.openmhealth.schema.pojos;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.openmhealth.schema.pojos.generic.LengthUnitValue;
 import org.openmhealth.schema.pojos.generic.TimeFrame;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class BodyHeight {
 
     @JsonProperty(value = "length-unit-value", required = true)

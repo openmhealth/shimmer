@@ -16,7 +16,7 @@ public class BodyHeightBuilder implements SchemaPojoBuilder<BodyHeight> {
         bodyHeight.setEffectiveTimeFrame(new TimeFrame());
     }
 
-    public BodyHeightBuilder setWeight(String value, String unit) {
+    public BodyHeightBuilder setHeight(String value, String unit) {
         LengthUnitValue lengthUnitValue = new LengthUnitValue();
         lengthUnitValue.setValue(new BigDecimal(value));
         lengthUnitValue.setUnit(LengthUnitValue.LengthUnit.valueOf(unit));

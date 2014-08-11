@@ -1,0 +1,42 @@
+{"shim": null, "timeStamp": 1407792905, "body": {
+    "things": [
+        {
+            "thing-id": {
+                "version-stamp": "643d036b-46bb-4730-840e-532772ea784d",
+                "": "de29216f-223c-434f-ac9f-51ca37cc220b"
+            },
+            "type-id": {
+                "name": "Height Measurement",
+                "": "40750a6a-89b2-455c-bd8d-b420a4cb500b"
+            },
+            "thing-state": "Active",
+            "flags": "0",
+            "eff-date": "2014-08-07T13:24:00",
+            "data-xml": {
+                "height": {
+                    "when": {
+                        "date": {
+                            "y": "2014",
+                            "m": "8",
+                            "d": "7"
+                        },
+                        "time": {
+                            "h": "13",
+                            "m": "24"
+                        }
+                    },
+                    "value": {
+                        "m": "1.676399997451872",
+                        "display": {
+                            "text": "5 ft 6 in",
+                            "units": "in",
+                            "units-code": "in",
+                            "": "66"
+                        }
+                    }
+                },
+                "common": null
+            }
+        }
+    ]
+}}

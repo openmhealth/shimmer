@@ -14,14 +14,8 @@ import net.minidev.json.JSONObject;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
-import org.openmhealth.schema.build.ActivityBuilder;
-import org.openmhealth.schema.build.BloodPressureBuilder;
-import org.openmhealth.schema.build.BodyWeightBuilder;
-import org.openmhealth.schema.build.NumberOfStepsBuilder;
-import org.openmhealth.schema.pojos.Activity;
-import org.openmhealth.schema.pojos.BloodPressure;
-import org.openmhealth.schema.pojos.BodyWeight;
-import org.openmhealth.schema.pojos.NumberOfSteps;
+import org.openmhealth.schema.build.*;
+import org.openmhealth.schema.pojos.*;
 import org.openmhealth.schema.pojos.generic.DurationUnitValue;
 import org.openmhealth.schema.pojos.generic.LengthUnitValue;
 import org.openmhealth.schema.pojos.generic.MassUnitValue;
@@ -136,10 +130,10 @@ public class HealthvaultShim implements Shim {
                         numberOfStepsList.add(numberOfSteps);
                     }
 
-                    Collection<Object> results = new ArrayList<>();
-                    results.addAll(activities);
-                    results.addAll(numberOfStepsList);
-
+                    Map<String, Object> results = new HashMap<>();
+                    //todo: Change this to constants driven elements!
+                    results.put("activity", activities);
+                    results.put("number-of-steps", numberOfStepsList);
                     return ShimDataResponse.result(results);
                 }
             }
@@ -156,6 +150,7 @@ public class HealthvaultShim implements Shim {
                     String rawJson = responseNode.toString();
 
                     List<BloodPressure> bloodPressures = new ArrayList<>();
+                    List<HeartRate> heartRates = new ArrayList<>();
                     JsonPath bloodPressurePath = JsonPath.compile("$.things[*].data-xml.blood-pressure");
 
                     List<Object> hvBloodPressures = JsonPath.read(rawJson, bloodPressurePath.getPath());
@@ -175,8 +170,116 @@ public class HealthvaultShim implements Shim {
                                 new BigDecimal(hvBloodPressure.get("systolic").asText()),
                                 new BigDecimal(hvBloodPressure.get("diastolic").asText())
                             ).build());
+
+                        heartRates.add(new HeartRateBuilder()
+                            .setRate(hvBloodPressure.get("pulse").asText())
+                            .setTimeTaken(dateTimeWhen).build());
                     }
-                    return ShimDataResponse.result(bloodPressures);
+                    Map<String, Object> results = new HashMap<>();
+                    //todo: Change this to constants driven elements!
+                    results.put("blood-pressure", bloodPressures);
+                    results.put("heart-rate", heartRates);
+                    return ShimDataResponse.result(results);
+                }
+            }
+        ),
+
+        HEIGHT(
+            "40750a6a-89b2-455c-bd8d-b420a4cb500b",
+            new JsonDeserializer<ShimDataResponse>() {
+                @Override
+                public ShimDataResponse deserialize(JsonParser jsonParser,
+                                                    DeserializationContext ctxt)
+                    throws IOException, JsonProcessingException {
+                    JsonNode responseNode = jsonParser.getCodec().readTree(jsonParser);
+                    String rawJson = responseNode.toString();
+
+                    List<BodyHeight> bodyHeights = new ArrayList<>();
+                    JsonPath bodyHeightsPath = JsonPath.compile("$.things[*].data-xml.height");
+
+                    List<Object> hvHeights = JsonPath.read(rawJson, bodyHeightsPath.getPath());
+                    if (CollectionUtils.isEmpty(hvHeights)) {
+                        return ShimDataResponse.result(null);
+                    }
+                    ObjectMapper mapper = new ObjectMapper();
+                    for (Object fva : hvHeights) {
+                        JsonNode hvHeight = mapper.readTree(((JSONObject) fva).toJSONString());
+
+                        DateTime dateTimeWhen = parseDateTimeFromWhenNode(hvHeight.get("when"));
+
+                        BodyHeight bodyHeight = new BodyHeightBuilder()
+                            .setHeight(
+                                hvHeight.get("value").get("display").get("").asText(),
+                                LengthUnitValue.LengthUnit.in.toString())
+                            .setTimeTaken(dateTimeWhen).build();
+
+                        bodyHeights.add(bodyHeight);
+                    }
+                    return ShimDataResponse.result(bodyHeights);
+                }
+            }
+        ),
+
+        BLOOD_GLUCOSE(
+            "879e7c04-4e8a-4707-9ad3-b054df467ce4",
+            new JsonDeserializer<ShimDataResponse>() {
+                @Override
+                public ShimDataResponse deserialize(JsonParser jsonParser,
+                                                    DeserializationContext ctxt)
+                    throws IOException {
+                    JsonNode responseNode = jsonParser.getCodec().readTree(jsonParser);
+                    String rawJson = responseNode.toString();
+
+                    List<BloodGlucose> bloodGlucoses = new ArrayList<>();
+                    JsonPath bloodGlucosePath = JsonPath.compile("$.things[*].data-xml.blood-glucose");
+
+                    List<Object> hvbloodGlucoses = JsonPath.read(rawJson, bloodGlucosePath.getPath());
+                    if (CollectionUtils.isEmpty(hvbloodGlucoses)) {
+                        return ShimDataResponse.result(null);
+                    }
+                    ObjectMapper mapper = new ObjectMapper();
+                    for (Object fva : hvbloodGlucoses) {
+                        JsonNode hvBloodGlucose = mapper.readTree(((JSONObject) fva).toJSONString());
+
+                        DateTime dateTimeWhen =
+                            parseDateTimeFromWhenNode(hvBloodGlucose.get("when"));
+
+                        String hvMeasureType = hvBloodGlucose.get("glucose-measurement-type").get("text").asText();
+                        hvMeasureType = hvMeasureType.toLowerCase().replaceAll(" ", "_");
+
+                        /**
+                         * Must parse out the meal context properly, HV has many
+                         * available choices, we care about fewer.
+                         */
+                        BloodGlucose.MealContext mealContext = null;
+                        if (hvBloodGlucose.get("measurement-context") != null) {
+                            String hvMealContext = hvBloodGlucose.get("measurement-context").get("text").asText();
+                            hvMealContext = hvMealContext.toLowerCase().trim();
+                            if (hvMealContext.contains("after")
+                                && !hvMealContext.contains("exercise")) {
+                                mealContext = BloodGlucose.MealContext.after_meal;
+                            } else if (hvMealContext.contains("before")
+                                && !hvMealContext.contains("exercise")) {
+                                mealContext = BloodGlucose.MealContext.before_meal;
+                            } else if (hvMealContext.startsWith("non")) {
+                                mealContext = BloodGlucose.MealContext.not_fasting;
+                            } else if (hvMealContext.contains("fasting")) {
+                                mealContext = BloodGlucose.MealContext.fasting;
+                            }
+                        }
+
+                        bloodGlucoses.add(new BloodGlucoseBuilder()
+                            .setTimeTaken(dateTimeWhen)
+                            .setValue(hvBloodGlucose.get("value").
+                                get("display").get("").asText())
+                            .setMeasureContext(hvMeasureType)
+                            .setMealContext(mealContext.toString())
+                            .build());
+                    }
+                    Map<String, Object> results = new HashMap<>();
+                    //todo: Change this to constants driven elements!
+                    results.put("blood-glucose", bloodGlucoses);
+                    return ShimDataResponse.result(results);
                 }
             }
         ),
@@ -297,10 +400,13 @@ public class HealthvaultShim implements Shim {
                      * Rebuild JSON document structure to pass to deserializer.
                      */
                     String thingsJson = "{\"things\":[";
+                    String thingsContent = "";
                     for (JsonNode thingNode : thingList) {
-                        thingsJson += thingNode.toString() + ",";
+                        thingsContent += thingNode.toString() + ",";
                     }
-                    thingsJson = thingsJson.substring(0, thingsJson.length() - 1);
+                    thingsContent = "".equals(thingsContent) ? thingsContent :
+                        thingsContent.substring(0, thingsContent.length() - 1);
+                    thingsJson += thingsContent;
                     thingsJson += "]}";
 
                     /**

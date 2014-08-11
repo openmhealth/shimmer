@@ -1,0 +1,72 @@
+{"shim": null, "timeStamp": 1407791432, "body": {
+    "shim": null,
+    "timeStamp": 1407791432,
+    "body": {
+        "heart-rate": [
+            {
+                "value": 80,
+                "unit": "bpm",
+                "effective-time-frame": {
+                    "start-time": "2014-08-08 09:30:00",
+                    "end-time": null,
+                    "duration": null,
+                    "part-of-day": null
+                },
+                "numeric-descriptor": null,
+                "notes": null
+            },
+            {
+                "value": 66,
+                "unit": "bpm",
+                "effective-time-frame": {
+                    "start-time": "2014-08-05 12:00:00",
+                    "end-time": null,
+                    "duration": null,
+                    "part-of-day": null
+                },
+                "numeric-descriptor": null,
+                "notes": null
+            }
+        ],
+        "blood-pressure": [
+            {
+                "systolic-blood-pressure": {
+                    "value": 115,
+                    "unit": "mmHg"
+                },
+                "diastolic-blood-pressure": {
+                    "value": 76,
+                    "unit": "mmHg"
+                },
+                "effective-time-frame": {
+                    "start-time": "2014-08-08 09:30:00",
+                    "end-time": null,
+                    "duration": null,
+                    "part-of-day": null
+                },
+                "position-during-measurement": null,
+                "numeric-descriptor": null,
+                "notes": null
+            },
+            {
+                "systolic-blood-pressure": {
+                    "value": 120,
+                    "unit": "mmHg"
+                },
+                "diastolic-blood-pressure": {
+                    "value": 80,
+                    "unit": "mmHg"
+                },
+                "effective-time-frame": {
+                    "start-time": "2014-08-05 12:00:00",
+                    "end-time": null,
+                    "duration": null,
+                    "part-of-day": null
+                },
+                "position-during-measurement": null,
+                "numeric-descriptor": null,
+                "notes": null
+            }
+        ]
+    }
+}}

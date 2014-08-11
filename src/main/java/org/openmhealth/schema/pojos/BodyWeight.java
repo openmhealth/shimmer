@@ -1,9 +1,11 @@
 package org.openmhealth.schema.pojos;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.openmhealth.schema.pojos.generic.MassUnitValue;
 import org.openmhealth.schema.pojos.generic.TimeFrame;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class BodyWeight {
 
     @JsonProperty(value = "mass-unit-value", required = true)
