@@ -14,7 +14,7 @@ import net.minidev.json.JSONObject;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
-import org.openmhealth.schema.build.*;
+import org.openmhealth.schema.pojos.build.*;
 import org.openmhealth.schema.pojos.*;
 import org.openmhealth.schema.pojos.generic.DurationUnitValue;
 import org.openmhealth.schema.pojos.generic.LengthUnitValue;

@@ -1,4 +1,4 @@
-package org.openmhealth.schema.build;
+package org.openmhealth.schema.pojos.build;
 
 import org.joda.time.DateTime;
 import org.openmhealth.schema.pojos.BodyWeight;

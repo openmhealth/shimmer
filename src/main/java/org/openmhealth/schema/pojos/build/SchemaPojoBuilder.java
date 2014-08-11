@@ -1,4 +1,4 @@
-package org.openmhealth.schema.build;
+package org.openmhealth.schema.pojos.build;
 
 public interface SchemaPojoBuilder<T> {
 
