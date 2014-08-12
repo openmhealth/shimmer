@@ -1,0 +1,16 @@
+{"shim": null, "timeStamp": 1407814448, "body": {
+    "glucose": [
+        {
+            "glucose": 5,
+            "tracker": "Morning"
+        },
+        {
+            "glucose": 5.1,
+            "tracker": "Afternoon"
+        },
+        {
+            "glucose": 5.5,
+            "tracker": "Evening"
+        }
+    ]
+}}

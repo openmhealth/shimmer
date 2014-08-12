@@ -20,6 +20,7 @@ import org.openmhealth.schema.pojos.generic.DurationUnitValue;
 import org.openmhealth.schema.pojos.generic.LengthUnitValue;
 import org.openmhealth.schema.pojos.generic.MassUnitValue;
 import org.openmhealth.shim.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -62,10 +63,16 @@ public class HealthvaultShim implements Shim {
 
     private Connection connection = ConnectionFactory.getConnection();
 
-    private static Map<String, AuthorizationRequestParameters> AUTH_PARAMS_REPO = new LinkedHashMap<>();
+    //private static Map<String, AuthorizationRequestParameters> AUTH_PARAMS_REPO = new LinkedHashMap<>();
 
     private static DateTimeFormatter formatterMins = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm");
     private static DateTimeFormatter formatterDate = DateTimeFormat.forPattern("yyyy-MM-dd");
+
+    private AuthorizationRequestParametersRepo authorizationRequestParametersRepo;
+
+    public HealthvaultShim(AuthorizationRequestParametersRepo authorizationRequestParametersRepo) {
+        this.authorizationRequestParametersRepo = authorizationRequestParametersRepo;
+    }
 
     @Override
     public String getShimKey() {
@@ -376,7 +383,7 @@ public class HealthvaultShim implements Shim {
                      * XML Document mappings to JSON don't respect repeatable
                      * tags, they don't get properly serialized into collections.
                      * Thus, we pickup the 'things' via the 'group' root tag
-                     * and create a new JSON document.
+                     * and create a new JSON document out of each 'thing' node.
                      */
                     XmlMapper xmlMapper = new XmlMapper();
                     DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -385,7 +392,7 @@ public class HealthvaultShim implements Shim {
                     NodeList nodeList = doc.getElementsByTagName("thing");
 
                     /**
-                     * Collect JsonNode from each 'thing' xml dnode.
+                     * Collect JsonNode from each 'thing' xml node.
                      */
                     List<JsonNode> thingList = new ArrayList<>();
                     for (int i = 0; i < nodeList.getLength(); i++) {
@@ -462,7 +469,9 @@ public class HealthvaultShim implements Shim {
 
         authParams.setAuthorizationUrl(getAuthorizationUrl(callbackUrl, ACTION_QS));
 
-        AUTH_PARAMS_REPO.put(stateKey, authParams);
+        authorizationRequestParametersRepo.save(authParams);
+        //AUTH_PARAMS_REPO.put(stateKey, authParams);
+
         return authParams;
     }
 
@@ -472,7 +481,9 @@ public class HealthvaultShim implements Shim {
 
         String stateKey = servletRequest.getParameter("state");
 
-        AuthorizationRequestParameters authParams = AUTH_PARAMS_REPO.get(stateKey);
+        //AuthorizationRequestParameters authParams = AUTH_PARAMS_REPO.get(stateKey);
+        AuthorizationRequestParameters authParams =
+            authorizationRequestParametersRepo.findByStateKey(stateKey);
         if (authParams == null) {
             throw new ShimException("Invalid state, could not find " +
                 "corresponding auth parameters");

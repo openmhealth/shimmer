@@ -6,7 +6,10 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.impl.client.HttpClients;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 
 import javax.servlet.http.HttpServletRequest;
@@ -23,8 +26,11 @@ public abstract class OAuth1ShimBase implements Shim, OAuth1Shim {
 
     protected HttpClient httpClient = HttpClients.createDefault();
 
-    private static Map<String, AuthorizationRequestParameters> AUTH_PARAMS_REPO = new LinkedHashMap<>();
+    private AuthorizationRequestParametersRepo authorizationRequestParametersRepo;
 
+    protected OAuth1ShimBase(AuthorizationRequestParametersRepo authorizationRequestParametersRepo) {
+        this.authorizationRequestParametersRepo = authorizationRequestParametersRepo;
+    }
 
     @Override
     @SuppressWarnings("unchecked")
@@ -74,7 +80,7 @@ public abstract class OAuth1ShimBase implements Shim, OAuth1Shim {
             /**
              * Store the parameters in a repo.
              */
-            AUTH_PARAMS_REPO.put(stateKey, parameters);
+            authorizationRequestParametersRepo.save(parameters);
 
             return parameters;
         } catch (HttpClientErrorException e) {
@@ -95,7 +101,8 @@ public abstract class OAuth1ShimBase implements Shim, OAuth1Shim {
         String requestToken = servletRequest.getParameter(OAuth.OAUTH_TOKEN);
         final String requestVerifier = servletRequest.getParameter(OAuth.OAUTH_VERIFIER);
 
-        AuthorizationRequestParameters authParams = AUTH_PARAMS_REPO.get(stateKey);
+        AuthorizationRequestParameters authParams =
+            authorizationRequestParametersRepo.findByStateKey(stateKey);
         if (authParams == null) {
             throw new ShimException("Invalid state, could not find " +
                 "corresponding auth parameters");

@@ -1,7 +1,9 @@
 package org.openmhealth.shim.runkeeper;
 
 import org.joda.time.DateTime;
+import org.openmhealth.shim.AccessParametersRepo;
 import org.openmhealth.shim.AuthorizationRequestParameters;
+import org.openmhealth.shim.AuthorizationRequestParametersRepo;
 import org.openmhealth.shim.OAuth2ShimBase;
 import org.springframework.http.*;
 import org.springframework.security.oauth2.client.OAuth2RestOperations;
@@ -39,6 +41,11 @@ public class RunkeeperShim extends OAuth2ShimBase {
         new ArrayList<String>(Arrays.asList(
             "application/vnd.com.runkeeper.FitnessActivityFeed+json"
         ));
+
+    public RunkeeperShim(AuthorizationRequestParametersRepo authorizationRequestParametersRepo,
+                         AccessParametersRepo accessParametersRepo) {
+        super(authorizationRequestParametersRepo, accessParametersRepo);
+    }
 
     @Override
     public String getShimKey() {

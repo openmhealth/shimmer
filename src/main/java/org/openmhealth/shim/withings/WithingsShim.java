@@ -28,6 +28,10 @@ public class WithingsShim extends OAuth1ShimBase {
 
     public static final String WITHINGS_CLIENT_SECRET = "d9182878bc9999158cd748fc2fe12d81ffcce9c9f77093972e93c0f";
 
+    public WithingsShim(AuthorizationRequestParametersRepo authorizationRequestParametersRepo) {
+        super(authorizationRequestParametersRepo);
+    }
+
     @Override
     public List<String> getScopes() {
         return null; //noop!

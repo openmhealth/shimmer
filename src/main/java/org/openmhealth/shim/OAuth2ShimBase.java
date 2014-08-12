@@ -1,6 +1,7 @@
 package org.openmhealth.shim;
 
 
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.client.DefaultOAuth2ClientContext;
 import org.springframework.security.oauth2.client.OAuth2RestOperations;
@@ -11,18 +12,29 @@ import org.springframework.security.oauth2.client.token.AccessTokenProviderChain
 import org.springframework.security.oauth2.client.token.AccessTokenRequest;
 import org.springframework.security.oauth2.client.token.DefaultAccessTokenRequest;
 import org.springframework.security.oauth2.client.token.grant.code.AuthorizationCodeResourceDetails;
-import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.common.exceptions.OAuth2Exception;
+import org.springframework.security.oauth2.common.util.SerializationUtils;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Map;
 
 /**
  * Common code for all OAuth2.0 based shims.
  */
 public abstract class OAuth2ShimBase implements Shim, OAuth2Shim {
 
-    public static LinkedHashMap<String, AccessTokenRequest> ACCESS_REQUEST_REPO = new LinkedHashMap<>();
+    private AuthorizationRequestParametersRepo authorizationRequestParametersRepo;
+
+    private AccessParametersRepo accessParametersRepo;
+
+    protected OAuth2ShimBase(AuthorizationRequestParametersRepo authorizationRequestParametersRepo,
+                             AccessParametersRepo accessParametersRepo) {
+        this.authorizationRequestParametersRepo = authorizationRequestParametersRepo;
+        this.accessParametersRepo = accessParametersRepo;
+    }
 
     protected abstract AuthorizationRequestParameters getAuthorizationRequestParameters(
         final String username, final UserRedirectRequiredException exception);
@@ -45,8 +57,19 @@ public abstract class OAuth2ShimBase implements Shim, OAuth2Shim {
             AccessTokenRequest accessTokenRequest =
                 restTemplate.getOAuth2ClientContext().getAccessTokenRequest();
             String stateKey = accessTokenRequest.getStateKey();
-            ACCESS_REQUEST_REPO.put(stateKey, accessTokenRequest);
-            return getAuthorizationRequestParameters(username, e);
+
+            /**
+             * Build an authorization request from the exception
+             * parameters. We also serialize spring's accessTokenRequest.
+             */
+            AuthorizationRequestParameters authRequestParams =
+                getAuthorizationRequestParameters(username, e);
+
+            authRequestParams.setSerializedRequest(SerializationUtils.serialize(accessTokenRequest));
+            authRequestParams.setStateKey(stateKey);
+
+            authorizationRequestParametersRepo.save(authRequestParams);
+            return authRequestParams;
         }
     }
 
@@ -67,13 +90,42 @@ public abstract class OAuth2ShimBase implements Shim, OAuth2Shim {
     public AuthorizationResponse handleAuthorizationResponse(HttpServletRequest servletRequest) {
         String state = servletRequest.getParameter("state");
         String code = servletRequest.getParameter("code");
+
+        AuthorizationRequestParameters authorizationRequestParameters =
+            authorizationRequestParametersRepo.findByStateKey(state);
+
+        if (authorizationRequestParameters == null) {
+            throw new IllegalStateException("Could not find corresponding authorization " +
+                "request parameters, cannot continue.");
+        }
+
         OAuth2RestOperations restTemplate = restTemplate(state, code);
         try {
-            trigger(restTemplate);
-            OAuth2AccessToken accessToken = restTemplate.getAccessToken();
+            /**
+             * Create a persistable access parameters entity so that
+             * spring oauth2's client token services can relate
+             * the serialized OAuth2AccessToken to it.
+             */
             AccessParameters accessParameters = new AccessParameters();
-            accessParameters.setAccessToken(accessToken.getValue());
+            accessParameters.setUsername(authorizationRequestParameters.getUsername());
+            accessParameters.setShimKey(getShimKey());
             accessParameters.setStateKey(state);
+            accessParametersRepo.save(accessParameters);
+
+            trigger(restTemplate);
+
+            /**
+             * By this line we will have an approved access token or
+             * not, if we do not then we delete the access parameters entity.
+             */
+            if (restTemplate.getAccessToken() == null) {
+                accessParametersRepo.delete(accessParameters);
+                return AuthorizationResponse.error("Did not receive approval");
+            } else {
+                accessParameters = accessParametersRepo.findByUsernameAndShimKey(
+                    authorizationRequestParameters.getUsername(),
+                    getShimKey(), new Sort(Sort.Direction.DESC, "dateCreated"));
+            }
             return AuthorizationResponse.authorized(accessParameters);
         } catch (OAuth2Exception e) {
             //TODO: OAuth2Exception may include other stuff
@@ -93,9 +145,14 @@ public abstract class OAuth2ShimBase implements Shim, OAuth2Shim {
     }
 
     protected OAuth2RestOperations restTemplate(String stateKey, String code) {
-        DefaultAccessTokenRequest existingRequest = stateKey != null
-            && ACCESS_REQUEST_REPO.containsKey(stateKey) ?
-            (DefaultAccessTokenRequest) ACCESS_REQUEST_REPO.get(stateKey) : null;
+
+        DefaultAccessTokenRequest existingRequest =
+
+            stateKey != null
+                && authorizationRequestParametersRepo.findByStateKey(stateKey) != null ?
+
+                (DefaultAccessTokenRequest) SerializationUtils.deserialize(
+                    authorizationRequestParametersRepo.findByStateKey(stateKey).getSerializedRequest()) : null;
 
         if (existingRequest != null && code != null) {
             existingRequest.set("code", code);
@@ -113,7 +170,8 @@ public abstract class OAuth2ShimBase implements Shim, OAuth2Shim {
         AccessTokenProviderChain tokenProviderChain =
             new AccessTokenProviderChain(new ArrayList<>(
                 Arrays.asList(getAuthorizationCodeAccessTokenProvider())));
-        tokenProviderChain.setClientTokenServices(new InMemoryTokenRepo());
+        tokenProviderChain.setClientTokenServices(
+            new AccessParameterClientTokenServices(accessParametersRepo));
         restTemplate.setAccessTokenProvider(tokenProviderChain);
         return restTemplate;
     }

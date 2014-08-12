@@ -1,18 +1,38 @@
 package org.openmhealth.shim;
 
+import org.springframework.data.annotation.Id;
 import org.springframework.http.HttpMethod;
 
 import java.util.Map;
 
 public class AuthorizationRequestParameters {
 
-    private String username;
-    private HttpMethod httpMethod = HttpMethod.POST;
+    @Id
+    private String id;
+
     private String stateKey;
+
+    private String username;
+
+    private HttpMethod httpMethod = HttpMethod.POST;
+
     private String redirectUri;
+
     private Map<String, String> requestParams;
+
     private String authorizationUrl;
+
     private boolean isAuthorized = false;
+
+    private byte[] serializedRequest;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public String getUsername() {
         return username;
@@ -68,6 +88,14 @@ public class AuthorizationRequestParameters {
 
     public void setRequestParams(Map<String, String> requestParams) {
         this.requestParams = requestParams;
+    }
+
+    public byte[] getSerializedRequest() {
+        return serializedRequest;
+    }
+
+    public void setSerializedRequest(byte[] serializedRequest) {
+        this.serializedRequest = serializedRequest;
     }
 
     public static AuthorizationRequestParameters authorized() {

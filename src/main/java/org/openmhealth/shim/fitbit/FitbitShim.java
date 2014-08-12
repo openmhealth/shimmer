@@ -1,6 +1,7 @@
 package org.openmhealth.shim.fitbit;
 
 import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -8,23 +9,31 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.jayway.jsonpath.JsonPath;
 import net.minidev.json.JSONObject;
+import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+import org.openmhealth.schema.pojos.BodyWeight;
 import org.openmhealth.schema.pojos.build.ActivityBuilder;
+import org.openmhealth.schema.pojos.build.BodyWeightBuilder;
 import org.openmhealth.schema.pojos.build.NumberOfStepsBuilder;
 import org.openmhealth.schema.pojos.Activity;
 import org.openmhealth.schema.pojos.NumberOfSteps;
 import org.openmhealth.schema.pojos.generic.DurationUnitValue;
 import org.openmhealth.schema.pojos.generic.LengthUnitValue;
+import org.openmhealth.schema.pojos.generic.MassUnitValue;
 import org.openmhealth.shim.*;
 import org.springframework.http.HttpMethod;
+import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import java.io.IOException;
+import java.io.StringWriter;
+import java.net.URL;
 import java.util.*;
 
 public class FitbitShim extends OAuth1ShimBase {
@@ -41,6 +50,10 @@ public class FitbitShim extends OAuth1ShimBase {
     public static final String FITBIT_CLIENT_ID = "7da3c2e5e74d4492ab6bb3286fc32c6b";
 
     public static final String FITBIT_CLIENT_SECRET = "455a383f80de45d6a4f9b09e841da1f4";
+
+    public FitbitShim(AuthorizationRequestParametersRepo authorizationRequestParametersRepo) {
+        super(authorizationRequestParametersRepo);
+    }
 
     @Override
     public List<String> getScopes() {
@@ -89,11 +102,81 @@ public class FitbitShim extends OAuth1ShimBase {
         DateTimeFormat.forPattern("yyyy-MM-dd HH:mm");
 
     public enum FitbitDataType implements ShimDataType {
-        /**
-         * The activity endpoint from fitbit retrieves
-         * both activity and number of steps standard schemas.
-         */
+
+        WEIGHT(
+            "body/log/weight",
+            new JsonDeserializer<ShimDataResponse>() {
+                @Override
+                public ShimDataResponse deserialize(JsonParser jsonParser,
+                                                    DeserializationContext ctxt)
+                    throws IOException, JsonProcessingException {
+                    JsonNode responseNode = jsonParser.getCodec().readTree(jsonParser);
+                    String rawJson = responseNode.toString();
+
+                    List<BodyWeight> bodyWeights = new ArrayList<>();
+                    JsonPath bodyWeightsPath = JsonPath.compile("$.things[*].data-xml.weight");
+
+                    List<Object> hvWeights = JsonPath.read(rawJson, bodyWeightsPath.getPath());
+                    if (CollectionUtils.isEmpty(hvWeights)) {
+                        return ShimDataResponse.result(null);
+                    }
+                    ObjectMapper mapper = new ObjectMapper();
+                    for (Object fva : hvWeights) {
+                        JsonNode hvWeight = mapper.readTree(((JSONObject) fva).toJSONString());
+
+                        DateTime dateTimeWhen = null; //parseDateTimeFromWhenNode(hvWeight.get("when"));
+
+                        BodyWeight bodyWeight = new BodyWeightBuilder()
+                            .setWeight(
+                                hvWeight.get("value").get("display").get("").asText(),
+                                MassUnitValue.MassUnit.lb.toString())
+                            .setTimeTaken(dateTimeWhen).build();
+
+                        bodyWeights.add(bodyWeight);
+                    }
+                    return ShimDataResponse.result(bodyWeights);
+                }
+            }
+        ),
+
+        HEART(
+            "heart",
+            new JsonDeserializer<ShimDataResponse>() {
+                @Override
+                public ShimDataResponse deserialize(JsonParser jsonParser,
+                                                    DeserializationContext ctxt)
+                    throws IOException, JsonProcessingException {
+                    return ShimDataResponse.empty();
+                }
+            }
+        ),
+
+        BLOOD_PRESSURE(
+            "bp",
+            new JsonDeserializer<ShimDataResponse>() {
+                @Override
+                public ShimDataResponse deserialize(JsonParser jsonParser,
+                                                    DeserializationContext ctxt)
+                    throws IOException, JsonProcessingException {
+                    return ShimDataResponse.empty();
+                }
+            }
+        ),
+
+        BLOOD_GLUCOSE(
+            "glucose",
+            new JsonDeserializer<ShimDataResponse>() {
+                @Override
+                public ShimDataResponse deserialize(JsonParser jsonParser,
+                                                    DeserializationContext ctxt)
+                    throws IOException, JsonProcessingException {
+                    return ShimDataResponse.empty();
+                }
+            }
+        ),
+
         ACTIVITY(
+            "activities",
             new JsonDeserializer<ShimDataResponse>() {
                 @Override
                 public ShimDataResponse deserialize(JsonParser jsonParser,
@@ -144,12 +227,14 @@ public class FitbitShim extends OAuth1ShimBase {
                     return ShimDataResponse.result(results);
                 }
             }
-
         );
+
+        private String endPoint;
 
         private JsonDeserializer<ShimDataResponse> normalizer;
 
-        FitbitDataType(JsonDeserializer<ShimDataResponse> normalizer) {
+        FitbitDataType(String endPoint, JsonDeserializer<ShimDataResponse> normalizer) {
+            this.endPoint = endPoint;
             this.normalizer = normalizer;
         }
 
@@ -158,6 +243,9 @@ public class FitbitShim extends OAuth1ShimBase {
             return normalizer;
         }
 
+        public String getEndPoint() {
+            return endPoint;
+        }
     }
 
     @Override
@@ -174,18 +262,12 @@ public class FitbitShim extends OAuth1ShimBase {
                 + shimDataRequest.getDataTypeKey()
                 + " in shimDataRequest, cannot retrieve data.");
         }
-
         String endPointUrl = DATA_URL;
-
-        switch (fitbitDataType) {
-            default:
-            case ACTIVITY:
-                endPointUrl += "/1/user/-/activities/date/2014-07-13.json";
-                break;
-        }
+        endPointUrl += "/1/user/-/"
+            + fitbitDataType.getEndPoint() + "/date/2014-07-13.json";
 
         HttpRequestBase dataRequest =
-            OAuth1Utils.getSignedRequest(
+            OAuth1Utils.getSignedRequest(HttpMethod.GET,
                 endPointUrl, getClientId(), getClientSecret(), accessToken, tokenSecret, null);
 
         HttpResponse response;
@@ -193,7 +275,15 @@ public class FitbitShim extends OAuth1ShimBase {
             response = httpClient.execute(dataRequest);
             HttpEntity responseEntity = response.getEntity();
 
-            // Fetch and decode the JSON data.
+            /**
+             * The fitbit API's system works by retrieving each day's
+             * data. The date captured is not returned in the data from fitbit because
+             * it's implicit so we create a JSON wrapper that includes it.
+             */
+            /*StringWriter writer = new StringWriter();
+            IOUtils.copy(responseEntity.getContent(), writer);
+            String jsonContent = "{date:}" writer.toString();*/
+
             ObjectMapper objectMapper = new ObjectMapper();
             if (shimDataRequest.getNormalize()) {
                 SimpleModule module = new SimpleModule();

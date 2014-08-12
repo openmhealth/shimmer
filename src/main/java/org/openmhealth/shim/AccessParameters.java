@@ -1,6 +1,9 @@
 package org.openmhealth.shim;
 
 
+import org.joda.time.DateTime;
+import org.springframework.data.annotation.Id;
+
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -9,7 +12,12 @@ import java.util.Map;
  */
 public class AccessParameters {
 
+    @Id
+    private String id;
+
     private String username;
+
+    private String shimKey;
 
     private String clientId;
 
@@ -20,6 +28,34 @@ public class AccessParameters {
     private String tokenSecret;
 
     private String stateKey;
+
+    private DateTime dateCreated = new DateTime();
+
+    private byte[] serializedToken; //Required only by spring oauth2
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getShimKey() {
+        return shimKey;
+    }
+
+    public void setShimKey(String shimKey) {
+        this.shimKey = shimKey;
+    }
+
+    public DateTime getDateCreated() {
+        return dateCreated;
+    }
+
+    public void setDateCreated(DateTime dateCreated) {
+        this.dateCreated = dateCreated;
+    }
 
     public String getStateKey() {
         return stateKey;
@@ -77,5 +113,13 @@ public class AccessParameters {
 
     public void setAdditionalParameters(Map<String, Object> additionalParameters) {
         this.additionalParameters = additionalParameters;
+    }
+
+    public byte[] getSerializedToken() {
+        return serializedToken;
+    }
+
+    public void setSerializedToken(byte[] serializedToken) {
+        this.serializedToken = serializedToken;
     }
 }

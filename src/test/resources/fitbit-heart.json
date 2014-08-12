@@ -1,0 +1,48 @@
+{"shim": null, "timeStamp": 1407814689, "body": {
+    "average": [
+        {
+            "heartRate": 50,
+            "tracker": "Resting Heart Rate"
+        },
+        {
+            "heartRate": 61,
+            "tracker": "Normal Heart Rate"
+        },
+        {
+            "heartRate": 75,
+            "tracker": "Exertive Heart Rate"
+        }
+    ],
+    "heart": [
+        {
+            "heartRate": 50,
+            "logId": 437197297,
+            "tracker": "Resting Heart Rate"
+        },
+        {
+            "heartRate": 51,
+            "logId": 437186452,
+            "tracker": "Resting Heart Rate"
+        },
+        {
+            "heartRate": 60,
+            "logId": 437197296,
+            "tracker": "Normal Heart Rate"
+        },
+        {
+            "heartRate": 62,
+            "logId": 437186451,
+            "tracker": "Normal Heart Rate"
+        },
+        {
+            "heartRate": 77,
+            "logId": 437197298,
+            "tracker": "Exertive Heart Rate"
+        },
+        {
+            "heartRate": 73,
+            "logId": 437186453,
+            "tracker": "Exertive Heart Rate"
+        }
+    ]
+}}

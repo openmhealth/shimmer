@@ -7,10 +7,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.joda.time.DateTime;
 import org.joda.time.MutableDateTime;
-import org.openmhealth.shim.OAuth1ShimBase;
-import org.openmhealth.shim.ShimDataRequest;
-import org.openmhealth.shim.ShimDataResponse;
-import org.openmhealth.shim.ShimException;
+import org.openmhealth.shim.*;
 
 import java.io.IOException;
 import java.net.URL;
@@ -36,6 +33,10 @@ public class FatsecretShim extends OAuth1ShimBase {
     public static final String FATSECRET_CLIENT_ID = "d1c59d7f9c8243f0b2eaef9ea43278a0";
 
     public static final String FATSECRET_CLIENT_SECRET = "c16dd2eeea804a7cba1180293d4b770c";
+
+    public FatsecretShim(AuthorizationRequestParametersRepo authorizationRequestParametersRepo) {
+        super(authorizationRequestParametersRepo);
+    }
 
     @Override
     public List<String> getScopes() {

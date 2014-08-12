@@ -43,6 +43,11 @@ public class JawboneShim extends OAuth2ShimBase {
         new ArrayList<String>(Arrays.asList("extended_read", "weight_read",
             "cardiac_read", "meal_read", "move_read", "sleep_read"));
 
+    public JawboneShim(AuthorizationRequestParametersRepo authorizationRequestParametersRepo,
+                       AccessParametersRepo accessParametersRepo) {
+        super(authorizationRequestParametersRepo, accessParametersRepo);
+    }
+
     @Override
     public String getShimKey() {
         return SHIM_KEY;

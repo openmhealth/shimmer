@@ -1,14 +1,11 @@
 package org.openmhealth.shim;
 
-import org.openmhealth.shim.fatsecret.FatsecretShim;
-import org.openmhealth.shim.fitbit.FitbitShim;
-import org.openmhealth.shim.healthvault.HealthvaultShim;
-import org.openmhealth.shim.jawbone.JawboneShim;
-import org.openmhealth.shim.runkeeper.RunkeeperShim;
-import org.openmhealth.shim.withings.WithingsShim;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -17,25 +14,22 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Collections;
-import java.util.LinkedHashMap;
 
 @Configuration
 @EnableAutoConfiguration
+@ComponentScan(basePackages = "org.openmhealth")
 @EnableWebSecurity
 @RestController
 public class Application extends WebSecurityConfigurerAdapter {
 
-    private LinkedHashMap<String, Shim> SHIM_REGISTRY = new LinkedHashMap<String, Shim>() {{
-        put(JawboneShim.SHIM_KEY, new JawboneShim());
-        put(RunkeeperShim.SHIM_KEY, new RunkeeperShim());
-        put(FatsecretShim.SHIM_KEY, new FatsecretShim());
-        put(WithingsShim.SHIM_KEY, new WithingsShim());
-        put(FitbitShim.SHIM_KEY, new FitbitShim());
-        put(HealthvaultShim.SHIM_KEY, new HealthvaultShim());
-    }};
+    @Autowired
+    private AccessParametersRepo accessParametersRepo;
 
-    private LinkedHashMap<String, AccessParameters> ACCESS_PARAM_REPO = new LinkedHashMap<>();
-    private LinkedHashMap<String, AuthorizationRequestParameters> AUTH_PARAM_REPO = new LinkedHashMap<>();
+    @Autowired
+    private AuthorizationRequestParametersRepo authParametersRepo;
+
+    @Autowired
+    private ShimRegistry shimRegistry;
 
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
@@ -63,14 +57,14 @@ public class Application extends WebSecurityConfigurerAdapter {
                                              @PathVariable("shim") String shim) throws ShimException {
         setPassThroughAuthentication(username, shim);
         AuthorizationRequestParameters authParams =
-            SHIM_REGISTRY.get(shim).getAuthorizationRequestParameters(
+            shimRegistry.getShim(shim).getAuthorizationRequestParameters(
                 username, Collections.<String, String>emptyMap());
         /**
          * Save authorization parameters to local repo. They will be
          * re-fetched via stateKey upon approval.
          */
         authParams.setUsername(username);
-        AUTH_PARAM_REPO.put(authParams.getStateKey(), authParams);
+        authParametersRepo.save(authParams);
         return authParams;
     }
 
@@ -88,22 +82,22 @@ public class Application extends WebSecurityConfigurerAdapter {
     AuthorizationResponse approve(@PathVariable("shim") String shim,
                                   HttpServletRequest servletRequest) throws ShimException {
         String stateKey = servletRequest.getParameter("state");
-        if (!AUTH_PARAM_REPO.containsKey(stateKey)) {
+        AuthorizationRequestParameters authParams = authParametersRepo.findByStateKey(stateKey);
+        if (authParams == null) {
             throw new ShimException("Invalid state key, original access " +
                 "request not found. Cannot authorize.");
         } else {
-            AuthorizationRequestParameters authParams = AUTH_PARAM_REPO.get(stateKey);
             setPassThroughAuthentication(authParams.getUsername(), shim);
             AuthorizationResponse response =
-                SHIM_REGISTRY.get(shim).handleAuthorizationResponse(servletRequest);
+                shimRegistry.getShim(shim).handleAuthorizationResponse(servletRequest);
             /**
              * Save the access parameters to local repo.
              * They will be re-fetched via username and path parameters
              * for future requests.
              */
             response.getAccessParameters().setUsername(authParams.getUsername());
-            String accessParamKey = response.getAccessParameters().getUsername() + ":" + shim;
-            ACCESS_PARAM_REPO.put(accessParamKey, response.getAccessParameters());
+            response.getAccessParameters().setShimKey(shim);
+            accessParametersRepo.save(response.getAccessParameters());
             return response;
         }
     }
@@ -129,13 +123,16 @@ public class Application extends WebSecurityConfigurerAdapter {
         shimDataRequest.setDataTypeKey(dataTypeKey);
         shimDataRequest.setNormalize(!"".equals(normalize));
 
-        AccessParameters accessParameters = ACCESS_PARAM_REPO.get(username + ":" + shim);
+        AccessParameters accessParameters =
+            accessParametersRepo.findByUsernameAndShimKey(
+                username, shim, new Sort(Sort.Direction.DESC, "dateCreated"));
+
         if (accessParameters == null) {
             throw new ShimException("User '"
                 + username + "' has not authorized shim: '" + shim + "'");
         }
         shimDataRequest.setAccessParameters(accessParameters);
-        return SHIM_REGISTRY.get(shim).getData(shimDataRequest);
+        return shimRegistry.getShim(shim).getData(shimDataRequest);
     }
 
     /**

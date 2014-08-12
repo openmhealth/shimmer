@@ -12,8 +12,10 @@ import oauth.signpost.http.HttpParameters;
 import oauth.signpost.signature.QueryStringSigningStrategy;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
+import org.springframework.http.HttpMethod;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -90,7 +92,8 @@ public class OAuth1Utils {
      * @param oAuthParameters - Any additional parameters
      * @return The request to be signed and sent to external data provider.
      */
-    public static HttpRequestBase getSignedRequest(String unsignedUrl,
+    public static HttpRequestBase getSignedRequest(HttpMethod method,
+                                                   String unsignedUrl,
                                                    String clientId,
                                                    String clientSecret,
                                                    String token,
@@ -100,7 +103,8 @@ public class OAuth1Utils {
         URL requestUrl = buildSignedUrl(unsignedUrl, clientId, clientSecret, token, tokenSecret, oAuthParameters);
         String[] signedParams = requestUrl.toString().split("\\?")[1].split("&");
 
-        HttpPost postRequest = new HttpPost(unsignedUrl);
+        HttpRequestBase postRequest = method == HttpMethod.GET ?
+            new HttpGet(unsignedUrl) : new HttpPost(unsignedUrl);
         String oauthHeader = "";
         for (String signedParam : signedParams) {
             String[] parts = signedParam.split("=");
@@ -123,6 +127,16 @@ public class OAuth1Utils {
             e.printStackTrace();
             throw new ShimException("Could not sign POST request, cannot continue");
         }
+    }
+
+    public static HttpRequestBase getSignedRequest(String unsignedUrl,
+                                                   String clientId,
+                                                   String clientSecret,
+                                                   String token,
+                                                   String tokenSecret,
+                                                   Map<String, String> oAuthParameters) throws ShimException {
+        return getSignedRequest(HttpMethod.POST,
+            unsignedUrl, clientId, clientSecret, token, tokenSecret, oAuthParameters);
     }
 
     /**
