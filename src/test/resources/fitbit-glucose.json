@@ -2,15 +2,18 @@
     "glucose": [
         {
             "glucose": 5,
-            "tracker": "Morning"
+            "tracker": "Morning",
+            "time": "12:30"
         },
         {
             "glucose": 5.1,
-            "tracker": "Afternoon"
+            "tracker": "Afternoon",
+            "time": "12:30"
         },
         {
             "glucose": 5.5,
-            "tracker": "Evening"
+            "tracker": "Evening",
+            "time": "12:30"
         }
     ]
 }}

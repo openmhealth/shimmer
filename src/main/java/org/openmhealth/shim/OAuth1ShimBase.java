@@ -41,6 +41,7 @@ public abstract class OAuth1ShimBase implements Shim, OAuth1Shim {
 
         String stateKey = OAuth1Utils.generateStateKey();
 
+        HttpRequestBase tokenRequest = null;
         try {
             String callbackUrl =
                 "http://localhost:8080/authorize/" + getShimKey() + "/callback?state=" + stateKey;
@@ -50,10 +51,12 @@ public abstract class OAuth1ShimBase implements Shim, OAuth1Shim {
 
             String initiateAuthUrl = getBaseRequestTokenUrl();
 
-            HttpResponse response = httpClient.execute(
-                getRequestTokenRequest(initiateAuthUrl, null, null, requestTokenParameters));
+            tokenRequest =
+                getRequestTokenRequest(initiateAuthUrl, null, null, requestTokenParameters);
 
-            Map<String, String> tokenParameters = OAuth1Utils.parseRequestTokenResponse(response);
+            HttpResponse httpResponse = httpClient.execute(tokenRequest);
+
+            Map<String, String> tokenParameters = OAuth1Utils.parseRequestTokenResponse(httpResponse);
 
             String token = tokenParameters.get(OAuth.OAUTH_TOKEN);
             String tokenSecret = tokenParameters.get(OAuth.OAUTH_TOKEN_SECRET);
@@ -90,6 +93,10 @@ public abstract class OAuth1ShimBase implements Shim, OAuth1Shim {
             e.printStackTrace();
             throw new ShimException("Unable to initiate OAuth1 authorization, " +
                 "could not parse token parameters");
+        } finally {
+            if (tokenRequest != null) {
+                tokenRequest.releaseConnection();
+            }
         }
     }
 
@@ -112,14 +119,20 @@ public abstract class OAuth1ShimBase implements Shim, OAuth1Shim {
         String requestTokenSecret = authParams.getRequestParams().get(OAuth.OAUTH_TOKEN_SECRET);
 
         HttpResponse response;
+        HttpRequestBase accessTokenRequest = null;
         try {
-            response = httpClient.execute(getAccessTokenRequest(getBaseTokenUrl(),
+            accessTokenRequest = getAccessTokenRequest(getBaseTokenUrl(),
                 requestToken, requestTokenSecret, new HashMap<String, String>() {{
                     put(OAuth.OAUTH_VERIFIER, requestVerifier);
-                }}));
+                }});
+            response = httpClient.execute(accessTokenRequest);
         } catch (IOException e) {
             e.printStackTrace();
             throw new ShimException("Could not retrieve response from token URL");
+        } finally {
+            if (accessTokenRequest != null) {
+                accessTokenRequest.releaseConnection();
+            }
         }
         Map<String, String> accessTokenParameters = OAuth1Utils.parseRequestTokenResponse(response);
         String accessToken = accessTokenParameters.get(OAuth.OAUTH_TOKEN);

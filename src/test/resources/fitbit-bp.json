@@ -20,7 +20,8 @@
         {
             "diastolic": 80,
             "logId": 437214560,
-            "systolic": 120
+            "systolic": 120,
+            "time": "13:30"
         }
     ]
 }}

@@ -116,6 +116,8 @@ public class FatsecretShim extends OAuth1ShimBase {
 
         } catch (IOException e) {
             throw new ShimException("Could not fetch data", e);
+        } finally {
+            get.releaseConnection();
         }
     }
 }

@@ -17,12 +17,8 @@ import org.apache.http.client.methods.HttpRequestBase;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
-import org.openmhealth.schema.pojos.BodyWeight;
-import org.openmhealth.schema.pojos.build.ActivityBuilder;
-import org.openmhealth.schema.pojos.build.BodyWeightBuilder;
-import org.openmhealth.schema.pojos.build.NumberOfStepsBuilder;
-import org.openmhealth.schema.pojos.Activity;
-import org.openmhealth.schema.pojos.NumberOfSteps;
+import org.openmhealth.schema.pojos.*;
+import org.openmhealth.schema.pojos.build.*;
 import org.openmhealth.schema.pojos.generic.DurationUnitValue;
 import org.openmhealth.schema.pojos.generic.LengthUnitValue;
 import org.openmhealth.schema.pojos.generic.MassUnitValue;
@@ -33,6 +29,7 @@ import org.springframework.util.CollectionUtils;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.math.BigDecimal;
 import java.net.URL;
 import java.util.*;
 
@@ -114,22 +111,24 @@ public class FitbitShim extends OAuth1ShimBase {
                     String rawJson = responseNode.toString();
 
                     List<BodyWeight> bodyWeights = new ArrayList<>();
-                    JsonPath bodyWeightsPath = JsonPath.compile("$.things[*].data-xml.weight");
+                    JsonPath bodyWeightsPath = JsonPath.compile("$result.content.weight[*]");
 
-                    List<Object> hvWeights = JsonPath.read(rawJson, bodyWeightsPath.getPath());
-                    if (CollectionUtils.isEmpty(hvWeights)) {
+                    List<Object> fbWeights = JsonPath.read(rawJson, bodyWeightsPath.getPath());
+                    if (CollectionUtils.isEmpty(fbWeights)) {
                         return ShimDataResponse.result(null);
                     }
                     ObjectMapper mapper = new ObjectMapper();
-                    for (Object fva : hvWeights) {
-                        JsonNode hvWeight = mapper.readTree(((JSONObject) fva).toJSONString());
+                    for (Object fva : fbWeights) {
+                        JsonNode fbWeight = mapper.readTree(((JSONObject) fva).toJSONString());
 
-                        DateTime dateTimeWhen = null; //parseDateTimeFromWhenNode(hvWeight.get("when"));
+                        String dateStr = fbWeight.get("date").asText();
+                        dateStr += fbWeight.get("time") != null ? "T" + fbWeight.get("time").asText() : "";
 
+                        DateTime dateTimeWhen = new DateTime(dateStr);
                         BodyWeight bodyWeight = new BodyWeightBuilder()
                             .setWeight(
-                                hvWeight.get("value").get("display").get("").asText(),
-                                MassUnitValue.MassUnit.lb.toString())
+                                fbWeight.get("weight").asText(),
+                                MassUnitValue.MassUnit.kg.toString())
                             .setTimeTaken(dateTimeWhen).build();
 
                         bodyWeights.add(bodyWeight);
@@ -145,8 +144,38 @@ public class FitbitShim extends OAuth1ShimBase {
                 @Override
                 public ShimDataResponse deserialize(JsonParser jsonParser,
                                                     DeserializationContext ctxt)
-                    throws IOException, JsonProcessingException {
-                    return ShimDataResponse.empty();
+                    throws IOException {
+                    JsonNode responseNode = jsonParser.getCodec().readTree(jsonParser);
+                    String rawJson = responseNode.toString();
+
+                    List<HeartRate> heartRates = new ArrayList<>();
+                    JsonPath heartPath = JsonPath.compile("$.result.content.heart[*]");
+
+                    String dateString = JsonPath.read(rawJson, "$.result.date").toString();
+
+                    List<Object> fbHearts = JsonPath.read(rawJson, heartPath.getPath());
+                    if (CollectionUtils.isEmpty(fbHearts)) {
+                        return ShimDataResponse.result(null);
+                    }
+
+                    ObjectMapper mapper = new ObjectMapper();
+                    for (Object fva : fbHearts) {
+                        JsonNode fbHeart = mapper.readTree(((JSONObject) fva).toJSONString());
+
+                        String heartDate = dateString;
+                        if (fbHeart.get("time") != null) {
+                            heartDate += "T" + fbHeart.get("time").asText();
+                        }
+
+                        heartRates.add(new HeartRateBuilder()
+                            .setRate(fbHeart.get("heartRate").asText())
+                            .setTimeTaken(new DateTime(heartDate)).build());
+
+                    }
+                    Map<String, Object> results = new HashMap<>();
+                    //todo: Change this to constants driven elements!
+                    results.put("heart-rate", heartRates);
+                    return ShimDataResponse.result(results);
                 }
             }
         ),
@@ -158,7 +187,39 @@ public class FitbitShim extends OAuth1ShimBase {
                 public ShimDataResponse deserialize(JsonParser jsonParser,
                                                     DeserializationContext ctxt)
                     throws IOException, JsonProcessingException {
-                    return ShimDataResponse.empty();
+                    JsonNode responseNode = jsonParser.getCodec().readTree(jsonParser);
+                    String rawJson = responseNode.toString();
+
+                    List<BloodPressure> bloodPressures = new ArrayList<>();
+                    JsonPath bpPath = JsonPath.compile("$.result.content.bp[*]");
+
+                    String dateString = JsonPath.read(rawJson, "$.result.date").toString();
+
+                    List<Object> fbBloodPressures = JsonPath.read(rawJson, bpPath.getPath());
+                    if (CollectionUtils.isEmpty(fbBloodPressures)) {
+                        return ShimDataResponse.result(null);
+                    }
+
+                    ObjectMapper mapper = new ObjectMapper();
+                    for (Object fva : fbBloodPressures) {
+                        JsonNode fbBp = mapper.readTree(((JSONObject) fva).toJSONString());
+
+                        String bpDate = dateString;
+                        if (fbBp.get("time") != null) {
+                            bpDate += "T" + fbBp.get("time").asText();
+                        }
+
+                        bloodPressures.add(new BloodPressureBuilder()
+                            .setTimeTaken(new DateTime(bpDate))
+                            .setValues(
+                                new BigDecimal(fbBp.get("systolic").asText()),
+                                new BigDecimal(fbBp.get("diastolic").asText())
+                            ).build());
+                    }
+                    Map<String, Object> results = new HashMap<>();
+                    //todo: Change this to constants driven elements!
+                    results.put("blood-pressure", bloodPressures);
+                    return ShimDataResponse.result(results);
                 }
             }
         ),
@@ -170,7 +231,36 @@ public class FitbitShim extends OAuth1ShimBase {
                 public ShimDataResponse deserialize(JsonParser jsonParser,
                                                     DeserializationContext ctxt)
                     throws IOException, JsonProcessingException {
-                    return ShimDataResponse.empty();
+                    JsonNode responseNode = jsonParser.getCodec().readTree(jsonParser);
+                    String rawJson = responseNode.toString();
+
+                    List<BloodGlucose> bloodGlucoses = new ArrayList<>();
+                    JsonPath bpPath = JsonPath.compile("$.result.content.glucose[*]");
+
+                    String dateString = JsonPath.read(rawJson, "$.result.date").toString();
+
+                    List<Object> fbBloodPressures = JsonPath.read(rawJson, bpPath.getPath());
+                    if (CollectionUtils.isEmpty(fbBloodPressures)) {
+                        return ShimDataResponse.result(null);
+                    }
+
+                    ObjectMapper mapper = new ObjectMapper();
+                    for (Object fva : fbBloodPressures) {
+                        JsonNode fbBp = mapper.readTree(((JSONObject) fva).toJSONString());
+
+                        String bpDate = dateString;
+                        if (fbBp.get("time") != null) {
+                            bpDate += "T" + fbBp.get("time").asText();
+                        }
+
+                        bloodGlucoses.add(new BloodGlucoseBuilder()
+                            .setTimeTaken(new DateTime(bpDate))
+                            .setValue(fbBp.get("glucose").asText()).build());
+                    }
+                    Map<String, Object> results = new HashMap<>();
+                    //todo: Change this to constants driven elements!
+                    results.put("blood-glucose", bloodGlucoses);
+                    return ShimDataResponse.result(results);
                 }
             }
         ),
@@ -188,7 +278,7 @@ public class FitbitShim extends OAuth1ShimBase {
                     List<Activity> activities = new ArrayList<>();
                     List<NumberOfSteps> numberOfStepsList = new ArrayList<>();
 
-                    JsonPath activityPath = JsonPath.compile("$.activities[*]");
+                    JsonPath activityPath = JsonPath.compile("$.result.content.activities[*]");
 
                     final List<Object> fitbitActivities = JsonPath.read(rawJson, activityPath.getPath());
                     if (CollectionUtils.isEmpty(fitbitActivities)) {
@@ -262,9 +352,10 @@ public class FitbitShim extends OAuth1ShimBase {
                 + shimDataRequest.getDataTypeKey()
                 + " in shimDataRequest, cannot retrieve data.");
         }
+        String dateString = "2014-07-13";
         String endPointUrl = DATA_URL;
         endPointUrl += "/1/user/-/"
-            + fitbitDataType.getEndPoint() + "/date/2014-07-13.json";
+            + fitbitDataType.getEndPoint() + "/date/" + dateString + ".json";
 
         HttpRequestBase dataRequest =
             OAuth1Utils.getSignedRequest(HttpMethod.GET,
@@ -280,21 +371,24 @@ public class FitbitShim extends OAuth1ShimBase {
              * data. The date captured is not returned in the data from fitbit because
              * it's implicit so we create a JSON wrapper that includes it.
              */
-            /*StringWriter writer = new StringWriter();
+            StringWriter writer = new StringWriter();
             IOUtils.copy(responseEntity.getContent(), writer);
-            String jsonContent = "{date:}" writer.toString();*/
+            String jsonContent = "{\"result\": {\"date\": \"" + dateString + "\" " +
+                ",\"content\": " + writer.toString() + "}}";
 
             ObjectMapper objectMapper = new ObjectMapper();
             if (shimDataRequest.getNormalize()) {
                 SimpleModule module = new SimpleModule();
                 module.addDeserializer(ShimDataResponse.class, fitbitDataType.getNormalizer());
                 objectMapper.registerModule(module);
-                return objectMapper.readValue(responseEntity.getContent(), ShimDataResponse.class);
+                return objectMapper.readValue(jsonContent, ShimDataResponse.class);
             } else {
-                return ShimDataResponse.result(objectMapper.readTree(responseEntity.getContent()));
+                return ShimDataResponse.result(objectMapper.readTree(jsonContent));
             }
         } catch (IOException e) {
             throw new ShimException("Could not fetch data", e);
+        } finally {
+            dataRequest.releaseConnection();
         }
     }
 }
