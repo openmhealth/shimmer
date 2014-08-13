@@ -1,0 +1,27 @@
+{"shim": null, "timeStamp": 1407936493, "body": {
+    "items": [
+        {
+            "duration": 3600,
+            "total_distance": 6437.376,
+            "has_path": false,
+            "entry_mode": "Web",
+            "source": "RunKeeper",
+            "start_time": "Wed, 6 Aug 2014 04:49:00",
+            "total_calories": 433,
+            "type": "Rowing",
+            "uri": "/fitnessActivities/412927691"
+        },
+        {
+            "duration": 1800,
+            "total_distance": 578.739946633975,
+            "has_path": true,
+            "entry_mode": "Web",
+            "source": "RunKeeper",
+            "start_time": "Fri, 1 Aug 2014 06:53:05",
+            "total_calories": 59,
+            "type": "Running",
+            "uri": "/fitnessActivities/404833504"
+        }
+    ],
+    "size": 2
+}}

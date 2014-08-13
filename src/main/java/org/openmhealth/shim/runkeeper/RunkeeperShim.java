@@ -1,10 +1,13 @@
 package org.openmhealth.shim.runkeeper;
 
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.joda.time.DateTime;
-import org.openmhealth.shim.AccessParametersRepo;
-import org.openmhealth.shim.AuthorizationRequestParameters;
-import org.openmhealth.shim.AuthorizationRequestParametersRepo;
-import org.openmhealth.shim.OAuth2ShimBase;
+import org.openmhealth.shim.*;
 import org.springframework.http.*;
 import org.springframework.security.oauth2.client.OAuth2RestOperations;
 import org.springframework.security.oauth2.client.resource.OAuth2ProtectedResourceDetails;
@@ -12,10 +15,9 @@ import org.springframework.security.oauth2.client.resource.UserRedirectRequiredE
 import org.springframework.security.oauth2.client.token.AccessTokenRequest;
 import org.springframework.security.oauth2.client.token.RequestEnhancer;
 import org.springframework.security.oauth2.client.token.grant.code.AuthorizationCodeAccessTokenProvider;
-import org.springframework.security.oauth2.client.token.grant.code.AuthorizationCodeResourceDetails;
 import org.springframework.util.MultiValueMap;
-import org.springframework.util.StringUtils;
 
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -77,26 +79,99 @@ public class RunkeeperShim extends OAuth2ShimBase {
         return RUNKEEPER_SCOPES;
     }
 
+
+    public enum RunkeeperDataType implements ShimDataType {
+
+        ACTIVITY("application/vnd.com.runkeeper.FitnessActivityFeed+json",
+            "fitnessActivities",
+            new JsonDeserializer<ShimDataResponse>() {
+                @Override
+                public ShimDataResponse deserialize(JsonParser jsonParser,
+                                                    DeserializationContext ctxt)
+                    throws IOException {
+                    return ShimDataResponse.empty();
+                }
+            }),
+
+        WEIGHT(
+            "application/vnd.com.runkeeper.WeightSetFeed+json",
+            "weight",
+            new JsonDeserializer<ShimDataResponse>() {
+                @Override
+                public ShimDataResponse deserialize(JsonParser jsonParser, DeserializationContext ctxt)
+                    throws IOException {
+                    return ShimDataResponse.empty();
+                }
+            });
+
+        private String dataTypeHeader;
+
+        private String endPointUrl;
+
+        private JsonDeserializer<ShimDataResponse> normalizer;
+
+        RunkeeperDataType(String dataTypeHeader, String endPointUrl,
+                          JsonDeserializer<ShimDataResponse> normalizer) {
+            this.dataTypeHeader = dataTypeHeader;
+            this.endPointUrl = endPointUrl;
+            this.normalizer = normalizer;
+        }
+
+        @Override
+        public JsonDeserializer<ShimDataResponse> getNormalizer() {
+            return normalizer;
+        }
+
+        public String getDataTypeHeader() {
+            return dataTypeHeader;
+        }
+
+        public String getEndPointUrl() {
+            return endPointUrl;
+        }
+    }
+
+
     public AuthorizationCodeAccessTokenProvider getAuthorizationCodeAccessTokenProvider() {
         AuthorizationCodeAccessTokenProvider provider = new AuthorizationCodeAccessTokenProvider();
         provider.setTokenRequestEnhancer(new RunkeeperTokenRequestEnhancer());
         return provider;
     }
 
-    protected ResponseEntity<String> getData(OAuth2RestOperations restTemplate, Map<String, Object> params) {
+    @Override
+    public ShimDataRequest getTriggerDataRequest() {
+        ShimDataRequest shimDataRequest = new ShimDataRequest();
+        shimDataRequest.setDataTypeKey(RunkeeperDataType.ACTIVITY.toString());
+        shimDataRequest.setNumToReturn(1l);
+        return shimDataRequest;
+    }
+
+    protected ResponseEntity<ShimDataResponse> getData(OAuth2RestOperations restTemplate,
+                                                       ShimDataRequest shimDataRequest) throws ShimException {
+
+        String dataTypeKey = shimDataRequest.getDataTypeKey().trim().toUpperCase();
+
+        RunkeeperDataType runkeeperDataType;
+        try {
+            runkeeperDataType = RunkeeperDataType.valueOf(dataTypeKey);
+        } catch (NullPointerException | IllegalArgumentException e) {
+            throw new ShimException("Null or Invalid data type parameter: "
+                + dataTypeKey + " in shimDataRequest, cannot retrieve data.");
+        }
+
         String urlRequest = DATA_URL;
-        urlRequest += "/fitnessActivities?";
+        urlRequest += "/" + runkeeperDataType.getEndPointUrl() + "?";
 
         HttpHeaders headers = new HttpHeaders();
-        headers.set("Accept", RUNKEEPER_SCOPES.get(0));
+        headers.set("Accept", runkeeperDataType.getDataTypeHeader());
 
         long numToSkip = 0;
-        long numToReturn = 3;
+        long numToReturn = 50;
 
         Calendar cal = Calendar.getInstance();
-        cal.set(2014, Calendar.AUGUST, 1);
+        cal.set(2014, Calendar.AUGUST, 10);
         Date endDate = new Date(cal.getTimeInMillis());
-        cal.add(Calendar.DATE, -1);
+        cal.add(Calendar.DATE, -11);
         Date startDate = new Date(cal.getTimeInMillis());
 
         DateTime startTime = new DateTime(startDate.getTime());
@@ -116,14 +191,22 @@ public class RunkeeperShim extends OAuth2ShimBase {
         urlRequest += "".equals(urlParams) ?
             "" : ("?" + urlParams.substring(1, urlParams.length()));
 
+        ObjectMapper objectMapper = new ObjectMapper();
+
         ResponseEntity<byte[]> response = restTemplate.exchange(
             urlRequest,
             HttpMethod.GET,
             new HttpEntity<byte[]>(headers),
             byte[].class);
 
-        String jsonString = new String(response.getBody());
-        return new ResponseEntity<String>(jsonString, HttpStatus.OK);
+        JsonNode json = null;
+        try {
+            json = objectMapper.readTree(response.getBody());
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new ShimException("Could not read response data.");
+        }
+        return new ResponseEntity<>(ShimDataResponse.result(json), HttpStatus.OK);
     }
 
     protected AuthorizationRequestParameters getAuthorizationRequestParameters(

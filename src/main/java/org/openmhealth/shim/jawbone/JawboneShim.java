@@ -1,9 +1,9 @@
 package org.openmhealth.shim.jawbone;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.openmhealth.shim.*;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.security.oauth2.client.DefaultOAuth2ClientContext;
 import org.springframework.security.oauth2.client.OAuth2RestOperations;
 import org.springframework.security.oauth2.client.OAuth2RestTemplate;
@@ -20,6 +20,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -82,7 +83,16 @@ public class JawboneShim extends OAuth2ShimBase {
         return new JawboneAuthorizationCodeAccessTokenProvider();
     }
 
-    protected ResponseEntity<String> getData(OAuth2RestOperations restTemplate, Map<String, Object> params) {
+    @Override
+    public ShimDataRequest getTriggerDataRequest() {
+        ShimDataRequest shimDataRequest = new ShimDataRequest();
+        shimDataRequest.setDataTypeKey("body_events");
+        shimDataRequest.setNumToReturn(1l);
+        return shimDataRequest;
+    }
+
+    protected ResponseEntity<ShimDataResponse> getData(OAuth2RestOperations restTemplate,
+                                                       ShimDataRequest shimDataRequest) throws ShimException {
         String urlRequest = DATA_URL;
         urlRequest += "body_events?";
 
@@ -94,7 +104,18 @@ public class JawboneShim extends OAuth2ShimBase {
         urlRequest += "&start_time=" + startTimeTs;
         urlRequest += "&end_time=" + endTimeTs;
         urlRequest += "&limit=" + numToReturn;
-        return restTemplate.getForEntity(urlRequest, String.class);
+
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        ResponseEntity<byte[]> responseEntity = restTemplate.getForEntity(urlRequest, byte[].class);
+        JsonNode json = null;
+        try {
+            json = objectMapper.readTree(responseEntity.getBody());
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new ShimException("Could not read response data.");
+        }
+        return new ResponseEntity<>(ShimDataResponse.result(json), HttpStatus.OK);
     }
 
     protected AuthorizationRequestParameters getAuthorizationRequestParameters(

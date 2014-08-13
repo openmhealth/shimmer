@@ -1,6 +1,7 @@
 package org.openmhealth.shim;
 
 
+import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.client.DefaultOAuth2ClientContext;
@@ -16,10 +17,7 @@ import org.springframework.security.oauth2.common.exceptions.OAuth2Exception;
 import org.springframework.security.oauth2.common.util.SerializationUtils;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Common code for all OAuth2.0 based shims.
@@ -39,15 +37,16 @@ public abstract class OAuth2ShimBase implements Shim, OAuth2Shim {
     protected abstract AuthorizationRequestParameters getAuthorizationRequestParameters(
         final String username, final UserRedirectRequiredException exception);
 
-    protected abstract ResponseEntity<String> getData(
-        OAuth2RestOperations restTemplate, Map<String, Object> params);
+    protected abstract ResponseEntity<ShimDataResponse> getData(
+        OAuth2RestOperations restTemplate, ShimDataRequest shimDataRequest) throws ShimException;
 
     @Override
     public AuthorizationRequestParameters getAuthorizationRequestParameters(String username,
-                                                                            Map<String, String> addlParameters) {
+                                                                            Map<String, String> addlParameters)
+        throws ShimException {
         OAuth2RestOperations restTemplate = restTemplate();
         try {
-            trigger(restTemplate);
+            trigger(restTemplate, getTriggerDataRequest());
             return AuthorizationRequestParameters.authorized();
         } catch (UserRedirectRequiredException e) {
             /**
@@ -87,7 +86,9 @@ public abstract class OAuth2ShimBase implements Shim, OAuth2Shim {
     }
 
     @Override
-    public AuthorizationResponse handleAuthorizationResponse(HttpServletRequest servletRequest) {
+    public AuthorizationResponse handleAuthorizationResponse(HttpServletRequest servletRequest)
+        throws ShimException {
+
         String state = servletRequest.getParameter("state");
         String code = servletRequest.getParameter("code");
 
@@ -112,7 +113,7 @@ public abstract class OAuth2ShimBase implements Shim, OAuth2Shim {
             accessParameters.setStateKey(state);
             accessParametersRepo.save(accessParameters);
 
-            trigger(restTemplate);
+            trigger(restTemplate, getTriggerDataRequest());
 
             /**
              * By this line we will have an approved access token or
@@ -136,12 +137,12 @@ public abstract class OAuth2ShimBase implements Shim, OAuth2Shim {
     }
 
     @Override
-    public ShimDataResponse getData(ShimDataRequest shimDataRequest) {
-        return ShimDataResponse.result(getData(restTemplate(), Collections.<String, Object>emptyMap()));
+    public ShimDataResponse getData(ShimDataRequest shimDataRequest) throws ShimException {
+        return getData(restTemplate(), shimDataRequest).getBody();
     }
 
-    public void trigger(OAuth2RestOperations restTemplate) {
-        getData(restTemplate, null);
+    public void trigger(OAuth2RestOperations restTemplate, ShimDataRequest shimDataRequest) throws ShimException {
+        getData(restTemplate, shimDataRequest);
     }
 
     protected OAuth2RestOperations restTemplate(String stateKey, String code) {

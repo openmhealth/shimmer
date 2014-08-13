@@ -1,8 +1,8 @@
 spring:
   application:
     name: OMH OAuth2 Client
-#server:
-  #port: 8081
+server:
+  port: 8080
   # use a different path for the client (otherwise cookies are shared)
   #context_path: /client
 security:
