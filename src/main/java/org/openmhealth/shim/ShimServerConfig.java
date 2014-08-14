@@ -4,7 +4,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
 @Component
-@ConfigurationProperties(prefix = "org.openmhealth.shim.server")
+@ConfigurationProperties(prefix = "openmhealth.shim.server")
 public class ShimServerConfig {
 
     private String callbackUrlBase = "http://localhost:8083";

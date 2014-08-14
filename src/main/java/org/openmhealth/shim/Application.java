@@ -135,9 +135,9 @@ public class Application extends WebSecurityConfigurerAdapter {
              * required a client redirect we do it now, else just return
              * the authorization response.
              */
-            if (authParams.getRedirectUri() != null) {
+            if (authParams.getClientRedirectUrl() != null) {
                 try {
-                    servletResponse.sendRedirect(authParams.getRedirectUri());
+                    servletResponse.sendRedirect(authParams.getClientRedirectUrl());
                 } catch (IOException e) {
                     e.printStackTrace();
                     throw new ShimException("Error occurred redirecting to :"

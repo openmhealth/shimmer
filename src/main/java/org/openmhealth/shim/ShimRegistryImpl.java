@@ -20,6 +20,9 @@ public class ShimRegistryImpl implements ShimRegistry {
     @Autowired
     private AuthorizationRequestParametersRepo authParametersRepo;
 
+    @Autowired
+    private ShimServerConfig shimServerConfig;
+
     private LinkedHashMap<String, Shim> registryMap;
 
     public ShimRegistryImpl() {
@@ -27,12 +30,18 @@ public class ShimRegistryImpl implements ShimRegistry {
 
     private void init() {
         registryMap = new LinkedHashMap<String, Shim>();
-        registryMap.put(JawboneShim.SHIM_KEY, new JawboneShim(authParametersRepo, accessParametersRepo));
-        registryMap.put(RunkeeperShim.SHIM_KEY, new RunkeeperShim(authParametersRepo, accessParametersRepo));
-        registryMap.put(FatsecretShim.SHIM_KEY, new FatsecretShim(authParametersRepo));
-        registryMap.put(WithingsShim.SHIM_KEY, new WithingsShim(authParametersRepo));
-        registryMap.put(FitbitShim.SHIM_KEY, new FitbitShim(authParametersRepo));
-        registryMap.put(HealthvaultShim.SHIM_KEY, new HealthvaultShim(authParametersRepo));
+        registryMap.put(JawboneShim.SHIM_KEY,
+            new JawboneShim(authParametersRepo, accessParametersRepo, shimServerConfig));
+        registryMap.put(RunkeeperShim.SHIM_KEY,
+            new RunkeeperShim(authParametersRepo, accessParametersRepo, shimServerConfig));
+        registryMap.put(FatsecretShim.SHIM_KEY,
+            new FatsecretShim(authParametersRepo, shimServerConfig));
+        registryMap.put(WithingsShim.SHIM_KEY,
+            new WithingsShim(authParametersRepo, shimServerConfig));
+        registryMap.put(FitbitShim.SHIM_KEY,
+            new FitbitShim(authParametersRepo, shimServerConfig));
+        registryMap.put(HealthvaultShim.SHIM_KEY,
+            new HealthvaultShim(authParametersRepo, shimServerConfig));
     }
 
     @Override
