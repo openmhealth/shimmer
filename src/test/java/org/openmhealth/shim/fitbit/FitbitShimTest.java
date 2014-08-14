@@ -37,6 +37,7 @@ public class FitbitShimTest {
     }
 
     @Test
+    @Ignore
     public void testConvert() throws IOException {
 
         ObjectMapper objectMapper = new ObjectMapper();

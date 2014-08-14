@@ -30,5 +30,12 @@ public class SchemaGeneratorTest {
             System.out.println(
                 mapper.writerWithDefaultPrettyPrinter().writeValueAsString(schema));
         }
+
+        /**
+         * Mongo commands for installing schema types to the registry
+         *
+         * db.registry.insert({"schema_id":"omh:normalized:activity","schema_version":1,"schema":{"type":"object","fields":[]}});
+         * db.registry.insert({"schema_id":"omh:normalized:number-of-steps","schema_version":1,"schema":{"type":"object","fields":[]}});
+         */
     }
 }

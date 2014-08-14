@@ -3,10 +3,12 @@ package org.openmhealth.schema.pojos;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonRootName;
 import org.openmhealth.schema.pojos.generic.LengthUnitValue;
 import org.openmhealth.schema.pojos.generic.TimeFrame;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonRootName(value = "activity", namespace = "omh:normalized")
 public class Activity {
 
     @JsonProperty(value = "activity-name", required = true)

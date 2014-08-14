@@ -1,5 +1,9 @@
 package org.openmhealth.shim.withings;
 
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.http.HttpEntity;
@@ -73,6 +77,37 @@ public class WithingsShim extends OAuth1ShimBase {
             accessParameters.getAdditionalParameters();
         addlParams = addlParams != null ? addlParams : new LinkedHashMap<String, Object>();
         addlParams.put("userid", request.getParameter("userid"));
+    }
+
+    public enum WithingsDataType implements ShimDataType {
+
+        BODY("getmeas", new JsonDeserializer<ShimDataResponse>() {
+            @Override
+            public ShimDataResponse deserialize(JsonParser jsonParser,
+                                                DeserializationContext ctxt)
+                throws IOException, JsonProcessingException {
+                return null;
+            }
+        });
+
+        private String endPointMethod;
+
+        private JsonDeserializer<ShimDataResponse> normalizer;
+
+        WithingsDataType(String endPointUrl,
+                         JsonDeserializer<ShimDataResponse> normalizer) {
+            this.endPointMethod = endPointUrl;
+            this.normalizer = normalizer;
+        }
+
+        @Override
+        public JsonDeserializer<ShimDataResponse> getNormalizer() {
+            return normalizer;
+        }
+
+        public String getEndPointMethod() {
+            return endPointMethod;
+        }
     }
 
     @Override

@@ -2,10 +2,12 @@ package org.openmhealth.schema.pojos;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonRootName;
 import org.openmhealth.schema.pojos.generic.NumericDescriptor;
 import org.openmhealth.schema.pojos.generic.TimeFrame;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonRootName(value = "blood-pressure", namespace = "omh:normalized")
 public class BloodPressure {
 
     @JsonProperty(value = "systolic-blood-pressure", required = false)
