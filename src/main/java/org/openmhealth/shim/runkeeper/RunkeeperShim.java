@@ -57,8 +57,9 @@ public class RunkeeperShim extends OAuth2ShimBase {
         ));
 
     public RunkeeperShim(AuthorizationRequestParametersRepo authorizationRequestParametersRepo,
-                         AccessParametersRepo accessParametersRepo) {
-        super(authorizationRequestParametersRepo, accessParametersRepo);
+                         AccessParametersRepo accessParametersRepo,
+                         ShimServerConfig shimServerConfig1) {
+        super(authorizationRequestParametersRepo, accessParametersRepo, shimServerConfig1);
     }
 
     @Override
@@ -295,7 +296,7 @@ public class RunkeeperShim extends OAuth2ShimBase {
             + "&client_id="
             + resource.getClientId()
             + "&response_type=code"
-            + "&redirect_uri=http://localhost:8080/authorize/" + getShimKey() + "/callback";
+            + "&redirect_uri=" + getCallbackUrl();
         AuthorizationRequestParameters parameters = new AuthorizationRequestParameters();
         parameters.setRedirectUri(exception.getRedirectUri());
         parameters.setStateKey(exception.getStateKey());

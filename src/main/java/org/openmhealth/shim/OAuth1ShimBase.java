@@ -28,8 +28,12 @@ public abstract class OAuth1ShimBase implements Shim, OAuth1Shim {
 
     private AuthorizationRequestParametersRepo authorizationRequestParametersRepo;
 
-    protected OAuth1ShimBase(AuthorizationRequestParametersRepo authorizationRequestParametersRepo) {
+    private ShimServerConfig shimServerConfig;
+
+    protected OAuth1ShimBase(AuthorizationRequestParametersRepo authorizationRequestParametersRepo,
+                             ShimServerConfig shimServerConfig) {
         this.authorizationRequestParametersRepo = authorizationRequestParametersRepo;
+        this.shimServerConfig = shimServerConfig;
     }
 
     @Override
@@ -43,8 +47,7 @@ public abstract class OAuth1ShimBase implements Shim, OAuth1Shim {
 
         HttpRequestBase tokenRequest = null;
         try {
-            String callbackUrl =
-                "http://localhost:8080/authorize/" + getShimKey() + "/callback?state=" + stateKey;
+            String callbackUrl = shimServerConfig.getCallbackUrl(getShimKey(), stateKey);
 
             Map<String, String> requestTokenParameters = new HashMap<>();
             requestTokenParameters.put("oauth_callback", callbackUrl);

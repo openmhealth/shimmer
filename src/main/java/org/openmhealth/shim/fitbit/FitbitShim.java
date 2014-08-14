@@ -48,8 +48,9 @@ public class FitbitShim extends OAuth1ShimBase {
 
     public static final String FITBIT_CLIENT_SECRET = "455a383f80de45d6a4f9b09e841da1f4";
 
-    public FitbitShim(AuthorizationRequestParametersRepo authorizationRequestParametersRepo) {
-        super(authorizationRequestParametersRepo);
+    public FitbitShim(AuthorizationRequestParametersRepo authorizationRequestParametersRepo,
+                      ShimServerConfig shimServerConfig) {
+        super(authorizationRequestParametersRepo, shimServerConfig);
     }
 
     @Override

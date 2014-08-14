@@ -63,15 +63,17 @@ public class HealthvaultShim implements Shim {
 
     private Connection connection = ConnectionFactory.getConnection();
 
-    //private static Map<String, AuthorizationRequestParameters> AUTH_PARAMS_REPO = new LinkedHashMap<>();
-
     private static DateTimeFormatter formatterMins = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm");
     private static DateTimeFormatter formatterDate = DateTimeFormat.forPattern("yyyy-MM-dd");
 
     private AuthorizationRequestParametersRepo authorizationRequestParametersRepo;
 
-    public HealthvaultShim(AuthorizationRequestParametersRepo authorizationRequestParametersRepo) {
+    private ShimServerConfig shimServerConfig;
+
+    public HealthvaultShim(AuthorizationRequestParametersRepo authorizationRequestParametersRepo,
+                           ShimServerConfig shimServerConfig) {
         this.authorizationRequestParametersRepo = authorizationRequestParametersRepo;
+        this.shimServerConfig = shimServerConfig;
     }
 
     @Override
@@ -464,9 +466,7 @@ public class HealthvaultShim implements Shim {
         authParams.setStateKey(stateKey);
 
         //Callback URL
-        String callbackUrl = "http://localhost:8080/authorize/"
-            + getShimKey() + "/callback?state=" + stateKey;
-
+        String callbackUrl = shimServerConfig.getCallbackUrl(getShimKey(),stateKey);
         authParams.setAuthorizationUrl(getAuthorizationUrl(callbackUrl, ACTION_QS));
 
         authorizationRequestParametersRepo.save(authParams);

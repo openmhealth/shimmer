@@ -1,7 +1,6 @@
 package org.openmhealth.shim;
 
 
-import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.client.DefaultOAuth2ClientContext;
@@ -17,7 +16,9 @@ import org.springframework.security.oauth2.common.exceptions.OAuth2Exception;
 import org.springframework.security.oauth2.common.util.SerializationUtils;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Map;
 
 /**
  * Common code for all OAuth2.0 based shims.
@@ -28,10 +29,14 @@ public abstract class OAuth2ShimBase implements Shim, OAuth2Shim {
 
     private AccessParametersRepo accessParametersRepo;
 
+    protected ShimServerConfig shimServerConfig;
+
     protected OAuth2ShimBase(AuthorizationRequestParametersRepo authorizationRequestParametersRepo,
-                             AccessParametersRepo accessParametersRepo) {
+                             AccessParametersRepo accessParametersRepo,
+                             ShimServerConfig shimServerConfig) {
         this.authorizationRequestParametersRepo = authorizationRequestParametersRepo;
         this.accessParametersRepo = accessParametersRepo;
+        this.shimServerConfig = shimServerConfig;
     }
 
     protected abstract AuthorizationRequestParameters getAuthorizationRequestParameters(
@@ -39,6 +44,10 @@ public abstract class OAuth2ShimBase implements Shim, OAuth2Shim {
 
     protected abstract ResponseEntity<ShimDataResponse> getData(
         OAuth2RestOperations restTemplate, ShimDataRequest shimDataRequest) throws ShimException;
+
+    protected String getCallbackUrl() {
+        return shimServerConfig.getCallbackUrl(getShimKey());
+    }
 
     @Override
     public AuthorizationRequestParameters getAuthorizationRequestParameters(String username,

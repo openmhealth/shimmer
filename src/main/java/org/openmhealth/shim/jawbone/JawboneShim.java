@@ -45,8 +45,9 @@ public class JawboneShim extends OAuth2ShimBase {
             "cardiac_read", "meal_read", "move_read", "sleep_read"));
 
     public JawboneShim(AuthorizationRequestParametersRepo authorizationRequestParametersRepo,
-                       AccessParametersRepo accessParametersRepo) {
-        super(authorizationRequestParametersRepo, accessParametersRepo);
+                       AccessParametersRepo accessParametersRepo,
+                       ShimServerConfig shimServerConfig1) {
+        super(authorizationRequestParametersRepo, accessParametersRepo, shimServerConfig1);
     }
 
     @Override
@@ -129,7 +130,7 @@ public class JawboneShim extends OAuth2ShimBase {
             + resource.getClientId()
             + "&response_type=code"
             + "&scope=" + StringUtils.collectionToDelimitedString(resource.getScope(), " ")
-            + "&redirect_uri=http://localhost:8080/authorize/" + getShimKey() + "/callback";
+            + "&redirect_uri=" + getCallbackUrl();
         AuthorizationRequestParameters parameters = new AuthorizationRequestParameters();
         parameters.setRedirectUri(exception.getRedirectUri());
         parameters.setStateKey(exception.getStateKey());

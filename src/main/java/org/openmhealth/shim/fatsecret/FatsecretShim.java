@@ -34,8 +34,9 @@ public class FatsecretShim extends OAuth1ShimBase {
 
     public static final String FATSECRET_CLIENT_SECRET = "c16dd2eeea804a7cba1180293d4b770c";
 
-    public FatsecretShim(AuthorizationRequestParametersRepo authorizationRequestParametersRepo) {
-        super(authorizationRequestParametersRepo);
+    public FatsecretShim(AuthorizationRequestParametersRepo authorizationRequestParametersRepo,
+                         ShimServerConfig shimServerConfig) {
+        super(authorizationRequestParametersRepo, shimServerConfig);
     }
 
     @Override
