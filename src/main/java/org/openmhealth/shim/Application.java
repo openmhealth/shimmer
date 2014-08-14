@@ -13,7 +13,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 @Configuration
 @EnableAutoConfiguration
@@ -46,7 +50,10 @@ public class Application extends WebSecurityConfigurerAdapter {
     /**
      * Endpoint for triggering domain approval.
      *
-     * @param shim - The shim registry key of the shim we're approving
+     * @param username          - The user record for which we're authorizing a shim.
+     * @param clientRedirectUrl -  The URL to which the external shim client (i.e, hibpone) will
+     *                          be redirected after authorization is complete.
+     * @param shim              - The shim registry key of the shim we're approving
      * @return - AuthorizationRequest parameters, including a boolean
      * flag if already authorized.
      */
@@ -54,6 +61,8 @@ public class Application extends WebSecurityConfigurerAdapter {
     public
     @ResponseBody
     AuthorizationRequestParameters authorize(@RequestParam(value = "username") String username,
+                                             @RequestParam(value = "client_redirect_url", defaultValue = "oob")
+                                             String clientRedirectUrl,
                                              @PathVariable("shim") String shim) throws ShimException {
         setPassThroughAuthentication(username, shim);
         AuthorizationRequestParameters authParams =
@@ -64,8 +73,29 @@ public class Application extends WebSecurityConfigurerAdapter {
          * re-fetched via stateKey upon approval.
          */
         authParams.setUsername(username);
+        authParams.setClientRedirectUrl(clientRedirectUrl);
         authParametersRepo.save(authParams);
         return authParams;
+    }
+
+    /**
+     * Endpoint for removing authorizations for a given user and shim.
+     *
+     * @param username - The user record for which we're removing shim access.
+     * @param shim     - The shim registry key of the shim authorization we're removing.
+     * @return - Simple response message.
+     */
+    @RequestMapping(value = "/de-authorize/{shim}", method = RequestMethod.DELETE)
+    public
+    @ResponseBody
+    List<String> removeAuthorization(@RequestParam(value = "username") String username,
+                                     @PathVariable("shim") String shim) throws ShimException {
+        List<AccessParameters> accessParameters =
+            accessParametersRepo.findAllByUsernameAndShimKey(username, shim);
+        for (AccessParameters accessParameter : accessParameters) {
+            accessParametersRepo.delete(accessParameter);
+        }
+        return Arrays.asList("Success: Authorization Removed.");
     }
 
     /**
@@ -80,7 +110,8 @@ public class Application extends WebSecurityConfigurerAdapter {
     public
     @ResponseBody
     AuthorizationResponse approve(@PathVariable("shim") String shim,
-                                  HttpServletRequest servletRequest) throws ShimException {
+                                  HttpServletRequest servletRequest,
+                                  HttpServletResponse servletResponse) throws ShimException {
         String stateKey = servletRequest.getParameter("state");
         AuthorizationRequestParameters authParams = authParametersRepo.findByStateKey(stateKey);
         if (authParams == null) {
@@ -98,6 +129,22 @@ public class Application extends WebSecurityConfigurerAdapter {
             response.getAccessParameters().setUsername(authParams.getUsername());
             response.getAccessParameters().setShimKey(shim);
             accessParametersRepo.save(response.getAccessParameters());
+
+            /**
+             * At this point the authorization is complete, if the authorization request
+             * required a client redirect we do it now, else just return
+             * the authorization response.
+             */
+            if (authParams.getRedirectUri() != null) {
+                try {
+                    servletResponse.sendRedirect(authParams.getRedirectUri());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    throw new ShimException("Error occurred redirecting to :"
+                        + authParams.getRedirectUri());
+                }
+                return null;
+            }
             return response;
         }
     }
