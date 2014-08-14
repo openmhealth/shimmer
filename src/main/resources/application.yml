@@ -1,10 +1,11 @@
 spring:
   application:
     name: OMH OAuth2 Client
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/omh_dsu
 server:
-  port: 8080
-  # use a different path for the client (otherwise cookies are shared)
-  #context_path: /client
+  port: 8083
 security:
   basic:
     enabled: false
