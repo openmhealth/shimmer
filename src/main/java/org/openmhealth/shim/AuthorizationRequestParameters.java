@@ -22,6 +22,8 @@ public class AuthorizationRequestParameters {
 
     private String authorizationUrl;
 
+    private String clientRedirectUrl;
+
     private boolean isAuthorized = false;
 
     private byte[] serializedRequest;
@@ -96,6 +98,14 @@ public class AuthorizationRequestParameters {
 
     public void setSerializedRequest(byte[] serializedRequest) {
         this.serializedRequest = serializedRequest;
+    }
+
+    public String getClientRedirectUrl() {
+        return clientRedirectUrl;
+    }
+
+    public void setClientRedirectUrl(String clientRedirectUrl) {
+        this.clientRedirectUrl = clientRedirectUrl;
     }
 
     public static AuthorizationRequestParameters authorized() {
