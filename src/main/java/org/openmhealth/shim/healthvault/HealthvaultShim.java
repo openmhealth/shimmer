@@ -146,9 +146,8 @@ public class HealthvaultShim implements Shim {
                     }
 
                     Map<String, Object> results = new HashMap<>();
-                    //todo: Change this to constants driven elements!
-                    results.put("activity", activities);
-                    results.put("number-of-steps", numberOfStepsList);
+                    results.put(Activity.SCHEMA_ACTIVITY, activities);
+                    results.put(NumberOfSteps.SCHEMA_NUMBER_OF_STEPS, numberOfStepsList);
                     return ShimDataResponse.result(results);
                 }
             }
@@ -191,9 +190,8 @@ public class HealthvaultShim implements Shim {
                             .setTimeTaken(dateTimeWhen).build());
                     }
                     Map<String, Object> results = new HashMap<>();
-                    //todo: Change this to constants driven elements!
-                    results.put("blood-pressure", bloodPressures);
-                    results.put("heart-rate", heartRates);
+                    results.put(BloodPressure.SCHEMA_BLOOD_PRESSURE, bloodPressures);
+                    results.put(HeartRate.SCHEMA_HEART_RATE, heartRates);
                     return ShimDataResponse.result(results);
                 }
             }
@@ -230,7 +228,9 @@ public class HealthvaultShim implements Shim {
 
                         bodyHeights.add(bodyHeight);
                     }
-                    return ShimDataResponse.result(bodyHeights);
+                    Map<String, Object> results = new HashMap<>();
+                    results.put(BodyHeight.SCHEMA_BODY_HEIGHT, bodyHeights);
+                    return ShimDataResponse.result(results);
                 }
             }
         ),
@@ -292,8 +292,7 @@ public class HealthvaultShim implements Shim {
                             .build());
                     }
                     Map<String, Object> results = new HashMap<>();
-                    //todo: Change this to constants driven elements!
-                    results.put("blood-glucose", bloodGlucoses);
+                    results.put(BloodGlucose.SCHEMA_BLOOD_GLUCOSE, bloodGlucoses);
                     return ShimDataResponse.result(results);
                 }
             }
@@ -331,7 +330,9 @@ public class HealthvaultShim implements Shim {
 
                         bodyWeights.add(bodyWeight);
                     }
-                    return ShimDataResponse.result(bodyWeights);
+                    Map<String, Object> results = new HashMap<>();
+                    results.put(BodyWeight.SCHEMA_BODY_WEIGHT, bodyWeights);
+                    return ShimDataResponse.result(results);
                 }
             });
 
@@ -365,15 +366,31 @@ public class HealthvaultShim implements Shim {
                 + " in shimDataRequest, cannot retrieve data.");
         }
 
+        final DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd'T'hh:mm:ss");
+
+        /***
+         * Setup default date parameters
+         */
+        DateTime startDate = shimDataRequest.getStartDate() == null ?
+            new DateTime(new Date().getTime()) : shimDataRequest.getStartDate();
+        String dateStart = startDate.toString(formatter);
+
+        DateTime endDate = shimDataRequest.getEndDate() == null ?
+            startDate.minusDays(1) : shimDataRequest.getEndDate();
+        String dateEnd = endDate.toString(formatter);
+
+        long numToReturn = shimDataRequest.getNumToReturn() == null ? 50 :
+            shimDataRequest.getNumToReturn();
+
         Request request = new Request();
         request.setMethodName("GetThings");
         request.setInfo(
             "<info>" +
-                "<group max=\"30\">" +
+                "<group max=\"" + numToReturn + "\">" +
                 "<filter>" +
                 "<type-id>" + healthVaultDataType.getDataTypeId() + "</type-id>" +
-                "<eff-date-min>2014-08-04T00:00:00</eff-date-min>" +
-                "<eff-date-max>2014-08-10T23:59:00</eff-date-max>" +
+                "<eff-date-min>" + dateStart + "</eff-date-min>" +
+                "<eff-date-max>" + dateEnd + "</eff-date-max>" +
                 "</filter>" +
                 "<format>" +
                 "<section>core</section>" +
@@ -476,7 +493,6 @@ public class HealthvaultShim implements Shim {
         authParams.setAuthorizationUrl(getAuthorizationUrl(callbackUrl, ACTION_QS));
 
         authorizationRequestParametersRepo.save(authParams);
-        //AUTH_PARAMS_REPO.put(stateKey, authParams);
 
         return authParams;
     }
@@ -487,7 +503,6 @@ public class HealthvaultShim implements Shim {
 
         String stateKey = servletRequest.getParameter("state");
 
-        //AuthorizationRequestParameters authParams = AUTH_PARAMS_REPO.get(stateKey);
         AuthorizationRequestParameters authParams =
             authorizationRequestParametersRepo.findByStateKey(stateKey);
         if (authParams == null) {
