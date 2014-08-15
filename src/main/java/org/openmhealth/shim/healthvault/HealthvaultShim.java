@@ -93,8 +93,7 @@ public class HealthvaultShim implements Shim {
 
     @Override
     public ShimDataType[] getShimDataTypes() {
-        //return HealthVaultDataType.values();
-        return new HealthVaultDataType[]{HealthVaultDataType.ACTIVITY};
+        return HealthVaultDataType.values();
     }
 
     public enum HealthVaultDataType implements ShimDataType {
@@ -144,7 +143,6 @@ public class HealthvaultShim implements Shim {
                         activities.add(activity);
                         numberOfStepsList.add(numberOfSteps);
                     }
-
                     Map<String, Object> results = new HashMap<>();
                     results.put(Activity.SCHEMA_ACTIVITY, activities);
                     results.put(NumberOfSteps.SCHEMA_NUMBER_OF_STEPS, numberOfStepsList);
