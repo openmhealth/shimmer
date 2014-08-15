@@ -134,10 +134,8 @@ public class RunkeeperShim extends OAuth2ShimBase {
 
                         activities.add(activity);
                     }
-
                     Map<String, Object> results = new HashMap<>();
-                    //todo: Change this to constants driven elements!
-                    results.put("activity", activities);
+                    results.put(Activity.SCHEMA_ACTIVITY, activities);
                     return ShimDataResponse.result(results);
                 }
             }),
@@ -173,7 +171,9 @@ public class RunkeeperShim extends OAuth2ShimBase {
 
                         bodyWeights.add(bodyWeight);
                     }
-                    return ShimDataResponse.result(bodyWeights);
+                    Map<String, Object> results = new HashMap<>();
+                    results.put(BodyWeight.SCHEMA_BODY_WEIGHT, bodyWeights);
+                    return ShimDataResponse.result(results);
                 }
             });
 
@@ -238,32 +238,34 @@ public class RunkeeperShim extends OAuth2ShimBase {
         }
 
         String urlRequest = DATA_URL;
-        urlRequest += "/" + runkeeperDataType.getEndPointUrl() + "?";
+        urlRequest += "/" + runkeeperDataType.getEndPointUrl();
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Accept", runkeeperDataType.getDataTypeHeader());
 
-        long numToSkip = 0;
-        long numToReturn = 50;
+        final DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd");
 
-        Calendar cal = Calendar.getInstance();
-        cal.set(2014, Calendar.AUGUST, 10);
-        Date endDate = new Date(cal.getTimeInMillis());
-        cal.add(Calendar.DATE, -11);
-        Date startDate = new Date(cal.getTimeInMillis());
+        /***
+         * Setup default date parameters
+         */
+        DateTime today = new DateTime();
 
-        DateTime startTime = new DateTime(startDate.getTime());
-        DateTime endTime = new DateTime(endDate.getTime());
+        DateTime startDate = shimDataRequest.getStartDate() == null ?
+            today.minusDays(1) : shimDataRequest.getStartDate();
+        String dateStart = startDate.toString(formatter);
 
-        DateFormat fmt = new SimpleDateFormat("yyyy-MM-dd");
-        DateTime altEndDate = new DateTime(startDate).plusMillis(1);
+        DateTime endDate = shimDataRequest.getEndDate() == null ?
+            today.plusDays(1) : shimDataRequest.getEndDate();
+        String dateEnd = endDate.toString(formatter);
+
+        long numToReturn = shimDataRequest.getNumToReturn() == null ||
+            shimDataRequest.getNumToReturn() <= 0 ? 100 :
+            shimDataRequest.getNumToReturn();
+
         String urlParams = "";
 
-        urlParams +=
-            "&noEarlierThan=" + fmt.format(startTime.toDate());
-        //urlParams += "&noLaterThan="
-        //    + (endTime != null ? fmt.format(endTime.toDate()) : fmt.format(altEndDate.toDate()));
-        urlParams += "&noLaterThan=" + fmt.format(endTime.toDate());
+        urlParams += "&noEarlierThan=" + dateStart;
+        urlParams += "&noLaterThan=" + dateEnd;
         urlParams += "&pageSize=" + numToReturn;
 
         urlRequest += "".equals(urlParams) ?
@@ -282,9 +284,13 @@ public class RunkeeperShim extends OAuth2ShimBase {
                 SimpleModule module = new SimpleModule();
                 module.addDeserializer(ShimDataResponse.class, runkeeperDataType.getNormalizer());
                 objectMapper.registerModule(module);
+                return new ResponseEntity<>(objectMapper.readValue(response.getBody(),
+                    ShimDataResponse.class), HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(
+                    ShimDataResponse.result(objectMapper.readTree(response.getBody())), HttpStatus.OK);
             }
-            return new ResponseEntity<>(objectMapper.readValue(response.getBody(),
-                ShimDataResponse.class), HttpStatus.OK);
+
         } catch (IOException e) {
             e.printStackTrace();
             throw new ShimException("Could not read response data.");

@@ -380,7 +380,7 @@ public class HealthvaultShim implements Shim {
         String dateEnd = endDate.toString(formatter);
 
         long numToReturn = shimDataRequest.getNumToReturn() == null ||
-            shimDataRequest.getNumToReturn() <= 0 ? 50 :
+            shimDataRequest.getNumToReturn() <= 0 ? 100 :
             shimDataRequest.getNumToReturn();
 
         Request request = new Request();
