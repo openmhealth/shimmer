@@ -73,6 +73,11 @@ public class WithingsShim extends OAuth1ShimBase {
     }
 
     @Override
+    public ShimDataType[] getShimDataTypes() {
+        return null;
+    }
+
+    @Override
     protected void loadAdditionalAccessParameters(HttpServletRequest request, AccessParameters accessParameters) {
         Map<String, Object> addlParams =
             accessParameters.getAdditionalParameters();

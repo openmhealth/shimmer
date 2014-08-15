@@ -219,6 +219,11 @@ public class RunkeeperShim extends OAuth2ShimBase {
         return shimDataRequest;
     }
 
+    @Override
+    public ShimDataType[] getShimDataTypes() {
+        return RunkeeperDataType.values();
+    }
+
     protected ResponseEntity<ShimDataResponse> getData(OAuth2RestOperations restTemplate,
                                                        ShimDataRequest shimDataRequest) throws ShimException {
 
@@ -316,7 +321,7 @@ public class RunkeeperShim extends OAuth2ShimBase {
             form.set("client_id", resource.getClientId());
             form.set("client_secret", resource.getClientSecret());
             form.set("grant_type", resource.getGrantType());
-            form.set("redirect_uri", "http://localhost:8080/authorize/" + getShimKey() + "/callback");
+            form.set("redirect_uri", getCallbackUrl());
         }
     }
 }

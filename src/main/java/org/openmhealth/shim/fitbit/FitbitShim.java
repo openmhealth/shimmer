@@ -99,6 +99,11 @@ public class FitbitShim extends OAuth1ShimBase {
     private static DateTimeFormatter formatterMins =
         DateTimeFormat.forPattern("yyyy-MM-dd HH:mm");
 
+    @Override
+    public ShimDataType[] getShimDataTypes() {
+        return FitbitDataType.values();
+    }
+
     public enum FitbitDataType implements ShimDataType {
 
         WEIGHT(

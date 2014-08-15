@@ -1,14 +1,16 @@
 package org.openmhealth.schema.pojos;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
+import org.joda.time.DateTime;
 import org.openmhealth.schema.pojos.generic.NumericDescriptor;
 import org.openmhealth.schema.pojos.generic.TimeFrame;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonRootName(value = "blood-pressure", namespace = "omh:normalized")
-public class BloodPressure {
+@JsonRootName(value = BloodPressure.SCHEMA_BLOOD_PRESSURE, namespace = DataPoint.NAMESPACE)
+public class BloodPressure implements DataPoint {
 
     @JsonProperty(value = "systolic-blood-pressure", required = false)
     private SystolicBloodPressure systolic;
@@ -25,10 +27,24 @@ public class BloodPressure {
     @JsonProperty(value = "numeric-descriptor", required = false)
     private NumericDescriptor numericDescriptor;
 
+    public static final String SCHEMA_BLOOD_PRESSURE = "blood-pressure";
+
     @JsonProperty(value = "notes", required = false)
     private String notes;
 
     public enum Position {sitting, lying_down, standing}
+
+    @Override
+    @JsonIgnore
+    public String getSchemaName() {
+        return SCHEMA_BLOOD_PRESSURE;
+    }
+
+    @Override
+    @JsonIgnore
+    public DateTime getTimeStamp() {
+        return effectiveTimeFrame.getStartTime();
+    }
 
     public TimeFrame getEffectiveTimeFrame() {
         return effectiveTimeFrame;

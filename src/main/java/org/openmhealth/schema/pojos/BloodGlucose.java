@@ -1,16 +1,18 @@
 package org.openmhealth.schema.pojos;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
+import org.joda.time.DateTime;
 import org.openmhealth.schema.pojos.generic.NumericDescriptor;
 import org.openmhealth.schema.pojos.generic.TimeFrame;
 
 import java.math.BigDecimal;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonRootName(value = "blood-glucose", namespace = "omh:normalized")
-public class BloodGlucose {
+@JsonRootName(value = BloodGlucose.SCHEMA_BLOOD_GLUCOSE, namespace = DataPoint.NAMESPACE)
+public class BloodGlucose implements DataPoint {
 
     @JsonProperty(value = "value", required = true)
     private BigDecimal value;
@@ -39,12 +41,26 @@ public class BloodGlucose {
 
     public enum Unit {mgdL, mmolL}
 
+    public static final String SCHEMA_BLOOD_GLUCOSE = "blood-glucose";
+
     public BloodGlucose() {
     }
 
     public BloodGlucose(BigDecimal value, Unit unit) {
         this.value = value;
         this.unit = unit;
+    }
+
+    @Override
+    @JsonIgnore
+    public String getSchemaName() {
+        return SCHEMA_BLOOD_GLUCOSE;
+    }
+
+    @Override
+    @JsonIgnore
+    public DateTime getTimeStamp() {
+        return effectiveTimeFrame.getStartTime();
     }
 
     public TimeFrame getEffectiveTimeFrame() {

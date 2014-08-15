@@ -92,6 +92,11 @@ public class JawboneShim extends OAuth2ShimBase {
         return shimDataRequest;
     }
 
+    @Override
+    public ShimDataType[] getShimDataTypes() {
+        return null;
+    }
+
     protected ResponseEntity<ShimDataResponse> getData(OAuth2RestOperations restTemplate,
                                                        ShimDataRequest shimDataRequest) throws ShimException {
         String urlRequest = DATA_URL;

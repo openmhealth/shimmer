@@ -5,4 +5,6 @@ import com.fasterxml.jackson.databind.JsonDeserializer;
 public interface ShimDataType {
 
     JsonDeserializer<ShimDataResponse> getNormalizer();
+
+    String name();
 }

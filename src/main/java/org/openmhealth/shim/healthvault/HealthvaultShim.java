@@ -91,6 +91,12 @@ public class HealthvaultShim implements Shim {
         return AUTHORIZE_URL;
     }
 
+    @Override
+    public ShimDataType[] getShimDataTypes() {
+        //return HealthVaultDataType.values();
+        return new HealthVaultDataType[]{HealthVaultDataType.ACTIVITY};
+    }
+
     public enum HealthVaultDataType implements ShimDataType {
 
         ACTIVITY(
@@ -426,7 +432,7 @@ public class HealthvaultShim implements Shim {
                         SimpleModule module = new SimpleModule();
                         module.addDeserializer(ShimDataResponse.class, healthVaultDataType.getNormalizer());
                         objectMapper.registerModule(module);
-                        return ShimDataResponse.result(objectMapper.readValue(thingsJson, ShimDataResponse.class));
+                        return objectMapper.readValue(thingsJson, ShimDataResponse.class);
                     } else {
                         return ShimDataResponse.result(objectMapper.readTree(thingsJson));
                     }
@@ -466,7 +472,7 @@ public class HealthvaultShim implements Shim {
         authParams.setStateKey(stateKey);
 
         //Callback URL
-        String callbackUrl = shimServerConfig.getCallbackUrl(getShimKey(),stateKey);
+        String callbackUrl = shimServerConfig.getCallbackUrl(getShimKey(), stateKey);
         authParams.setAuthorizationUrl(getAuthorizationUrl(callbackUrl, ACTION_QS));
 
         authorizationRequestParametersRepo.save(authParams);

@@ -1,7 +1,5 @@
 package org.openmhealth.shim;
 
-import org.joda.time.DateTime;
-
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
@@ -55,6 +53,8 @@ public interface Shim {
      * @return - a list of strings representing scopes.
      */
     List<String> getScopes();
+
+    ShimDataType[] getShimDataTypes();
 
     /**
      * Retrieve authorization parameter object so that an external

@@ -1,14 +1,16 @@
 package org.openmhealth.schema.pojos;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
+import org.joda.time.DateTime;
 import org.openmhealth.schema.pojos.generic.NumericDescriptor;
 import org.openmhealth.schema.pojos.generic.TimeFrame;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonRootName(value = "heart", namespace = "omh:normalized")
-public class HeartRate {
+@JsonRootName(value = HeartRate.SCHEMA_HEART_RATE, namespace = DataPoint.NAMESPACE)
+public class HeartRate implements DataPoint {
 
     @JsonProperty(value = "value", required = true)
     private Integer value;
@@ -25,12 +27,26 @@ public class HeartRate {
     @JsonProperty(value = "notes", required = false)
     private String notes;
 
+    public static final String SCHEMA_HEART_RATE = "heart-rate";
+
     public HeartRate() {
     }
 
     public HeartRate(Integer value, Unit unit) {
         this.value = value;
         this.unit = unit;
+    }
+
+    @Override
+    @JsonIgnore
+    public String getSchemaName() {
+        return SCHEMA_HEART_RATE;
+    }
+
+    @Override
+    @JsonIgnore
+    public DateTime getTimeStamp() {
+        return effectiveTimeFrame.getStartTime();
     }
 
     public NumericDescriptor getNumericDescriptor() {

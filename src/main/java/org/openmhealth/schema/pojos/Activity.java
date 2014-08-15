@@ -1,15 +1,17 @@
 package org.openmhealth.schema.pojos;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
+import org.joda.time.DateTime;
 import org.openmhealth.schema.pojos.generic.LengthUnitValue;
 import org.openmhealth.schema.pojos.generic.TimeFrame;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonRootName(value = "activity", namespace = "omh:normalized")
-public class Activity {
+@JsonRootName(value = Activity.SCHEMA_ACTIVITY, namespace = DataPoint.NAMESPACE)
+public class Activity implements DataPoint {
 
     @JsonProperty(value = "activity-name", required = true)
     private String activityName;
@@ -25,7 +27,21 @@ public class Activity {
     @JsonProperty("effective-time-frame")
     private TimeFrame effectiveTimeFrame;
 
+    public static final String SCHEMA_ACTIVITY = "activity";
+
     public Activity() {
+    }
+
+    @Override
+    @JsonIgnore
+    public String getSchemaName() {
+        return SCHEMA_ACTIVITY;
+    }
+
+    @Override
+    @JsonIgnore
+    public DateTime getTimeStamp() {
+        return effectiveTimeFrame.getStartTime();
     }
 
     public LengthUnitValue getDistance() {

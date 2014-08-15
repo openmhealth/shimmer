@@ -15,7 +15,7 @@ public class SchemaGeneratorTest {
     @Test
     public void test() throws JsonProcessingException {
 
-        List<Class<?>> standardSchemaPojos = Arrays.asList(Activity.class, BloodGlucose.class,
+        List<Class<? extends DataPoint>> standardSchemaPojos = Arrays.asList(Activity.class, BloodGlucose.class,
             BloodPressure.class, BodyHeight.class, BodyWeight.class, HeartRate.class, NumberOfSteps.class,
             SleepDuration.class);
 

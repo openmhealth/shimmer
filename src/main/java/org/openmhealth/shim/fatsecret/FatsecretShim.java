@@ -75,6 +75,11 @@ public class FatsecretShim extends OAuth1ShimBase {
     }
 
     @Override
+    public ShimDataType[] getShimDataTypes() {
+        return null;
+    }
+
+    @Override
     public ShimDataResponse getData(ShimDataRequest shimDataRequest) throws ShimException {
 
         long numToSkip = 0;
