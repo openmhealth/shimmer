@@ -36,6 +36,12 @@ public class SchemaGeneratorTest {
          *
          * db.registry.insert({"schema_id":"omh:normalized:activity","schema_version":1,"schema":{"type":"object","fields":[]}});
          * db.registry.insert({"schema_id":"omh:normalized:number-of-steps","schema_version":1,"schema":{"type":"object","fields":[]}});
+         * db.registry.insert({"schema_id":"omh:normalized:body-weight","schema_version":1,"schema":{"type":"object","fields":[]}});
+         * db.registry.insert({"schema_id":"omh:normalized:blood-pressure","schema_version":1,"schema":{"type":"object","fields":[]}});
+         * db.registry.insert({"schema_id":"omh:normalized:body-height","schema_version":1,"schema":{"type":"object","fields":[]}});
+         * db.registry.insert({"schema_id":"omh:normalized:blood-glucose","schema_version":1,"schema":{"type":"object","fields":[]}});
+         * db.registry.insert({"schema_id":"omh:normalized:sleep-duration","schema_version":1,"schema":{"type":"object","fields":[]}});
+         * db.registry.insert({"schema_id":"omh:normalized:heart-rate","schema_version":1,"schema":{"type":"object","fields":[]}});
          */
     }
 }

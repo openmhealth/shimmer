@@ -371,15 +371,18 @@ public class HealthvaultShim implements Shim {
         /***
          * Setup default date parameters
          */
+        DateTime today = new DateTime();
+
         DateTime startDate = shimDataRequest.getStartDate() == null ?
-            new DateTime(new Date().getTime()) : shimDataRequest.getStartDate();
+            today.minusDays(1) : shimDataRequest.getStartDate();
         String dateStart = startDate.toString(formatter);
 
         DateTime endDate = shimDataRequest.getEndDate() == null ?
-            startDate.minusDays(1) : shimDataRequest.getEndDate();
+            today.plusDays(1) : shimDataRequest.getEndDate();
         String dateEnd = endDate.toString(formatter);
 
-        long numToReturn = shimDataRequest.getNumToReturn() == null ? 50 :
+        long numToReturn = shimDataRequest.getNumToReturn() == null ||
+            shimDataRequest.getNumToReturn() <= 0 ? 50 :
             shimDataRequest.getNumToReturn();
 
         Request request = new Request();

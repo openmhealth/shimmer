@@ -1,5 +1,7 @@
 package org.openmhealth.shim;
 
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -35,6 +37,10 @@ public class Application extends WebSecurityConfigurerAdapter {
     @Autowired
     private ShimRegistry shimRegistry;
 
+    private static DateTimeFormatter formatterDate = DateTimeFormat.forPattern("yyyy-MM-dd");
+
+    private static final String REDIRECT_OOB = "oob";
+
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
     }
@@ -61,7 +67,8 @@ public class Application extends WebSecurityConfigurerAdapter {
     public
     @ResponseBody
     AuthorizationRequestParameters authorize(@RequestParam(value = "username") String username,
-                                             @RequestParam(value = "client_redirect_url", defaultValue = "oob")
+                                             @RequestParam(value = "client_redirect_url",
+                                                 defaultValue = REDIRECT_OOB)
                                              String clientRedirectUrl,
                                              @PathVariable("shim") String shim) throws ShimException {
         setPassThroughAuthentication(username, shim);
@@ -135,7 +142,8 @@ public class Application extends WebSecurityConfigurerAdapter {
              * required a client redirect we do it now, else just return
              * the authorization response.
              */
-            if (authParams.getClientRedirectUrl() != null) {
+            if (authParams.getClientRedirectUrl() != null &&
+               !REDIRECT_OOB.equals(authParams.getClientRedirectUrl())) {
                 try {
                     servletResponse.sendRedirect(authParams.getClientRedirectUrl());
                 } catch (IOException e) {
@@ -152,23 +160,52 @@ public class Application extends WebSecurityConfigurerAdapter {
     /**
      * Endpoint for retrieving data from shims.
      *
+     * @param username - User ID record for which to retrieve data, if not
+     *                 approved this will throw ShimException.
+     *                 <p/>
+     *                 todo: finish javadoc!
      * @return - The shim data response wrapper with data from the shim.
      */
     @RequestMapping(value = "/data/{shim}/{dataType}")
     public
     @ResponseBody
     ShimDataResponse data(@RequestParam(value = "username") String username,
+
                           @PathVariable("shim") String shim,
+
                           @PathVariable("dataType") String dataTypeKey,
+
                           @RequestParam(value = "normalize",
-                              required = false, defaultValue = "") String normalize,
-                          HttpServletRequest servletRequest) throws ShimException {
+                              required = false, defaultValue = "")
+                          String normalize,
+
+                          @RequestParam(value = "dateStart", required = false, defaultValue = "")
+                          String dateStart,
+
+                          @RequestParam(value = "dateEnd", required = false, defaultValue = "")
+                          String dateEnd,
+
+                          @RequestParam(value = "numToReturn", required = false, defaultValue = "50")
+                          Long numToReturn,
+
+                          HttpServletRequest servletRequest
+
+    ) throws ShimException {
+
         setPassThroughAuthentication(username, shim);
 
         ShimDataRequest shimDataRequest =
             ShimDataRequest.fromHttpRequest(servletRequest);
+
         shimDataRequest.setDataTypeKey(dataTypeKey);
         shimDataRequest.setNormalize(!"".equals(normalize));
+        if (!"".equals(dateStart)) {
+            shimDataRequest.setStartDate(formatterDate.parseDateTime(dateStart));
+        }
+        if (!"".equals(dateEnd)) {
+            shimDataRequest.setEndDate(formatterDate.parseDateTime(dateEnd));
+        }
+        shimDataRequest.setNumToReturn(numToReturn);
 
         AccessParameters accessParameters =
             accessParametersRepo.findByUsernameAndShimKey(
