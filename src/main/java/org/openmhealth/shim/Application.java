@@ -50,7 +50,8 @@ public class Application extends WebSecurityConfigurerAdapter {
         /**
          * Allow full anonymous authentication.
          */
-        http.authorizeRequests().anyRequest().permitAll();
+        http.csrf().disable()
+            .authorizeRequests().anyRequest().permitAll();
     }
 
     /**
