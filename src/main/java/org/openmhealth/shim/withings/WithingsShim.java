@@ -200,11 +200,13 @@ public class WithingsShim extends OAuth1ShimBase {
                                     break;
                             }
                         }
-                        BloodPressure bloodPressure = new BloodPressure();
-                        bloodPressure.setSystolic(systolic);
-                        bloodPressure.setDiastolic(diastolic);
-                        bloodPressure.setEffectiveTimeFrame(new TimeFrame(dateTime, null));
-                        bloodPressures.add(bloodPressure);
+                        if(systolic != null && diastolic != null){
+                            BloodPressure bloodPressure = new BloodPressure();
+                            bloodPressure.setSystolic(systolic);
+                            bloodPressure.setDiastolic(diastolic);
+                            bloodPressure.setEffectiveTimeFrame(new TimeFrame(dateTime, null));
+                            bloodPressures.add(bloodPressure);
+                        }
                     }
                     Map<String, Object> results = new HashMap<>();
                     results.put(BodyWeight.SCHEMA_BODY_WEIGHT, bodyWeights);
