@@ -13,13 +13,13 @@ import net.minidev.json.JSONObject;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
+import org.eclipse.jdt.internal.compiler.ast.TypeReference;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.openmhealth.schema.pojos.*;
-import org.openmhealth.schema.pojos.build.BodyHeightBuilder;
-import org.openmhealth.schema.pojos.build.BodyWeightBuilder;
-import org.openmhealth.schema.pojos.build.HeartRateBuilder;
+import org.openmhealth.schema.pojos.build.*;
+import org.openmhealth.schema.pojos.generic.DurationUnitValue;
 import org.openmhealth.schema.pojos.generic.LengthUnitValue;
 import org.openmhealth.schema.pojos.generic.MassUnitValue;
 import org.openmhealth.schema.pojos.generic.TimeFrame;
@@ -91,12 +91,13 @@ public class WithingsShim extends OAuth1ShimBase {
     @Override
     public ShimDataType[] getShimDataTypes() {
         return new ShimDataType[]{
-            WithingsDataType.BODY
+            WithingsDataType.BODY, WithingsDataType.INTRADAY, WithingsDataType.SLEEP
         };
     }
 
     @Override
-    protected void loadAdditionalAccessParameters(HttpServletRequest request, AccessParameters accessParameters) {
+    protected void loadAdditionalAccessParameters(
+        HttpServletRequest request, AccessParameters accessParameters) {
         Map<String, Object> addlParams =
             accessParameters.getAdditionalParameters();
         addlParams = addlParams != null ? addlParams : new LinkedHashMap<String, Object>();
@@ -200,7 +201,7 @@ public class WithingsShim extends OAuth1ShimBase {
                                     break;
                             }
                         }
-                        if(systolic != null && diastolic != null){
+                        if (systolic != null && diastolic != null) {
                             BloodPressure bloodPressure = new BloodPressure();
                             bloodPressure.setSystolic(systolic);
                             bloodPressure.setDiastolic(diastolic);
@@ -222,18 +223,47 @@ public class WithingsShim extends OAuth1ShimBase {
                 @Override
                 public ShimDataResponse deserialize(JsonParser jsonParser,
                                                     DeserializationContext ctxt)
-                    throws IOException, JsonProcessingException {
-                    return null;
+                    throws IOException {
+                    return ShimDataResponse.empty();
                 }
             }),
 
         INTRADAY("v2/measure?action=getintradayactivity", "startdate", "enddate", false, true,
             new JsonDeserializer<ShimDataResponse>() {
+
                 @Override
+                @SuppressWarnings("unchecked")
                 public ShimDataResponse deserialize(JsonParser jsonParser,
                                                     DeserializationContext ctxt)
-                    throws IOException, JsonProcessingException {
-                    return null;
+                    throws IOException {
+                    JsonNode responseNode = jsonParser.getCodec().readTree(jsonParser);
+                    String rawJson = responseNode.toString();
+
+                    List<NumberOfSteps> steps = new ArrayList<>();
+
+                    JsonPath stepsPath = JsonPath.compile("$.body.series[*]");
+                    Object wStepsObject = JsonPath.read(rawJson, stepsPath.getPath());
+                    if (wStepsObject == null) {
+                        return ShimDataResponse.empty();
+                    }
+
+                    ObjectMapper mapper = new ObjectMapper();
+                    Map<String, JsonNode> wSteps =
+                        mapper.readValue(((JSONObject) wStepsObject).toJSONString(), HashMap.class);
+
+                    for (String timestampStr : wSteps.keySet()) {
+                        DateTime dateTime = new DateTime(Long.parseLong(timestampStr) * 1000);
+                        Map<String, Object> stepEntry = (Map<String, Object>) wSteps.get(timestampStr);
+
+                        steps.add(new NumberOfStepsBuilder()
+                            .setStartTime(dateTime)
+                            .setDuration(stepEntry.get("duration").toString(),
+                                DurationUnitValue.DurationUnit.sec.toString())
+                            .setSteps((Integer) stepEntry.get("steps")).build());
+                    }
+                    Map<String, Object> results = new HashMap<>();
+                    results.put(NumberOfSteps.SCHEMA_NUMBER_OF_STEPS, steps);
+                    return ShimDataResponse.result(results);
                 }
             }),
 
@@ -242,8 +272,32 @@ public class WithingsShim extends OAuth1ShimBase {
                 @Override
                 public ShimDataResponse deserialize(JsonParser jsonParser,
                                                     DeserializationContext ctxt)
-                    throws IOException, JsonProcessingException {
-                    return null;
+                    throws IOException {
+                    JsonNode responseNode = jsonParser.getCodec().readTree(jsonParser);
+                    String rawJson = responseNode.toString();
+
+                    List<SleepDuration> sleeps = new ArrayList<>();
+
+                    JsonPath sleepsPath = JsonPath.compile("$.body.series[*]");
+                    List<Object> wSleeps = JsonPath.read(rawJson, sleepsPath.getPath());
+                    if (CollectionUtils.isEmpty(wSleeps)) {
+                        return ShimDataResponse.empty();
+                    }
+
+                    ObjectMapper mapper = new ObjectMapper();
+                    for (Object rawSleep : wSleeps) {
+                        JsonNode wSleep = mapper.readTree(((JSONObject) rawSleep).toJSONString());
+                        DateTime startTime = new DateTime(wSleep.get("startdate").asLong() * 1000);
+                        long duration = wSleep.get("enddate").asLong() - wSleep.get("startdate").asLong();
+                        sleeps.add(new SleepDurationBuilder()
+                            .setDate(startTime)
+                            .setDuration(duration + "",
+                                DurationUnitValue.DurationUnit.sec.toString())
+                            .build());
+                    }
+                    Map<String, Object> results = new HashMap<>();
+                    results.put(SleepDuration.SCHEMA_SLEEP_DURATION, sleeps);
+                    return ShimDataResponse.result(results);
                 }
             });
 
