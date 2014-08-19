@@ -1,7 +1,22 @@
 package org.openmhealth.shim.jawbone;
 
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.jayway.jsonpath.JsonPath;
+import net.minidev.json.JSONObject;
+import org.joda.time.DateTime;
+import org.openmhealth.schema.pojos.*;
+import org.openmhealth.schema.pojos.build.ActivityBuilder;
+import org.openmhealth.schema.pojos.build.BodyWeightBuilder;
+import org.openmhealth.schema.pojos.build.SleepDurationBuilder;
+import org.openmhealth.schema.pojos.generic.DurationUnitValue;
+import org.openmhealth.schema.pojos.generic.LengthUnitValue;
+import org.openmhealth.schema.pojos.generic.MassUnitValue;
 import org.openmhealth.shim.*;
 import org.springframework.http.*;
 import org.springframework.security.oauth2.client.DefaultOAuth2ClientContext;
@@ -16,6 +31,7 @@ import org.springframework.security.oauth2.client.token.RequestEnhancer;
 import org.springframework.security.oauth2.client.token.grant.code.AuthorizationCodeAccessTokenProvider;
 import org.springframework.security.oauth2.client.token.grant.code.AuthorizationCodeResourceDetails;
 import org.springframework.security.oauth2.common.exceptions.OAuth2Exception;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.MultiValueMap;
 import org.springframework.util.StringUtils;
 
@@ -87,25 +103,182 @@ public class JawboneShim extends OAuth2ShimBase {
     @Override
     public ShimDataRequest getTriggerDataRequest() {
         ShimDataRequest shimDataRequest = new ShimDataRequest();
-        shimDataRequest.setDataTypeKey("body_events");
+        shimDataRequest.setDataTypeKey(JawboneDataTypes.BODY.toString());
         shimDataRequest.setNumToReturn(1l);
         return shimDataRequest;
     }
 
     @Override
     public ShimDataType[] getShimDataTypes() {
-        return null;
+        return new JawboneDataTypes[]{
+            JawboneDataTypes.BODY, JawboneDataTypes.SLEEP, JawboneDataTypes.WORKOUTS};
+    }
+
+    public enum JawboneDataTypes implements ShimDataType {
+
+        BODY("body_events", new JsonDeserializer<ShimDataResponse>() {
+            @Override
+            public ShimDataResponse deserialize(JsonParser jsonParser,
+                                                DeserializationContext deserializationContext)
+                throws IOException {
+                JsonNode responseNode = jsonParser.getCodec().readTree(jsonParser);
+                String rawJson = responseNode.toString();
+
+                List<BodyWeight> bodyWeights = new ArrayList<>();
+
+                JsonPath bodyWeightsPath = JsonPath.compile("$.data.items[*]");
+                List<Object> jbWeights = JsonPath.read(rawJson, bodyWeightsPath.getPath());
+                if (CollectionUtils.isEmpty(jbWeights)) {
+                    return ShimDataResponse.result(null);
+                }
+                ObjectMapper mapper = new ObjectMapper();
+                for (Object rawWeight : jbWeights) {
+                    JsonNode jbWeight = mapper.readTree(((JSONObject) rawWeight).toJSONString());
+                    DateTime timeStamp = new DateTime(jbWeight.get("time_created").asLong()*1000);
+
+                    BodyWeight bodyWeight = new BodyWeightBuilder()
+                        .setWeight(
+                            jbWeight.get("weight").asText(),
+                            MassUnitValue.MassUnit.kg.toString())
+                        .setTimeTaken(timeStamp).build();
+
+                    bodyWeights.add(bodyWeight);
+                }
+                Map<String, Object> results = new HashMap<>();
+                results.put(BodyWeight.SCHEMA_BODY_WEIGHT, bodyWeights);
+                return ShimDataResponse.result(results);
+            }
+        }),
+
+        SLEEP("sleeps", new JsonDeserializer<ShimDataResponse>() {
+            @Override
+            public ShimDataResponse deserialize(JsonParser jsonParser,
+                                                DeserializationContext deserializationContext)
+                throws IOException {
+                JsonNode responseNode = jsonParser.getCodec().readTree(jsonParser);
+                String rawJson = responseNode.toString();
+
+                List<SleepDuration> sleepDurations = new ArrayList<>();
+
+                JsonPath sleepsPath = JsonPath.compile("$.data.items[*]");
+                List<Object> jbSleeps = JsonPath.read(rawJson, sleepsPath.getPath());
+                if (CollectionUtils.isEmpty(jbSleeps)) {
+                    return ShimDataResponse.result(null);
+                }
+                ObjectMapper mapper = new ObjectMapper();
+                for (Object rawSleep : jbSleeps) {
+                    JsonNode jbSleep = mapper.readTree(((JSONObject) rawSleep).toJSONString());
+                    DateTime timeStamp = new DateTime(jbSleep.get("time_created").asLong()*1000);
+
+                    SleepDuration sleepDuration = new SleepDurationBuilder()
+                        .setDuration(jbSleep.get("details").get("duration").asText(),
+                            DurationUnitValue.DurationUnit.sec.toString())
+                        .setDate(timeStamp).build();
+
+                    sleepDurations.add(sleepDuration);
+                }
+                Map<String, Object> results = new HashMap<>();
+                results.put(SleepDuration.SCHEMA_SLEEP_DURATION, sleepDurations);
+                return ShimDataResponse.result(results);
+            }
+        }),
+
+        WORKOUTS("workouts", new JsonDeserializer<ShimDataResponse>() {
+            @Override
+            public ShimDataResponse deserialize(JsonParser jsonParser,
+                                                DeserializationContext deserializationContext)
+                throws IOException {
+                JsonNode responseNode = jsonParser.getCodec().readTree(jsonParser);
+                String rawJson = responseNode.toString();
+
+                List<Activity> activities = new ArrayList<>();
+
+                JsonPath workoutsPath = JsonPath.compile("$.data.items[*]");
+                List<Object> jbWorkouts = JsonPath.read(rawJson, workoutsPath.getPath());
+                if (CollectionUtils.isEmpty(jbWorkouts)) {
+                    return ShimDataResponse.result(null);
+                }
+                ObjectMapper mapper = new ObjectMapper();
+                for (Object rawWorkout : jbWorkouts) {
+                    JsonNode jbWorkout = mapper.readTree(((JSONObject) rawWorkout).toJSONString());
+                    DateTime timeStamp = new DateTime(jbWorkout.get("time_created").asLong()*1000);
+                    DateTime timeEnd = new DateTime(jbWorkout.get("time_completed").asLong()*1000);
+
+                    Activity activity = new ActivityBuilder()
+                        .setActivityName(jbWorkout.get("title").asText())
+                        .setDistance(jbWorkout.get("details").get("meters").asDouble() + "",
+                            LengthUnitValue.LengthUnit.m.toString())
+                        .setDuration(jbWorkout.get("details").get("time").asText(),
+                            DurationUnitValue.DurationUnit.sec.toString())
+                        .setStartTime(timeStamp)
+                        .setEndTime(timeEnd).build();
+
+                    activities.add(activity);
+                }
+                Map<String, Object> results = new HashMap<>();
+                results.put(Activity.SCHEMA_ACTIVITY, activities);
+                return ShimDataResponse.result(results);
+            }
+        }),
+
+        MOVES("moves", new JsonDeserializer<ShimDataResponse>() {
+            @Override
+            public ShimDataResponse deserialize(JsonParser jsonParser,
+                                                DeserializationContext deserializationContext)
+                throws IOException {
+                return null;
+            }
+        });
+
+        private String endPoint;
+
+        private JsonDeserializer<ShimDataResponse> normalizer;
+
+        JawboneDataTypes(String endPoint, JsonDeserializer<ShimDataResponse> normalizer) {
+            this.endPoint = endPoint;
+            this.normalizer = normalizer;
+        }
+
+        @Override
+        public JsonDeserializer<ShimDataResponse> getNormalizer() {
+            return normalizer;
+        }
+
+        public String getEndPoint() {
+            return endPoint;
+        }
     }
 
     protected ResponseEntity<ShimDataResponse> getData(OAuth2RestOperations restTemplate,
                                                        ShimDataRequest shimDataRequest) throws ShimException {
         String urlRequest = DATA_URL;
-        urlRequest += "body_events?";
 
-        long numToReturn = 3;
+        final JawboneDataTypes jawboneDataType;
+        try {
+            jawboneDataType = JawboneDataTypes.valueOf(
+                shimDataRequest.getDataTypeKey().trim().toUpperCase());
+        } catch (NullPointerException | IllegalArgumentException e) {
+            throw new ShimException("Null or Invalid data type parameter: "
+                + shimDataRequest.getDataTypeKey()
+                + " in shimDataRequest, cannot retrieve data.");
+        }
 
-        long startTimeTs = 1405694496;
-        long endTimeTs = 1405694498;
+        urlRequest += jawboneDataType.getEndPoint() + "?";
+
+        long numToReturn = 100;
+        if (shimDataRequest.getNumToReturn() != null) {
+            numToReturn = shimDataRequest.getNumToReturn();
+        }
+
+        DateTime today = new DateTime();
+
+        DateTime startDate = shimDataRequest.getStartDate() == null ?
+            today.minusDays(1) : shimDataRequest.getStartDate();
+        long startTimeTs = startDate.toDate().getTime() / 1000;
+
+        DateTime endDate = shimDataRequest.getEndDate() == null ?
+            today.plusDays(1) : shimDataRequest.getEndDate();
+        long endTimeTs = endDate.toDate().getTime() / 1000;
 
         urlRequest += "&start_time=" + startTimeTs;
         urlRequest += "&end_time=" + endTimeTs;
@@ -116,12 +289,20 @@ public class JawboneShim extends OAuth2ShimBase {
         ResponseEntity<byte[]> responseEntity = restTemplate.getForEntity(urlRequest, byte[].class);
         JsonNode json = null;
         try {
-            json = objectMapper.readTree(responseEntity.getBody());
+            if (shimDataRequest.getNormalize()) {
+                SimpleModule module = new SimpleModule();
+                module.addDeserializer(ShimDataResponse.class, jawboneDataType.getNormalizer());
+                objectMapper.registerModule(module);
+                return new ResponseEntity<>(
+                    objectMapper.readValue(responseEntity.getBody(), ShimDataResponse.class), HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(
+                    ShimDataResponse.result(objectMapper.readTree(responseEntity.getBody())), HttpStatus.OK);
+            }
         } catch (IOException e) {
             e.printStackTrace();
             throw new ShimException("Could not read response data.");
         }
-        return new ResponseEntity<>(ShimDataResponse.result(json), HttpStatus.OK);
     }
 
     protected AuthorizationRequestParameters getAuthorizationRequestParameters(
