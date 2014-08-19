@@ -13,4 +13,5 @@ security:
 openmhealth:
   shim:
     server:
-      callbackUrlBase: http://localhost:8083
+      #callbackUrlBase: http://localhost:8083
+      callbackUrlBase: http://54.88.92.112:8083
