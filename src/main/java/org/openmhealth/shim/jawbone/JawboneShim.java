@@ -245,7 +245,7 @@ public class JawboneShim extends OAuth2ShimBase {
                     return ShimDataResponse.empty();
                 }
 
-                DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyyMMddhh");
+                DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyyMMddHH");
 
                 ObjectMapper mapper = new ObjectMapper();
                 String jsonString = ((JSONArray) hourlyStepTotalsMap).toJSONString();
