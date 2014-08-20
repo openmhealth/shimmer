@@ -10,6 +10,9 @@ buildscript {
 apply plugin: 'java'
 apply plugin: 'spring-boot'
 
+//apply plugin: 'maven'
+//group = "org.openmhealth.shim"
+
 jar {
   baseName = 'omh-shims'
   version = '0.1.0'
@@ -23,6 +26,7 @@ repositories {
   mavenLocal()
   mavenCentral()
 }
+
 dependencies {
 
   // tag::jetty[]
