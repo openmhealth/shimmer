@@ -10,4 +10,6 @@ public interface DataPoint {
 
     DateTime getTimeStamp();
 
+    Metadata getMetadata();
+
 }

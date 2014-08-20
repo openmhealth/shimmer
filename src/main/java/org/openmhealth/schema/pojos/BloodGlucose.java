@@ -12,7 +12,7 @@ import java.math.BigDecimal;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonRootName(value = BloodGlucose.SCHEMA_BLOOD_GLUCOSE, namespace = DataPoint.NAMESPACE)
-public class BloodGlucose implements DataPoint {
+public class BloodGlucose extends BaseDataPoint {
 
     @JsonProperty(value = "value", required = true)
     private BigDecimal value;

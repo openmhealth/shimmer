@@ -10,7 +10,7 @@ import org.openmhealth.schema.pojos.generic.TimeFrame;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonRootName(value = BodyWeight.SCHEMA_BODY_WEIGHT, namespace = "omh:normalized")
-public class BodyWeight implements DataPoint{
+public class BodyWeight extends BaseDataPoint {
 
     @JsonProperty(value = "mass-unit-value", required = true)
     private MassUnitValue massUnitValue;

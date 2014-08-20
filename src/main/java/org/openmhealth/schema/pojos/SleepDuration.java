@@ -10,7 +10,7 @@ import org.openmhealth.schema.pojos.generic.TimeFrame;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonRootName(value = SleepDuration.SCHEMA_SLEEP_DURATION, namespace = DataPoint.NAMESPACE)
-public class SleepDuration implements DataPoint {
+public class SleepDuration extends BaseDataPoint {
 
     @JsonProperty(value = "effective-time")
     private TimeFrame effectiveTime;

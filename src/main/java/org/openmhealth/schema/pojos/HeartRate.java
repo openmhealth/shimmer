@@ -10,7 +10,7 @@ import org.openmhealth.schema.pojos.generic.TimeFrame;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonRootName(value = HeartRate.SCHEMA_HEART_RATE, namespace = DataPoint.NAMESPACE)
-public class HeartRate implements DataPoint {
+public class HeartRate extends BaseDataPoint {
 
     @JsonProperty(value = "value", required = true)
     private Integer value;

@@ -10,7 +10,7 @@ import org.openmhealth.schema.pojos.generic.TimeFrame;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonRootName(value = BloodPressure.SCHEMA_BLOOD_PRESSURE, namespace = DataPoint.NAMESPACE)
-public class BloodPressure implements DataPoint {
+public class BloodPressure extends BaseDataPoint {
 
     @JsonProperty(value = "systolic-blood-pressure", required = false)
     private SystolicBloodPressure systolic;

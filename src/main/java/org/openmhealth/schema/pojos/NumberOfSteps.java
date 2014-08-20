@@ -9,7 +9,7 @@ import org.openmhealth.schema.pojos.generic.TimeFrame;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonRootName(value = NumberOfSteps.SCHEMA_NUMBER_OF_STEPS, namespace = DataPoint.NAMESPACE)
-public class NumberOfSteps implements DataPoint {
+public class NumberOfSteps extends BaseDataPoint {
 
     @JsonProperty(value = "value", required = true)
     private Integer value;
