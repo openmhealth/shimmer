@@ -1,43 +1,122 @@
-{"shim": null, "timeStamp": 1408379793, "body": {
+{
     "meta": {
-        "user_xid": "gG0aWvo9bXwLSMyOos3njA",
+        "user_xid": "6xl39CsoVp2KirfHwVq_Fx",
         "message": "OK",
         "code": 200,
-        "time": 1408379793
+        "time": 1386122022
     },
     "data": {
         "items": [
             {
-                "time_completed": 1408376384,
-                "xid": "UDZ763h_uKyRusV_RN8mlQ",
-                "title": "0 steps today",
-                "snapshot_image": "",
-                "time_created": 1408376384,
-                "time_updated": 1408379793,
+                "xid": "40F7_htRRnQwoMjIFucJ2g",
+                "title": "16,804 steps",
+                "type": "move",
+                "time_created": 1384963500,
+                "time_updated": 1385049599,
+                "time_completed": 1385099220,
+                "date": 20131121,
+                "snapshot_image": "/nudge/image/e/1385107737/40F7_htRRnQwoMjIFucJ2g/grEGutn_XYZ.png",
                 "details": {
-                    "active_time": 4000,
-                    "tzs": [
-                        [1408376384, -25200]
-                    ],
+                    "distance": 14745,
+                    "km": 14.745,
+                    "steps": 16804,
+                    "active_time": 11927,
+                    "longest_active": 2516,
+                    "inactive_time": 32760,
+                    "longest_idle": 27180,
+                    "calories": 1760.30480012,
+                    "bmr_day": 1697.47946931,
+                    "bmr": 1697.47946931,
+                    "bg_calories": 1099.9439497,
+                    "wo_calories": 388.506116077,
+                    "wo_time": 11484,
+                    "wo_active_time": 3902,
                     "wo_count": 2,
-                    "wo_longest": 4000,
-                    "bmr": 0.0,
-                    "bg_calories": 0,
-                    "bmr_day": 0.0,
-                    "longest_active": 4000,
-                    "wo_active_time": 4000,
-                    "tz": "America/Los_Angeles",
-                    "longest_idle": 0,
-                    "calories": 4500.0,
-                    "km": 0.0,
-                    "steps": 0,
-                    "wo_calories": 4500.0,
-                    "wo_time": 4000
-                },
-                "date": 20140818,
-                "type": "move"
+                    "wo_longest": 2516,
+                    "tz": "America/Los Angeles",
+                    "tzs": [
+                        [1384963500, "America/Phoenix"],
+                        [1385055720, "America/Los_Angeles"]
+                    ],
+                    "hourly_totals": {
+                        "2013112101": {
+                            "distance": 1324,
+                            "calories": 90.0120018125,
+                            "steps": 1603,
+                            "active_time": 793,
+                            "inactive_time": 220,
+                            "longest_active_time": 302,
+                            "longest_idle_time": 780
+                        },
+                        "2013112102": {
+                            "distance": 626,
+                            "calories": 47.0120018125,
+                            "steps": 455,
+                            "active_time": 246,
+                            "inactive_time": 260,
+                            "longest_active_time": 203,
+                            "longest_idle_time": 650
+                        }
+                    }
+                }
+            },
+            {
+                "xid": "40F7_htRRnQwoMjIFucJ2g",
+                "title": "16,804 steps",
+                "type": "move",
+                "time_created": 1384963500,
+                "time_updated": 1385049599,
+                "time_completed": 1385099220,
+                "date": 20131122,
+                "snapshot_image": "/nudge/image/e/1385107737/40F7_htRRnQwoMjIFucJ2g/grEGutn_XYZ.png",
+                "details": {
+                    "distance": 14745,
+                    "km": 14.745,
+                    "steps": 16804,
+                    "active_time": 11927,
+                    "longest_active": 2516,
+                    "inactive_time": 32760,
+                    "longest_idle": 27180,
+                    "calories": 1760.30480012,
+                    "bmr_day": 1697.47946931,
+                    "bmr": 1697.47946931,
+                    "bg_calories": 1099.9439497,
+                    "wo_calories": 388.506116077,
+                    "wo_time": 11484,
+                    "wo_active_time": 3902,
+                    "wo_count": 2,
+                    "wo_longest": 2516,
+                    "tz": "America/Los Angeles",
+                    "tzs": [
+                        [1384963500, "America/Phoenix"],
+                        [1385055720, "America/Los_Angeles"]
+                    ],
+                    "hourly_totals": {
+                        "2013112201": {
+                            "distance": 1324,
+                            "calories": 90.0120018125,
+                            "steps": 1603,
+                            "active_time": 793,
+                            "inactive_time": 220,
+                            "longest_active_time": 302,
+                            "longest_idle_time": 780
+                        },
+                        "2013112202": {
+                            "distance": 626,
+                            "calories": 47.0120018125,
+                            "steps": 455,
+                            "active_time": 246,
+                            "inactive_time": 260,
+                            "longest_active_time": 203,
+                            "longest_idle_time": 650
+                        }
+                    }
+                }
             }
         ],
-        "size": 1
+        "links": {
+            "next": "/nudge/api/v.1.1/users/6xl39CsoVp2KirfHwVq_Fx/moves?page_token=1384390680"
+        },
+        "size": 10
     }
-}}
+}

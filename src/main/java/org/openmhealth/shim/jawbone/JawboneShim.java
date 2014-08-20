@@ -7,12 +7,17 @@ import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.jayway.jsonpath.JsonPath;
+import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.openmhealth.schema.pojos.*;
 import org.openmhealth.schema.pojos.build.ActivityBuilder;
 import org.openmhealth.schema.pojos.build.BodyWeightBuilder;
+import org.openmhealth.schema.pojos.build.NumberOfStepsBuilder;
 import org.openmhealth.schema.pojos.build.SleepDurationBuilder;
 import org.openmhealth.schema.pojos.generic.DurationUnitValue;
 import org.openmhealth.schema.pojos.generic.LengthUnitValue;
@@ -134,7 +139,7 @@ public class JawboneShim extends OAuth2ShimBase {
                 ObjectMapper mapper = new ObjectMapper();
                 for (Object rawWeight : jbWeights) {
                     JsonNode jbWeight = mapper.readTree(((JSONObject) rawWeight).toJSONString());
-                    DateTime timeStamp = new DateTime(jbWeight.get("time_created").asLong()*1000);
+                    DateTime timeStamp = new DateTime(jbWeight.get("time_created").asLong() * 1000);
 
                     BodyWeight bodyWeight = new BodyWeightBuilder()
                         .setWeight(
@@ -168,7 +173,7 @@ public class JawboneShim extends OAuth2ShimBase {
                 ObjectMapper mapper = new ObjectMapper();
                 for (Object rawSleep : jbSleeps) {
                     JsonNode jbSleep = mapper.readTree(((JSONObject) rawSleep).toJSONString());
-                    DateTime timeStamp = new DateTime(jbSleep.get("time_created").asLong()*1000);
+                    DateTime timeStamp = new DateTime(jbSleep.get("time_created").asLong() * 1000);
 
                     SleepDuration sleepDuration = new SleepDurationBuilder()
                         .setDuration(jbSleep.get("details").get("duration").asText(),
@@ -201,8 +206,8 @@ public class JawboneShim extends OAuth2ShimBase {
                 ObjectMapper mapper = new ObjectMapper();
                 for (Object rawWorkout : jbWorkouts) {
                     JsonNode jbWorkout = mapper.readTree(((JSONObject) rawWorkout).toJSONString());
-                    DateTime timeStamp = new DateTime(jbWorkout.get("time_created").asLong()*1000);
-                    DateTime timeEnd = new DateTime(jbWorkout.get("time_completed").asLong()*1000);
+                    DateTime timeStamp = new DateTime(jbWorkout.get("time_created").asLong() * 1000);
+                    DateTime timeEnd = new DateTime(jbWorkout.get("time_completed").asLong() * 1000);
 
                     Activity activity = new ActivityBuilder()
                         .setActivityName(jbWorkout.get("title").asText())
@@ -221,12 +226,49 @@ public class JawboneShim extends OAuth2ShimBase {
             }
         }),
 
+        @SuppressWarnings("unchecked")
         MOVES("moves", new JsonDeserializer<ShimDataResponse>() {
             @Override
             public ShimDataResponse deserialize(JsonParser jsonParser,
                                                 DeserializationContext deserializationContext)
                 throws IOException {
-                return null;
+
+                JsonNode responseNode = jsonParser.getCodec().readTree(jsonParser);
+                String rawJson = responseNode.toString();
+
+                List<NumberOfSteps> steps = new ArrayList<>();
+                JsonPath stepsPath = JsonPath.compile("$.data.items[*].details.hourly_totals[*]");
+
+                Object hourlyStepTotalsMap = JsonPath.read(rawJson, stepsPath.getPath());
+
+                if (hourlyStepTotalsMap == null) {
+                    return ShimDataResponse.empty();
+                }
+
+                DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyyMMddhh");
+
+                ObjectMapper mapper = new ObjectMapper();
+                String jsonString = ((JSONArray) hourlyStepTotalsMap).toJSONString();
+                ArrayNode nodes = (ArrayNode) mapper.readTree(jsonString);
+
+                for (Object node1 : nodes) {
+                    Map<String, JsonNode> jbSteps = mapper.convertValue(node1, HashMap.class);
+                    for (String timestampStr : jbSteps.keySet()) {
+
+                        DateTime dateTime = formatter.parseDateTime(timestampStr);
+                        Map<String, Object> stepEntry = (Map<String, Object>) jbSteps.get(timestampStr);
+
+                        steps.add(new NumberOfStepsBuilder()
+                            .setStartTime(dateTime)
+                            .setDuration(stepEntry.get("active_time").toString(),
+                                DurationUnitValue.DurationUnit.sec.toString())
+                            .setSteps((Integer) stepEntry.get("steps")).build());
+                    }
+                }
+                Map<String, Object> results = new HashMap<>();
+                results.put(NumberOfSteps.SCHEMA_NUMBER_OF_STEPS, steps);
+                return ShimDataResponse.result(results);
+
             }
         });
 
