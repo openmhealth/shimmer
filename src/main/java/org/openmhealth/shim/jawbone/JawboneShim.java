@@ -116,7 +116,7 @@ public class JawboneShim extends OAuth2ShimBase {
     @Override
     public ShimDataType[] getShimDataTypes() {
         return new JawboneDataTypes[]{
-            JawboneDataTypes.BODY, JawboneDataTypes.SLEEP, JawboneDataTypes.WORKOUTS};
+            JawboneDataTypes.BODY, JawboneDataTypes.SLEEP, JawboneDataTypes.WORKOUTS, JawboneDataTypes.MOVES};
     }
 
     public enum JawboneDataTypes implements ShimDataType {
