@@ -7,7 +7,9 @@ import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.jayway.jsonpath.JsonPath;
+import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
@@ -281,7 +283,59 @@ public class FitbitShim extends OAuth1ShimBase {
             public ShimDataResponse deserialize(JsonParser jsonParser,
                                                 DeserializationContext deserializationContext)
                 throws IOException {
-                return ShimDataResponse.empty();
+
+                JsonNode responseNode = jsonParser.getCodec().readTree(jsonParser);
+                String rawJson = responseNode.toString();
+
+                List<NumberOfSteps> steps = new ArrayList<>();
+                JsonPath stepsPath = JsonPath.compile("$.[*].result.content[*]");
+
+                Object oneMinStepEntries = JsonPath.read(rawJson, stepsPath.getPath());
+
+                if (oneMinStepEntries == null) {
+                    return ShimDataResponse.empty();
+                }
+
+                DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
+                ObjectMapper mapper = new ObjectMapper();
+
+                /**
+                 * Determine if many items were returned or just one
+                 * and cast appropriately.
+                 */
+                ArrayNode nodes;
+                String jsonString;
+                if (oneMinStepEntries instanceof JSONArray) {
+                    jsonString = ((JSONArray) oneMinStepEntries).toJSONString();
+                } else {
+                    jsonString = "[" +
+                        ((JSONObject) oneMinStepEntries).toJSONString() + "]";
+                }
+                nodes = (ArrayNode) mapper.readTree(jsonString);
+
+                for (Object node1 : nodes) {
+                    JsonNode fbStepNode = (JsonNode) node1;
+
+                    String dateString =
+                        (fbStepNode.get("activities-steps")).get(0).get("dateTime").asText();
+
+                    ArrayNode dataset = (ArrayNode)
+                        fbStepNode.get("activities-steps-intraday").get("dataset");
+
+                    for (JsonNode stepMinute : dataset) {
+                        if (stepMinute.get("value").asInt() > 0) {
+                            steps.add(new NumberOfStepsBuilder()
+                                .setStartTime(formatter.parseDateTime(
+                                    dateString + " " + stepMinute.get("time").asText()))
+                                .setDuration("1", DurationUnitValue.DurationUnit.min.toString())
+                                .setSteps(stepMinute.get("value").asInt())
+                                .build());
+                        }
+                    }
+                }
+                Map<String, Object> results = new HashMap<>();
+                results.put(NumberOfSteps.SCHEMA_NUMBER_OF_STEPS, steps);
+                return ShimDataResponse.result(results);
             }
         }),
 
@@ -296,7 +350,6 @@ public class FitbitShim extends OAuth1ShimBase {
                     String rawJson = responseNode.toString();
 
                     List<Activity> activities = new ArrayList<>();
-                    List<NumberOfSteps> numberOfStepsList = new ArrayList<>();
 
                     JsonPath activityPath = JsonPath.compile("$.result.content.activities[*]");
 
@@ -322,17 +375,11 @@ public class FitbitShim extends OAuth1ShimBase {
                                 DurationUnitValue.DurationUnit.ms.toString())
                             .setStartTime(startTime).build();
 
-                        NumberOfSteps numberOfSteps = new NumberOfStepsBuilder()
-                            .setSteps(fitbitActivity.get("steps").asInt()).build();
-                        numberOfSteps.setEffectiveTimeFrame(activity.getEffectiveTimeFrame());
-
                         activities.add(activity);
-                        numberOfStepsList.add(numberOfSteps);
                     }
 
                     Map<String, Object> results = new HashMap<>();
                     results.put(Activity.SCHEMA_ACTIVITY, activities);
-                    results.put(NumberOfSteps.SCHEMA_NUMBER_OF_STEPS, numberOfStepsList);
                     return ShimDataResponse.result(results);
                 }
             }
