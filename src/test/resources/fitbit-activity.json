@@ -1,0 +1,172 @@
+{"shim": null, "timeStamp": 1408647736, "body": [
+    {
+        "result": {
+            "date": "2014-08-19",
+            "content": {
+                "activities": [],
+                "summary": {
+                    "activeScore": -1,
+                    "activityCalories": 0,
+                    "caloriesBMR": 1286,
+                    "caloriesOut": 1286,
+                    "distances": [
+                        {
+                            "activity": "total",
+                            "distance": 0
+                        },
+                        {
+                            "activity": "tracker",
+                            "distance": 0
+                        },
+                        {
+                            "activity": "loggedActivities",
+                            "distance": 0
+                        },
+                        {
+                            "activity": "veryActive",
+                            "distance": 0
+                        },
+                        {
+                            "activity": "moderatelyActive",
+                            "distance": 0
+                        },
+                        {
+                            "activity": "lightlyActive",
+                            "distance": 0
+                        },
+                        {
+                            "activity": "sedentaryActive",
+                            "distance": 0
+                        }
+                    ],
+                    "elevation": 0,
+                    "fairlyActiveMinutes": 0,
+                    "floors": 0,
+                    "lightlyActiveMinutes": 0,
+                    "marginalCalories": 0,
+                    "sedentaryMinutes": 1440,
+                    "steps": 0,
+                    "veryActiveMinutes": 0
+                }
+            }
+        }
+    },
+    {
+        "result": {
+            "date": "2014-08-20",
+            "content": {
+                "activities": [],
+                "goals": {
+                    "activeMinutes": 30,
+                    "caloriesOut": 2175,
+                    "distance": 8.05,
+                    "floors": 10,
+                    "steps": 10000
+                },
+                "summary": {
+                    "activeScore": -1,
+                    "activityCalories": 628,
+                    "caloriesBMR": 1286,
+                    "caloriesOut": 1683,
+                    "distances": [
+                        {
+                            "activity": "total",
+                            "distance": 3.05
+                        },
+                        {
+                            "activity": "tracker",
+                            "distance": 3.05
+                        },
+                        {
+                            "activity": "loggedActivities",
+                            "distance": 0
+                        },
+                        {
+                            "activity": "veryActive",
+                            "distance": 0
+                        },
+                        {
+                            "activity": "moderatelyActive",
+                            "distance": 1.2
+                        },
+                        {
+                            "activity": "lightlyActive",
+                            "distance": 1.83
+                        },
+                        {
+                            "activity": "sedentaryActive",
+                            "distance": 0.01
+                        }
+                    ],
+                    "elevation": 48.77,
+                    "fairlyActiveMinutes": 41,
+                    "floors": 16,
+                    "lightlyActiveMinutes": 215,
+                    "marginalCalories": 344,
+                    "sedentaryMinutes": 607,
+                    "steps": 4332,
+                    "veryActiveMinutes": 0
+                }
+            }
+        }
+    },
+    {
+        "result": {
+            "date": "2014-08-21",
+            "content": {
+                "activities": [],
+                "goals": {
+                    "activeMinutes": 30,
+                    "caloriesOut": 2175,
+                    "distance": 8.05,
+                    "floors": 10,
+                    "steps": 10000
+                },
+                "summary": {
+                    "activeScore": -1,
+                    "activityCalories": 265,
+                    "caloriesBMR": 751,
+                    "caloriesOut": 917,
+                    "distances": [
+                        {
+                            "activity": "total",
+                            "distance": 1.37
+                        },
+                        {
+                            "activity": "tracker",
+                            "distance": 1.37
+                        },
+                        {
+                            "activity": "loggedActivities",
+                            "distance": 0
+                        },
+                        {
+                            "activity": "veryActive",
+                            "distance": 0
+                        },
+                        {
+                            "activity": "moderatelyActive",
+                            "distance": 0.31
+                        },
+                        {
+                            "activity": "lightlyActive",
+                            "distance": 1.05
+                        },
+                        {
+                            "activity": "sedentaryActive",
+                            "distance": 0.01
+                        }
+                    ],
+                    "elevation": 30.48,
+                    "fairlyActiveMinutes": 12,
+                    "floors": 10,
+                    "lightlyActiveMinutes": 99,
+                    "marginalCalories": 142,
+                    "sedentaryMinutes": 457,
+                    "steps": 1944,
+                    "veryActiveMinutes": 0
+                }
+            }
+        }
+    }
+]}

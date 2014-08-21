@@ -44,9 +44,13 @@ public class FitbitShim extends OAuth1ShimBase {
 
     private static final String TOKEN_URL = "https://api.fitbit.com/oauth/access_token";
 
-    public static final String FITBIT_CLIENT_ID = "7da3c2e5e74d4492ab6bb3286fc32c6b";
+    //public static final String FITBIT_CLIENT_ID = "7da3c2e5e74d4492ab6bb3286fc32c6b";
 
-    public static final String FITBIT_CLIENT_SECRET = "455a383f80de45d6a4f9b09e841da1f4";
+    //public static final String FITBIT_CLIENT_SECRET = "455a383f80de45d6a4f9b09e841da1f4";
+
+    public static final String FITBIT_CLIENT_ID = "7c6dd32fc6784dcca9ebfe54733b03dc";
+
+    public static final String FITBIT_CLIENT_SECRET = "75f350a491c74796b5e79819483def47";
 
     public FitbitShim(AuthorizationRequestParametersRepo authorizationRequestParametersRepo,
                       ShimServerConfig shimServerConfig) {
@@ -272,6 +276,15 @@ public class FitbitShim extends OAuth1ShimBase {
             }
         ),
 
+        STEPS("activities/steps", new JsonDeserializer<ShimDataResponse>() {
+            @Override
+            public ShimDataResponse deserialize(JsonParser jsonParser,
+                                                DeserializationContext deserializationContext)
+                throws IOException {
+                return ShimDataResponse.empty();
+            }
+        }),
+
         ACTIVITY(
             "activities",
             new JsonDeserializer<ShimDataResponse>() {
@@ -445,7 +458,9 @@ public class FitbitShim extends OAuth1ShimBase {
 
         String endPointUrl = DATA_URL;
         endPointUrl += "/1/user/-/"
-            + fitbitDataType.getEndPoint() + "/date/" + dateString + ".json";
+            + fitbitDataType.getEndPoint() + "/date/" + dateString
+            + (fitbitDataType == FitbitDataType.STEPS ? "/1d/1min" : "") //special setting for time series
+            + ".json";
 
         HttpRequestBase dataRequest =
             OAuth1Utils.getSignedRequest(HttpMethod.GET,
