@@ -1,4 +1,4 @@
-package org.openmhealth.schema.pojos.serialize;
+package org.openmhealth.schema.pojos.serialize.dates;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.ISODateTimeFormat;
 import org.openmhealth.schema.pojos.generic.TimeFrame;
 
 import java.io.IOException;
@@ -13,9 +14,9 @@ import java.io.IOException;
 /**
  * Standard date serializer for Joda time in the regular schemas
  */
-public class JodaTimeDateSerializer extends JsonSerializer<DateTime> {
+public class ISODateSerializer extends JsonSerializer<DateTime> {
 
-    private static DateTimeFormatter formatter = DateTimeFormat.forPattern(TimeFrame.DATE_TIME_FORMAT);
+    protected static DateTimeFormatter formatter = ISODateTimeFormat.dateParser();
 
     @Override
     public void serialize(DateTime value, JsonGenerator gen,
