@@ -24,8 +24,16 @@ public class BodyWeightBuilder implements SchemaPojoBuilder<BodyWeight> {
         return this;
     }
 
+    public BodyWeightBuilder setWeight(Double value, MassUnitValue.MassUnit unit) {
+        MassUnitValue massUnitValue = new MassUnitValue();
+        massUnitValue.setValue(new BigDecimal(value));
+        massUnitValue.setUnit(unit);
+        bodyWeight.setMassUnitValue(massUnitValue);
+        return this;
+    }
+
     public BodyWeightBuilder setTimeTaken(DateTime dateTime) {
-        bodyWeight.getEffectiveTimeFrame().setStartTime(dateTime);
+        bodyWeight.setEffectiveTimeFrame(TimeFrame.withDateTime(dateTime));
         return this;
     }
 

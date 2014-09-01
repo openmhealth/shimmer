@@ -2,7 +2,7 @@ package org.openmhealth.schema.pojos.build;
 
 import org.joda.time.DateTime;
 import org.openmhealth.schema.pojos.BloodGlucose;
-import org.openmhealth.schema.pojos.generic.NumericDescriptor;
+import org.openmhealth.schema.pojos.generic.DescriptiveStatistic;
 import org.openmhealth.schema.pojos.generic.TimeFrame;
 
 import java.math.BigDecimal;
@@ -45,7 +45,7 @@ public class BloodGlucoseBuilder implements SchemaPojoBuilder<BloodGlucose> {
     }
 
     public BloodGlucoseBuilder setNumericDescriptor(String numericDescriptor) {
-        bloodGlucose.setNumericDescriptor(NumericDescriptor.valueOf(numericDescriptor));
+        bloodGlucose.setDescriptiveStatistic(DescriptiveStatistic.valueOf(numericDescriptor));
         return this;
     }
 
@@ -55,7 +55,7 @@ public class BloodGlucoseBuilder implements SchemaPojoBuilder<BloodGlucose> {
     }
 
     public BloodGlucoseBuilder setTimeTaken(DateTime dateTime) {
-        bloodGlucose.getEffectiveTimeFrame().setStartTime(dateTime);
+        bloodGlucose.getEffectiveTimeFrame().setDateTime(dateTime);
         return this;
     }
 

@@ -30,7 +30,10 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URL;
+import java.sql.Time;
 import java.util.*;
+
+import static org.openmhealth.schema.pojos.generic.DurationUnitValue.DurationUnit.*;
 
 public class WithingsShim extends OAuth1ShimBase {
 
@@ -205,7 +208,7 @@ public class WithingsShim extends OAuth1ShimBase {
                             BloodPressure bloodPressure = new BloodPressure();
                             bloodPressure.setSystolic(systolic);
                             bloodPressure.setDiastolic(diastolic);
-                            bloodPressure.setEffectiveTimeFrame(new TimeFrame(dateTime, null));
+                            bloodPressure.setEffectiveTimeFrame(TimeFrame.withDateTime(dateTime));
                             bloodPressures.add(bloodPressure);
                         }
                     }
@@ -256,9 +259,8 @@ public class WithingsShim extends OAuth1ShimBase {
                         Map<String, Object> stepEntry = (Map<String, Object>) wSteps.get(timestampStr);
 
                         steps.add(new NumberOfStepsBuilder()
-                            .setStartTime(dateTime)
-                            .setDuration(stepEntry.get("duration").toString(),
-                                DurationUnitValue.DurationUnit.sec.toString())
+                            .withStartAndDuration(
+                                dateTime, Double.parseDouble(stepEntry.get("duration") + ""),sec)
                             .setSteps((Integer) stepEntry.get("steps")).build());
                     }
                     Map<String, Object> results = new HashMap<>();
@@ -290,9 +292,8 @@ public class WithingsShim extends OAuth1ShimBase {
                         DateTime startTime = new DateTime(wSleep.get("startdate").asLong() * 1000);
                         long duration = wSleep.get("enddate").asLong() - wSleep.get("startdate").asLong();
                         sleeps.add(new SleepDurationBuilder()
-                            .setDate(startTime)
-                            .setDuration(duration + "",
-                                DurationUnitValue.DurationUnit.sec.toString())
+                            .withStartAndDuration(
+                                startTime, Double.parseDouble(duration + ""),sec)
                             .build());
                     }
                     Map<String, Object> results = new HashMap<>();

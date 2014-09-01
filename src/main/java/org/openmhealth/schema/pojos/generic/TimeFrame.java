@@ -4,70 +4,65 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.joda.time.DateTime;
-import org.openmhealth.schema.pojos.serialize.JodaTimeDateDeserializer;
-import org.openmhealth.schema.pojos.serialize.JodaTimeDateSerializer;
+import org.openmhealth.schema.pojos.serialize.dates.ISODateDeserializer;
+import org.openmhealth.schema.pojos.serialize.dates.ISODateSerializer;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class TimeFrame {
 
-    @JsonProperty(value = "start-time", required = false)
-    @JsonSerialize(using = JodaTimeDateSerializer.class)
-    @JsonDeserialize(using = JodaTimeDateDeserializer.class)
-    public DateTime startTime;
+    @JsonProperty(value = "date-time", required = false)
+    @JsonSerialize(using = ISODateSerializer.class)
+    @JsonDeserialize(using = ISODateDeserializer.class)
+    private DateTime dateTime;
 
-    @JsonProperty(value = "end-time", required = false)
-    @JsonSerialize(using = JodaTimeDateSerializer.class)
-    @JsonDeserialize(using = JodaTimeDateDeserializer.class)
-    private DateTime endTime;
-
-    @JsonProperty(value = "duration", required = false)
-    private DurationUnitValue duration;
-
-    @JsonProperty(value = "part-of-day", required = false)
-    private PartOfDay partOfDay;
-
-    public enum PartOfDay {morning, noon, afternoon, evening}
-
-    public static String DATE_TIME_FORMAT = "yyyy-MM-dd hh:mm:ss";
+    @JsonProperty(value = "time-interval", required = false)
+    private TimeInterval timeInterval;
 
     public TimeFrame() {
     }
 
-    public PartOfDay getPartOfDay() {
-        return partOfDay;
+    @JsonIgnore
+    public DateTime getTimestamp() {
+        if (dateTime != null) {
+            return dateTime;
+        }
+        if (timeInterval.getDate() != null) {
+            return timeInterval.getDate();
+        }
+        if (timeInterval.getStartTime() != null) {
+            return timeInterval.getStartTime();
+        }
+        return null;
     }
 
-    public void setPartOfDay(PartOfDay partOfDay) {
-        this.partOfDay = partOfDay;
+    public DateTime getDateTime() {
+        return dateTime;
     }
 
-    public DurationUnitValue getDuration() {
-        return duration;
+    public void setDateTime(DateTime dateTime) {
+        this.dateTime = dateTime;
     }
 
-    public void setDuration(DurationUnitValue duration) {
-        this.duration = duration;
+    public TimeInterval getTimeInterval() {
+        return timeInterval;
     }
 
-    public TimeFrame(DateTime startTime, DateTime endTime) {
-        this.startTime = startTime;
-        this.endTime = endTime;
+    public void setTimeInterval(TimeInterval timeInterval) {
+        this.timeInterval = timeInterval;
     }
 
-    public DateTime getStartTime() {
-        return startTime;
+    public static TimeFrame withDateTime(DateTime dateTime) {
+        return null;
     }
 
-    public void setStartTime(DateTime startTime) {
-        this.startTime = startTime;
+    public static TimeFrame withTimeInterval(DateTime startTime, DateTime endTime) {
+        return null;
     }
 
-    public DateTime getEndTime() {
-        return endTime;
-    }
-
-    public void setEndTime(DateTime endTime) {
-        this.endTime = endTime;
+    public static TimeFrame withTimeInterval(DateTime startTime,
+                                             Double durationValue, DurationUnitValue.DurationUnit unit) {
+        return null;
     }
 }

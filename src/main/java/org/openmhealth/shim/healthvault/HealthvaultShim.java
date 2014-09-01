@@ -43,6 +43,8 @@ import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.util.*;
 
+import static org.openmhealth.schema.pojos.generic.DurationUnitValue.DurationUnit;
+
 /**
  * Notes the healthvault shim is neither OAuth1.0/2.0, it's
  * a custom implementation.
@@ -131,10 +133,9 @@ public class HealthvaultShim implements Shim {
                             .setDistance(
                                 sessionNode.get("distance").get("display").get("").asText(),
                                 LengthUnitValue.LengthUnit.m.toString())
-                            .setDuration(
-                                sessionNode.get("minutes").asText(),
-                                DurationUnitValue.DurationUnit.min.toString())
-                            .setStartTime(startTime).build();
+                            .withStartAndDuration(
+                                startTime, sessionNode.get("minutes").asDouble(), DurationUnit.min)
+                            .build();
 
                         NumberOfSteps numberOfSteps = new NumberOfStepsBuilder()
                             .setSteps(sessionNode.get("number-of-steps").asInt()).build();

@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
 import org.joda.time.DateTime;
-import org.openmhealth.schema.pojos.generic.NumericDescriptor;
+import org.openmhealth.schema.pojos.generic.DescriptiveStatistic;
 import org.openmhealth.schema.pojos.generic.TimeFrame;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -25,7 +25,7 @@ public class BloodPressure extends BaseDataPoint {
     private Position position;
 
     @JsonProperty(value = "numeric-descriptor", required = false)
-    private NumericDescriptor numericDescriptor;
+    private DescriptiveStatistic descriptiveStatistic;
 
     public static final String SCHEMA_BLOOD_PRESSURE = "blood-pressure";
 
@@ -43,7 +43,7 @@ public class BloodPressure extends BaseDataPoint {
     @Override
     @JsonIgnore
     public DateTime getTimeStamp() {
-        return effectiveTimeFrame.getStartTime();
+        return effectiveTimeFrame.getTimestamp();
     }
 
     public TimeFrame getEffectiveTimeFrame() {
@@ -86,11 +86,11 @@ public class BloodPressure extends BaseDataPoint {
         this.notes = notes;
     }
 
-    public NumericDescriptor getNumericDescriptor() {
-        return numericDescriptor;
+    public DescriptiveStatistic getDescriptiveStatistic() {
+        return descriptiveStatistic;
     }
 
-    public void setNumericDescriptor(NumericDescriptor numericDescriptor) {
-        this.numericDescriptor = numericDescriptor;
+    public void setDescriptiveStatistic(DescriptiveStatistic descriptiveStatistic) {
+        this.descriptiveStatistic = descriptiveStatistic;
     }
 }

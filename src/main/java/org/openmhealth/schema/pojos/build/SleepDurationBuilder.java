@@ -16,16 +16,9 @@ public class SleepDurationBuilder implements SchemaPojoBuilder<SleepDuration> {
         sleepDuration.setEffectiveTime(new TimeFrame());
     }
 
-    public SleepDurationBuilder setDate(DateTime dateTime) {
-        sleepDuration.getEffectiveTime().setStartTime(dateTime);
-        return this;
-    }
-
-    public SleepDurationBuilder setDuration(String value, String unit) {
-        DurationUnitValue durationUnitValue = new DurationUnitValue();
-        durationUnitValue.setValue(new BigDecimal(value));
-        durationUnitValue.setUnit(DurationUnitValue.DurationUnit.valueOf(unit));
-        sleepDuration.getEffectiveTime().setDuration(durationUnitValue);
+    public SleepDurationBuilder withStartAndDuration(DateTime start, Double value,
+                                                     DurationUnitValue.DurationUnit unit) {
+        sleepDuration.setEffectiveTime(TimeFrame.withTimeInterval(start, value, unit));
         return this;
     }
 

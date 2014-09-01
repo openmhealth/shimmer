@@ -41,7 +41,7 @@ public class Activity extends BaseDataPoint {
     @Override
     @JsonIgnore
     public DateTime getTimeStamp() {
-        return effectiveTimeFrame.getStartTime();
+        return effectiveTimeFrame.getTimestamp();
     }
 
     public LengthUnitValue getDistance() {

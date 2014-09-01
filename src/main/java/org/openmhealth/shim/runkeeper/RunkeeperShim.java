@@ -127,10 +127,10 @@ public class RunkeeperShim extends OAuth2ShimBase {
                             .setDistance(
                                 rkActivity.get("total_distance").asText(),
                                 LengthUnitValue.LengthUnit.m.toString())
-                            .setDuration(
-                                rkActivity.get("duration").asText(),
-                                DurationUnitValue.DurationUnit.sec.toString())
-                            .setStartTime(startTime).build();
+                            .withStartAndDuration(
+                                startTime,
+                                rkActivity.get("duration").asDouble(),
+                                DurationUnitValue.DurationUnit.sec).build();
 
                         activities.add(activity);
                     }

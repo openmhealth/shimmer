@@ -5,8 +5,8 @@ import com.fasterxml.jackson.annotation.JsonRootName;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.joda.time.DateTime;
-import org.openmhealth.schema.pojos.serialize.MetadataTimestampDeserializer;
-import org.openmhealth.schema.pojos.serialize.MetadataTimestampSerializer;
+import org.openmhealth.schema.pojos.serialize.dates.MetadataTimestampDeserializer;
+import org.openmhealth.schema.pojos.serialize.dates.MetadataTimestampSerializer;
 
 @JsonRootName(value = "metadata", namespace = "org.openmhealth.schema")
 public class Metadata {

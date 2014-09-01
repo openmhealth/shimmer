@@ -5,7 +5,7 @@ import org.openmhealth.schema.pojos.BloodPressure;
 import org.openmhealth.schema.pojos.BloodPressureUnit;
 import org.openmhealth.schema.pojos.DiastolicBloodPressure;
 import org.openmhealth.schema.pojos.SystolicBloodPressure;
-import org.openmhealth.schema.pojos.generic.NumericDescriptor;
+import org.openmhealth.schema.pojos.generic.DescriptiveStatistic;
 import org.openmhealth.schema.pojos.generic.TimeFrame;
 
 import java.math.BigDecimal;
@@ -37,7 +37,7 @@ public class BloodPressureBuilder implements SchemaPojoBuilder<BloodPressure> {
     }
 
     public BloodPressureBuilder setNumericDescriptor(String numericDescriptor) {
-        bloodPressure.setNumericDescriptor(NumericDescriptor.valueOf(numericDescriptor));
+        bloodPressure.setDescriptiveStatistic(DescriptiveStatistic.valueOf(numericDescriptor));
         return this;
     }
 
@@ -52,7 +52,7 @@ public class BloodPressureBuilder implements SchemaPojoBuilder<BloodPressure> {
     }
 
     public BloodPressureBuilder setTimeTaken(DateTime dateTime) {
-        bloodPressure.getEffectiveTimeFrame().setStartTime(dateTime);
+        bloodPressure.setEffectiveTimeFrame(TimeFrame.withDateTime(dateTime));
         return this;
     }
 }

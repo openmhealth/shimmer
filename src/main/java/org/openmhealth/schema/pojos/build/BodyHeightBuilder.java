@@ -3,6 +3,7 @@ package org.openmhealth.schema.pojos.build;
 import org.joda.time.DateTime;
 import org.openmhealth.schema.pojos.BodyHeight;
 import org.openmhealth.schema.pojos.generic.LengthUnitValue;
+import org.openmhealth.schema.pojos.generic.MassUnitValue;
 import org.openmhealth.schema.pojos.generic.TimeFrame;
 
 import java.math.BigDecimal;
@@ -24,8 +25,16 @@ public class BodyHeightBuilder implements SchemaPojoBuilder<BodyHeight> {
         return this;
     }
 
+    public BodyHeightBuilder setHeight(Double value, LengthUnitValue.LengthUnit unit) {
+        LengthUnitValue lengthUnitValue = new LengthUnitValue();
+        lengthUnitValue.setValue(new BigDecimal(value));
+        lengthUnitValue.setUnit(unit);
+        bodyHeight.setLengthUnitValue(lengthUnitValue);
+        return this;
+    }
+
     public BodyHeightBuilder setTimeTaken(DateTime dateTime) {
-        bodyHeight.getEffectiveTimeFrame().setStartTime(dateTime);
+        bodyHeight.setEffectiveTimeFrame(TimeFrame.withDateTime(dateTime));
         return this;
     }
 

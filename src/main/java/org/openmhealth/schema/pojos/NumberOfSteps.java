@@ -31,7 +31,7 @@ public class NumberOfSteps extends BaseDataPoint {
     @Override
     @JsonIgnore
     public DateTime getTimeStamp() {
-        return effectiveTimeFrame.getStartTime();
+        return effectiveTimeFrame.getTimestamp();
     }
 
     public Integer getValue() {

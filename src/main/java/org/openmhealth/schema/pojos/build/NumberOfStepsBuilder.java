@@ -21,21 +21,14 @@ public class NumberOfStepsBuilder implements SchemaPojoBuilder<NumberOfSteps> {
         return this;
     }
 
-    public NumberOfStepsBuilder setDuration(String value, String unit) {
-        DurationUnitValue durationUnitValue = new DurationUnitValue();
-        durationUnitValue.setValue(new BigDecimal(value));
-        durationUnitValue.setUnit(DurationUnitValue.DurationUnit.valueOf(unit));
-        numberOfSteps.getEffectiveTimeFrame().setDuration(durationUnitValue);
+    public NumberOfStepsBuilder withStartAndDuration(DateTime start, Double value,
+                                                     DurationUnitValue.DurationUnit unit) {
+        numberOfSteps.setEffectiveTimeFrame(TimeFrame.withTimeInterval(start, value, unit));
         return this;
     }
 
-    public NumberOfStepsBuilder setStartTime(DateTime dateTime) {
-        numberOfSteps.getEffectiveTimeFrame().setStartTime(dateTime);
-        return this;
-    }
-
-    public NumberOfStepsBuilder setEndTime(DateTime dateTime) {
-        numberOfSteps.getEffectiveTimeFrame().setEndTime(dateTime);
+    public NumberOfStepsBuilder withStartAndEnd(DateTime start, DateTime end) {
+        numberOfSteps.setEffectiveTimeFrame(TimeFrame.withTimeInterval(start, end));
         return this;
     }
 

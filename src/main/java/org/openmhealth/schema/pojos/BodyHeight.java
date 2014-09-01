@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
 import org.joda.time.DateTime;
+import org.openmhealth.schema.pojos.generic.DescriptiveStatistic;
 import org.openmhealth.schema.pojos.generic.LengthUnitValue;
 import org.openmhealth.schema.pojos.generic.TimeFrame;
 
@@ -12,11 +13,14 @@ import org.openmhealth.schema.pojos.generic.TimeFrame;
 @JsonRootName(value = BodyHeight.SCHEMA_BODY_HEIGHT, namespace = DataPoint.NAMESPACE)
 public class BodyHeight extends BaseDataPoint {
 
-    @JsonProperty(value = "length-unit-value", required = true)
+    @JsonProperty(value = "body-height", required = true)
     private LengthUnitValue lengthUnitValue;
 
     @JsonProperty(value = "effective-time-frame", required = true)
     private TimeFrame effectiveTimeFrame;
+
+    @JsonProperty(value = "descriptive-statistic", required = true)
+    private DescriptiveStatistic descriptiveStatistic;
 
     public static final String SCHEMA_BODY_HEIGHT = "body-height";
 
@@ -37,7 +41,15 @@ public class BodyHeight extends BaseDataPoint {
     @Override
     @JsonIgnore
     public DateTime getTimeStamp() {
-        return effectiveTimeFrame.getStartTime();
+        return effectiveTimeFrame.getTimestamp();
+    }
+
+    public DescriptiveStatistic getDescriptiveStatistic() {
+        return descriptiveStatistic;
+    }
+
+    public void setDescriptiveStatistic(DescriptiveStatistic descriptiveStatistic) {
+        this.descriptiveStatistic = descriptiveStatistic;
     }
 
     public LengthUnitValue getLengthUnitValue() {

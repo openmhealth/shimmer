@@ -14,7 +14,7 @@ public class HeartRateBuilder implements SchemaPojoBuilder<HeartRate> {
     }
 
     public HeartRateBuilder setTimeTaken(DateTime dateTime) {
-        heartRate.getEffectiveTimeFrame().setStartTime(dateTime);
+        heartRate.getEffectiveTimeFrame().setDateTime(dateTime);
         return this;
     }
 

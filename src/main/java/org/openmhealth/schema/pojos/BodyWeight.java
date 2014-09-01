@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
 import org.joda.time.DateTime;
+import org.openmhealth.schema.pojos.generic.DescriptiveStatistic;
 import org.openmhealth.schema.pojos.generic.MassUnitValue;
 import org.openmhealth.schema.pojos.generic.TimeFrame;
 
@@ -12,11 +13,14 @@ import org.openmhealth.schema.pojos.generic.TimeFrame;
 @JsonRootName(value = BodyWeight.SCHEMA_BODY_WEIGHT, namespace = "omh:normalized")
 public class BodyWeight extends BaseDataPoint {
 
-    @JsonProperty(value = "mass-unit-value", required = true)
+    @JsonProperty(value = "body-weight", required = true)
     private MassUnitValue massUnitValue;
 
     @JsonProperty(value = "effective-time-frame", required = true)
     private TimeFrame effectiveTimeFrame;
+
+    @JsonProperty(value = "descriptive-statistic", required = true)
+    private DescriptiveStatistic descriptiveStatistic;
 
     public static final String SCHEMA_BODY_WEIGHT = "body-weight";
 
@@ -32,7 +36,15 @@ public class BodyWeight extends BaseDataPoint {
     @Override
     @JsonIgnore
     public DateTime getTimeStamp() {
-        return effectiveTimeFrame.getStartTime();
+        return effectiveTimeFrame.getTimestamp();
+    }
+
+    public DescriptiveStatistic getDescriptiveStatistic() {
+        return descriptiveStatistic;
+    }
+
+    public void setDescriptiveStatistic(DescriptiveStatistic descriptiveStatistic) {
+        this.descriptiveStatistic = descriptiveStatistic;
     }
 
     public MassUnitValue getMassUnitValue() {

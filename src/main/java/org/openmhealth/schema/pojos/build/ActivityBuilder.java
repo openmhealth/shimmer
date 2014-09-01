@@ -5,6 +5,7 @@ import org.openmhealth.schema.pojos.Activity;
 import org.openmhealth.schema.pojos.generic.DurationUnitValue;
 import org.openmhealth.schema.pojos.generic.LengthUnitValue;
 import org.openmhealth.schema.pojos.generic.TimeFrame;
+import org.openmhealth.schema.pojos.generic.TimeInterval;
 
 import java.math.BigDecimal;
 
@@ -35,21 +36,14 @@ public class ActivityBuilder implements SchemaPojoBuilder<Activity> {
         return this;
     }
 
-    public ActivityBuilder setDuration(String value, String unit) {
-        DurationUnitValue durationUnitValue = new DurationUnitValue();
-        durationUnitValue.setValue(new BigDecimal(value));
-        durationUnitValue.setUnit(DurationUnitValue.DurationUnit.valueOf(unit));
-        activity.getEffectiveTimeFrame().setDuration(durationUnitValue);
+    public ActivityBuilder withStartAndDuration(DateTime start, Double value,
+                                                DurationUnitValue.DurationUnit unit) {
+        activity.setEffectiveTimeFrame(TimeFrame.withTimeInterval(start, value, unit));
         return this;
     }
 
-    public ActivityBuilder setStartTime(DateTime dateTime) {
-        activity.getEffectiveTimeFrame().setStartTime(dateTime);
-        return this;
-    }
-
-    public ActivityBuilder setEndTime(DateTime dateTime) {
-        activity.getEffectiveTimeFrame().setEndTime(dateTime);
+    public ActivityBuilder withStartAndEnd(DateTime start, DateTime end) {
+        activity.setEffectiveTimeFrame(TimeFrame.withTimeInterval(start, end));
         return this;
     }
 }

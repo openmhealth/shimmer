@@ -29,7 +29,7 @@ public class SleepDuration extends BaseDataPoint {
     @Override
     @JsonIgnore
     public DateTime getTimeStamp() {
-        return effectiveTime.getStartTime();
+        return effectiveTime.getTimestamp();
     }
 
     public TimeFrame getEffectiveTime() {

@@ -44,6 +44,9 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.*;
 
+import static org.openmhealth.schema.pojos.generic.DurationUnitValue.*;
+import static org.openmhealth.schema.pojos.generic.DurationUnitValue.DurationUnit.*;
+
 /**
  * Encapsulates parameters specific to jawbone api.
  */
@@ -176,9 +179,9 @@ public class JawboneShim extends OAuth2ShimBase {
                     DateTime timeStamp = new DateTime(jbSleep.get("time_created").asLong() * 1000);
 
                     SleepDuration sleepDuration = new SleepDurationBuilder()
-                        .setDuration(jbSleep.get("details").get("duration").asText(),
-                            DurationUnitValue.DurationUnit.sec.toString())
-                        .setDate(timeStamp).build();
+                        .withStartAndDuration(
+                            timeStamp, jbSleep.get("details").get("duration").asDouble(), sec)
+                        .build();
 
                     sleepDurations.add(sleepDuration);
                 }
@@ -207,16 +210,14 @@ public class JawboneShim extends OAuth2ShimBase {
                 for (Object rawWorkout : jbWorkouts) {
                     JsonNode jbWorkout = mapper.readTree(((JSONObject) rawWorkout).toJSONString());
                     DateTime timeStamp = new DateTime(jbWorkout.get("time_created").asLong() * 1000);
-                    DateTime timeEnd = new DateTime(jbWorkout.get("time_completed").asLong() * 1000);
 
                     Activity activity = new ActivityBuilder()
                         .setActivityName(jbWorkout.get("title").asText())
                         .setDistance(jbWorkout.get("details").get("meters").asDouble() + "",
                             LengthUnitValue.LengthUnit.m.toString())
-                        .setDuration(jbWorkout.get("details").get("time").asText(),
-                            DurationUnitValue.DurationUnit.sec.toString())
-                        .setStartTime(timeStamp)
-                        .setEndTime(timeEnd).build();
+                        .withStartAndDuration(
+                            timeStamp, jbWorkout.get("details").get("time").asDouble(), sec)
+                        .build();
 
                     activities.add(activity);
                 }
@@ -259,9 +260,8 @@ public class JawboneShim extends OAuth2ShimBase {
                         Map<String, Object> stepEntry = (Map<String, Object>) jbSteps.get(timestampStr);
 
                         steps.add(new NumberOfStepsBuilder()
-                            .setStartTime(dateTime)
-                            .setDuration(stepEntry.get("active_time").toString(),
-                                DurationUnitValue.DurationUnit.sec.toString())
+                            .withStartAndDuration(
+                                dateTime, Double.parseDouble(stepEntry.get("active_time") + ""), sec)
                             .setSteps((Integer) stepEntry.get("steps")).build());
                     }
                 }

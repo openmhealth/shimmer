@@ -35,6 +35,8 @@ import java.math.BigDecimal;
 import java.net.URL;
 import java.util.*;
 
+import static org.openmhealth.schema.pojos.generic.DurationUnitValue.*;
+
 public class FitbitShim extends OAuth1ShimBase {
     public static final String SHIM_KEY = "fitbit";
 
@@ -325,10 +327,11 @@ public class FitbitShim extends OAuth1ShimBase {
                     for (JsonNode stepMinute : dataset) {
                         if (stepMinute.get("value").asInt() > 0) {
                             steps.add(new NumberOfStepsBuilder()
-                                .setStartTime(formatter.parseDateTime(
-                                    dateString + " " + stepMinute.get("time").asText()))
-                                .setDuration("1", DurationUnitValue.DurationUnit.min.toString())
-                                .setSteps(stepMinute.get("value").asInt())
+                                .withStartAndDuration(
+                                    formatter.parseDateTime(
+                                        dateString + " " + stepMinute.get("time").asText()),
+                                    1d, DurationUnit.min
+                                ).setSteps(stepMinute.get("value").asInt())
                                 .build());
                         }
                     }
@@ -371,9 +374,9 @@ public class FitbitShim extends OAuth1ShimBase {
                             .setActivityName(fitbitActivity.get("activityParentName").asText())
                             .setDistance(fitbitActivity.get("distance").asText(),
                                 LengthUnitValue.LengthUnit.m.toString())
-                            .setDuration(fitbitActivity.get("duration").asText(),
-                                DurationUnitValue.DurationUnit.ms.toString())
-                            .setStartTime(startTime).build();
+                            .withStartAndDuration(
+                                startTime, fitbitActivity.get("duration").asDouble(), DurationUnit.ms)
+                            .build();
 
                         activities.add(activity);
                     }
