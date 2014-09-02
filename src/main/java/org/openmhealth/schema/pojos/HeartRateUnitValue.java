@@ -4,8 +4,8 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import org.openmhealth.schema.pojos.serialize.dates.HeartRateUnitDeserializer;
-import org.openmhealth.schema.pojos.serialize.dates.LabeledEnumSerializer;
+import org.openmhealth.schema.pojos.serialize.HeartRateUnitDeserializer;
+import org.openmhealth.schema.pojos.serialize.LabeledEnumSerializer;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class HeartRateUnitValue {

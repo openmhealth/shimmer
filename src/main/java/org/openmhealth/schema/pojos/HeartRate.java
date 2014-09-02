@@ -4,9 +4,14 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.joda.time.DateTime;
 import org.openmhealth.schema.pojos.generic.DescriptiveStatistic;
 import org.openmhealth.schema.pojos.generic.TimeFrame;
+import org.openmhealth.schema.pojos.serialize.HeartRateUnitDeserializer;
+import org.openmhealth.schema.pojos.serialize.LabeledEnumSerializer;
+import org.openmhealth.schema.pojos.serialize.TemporalRelationshipToPhysicalActivityDeserializer;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonRootName(value = HeartRate.SCHEMA_HEART_RATE, namespace = DataPoint.NAMESPACE)
@@ -24,7 +29,9 @@ public class HeartRate extends BaseDataPoint {
     @JsonProperty(value = "heart-rate", required = true)
     private HeartRateUnitValue heartRate;
 
-    @JsonProperty(value = "temporal-relationship-to-physical-activity", required = true)
+    @JsonProperty(value = "temporal-relationship-to-physical-activity", required = false)
+    @JsonSerialize(using = LabeledEnumSerializer.class)
+    @JsonDeserialize(using = TemporalRelationshipToPhysicalActivityDeserializer.class)
     private TemporalRelationshipToPhysicalActivity temporalRelationshipToPhysicalActivity;
 
     public static final String SCHEMA_HEART_RATE = "heart-rate";
@@ -88,7 +95,6 @@ public class HeartRate extends BaseDataPoint {
         TemporalRelationshipToPhysicalActivity temporalRelationshipToPhysicalActivity) {
         this.temporalRelationshipToPhysicalActivity = temporalRelationshipToPhysicalActivity;
     }
-
 
 
 }

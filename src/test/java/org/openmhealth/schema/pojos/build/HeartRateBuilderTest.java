@@ -9,6 +9,7 @@ import com.github.fge.jsonschema.main.JsonSchemaFactory;
 import org.joda.time.DateTime;
 import org.junit.Test;
 import org.openmhealth.schema.pojos.HeartRate;
+import org.openmhealth.schema.pojos.TemporalRelationshipToPhysicalActivity;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -48,6 +49,8 @@ public class HeartRateBuilderTest {
 
         builder.withRate(234);
         builder.withTimeTaken(new DateTime());
+        builder.withTimeTakenDescription(
+            TemporalRelationshipToPhysicalActivity.after_exercise);
 
         HeartRate heartRate = builder.build();
 

@@ -18,7 +18,7 @@
             "$ref": "http://www.openmhealth.org/schema/omh/generic/descriptive-statistic-1.0.json"
         },
         "temporal-relationship-to-physical-activity": {
-            "$ref": "temporal-relationship-to-physical-activity-1.0.json"
+            "$ref": "http://www.openmhealth.org/schema/omh/clinical/temporal-relationship-to-physical-activity-1.0.json"
         },
         "user-notes": {
             "type": "string"

@@ -1,4 +1,4 @@
-package org.openmhealth.schema.pojos.serialize.dates;
+package org.openmhealth.schema.pojos.serialize;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.ObjectCodec;
