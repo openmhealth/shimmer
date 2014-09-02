@@ -186,9 +186,8 @@ public class FitbitShim extends OAuth1ShimBase {
                         }
 
                         heartRates.add(new HeartRateBuilder()
-                            .setRate(fbHeart.get("heartRate").asText())
-                            .setTimeTaken(new DateTime(heartDate)).build());
-
+                            .withRate(fbHeart.get("heartRate").asInt())
+                            .withTimeTaken(new DateTime(heartDate)).build());
                     }
                     Map<String, Object> results = new HashMap<>();
                     results.put(HeartRate.SCHEMA_HEART_RATE, heartRates);

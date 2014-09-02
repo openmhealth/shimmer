@@ -2,7 +2,11 @@ package org.openmhealth.schema.pojos.build;
 
 import org.joda.time.DateTime;
 import org.openmhealth.schema.pojos.HeartRate;
+import org.openmhealth.schema.pojos.HeartRateUnitValue;
+import org.openmhealth.schema.pojos.TemporalRelationshipToPhysicalActivity;
 import org.openmhealth.schema.pojos.generic.TimeFrame;
+
+import static org.openmhealth.schema.pojos.HeartRateUnitValue.Unit.bpm;
 
 public class HeartRateBuilder implements SchemaPojoBuilder<HeartRate> {
 
@@ -13,14 +17,20 @@ public class HeartRateBuilder implements SchemaPojoBuilder<HeartRate> {
         heartRate.setEffectiveTimeFrame(new TimeFrame());
     }
 
-    public HeartRateBuilder setTimeTaken(DateTime dateTime) {
+    public HeartRateBuilder withTimeTaken(DateTime dateTime) {
         heartRate.getEffectiveTimeFrame().setDateTime(dateTime);
         return this;
     }
 
-    public HeartRateBuilder setRate(String value) {
-        heartRate.setValue(new Integer(value));
-        heartRate.setUnit(HeartRate.Unit.bpm);
+    public HeartRateBuilder withRate(Integer value) {
+        HeartRateUnitValue heartRateUnitValue = new HeartRateUnitValue(value, bpm);
+        heartRate.setHeartRate(heartRateUnitValue);
+        return this;
+    }
+
+    public HeartRateBuilder withTimeTakenDescription(
+        TemporalRelationshipToPhysicalActivity description) {
+        heartRate.setTemporalRelationshipToPhysicalActivity(description);
         return this;
     }
 

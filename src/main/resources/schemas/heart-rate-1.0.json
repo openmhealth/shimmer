@@ -1,0 +1,61 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+
+    "description": "This schema represents a person's heart rate, either a single heart rate measurement, or the result of aggregating several measurements made over time (see Numeric descriptor schema for a list of aggregate measures)",
+    "type": "object",
+    "references": [
+        {
+            "description": "The SNOMED code represents Pulse rate (observable entity)",
+            "url": "http://purl.bioontology.org/ontology/SNOMEDCT/78564009"
+        }
+    ],
+
+    "definitions": {
+        "effective-time-frame": {
+            "$ref": "http://www.openmhealth.org/schema/omh/generic/time-frame-1.0.json"
+        },
+        "descriptive-statistic": {
+            "$ref": "http://www.openmhealth.org/schema/omh/generic/descriptive-statistic-1.0.json"
+        },
+        "temporal-relationship-to-physical-activity": {
+            "$ref": "temporal-relationship-to-physical-activity-1.0.json"
+        },
+        "user-notes": {
+            "type": "string"
+        }
+    },
+
+    "properties": {
+        "heart-rate": {
+            "allOf": [
+                {
+                    "$ref": "http://www.openmhealth.org/schema/omh/generic/unit-value-1.0.json"
+                },
+                {
+                    "properties": {
+                        "unit": {
+                            "enum": [
+                                "beats/min"
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        "effective-time-frame": {
+            "$ref": "#/definitions/effective-time-frame"
+        },
+        "descriptive-statistic": {
+            "$ref": "#/definitions/descriptive-statistic"
+        },
+        "temporal-relationship-to-physical-activity": {
+            "$ref": "#/definitions/temporal-relationship-to-physical-activity"
+        },
+        "user-notes": {
+            "$ref": "#/definitions/user-notes"
+        }
+    },
+
+    "required": ["heart-rate"]
+
+}

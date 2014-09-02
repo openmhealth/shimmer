@@ -12,29 +12,28 @@ import org.openmhealth.schema.pojos.generic.TimeFrame;
 @JsonRootName(value = HeartRate.SCHEMA_HEART_RATE, namespace = DataPoint.NAMESPACE)
 public class HeartRate extends BaseDataPoint {
 
-    @JsonProperty(value = "value", required = true)
-    private Integer value;
-
-    @JsonProperty(value = "unit", required = true)
-    private Unit unit;
-
     @JsonProperty(value = "effective-time-frame", required = false)
     private TimeFrame effectiveTimeFrame;
 
-    @JsonProperty(value = "numeric-descriptor", required = false)
+    @JsonProperty(value = "descriptive-statistic", required = false)
     private DescriptiveStatistic descriptiveStatistic;
 
-    @JsonProperty(value = "notes", required = false)
-    private String notes;
+    @JsonProperty(value = "user-notes", required = false)
+    private String userNotes;
+
+    @JsonProperty(value = "heart-rate", required = true)
+    private HeartRateUnitValue heartRate;
+
+    @JsonProperty(value = "temporal-relationship-to-physical-activity", required = true)
+    private TemporalRelationshipToPhysicalActivity temporalRelationshipToPhysicalActivity;
 
     public static final String SCHEMA_HEART_RATE = "heart-rate";
 
     public HeartRate() {
     }
 
-    public HeartRate(Integer value, Unit unit) {
-        this.value = value;
-        this.unit = unit;
+    public HeartRate(Integer value, HeartRateUnitValue.Unit unit) {
+        this.heartRate = new HeartRateUnitValue(value, unit);
     }
 
     @Override
@@ -65,30 +64,31 @@ public class HeartRate extends BaseDataPoint {
         this.effectiveTimeFrame = effectiveTimeFrame;
     }
 
-    public Integer getValue() {
-        return value;
+    public String getUserNotes() {
+        return userNotes;
     }
 
-    public void setValue(Integer value) {
-        this.value = value;
+    public void setUserNotes(String userNotes) {
+        this.userNotes = userNotes;
     }
 
-    public Unit getUnit() {
-        return unit;
+    public HeartRateUnitValue getHeartRate() {
+        return heartRate;
     }
 
-    public void setUnit(Unit unit) {
-        this.unit = unit;
+    public void setHeartRate(HeartRateUnitValue heartRate) {
+        this.heartRate = heartRate;
     }
 
-    public String getNotes() {
-        return notes;
+    public TemporalRelationshipToPhysicalActivity getTemporalRelationshipToPhysicalActivity() {
+        return temporalRelationshipToPhysicalActivity;
     }
 
-    public void setNotes(String notes) {
-        this.notes = notes;
+    public void setTemporalRelationshipToPhysicalActivity(
+        TemporalRelationshipToPhysicalActivity temporalRelationshipToPhysicalActivity) {
+        this.temporalRelationshipToPhysicalActivity = temporalRelationshipToPhysicalActivity;
     }
 
-    public enum Unit {bpm}
+
 
 }

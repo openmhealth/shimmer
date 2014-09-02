@@ -8,28 +8,23 @@ import com.github.fge.jsonschema.main.JsonSchema;
 import com.github.fge.jsonschema.main.JsonSchemaFactory;
 import org.joda.time.DateTime;
 import org.junit.Test;
-import org.openmhealth.schema.pojos.BodyHeight;
-import org.openmhealth.schema.pojos.BodyWeight;
-import org.openmhealth.schema.pojos.generic.LengthUnitValue;
+import org.openmhealth.schema.pojos.HeartRate;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.math.BigDecimal;
 import java.net.URL;
 
-import static org.junit.Assert.*;
-import static org.openmhealth.schema.pojos.generic.LengthUnitValue.*;
-import static org.openmhealth.schema.pojos.generic.LengthUnitValue.LengthUnit.*;
-import static org.openmhealth.schema.pojos.generic.MassUnitValue.MassUnit.lb;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
-public class BodyHeightBuilderTest {
+public class HeartRateBuilderTest {
 
     @Test
     public void test() throws IOException, ProcessingException {
+        final String HEART_RATE_SCHEMA = "schemas/heart-rate-1.0.json";
 
-        final String BODY_HEIGHT_SCHEMA = "schemas/body-height-1.0.json";
-
-        URL url = Thread.currentThread().getContextClassLoader().getResource(BODY_HEIGHT_SCHEMA);
+        URL url = Thread.currentThread().getContextClassLoader().getResource(HEART_RATE_SCHEMA);
         assertNotNull(url);
 
         ObjectMapper mapper = new ObjectMapper();
@@ -42,25 +37,24 @@ public class BodyHeightBuilderTest {
 
         ProcessingReport report;
 
-        BodyHeightBuilder builder = new BodyHeightBuilder();
+        HeartRateBuilder builder = new HeartRateBuilder();
 
-        BodyHeight invalidBodyHeight = builder.build();
-        String invalidJson = mapper.writeValueAsString(invalidBodyHeight);
+        HeartRate invalidHeartRate = builder.build();
+        String invalidJson = mapper.writeValueAsString(invalidHeartRate);
 
         report = schema.validate(mapper.readTree(invalidJson));
         System.out.println(report);
         assertFalse("Expected invalid result but got success", report.isSuccess());
 
-        builder.setHeight(150d, cm);
-        builder.setTimeTaken(new DateTime());
-        BodyHeight bodyHeight = builder.build();
+        builder.withRate(234);
+        builder.withTimeTaken(new DateTime());
 
-        assertNotNull(bodyHeight.getEffectiveTimeFrame());
-        assertNotNull(bodyHeight.getLengthUnitValue());
-        assertEquals(bodyHeight.getLengthUnitValue().getUnit(), cm);
-        assertEquals(bodyHeight.getLengthUnitValue().getValue(), new BigDecimal(150d));
+        HeartRate heartRate = builder.build();
 
-        String rawJson = mapper.writeValueAsString(bodyHeight);
+        assertNotNull(heartRate.getEffectiveTimeFrame());
+        assertNotNull(heartRate.getHeartRate());
+
+        String rawJson = mapper.writeValueAsString(heartRate);
 
         report = schema.validate(mapper.readTree(rawJson));
         System.out.println(report);

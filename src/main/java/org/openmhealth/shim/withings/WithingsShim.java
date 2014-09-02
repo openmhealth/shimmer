@@ -198,8 +198,8 @@ public class WithingsShim extends OAuth1ShimBase {
                                     break;
                                 case HEART_PULSE:
                                     heartRates.add(new HeartRateBuilder()
-                                        .setTimeTaken(dateTime)
-                                        .setRate(measureValue.intValue() + "")
+                                        .withRate(Integer.parseInt(measureValue.intValue() + ""))
+                                        .withTimeTaken(dateTime)
                                         .build());
                                     break;
                             }
@@ -260,7 +260,7 @@ public class WithingsShim extends OAuth1ShimBase {
 
                         steps.add(new NumberOfStepsBuilder()
                             .withStartAndDuration(
-                                dateTime, Double.parseDouble(stepEntry.get("duration") + ""),sec)
+                                dateTime, Double.parseDouble(stepEntry.get("duration") + ""), sec)
                             .setSteps((Integer) stepEntry.get("steps")).build());
                     }
                     Map<String, Object> results = new HashMap<>();
@@ -293,7 +293,7 @@ public class WithingsShim extends OAuth1ShimBase {
                         long duration = wSleep.get("enddate").asLong() - wSleep.get("startdate").asLong();
                         sleeps.add(new SleepDurationBuilder()
                             .withStartAndDuration(
-                                startTime, Double.parseDouble(duration + ""),sec)
+                                startTime, Double.parseDouble(duration + ""), sec)
                             .build());
                     }
                     Map<String, Object> results = new HashMap<>();

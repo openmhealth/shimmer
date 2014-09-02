@@ -185,8 +185,8 @@ public class HealthvaultShim implements Shim {
                             ).build());
 
                         heartRates.add(new HeartRateBuilder()
-                            .setRate(hvBloodPressure.get("pulse").asText())
-                            .setTimeTaken(dateTimeWhen).build());
+                            .withRate(hvBloodPressure.get("pulse").asInt())
+                            .withTimeTaken(dateTimeWhen).build());
                     }
                     Map<String, Object> results = new HashMap<>();
                     results.put(BloodPressure.SCHEMA_BLOOD_PRESSURE, bloodPressures);
