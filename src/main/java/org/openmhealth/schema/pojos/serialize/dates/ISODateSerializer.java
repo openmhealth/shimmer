@@ -4,10 +4,8 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
-import org.openmhealth.schema.pojos.generic.TimeFrame;
 
 import java.io.IOException;
 
@@ -16,7 +14,7 @@ import java.io.IOException;
  */
 public class ISODateSerializer extends JsonSerializer<DateTime> {
 
-    protected static DateTimeFormatter formatter = ISODateTimeFormat.dateParser();
+    protected static DateTimeFormatter formatter = ISODateTimeFormat.dateTime();
 
     @Override
     public void serialize(DateTime value, JsonGenerator gen,

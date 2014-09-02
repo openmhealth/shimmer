@@ -1,13 +1,15 @@
 package org.openmhealth.schema.pojos.generic;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import org.codehaus.jackson.annotate.JsonIgnore;
 import org.joda.time.DateTime;
 import org.openmhealth.schema.pojos.serialize.dates.ISODateDeserializer;
 import org.openmhealth.schema.pojos.serialize.dates.ISODateSerializer;
+
+import java.math.BigDecimal;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class TimeFrame {
@@ -28,10 +30,10 @@ public class TimeFrame {
         if (dateTime != null) {
             return dateTime;
         }
-        if (timeInterval.getDate() != null) {
+        if (timeInterval != null && timeInterval.getDate() != null) {
             return timeInterval.getDate();
         }
-        if (timeInterval.getStartTime() != null) {
+        if (timeInterval != null && timeInterval.getStartTime() != null) {
             return timeInterval.getStartTime();
         }
         return null;
@@ -54,15 +56,31 @@ public class TimeFrame {
     }
 
     public static TimeFrame withDateTime(DateTime dateTime) {
-        return null;
+        TimeFrame timeFrame = new TimeFrame();
+        timeFrame.setDateTime(dateTime);
+        return timeFrame;
     }
 
     public static TimeFrame withTimeInterval(DateTime startTime, DateTime endTime) {
-        return null;
+        TimeFrame timeFrame = new TimeFrame();
+        TimeInterval interval = new TimeInterval();
+        interval.setStartTime(startTime);
+        interval.setEndTime(endTime);
+        timeFrame.setTimeInterval(interval);
+        return timeFrame;
     }
 
     public static TimeFrame withTimeInterval(DateTime startTime,
-                                             Double durationValue, DurationUnitValue.DurationUnit unit) {
-        return null;
+                                             Double durationValue,
+                                             DurationUnitValue.DurationUnit unit) {
+        TimeFrame timeFrame = new TimeFrame();
+        TimeInterval interval = new TimeInterval();
+        interval.setStartTime(startTime);
+        DurationUnitValue durationUnitValue = new DurationUnitValue();
+        durationUnitValue.setUnit(unit);
+        durationUnitValue.setValue(new BigDecimal(durationValue));
+        interval.setDuration(durationUnitValue);
+        timeFrame.setTimeInterval(interval);
+        return timeFrame;
     }
 }

@@ -51,11 +51,10 @@ dependencies {
   compile "com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.4.0"
   compile "org.codehaus.woodstox:woodstox-core-asl:4.1.4"
   //todo: find out if this is necessary, it might not be
-  compile "com.fasterxml.jackson.module:jackson-module-jsonSchema:2.3.3"
+  //compile "com.fasterxml.jackson.module:jackson-module-jsonSchema:2.3.3"
   compile "com.jayway.jsonpath:json-path:0.9.1"
-  //compile "com.github.fge:json-schema-validator:2.2.5"
+  compile "com.github.fge:json-schema-validator:2.2.5"
   //testCompile "com.jayway.jsonpath:json-path-assert:0.9.1"
-
 
   compile "org.springframework.boot:spring-boot-starter-data-mongodb"
 
