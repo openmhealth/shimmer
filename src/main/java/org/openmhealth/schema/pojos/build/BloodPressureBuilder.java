@@ -1,10 +1,7 @@
 package org.openmhealth.schema.pojos.build;
 
 import org.joda.time.DateTime;
-import org.openmhealth.schema.pojos.BloodPressure;
-import org.openmhealth.schema.pojos.BloodPressureUnit;
-import org.openmhealth.schema.pojos.DiastolicBloodPressure;
-import org.openmhealth.schema.pojos.SystolicBloodPressure;
+import org.openmhealth.schema.pojos.*;
 import org.openmhealth.schema.pojos.generic.DescriptiveStatistic;
 import org.openmhealth.schema.pojos.generic.TimeFrame;
 
@@ -31,13 +28,15 @@ public class BloodPressureBuilder implements SchemaPojoBuilder<BloodPressure> {
         return this;
     }
 
-    public BloodPressureBuilder setPositionDuringMeasurement(String position) {
-        bloodPressure.setPosition(BloodPressure.Position.valueOf(position));
+    public BloodPressureBuilder setPositionDuringMeasurement(
+        PositionDuringMeasurement positionDuringMeasurement) {
+
+        bloodPressure.setPositionDuringMeasurement(positionDuringMeasurement);
         return this;
     }
 
-    public BloodPressureBuilder setNumericDescriptor(String numericDescriptor) {
-        bloodPressure.setDescriptiveStatistic(DescriptiveStatistic.valueOf(numericDescriptor));
+    public BloodPressureBuilder setDescriptiveStatistic(DescriptiveStatistic descriptiveStatistic) {
+        bloodPressure.setDescriptiveStatistic(descriptiveStatistic);
         return this;
     }
 

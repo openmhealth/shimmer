@@ -4,9 +4,13 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.joda.time.DateTime;
 import org.openmhealth.schema.pojos.generic.DescriptiveStatistic;
 import org.openmhealth.schema.pojos.generic.TimeFrame;
+import org.openmhealth.schema.pojos.serialize.LabeledEnumSerializer;
+import org.openmhealth.schema.pojos.serialize.TemporalRelationshipToPhysicalActivityDeserializer;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonRootName(value = BloodPressure.SCHEMA_BLOOD_PRESSURE, namespace = DataPoint.NAMESPACE)
@@ -22,17 +26,17 @@ public class BloodPressure extends BaseDataPoint {
     private TimeFrame effectiveTimeFrame;
 
     @JsonProperty(value = "position-during-measurement", required = false)
-    private Position position;
+    @JsonSerialize(using = LabeledEnumSerializer.class)
+    @JsonDeserialize(using = TemporalRelationshipToPhysicalActivityDeserializer.class)
+    private PositionDuringMeasurement positionDuringMeasurement;
 
-    @JsonProperty(value = "numeric-descriptor", required = false)
+    @JsonProperty(value = "descriptive-statistic", required = false)
     private DescriptiveStatistic descriptiveStatistic;
 
     public static final String SCHEMA_BLOOD_PRESSURE = "blood-pressure";
 
     @JsonProperty(value = "notes", required = false)
     private String notes;
-
-    public enum Position {sitting, lying_down, standing}
 
     @Override
     @JsonIgnore
@@ -54,12 +58,12 @@ public class BloodPressure extends BaseDataPoint {
         this.effectiveTimeFrame = effectiveTimeFrame;
     }
 
-    public Position getPosition() {
-        return position;
+    public PositionDuringMeasurement getPositionDuringMeasurement() {
+        return positionDuringMeasurement;
     }
 
-    public void setPosition(Position position) {
-        this.position = position;
+    public void setPositionDuringMeasurement(PositionDuringMeasurement positionDuringMeasurement) {
+        this.positionDuringMeasurement = positionDuringMeasurement;
     }
 
     public SystolicBloodPressure getSystolic() {

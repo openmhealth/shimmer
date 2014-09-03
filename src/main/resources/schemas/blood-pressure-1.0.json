@@ -1,0 +1,56 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+
+    "description": "This schema represents a person's blood pressure as a combination of systolic and diastolic blood pressure, either a single blood pressure measurement, or the result of aggregating several measurements made over time (see Numeric descriptor schema for a list of aggregate measures)",
+    "type": "object",
+    "references": [
+        {
+            "description": "The SNOMED codes represents Blood pressure (observable entity)",
+            "url": "http://purl.bioontology.org/ontology/SNOMEDCT/75367002"
+        }
+    ],
+    "definitions": {
+        "systolic-blood-pressure": {
+            "$ref": "http://www.openmhealth.org/schema/omh/clinical/systolic-blood-pressure-1.0.json"
+        },
+        "diastolic-blood-pressure": {
+            "$ref": "http://www.openmhealth.org/schema/omh/clinical/diastolic-blood-pressure-1.0.json"
+        },
+        "effective-time-frame": {
+            "$ref": "http://www.openmhealth.org/schema/omh/generic/time-frame-1.0.json"
+        },
+        "position-during-measurement": {
+            "$ref": "http://www.openmhealth.org/schema/omh/clinical/position-during-measurement-1.0.json"
+        },
+        "descriptive-statistic": {
+            "$ref": "http://www.openmhealth.org/schema/omh/generic/descriptive-statistic-1.0.json"
+        },
+        "user-notes": {
+            "type": "string"
+        }
+    },
+
+    "properties": {
+        "systolic-blood-pressure": {
+            "$ref": "#/definitions/systolic-blood-pressure"
+        },
+        "diastolic-blood-pressure": {
+            "$ref": "#/definitions/diastolic-blood-pressure"
+        },
+        "effective-time-frame": {
+            "$ref": "#/definitions/effective-time-frame"
+        },
+        "position-during-measurement": {
+            "$ref": "#/definitions/position-during-measurement"
+        },
+        "descriptive-statistic": {
+            "$ref": "#/definitions/descriptive-statistic"
+        },
+        "user-notes": {
+            "$ref": "#/definitions/user-notes"
+        }
+    },
+
+    "required": ["systolic-blood-pressure", "diastolic-blood-pressure"]
+
+}
