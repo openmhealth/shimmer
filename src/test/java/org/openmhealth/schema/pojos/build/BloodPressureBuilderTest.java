@@ -33,18 +33,16 @@ import java.io.InputStream;
 import java.math.BigDecimal;
 import java.net.URL;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class BloodPressureBuilderTest {
 
     @Test
     @SuppressWarnings("unchecked")
     public void testParse() throws IOException, ProcessingException {
-        final String HEART_RATE_SCHEMA = "schemas/blood-pressure-1.0.json";
+        final String BLOOD_PRESSURE_SCHEMA = "schemas/blood-pressure-1.0.json";
 
-        URL url = Thread.currentThread().getContextClassLoader().getResource(HEART_RATE_SCHEMA);
+        URL url = Thread.currentThread().getContextClassLoader().getResource(BLOOD_PRESSURE_SCHEMA);
         assertNotNull(url);
 
         ObjectMapper mapper = new ObjectMapper();
@@ -74,6 +72,15 @@ public class BloodPressureBuilderTest {
             .setDescriptiveStatistic(DescriptiveStatistic.average).build();
 
         String rawJson = mapper.writeValueAsString(bloodPressure);
+
+        BloodPressure deserialized = mapper.readValue(rawJson, BloodPressure.class);
+
+        assertNotNull(deserialized.getEffectiveTimeFrame());
+        assertNotNull(deserialized.getDiastolic());
+        assertNotNull(deserialized.getSystolic());
+        assertNotNull(deserialized.getNotes());
+        assertNotNull(deserialized.getPositionDuringMeasurement());
+        assertNotNull(deserialized.getDescriptiveStatistic());
 
         report = schema.validate(mapper.readTree(rawJson));
         System.out.println(report);

@@ -10,6 +10,7 @@ import org.joda.time.DateTime;
 import org.openmhealth.schema.pojos.generic.DescriptiveStatistic;
 import org.openmhealth.schema.pojos.generic.TimeFrame;
 import org.openmhealth.schema.pojos.serialize.LabeledEnumSerializer;
+import org.openmhealth.schema.pojos.serialize.PositionDuringMeasurementDeserializer;
 import org.openmhealth.schema.pojos.serialize.TemporalRelationshipToPhysicalActivityDeserializer;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -27,7 +28,7 @@ public class BloodPressure extends BaseDataPoint {
 
     @JsonProperty(value = "position-during-measurement", required = false)
     @JsonSerialize(using = LabeledEnumSerializer.class)
-    @JsonDeserialize(using = TemporalRelationshipToPhysicalActivityDeserializer.class)
+    @JsonDeserialize(using = PositionDuringMeasurementDeserializer.class)
     private PositionDuringMeasurement positionDuringMeasurement;
 
     @JsonProperty(value = "descriptive-statistic", required = false)
