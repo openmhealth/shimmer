@@ -265,29 +265,31 @@ public class HealthvaultShim implements Shim {
                          * Must parse out the meal context properly, HV has many
                          * available choices, we care about fewer.
                          */
-                        BloodGlucose.MealContext mealContext = null;
+                        TemporalRelationshipToMeal mealContext = null;
                         if (hvBloodGlucose.get("measurement-context") != null) {
                             String hvMealContext = hvBloodGlucose.get("measurement-context").get("text").asText();
                             hvMealContext = hvMealContext.toLowerCase().trim();
                             if (hvMealContext.contains("after")
                                 && !hvMealContext.contains("exercise")) {
-                                mealContext = BloodGlucose.MealContext.after_meal;
+                                mealContext = TemporalRelationshipToMeal.after_meal;
                             } else if (hvMealContext.contains("before")
                                 && !hvMealContext.contains("exercise")) {
-                                mealContext = BloodGlucose.MealContext.before_meal;
+                                mealContext = TemporalRelationshipToMeal.before_meal;
                             } else if (hvMealContext.startsWith("non")) {
-                                mealContext = BloodGlucose.MealContext.not_fasting;
+                                mealContext = TemporalRelationshipToMeal.not_fasting;
                             } else if (hvMealContext.contains("fasting")) {
-                                mealContext = BloodGlucose.MealContext.fasting;
+                                mealContext = TemporalRelationshipToMeal.fasting;
                             }
                         }
 
                         bloodGlucoses.add(new BloodGlucoseBuilder()
                             .setTimeTaken(dateTimeWhen)
-                            .setValue(hvBloodGlucose.get("value").
-                                get("display").get("").asText())
-                            .setMeasureContext(hvMeasureType)
-                            .setMealContext(mealContext != null ? mealContext.toString() : null)
+                            .setMgdLValue(new BigDecimal(hvBloodGlucose.get("value").
+                                get("display").get("").asText()))
+                            .setBloodSpecimenType(BloodSpecimenType.valueOf(hvMeasureType))
+                            .setTemporalRelationshipToMeal(
+                                mealContext != null ?
+                                    TemporalRelationshipToMeal.valueOf(mealContext.toString()) : null)
                             .build());
                     }
                     Map<String, Object> results = new HashMap<>();

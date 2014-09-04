@@ -1,0 +1,76 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+
+    "description": "This schema represents a person's blood glucose level, either a single blood glucose measurement, or the result of aggregating several measurements made over time (see Numeric descriptor schema for a list of aggregate measures)",
+    "type": "object",
+
+    "references": [
+        {
+            "description": "The SNOMED code represents Blood glucose level (finding)",
+            "url": "http://purl.bioontology.org/ontology/SNOMEDCT/365812005"
+        }
+    ],
+
+    "definitions": {
+        "blood-specimen-type": {
+            "$ref": "http://www.openmhealth.org/schema/omh/clinical/blood-specimen-type-1.0.json"
+        },
+        "effective-time-frame": {
+            "$ref": "http://www.openmhealth.org/schema/omh/generic/time-frame-1.0.json"
+        },
+        "temporal-relationship-to-meal": {
+            "$ref": "http://www.openmhealth.org/schema/omh/clinical/temporal-relationship-to-meal-1.0.json"
+        },
+        "temporal-relationship-to-sleep": {
+            "$ref": "http://www.openmhealth.org/schema/omh/clinical/temporal-relationship-to-sleep-1.0.json"
+        },
+        "descriptive-statistic": {
+            "$ref": "http://www.openmhealth.org/schema/omh/generic/descriptive-statistic-1.0.json"
+        },
+        "user-notes": {
+            "type": "string"
+        }
+    },
+
+    "properties": {
+        "blood-glucose": {
+            "allOf": [
+                {
+                    "$ref": "http://www.openmhealth.org/schema/omh/generic/unit-value-1.0.json"
+                },
+                {
+                    "properties": {
+                        "unit": {
+                            "enum": [
+                                "mg/dL",
+                                "mmol/L"
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        "blood-specimen-type": {
+            "$ref": "#/definitions/blood-specimen-type"
+        },
+        "effective-time-frame": {
+            "$ref": "#/definitions/effective-time-frame"
+        },
+        "temporal-relationship-to-meal": {
+            "$ref": "#/definitions/temporal-relationship-to-meal"
+        },
+
+        "temporal-relationship-to-sleep": {
+            "$ref": "#/definitions/temporal-relationship-to-sleep"
+        },
+        "descriptive-statistic": {
+            "$ref": "#/definitions/descriptive-statistic"
+        },
+        "user-notes": {
+            "$ref": "#/definitions/user-notes"
+        }
+    },
+
+    "required": ["blood-glucose"]
+
+}

@@ -36,7 +36,7 @@ public class BloodPressure extends BaseDataPoint {
 
     public static final String SCHEMA_BLOOD_PRESSURE = "blood-pressure";
 
-    @JsonProperty(value = "notes", required = false)
+    @JsonProperty(value = "user-notes", required = false)
     private String notes;
 
     @Override

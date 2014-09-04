@@ -2,6 +2,9 @@ package org.openmhealth.schema.pojos.build;
 
 import org.joda.time.DateTime;
 import org.openmhealth.schema.pojos.BloodGlucose;
+import org.openmhealth.schema.pojos.BloodGlucoseUnitValue;
+import org.openmhealth.schema.pojos.BloodSpecimenType;
+import org.openmhealth.schema.pojos.TemporalRelationshipToMeal;
 import org.openmhealth.schema.pojos.generic.DescriptiveStatistic;
 import org.openmhealth.schema.pojos.generic.TimeFrame;
 
@@ -16,36 +19,35 @@ public class BloodGlucoseBuilder implements SchemaPojoBuilder<BloodGlucose> {
         bloodGlucose.setEffectiveTimeFrame(new TimeFrame());
     }
 
-    public BloodGlucoseBuilder setValue(String value) {
-        bloodGlucose.setValue(new BigDecimal(value));
-        bloodGlucose.setUnit(BloodGlucose.Unit.mgdL);
+    public BloodGlucoseBuilder setMgdLValue(BigDecimal value) {
+        bloodGlucose.setBloodGlucose(
+            new BloodGlucoseUnitValue(value, BloodGlucoseUnitValue.Unit.mg_dL));
         return this;
     }
 
-    public BloodGlucoseBuilder setValueAndUnit(String value, String unit) {
-        bloodGlucose.setValue(new BigDecimal(value));
-        bloodGlucose.setUnit(BloodGlucose.Unit.valueOf(unit));
+    public BloodGlucoseBuilder setValueAndUnit(
+        BigDecimal value, BloodGlucoseUnitValue.Unit unit) {
+        bloodGlucose.setBloodGlucose(new BloodGlucoseUnitValue(value, unit));
         return this;
     }
 
-    public BloodGlucoseBuilder setMealContext(String mealContext) {
+    public BloodGlucoseBuilder setTemporalRelationshipToMeal(
+        TemporalRelationshipToMeal mealContext) {
         if (mealContext != null) {
-            bloodGlucose.setMealContext(
-                BloodGlucose.MealContext.valueOf(mealContext));
+            bloodGlucose.setTemporalRelationshipToMeal(mealContext);
         }
         return this;
     }
 
-    public BloodGlucoseBuilder setMeasureContext(String measureContext) {
-        if (measureContext != null) {
-            bloodGlucose.setMeasureContext(
-                BloodGlucose.MeasureContext.valueOf(measureContext));
+    public BloodGlucoseBuilder setBloodSpecimenType(BloodSpecimenType bloodSpecimenType) {
+        if (bloodSpecimenType != null) {
+            bloodGlucose.setBloodSpecimenType(bloodSpecimenType);
         }
         return this;
     }
 
-    public BloodGlucoseBuilder setNumericDescriptor(String numericDescriptor) {
-        bloodGlucose.setDescriptiveStatistic(DescriptiveStatistic.valueOf(numericDescriptor));
+    public BloodGlucoseBuilder setDescriptiveStatistic(DescriptiveStatistic numericDescriptor) {
+        bloodGlucose.setDescriptiveStatistic(numericDescriptor);
         return this;
     }
 

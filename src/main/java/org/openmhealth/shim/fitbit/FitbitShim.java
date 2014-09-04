@@ -270,7 +270,7 @@ public class FitbitShim extends OAuth1ShimBase {
 
                         bloodGlucoses.add(new BloodGlucoseBuilder()
                             .setTimeTaken(new DateTime(bpDate))
-                            .setValue(fbBp.get("glucose").asText()).build());
+                            .setMgdLValue(new BigDecimal(fbBp.get("glucose").asText())).build());
                     }
                     Map<String, Object> results = new HashMap<>();
                     results.put(BloodGlucose.SCHEMA_BLOOD_GLUCOSE, bloodGlucoses);
