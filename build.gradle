@@ -37,7 +37,6 @@ dependencies {
   // end::jetty[]
   testCompile "org.springframework.boot:spring-boot-starter-test"
   compile "org.springframework.security.oauth:spring-security-oauth:2.0.1.RELEASE"
-  compile "org.springframework.security.oauth:spring-security-oauth2:2.0.1.RELEASE"
 
   compile "joda-time:joda-time:2.4"
 
