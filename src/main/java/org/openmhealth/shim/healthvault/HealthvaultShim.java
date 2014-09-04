@@ -44,6 +44,7 @@ import java.math.BigDecimal;
 import java.util.*;
 
 import static org.openmhealth.schema.pojos.generic.DurationUnitValue.DurationUnit;
+import static org.openmhealth.schema.pojos.generic.LengthUnitValue.LengthUnit;
 
 /**
  * Notes the healthvault shim is neither OAuth1.0/2.0, it's
@@ -131,8 +132,8 @@ public class HealthvaultShim implements Shim {
                         Activity activity = new ActivityBuilder()
                             .setActivityName(sessionNode.get("mode").get("text").asText())
                             .setDistance(
-                                sessionNode.get("distance").get("display").get("").asText(),
-                                LengthUnitValue.LengthUnit.m.toString())
+                                sessionNode.get("distance").get("display").get("").asDouble(),
+                                LengthUnit.m)
                             .withStartAndDuration(
                                 startTime, sessionNode.get("minutes").asDouble(), DurationUnit.min)
                             .build();
@@ -222,7 +223,7 @@ public class HealthvaultShim implements Shim {
                         BodyHeight bodyHeight = new BodyHeightBuilder()
                             .setHeight(
                                 hvHeight.get("value").get("display").get("").asText(),
-                                LengthUnitValue.LengthUnit.in.toString())
+                                LengthUnit.in.toString())
                             .setTimeTaken(dateTimeWhen).build();
 
                         bodyHeights.add(bodyHeight);

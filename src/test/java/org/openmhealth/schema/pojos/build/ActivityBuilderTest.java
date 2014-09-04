@@ -24,25 +24,24 @@ import com.github.fge.jsonschema.main.JsonSchema;
 import com.github.fge.jsonschema.main.JsonSchemaFactory;
 import org.joda.time.DateTime;
 import org.junit.Test;
-import org.openmhealth.schema.pojos.BloodGlucose;
-import org.openmhealth.schema.pojos.BloodSpecimenType;
-import org.openmhealth.schema.pojos.generic.DescriptiveStatistic;
+import org.openmhealth.schema.pojos.Activity;
+import org.openmhealth.schema.pojos.generic.DurationUnitValue;
+import org.openmhealth.schema.pojos.generic.LengthUnitValue;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.math.BigDecimal;
 import java.net.URL;
 
 import static org.junit.Assert.*;
 
-public class BloodGlucoseBuilderTest {
+public class ActivityBuilderTest {
 
     @Test
     @SuppressWarnings("unchecked")
     public void testParse() throws IOException, ProcessingException {
-        final String BLOOD_GLUCOSE_SCHEMA = "schemas/blood-glucose-1.0.json";
+        final String PHYSICAL_ACTIVITY_SCHEMA = "schemas/physical-activity-1.0.json";
 
-        URL url = Thread.currentThread().getContextClassLoader().getResource(BLOOD_GLUCOSE_SCHEMA);
+        URL url = Thread.currentThread().getContextClassLoader().getResource(PHYSICAL_ACTIVITY_SCHEMA);
         assertNotNull(url);
 
         ObjectMapper mapper = new ObjectMapper();
@@ -55,35 +54,37 @@ public class BloodGlucoseBuilderTest {
 
         ProcessingReport report;
 
-        BloodGlucoseBuilder builder = new BloodGlucoseBuilder();
+        ActivityBuilder builder = new ActivityBuilder();
 
-        BloodGlucose invalidBloodGlucose = builder.build();
-        String invalidJson = mapper.writeValueAsString(invalidBloodGlucose);
+        Activity invalidActivity = builder.build();
+        String invalidJson = mapper.writeValueAsString(invalidActivity);
 
         report = schema.validate(mapper.readTree(invalidJson));
         System.out.println(report);
         assertFalse("Expected invalid result but got success", report.isSuccess());
 
-        BloodGlucose bloodGlucose = builder
-            .setBloodSpecimenType(BloodSpecimenType.whole_blood)
-            .setMgdLValue(new BigDecimal(90d))
-            .setNotes("yo yo yo")
-            .setTimeTaken(new DateTime())
-            .setDescriptiveStatistic(DescriptiveStatistic.average).build();
+        Activity activity = builder
+            .withStartAndDuration(
+                new DateTime(), 3100d, DurationUnitValue.DurationUnit.sec)
+            .setReportedActivityIntensity(Activity.ActivityIntensity.moderate)
+            .setActivityName("snow boarding")
+            .setDistance(5d, LengthUnitValue.LengthUnit.mi).build();
 
-        String rawJson = mapper.writeValueAsString(bloodGlucose);
+        String rawJson = mapper.writeValueAsString(activity);
 
-        BloodGlucose deserialized = mapper.readValue(rawJson, BloodGlucose.class);
+        Activity deserialized = mapper.readValue(rawJson, Activity.class);
 
-        assertNotNull(deserialized.getEffectiveTimeFrame());
-        assertNotNull(deserialized.getBloodGlucose().getUnit());
-        assertNotNull(deserialized.getBloodGlucose().getValue());
-        assertNotNull(deserialized.getNotes());
-        assertNotNull(deserialized.getDescriptiveStatistic());
+        assertNotNull(deserialized.getEffectiveTimeFrame().getTimeInterval().getDateTime());
+        assertNotNull(deserialized.getEffectiveTimeFrame().getTimeInterval().getDuration());
+        assertNotNull(deserialized.getActivityName());
+        assertNotNull(deserialized.getDistance().getUnit());
+        assertNotNull(deserialized.getDistance().getValue());
+        assertNotNull(deserialized.getReportedActivityIntensity());
 
         report = schema.validate(mapper.readTree(rawJson));
         System.out.println(report);
 
         assertTrue("Expected valid result!", report.isSuccess());
     }
+
 }

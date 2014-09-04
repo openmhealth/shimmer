@@ -34,6 +34,8 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import static org.openmhealth.schema.pojos.generic.LengthUnitValue.LengthUnit.m;
+
 /**
  * Encapsulates parameters specific to jawbone api.
  */
@@ -125,8 +127,7 @@ public class RunkeeperShim extends OAuth2ShimBase {
                         Activity activity = new ActivityBuilder()
                             .setActivityName(rkActivity.get("type").asText())
                             .setDistance(
-                                rkActivity.get("total_distance").asText(),
-                                LengthUnitValue.LengthUnit.m.toString())
+                                rkActivity.get("total_distance").asDouble(),m)
                             .withStartAndDuration(
                                 startTime,
                                 rkActivity.get("duration").asDouble(),

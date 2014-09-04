@@ -46,6 +46,7 @@ import java.util.*;
 
 import static org.openmhealth.schema.pojos.generic.DurationUnitValue.*;
 import static org.openmhealth.schema.pojos.generic.DurationUnitValue.DurationUnit.*;
+import static org.openmhealth.schema.pojos.generic.LengthUnitValue.LengthUnit;
 
 /**
  * Encapsulates parameters specific to jawbone api.
@@ -213,8 +214,7 @@ public class JawboneShim extends OAuth2ShimBase {
 
                     Activity activity = new ActivityBuilder()
                         .setActivityName(jbWorkout.get("title").asText())
-                        .setDistance(jbWorkout.get("details").get("meters").asDouble() + "",
-                            LengthUnitValue.LengthUnit.m.toString())
+                        .setDistance(jbWorkout.get("details").get("meters").asDouble(),LengthUnit.m)
                         .withStartAndDuration(
                             timeStamp, jbWorkout.get("details").get("time").asDouble(), sec)
                         .build();

@@ -36,6 +36,8 @@ import java.net.URL;
 import java.util.*;
 
 import static org.openmhealth.schema.pojos.generic.DurationUnitValue.*;
+import static org.openmhealth.schema.pojos.generic.LengthUnitValue.*;
+import static org.openmhealth.schema.pojos.generic.LengthUnitValue.LengthUnit.*;
 
 public class FitbitShim extends OAuth1ShimBase {
     public static final String SHIM_KEY = "fitbit";
@@ -371,8 +373,7 @@ public class FitbitShim extends OAuth1ShimBase {
 
                         Activity activity = new ActivityBuilder()
                             .setActivityName(fitbitActivity.get("activityParentName").asText())
-                            .setDistance(fitbitActivity.get("distance").asText(),
-                                LengthUnitValue.LengthUnit.m.toString())
+                            .setDistance(fitbitActivity.get("distance").asDouble(),m)
                             .withStartAndDuration(
                                 startTime, fitbitActivity.get("duration").asDouble(), DurationUnit.ms)
                             .build();

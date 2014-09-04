@@ -28,11 +28,16 @@ public class ActivityBuilder implements SchemaPojoBuilder<Activity> {
         return this;
     }
 
-    public ActivityBuilder setDistance(String value, String unit) {
+    public ActivityBuilder setDistance(Double value, LengthUnitValue.LengthUnit unit) {
         LengthUnitValue distance = new LengthUnitValue();
         distance.setValue(new BigDecimal(value));
-        distance.setUnit(LengthUnitValue.LengthUnit.valueOf(unit));
+        distance.setUnit(unit);
         activity.setDistance(distance);
+        return this;
+    }
+
+    public ActivityBuilder setReportedActivityIntensity(Activity.ActivityIntensity activityIntensity) {
+        activity.setReportedActivityIntensity(activityIntensity);
         return this;
     }
 

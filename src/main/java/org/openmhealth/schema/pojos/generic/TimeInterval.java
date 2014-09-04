@@ -24,7 +24,7 @@ public class TimeInterval {
     @JsonProperty(value = "start-time", required = false)
     @JsonSerialize(using = ISODateSerializer.class)
     @JsonDeserialize(using = ISODateDeserializer.class)
-    private DateTime startTime;
+    private DateTime dateTime;
 
     @JsonProperty(value = "end-time", required = false)
     @JsonSerialize(using = ISODateSerializer.class)
@@ -45,12 +45,12 @@ public class TimeInterval {
         this.date = date;
     }
 
-    public DateTime getStartTime() {
-        return startTime;
+    public DateTime getDateTime() {
+        return dateTime;
     }
 
-    public void setStartTime(DateTime startTime) {
-        this.startTime = startTime;
+    public void setDateTime(DateTime dateTime) {
+        this.dateTime = dateTime;
     }
 
     public DateTime getEndTime() {

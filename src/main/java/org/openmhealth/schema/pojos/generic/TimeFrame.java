@@ -33,8 +33,8 @@ public class TimeFrame {
         if (timeInterval != null && timeInterval.getDate() != null) {
             return timeInterval.getDate();
         }
-        if (timeInterval != null && timeInterval.getStartTime() != null) {
-            return timeInterval.getStartTime();
+        if (timeInterval != null && timeInterval.getDateTime() != null) {
+            return timeInterval.getDateTime();
         }
         return null;
     }
@@ -64,7 +64,7 @@ public class TimeFrame {
     public static TimeFrame withTimeInterval(DateTime startTime, DateTime endTime) {
         TimeFrame timeFrame = new TimeFrame();
         TimeInterval interval = new TimeInterval();
-        interval.setStartTime(startTime);
+        interval.setDateTime(startTime);
         interval.setEndTime(endTime);
         timeFrame.setTimeInterval(interval);
         return timeFrame;
@@ -75,7 +75,7 @@ public class TimeFrame {
                                              DurationUnitValue.DurationUnit unit) {
         TimeFrame timeFrame = new TimeFrame();
         TimeInterval interval = new TimeInterval();
-        interval.setStartTime(startTime);
+        interval.setDateTime(startTime);
         DurationUnitValue durationUnitValue = new DurationUnitValue();
         durationUnitValue.setUnit(unit);
         durationUnitValue.setValue(new BigDecimal(durationValue));

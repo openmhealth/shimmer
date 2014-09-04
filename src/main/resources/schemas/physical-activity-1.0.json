@@ -1,0 +1,43 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+
+    "description": "This schema represents a single episode of physical activity.",
+    "type": "object",
+    "references": [
+        {
+            "description": "The SNOMED code represents Physical activity (observable entity)",
+            "url": "http://purl.bioontology.org/ontology/SNOMEDCT/68130003"
+        }
+    ],
+    "definitions": {
+        "activity-name": {
+            "$ref": "http://www.openmhealth.org/schema/omh/clinical/activity-name-1.0.json"
+        },
+        "effective-time-frame": {
+            "$ref": "http://www.openmhealth.org/schema/omh/generic/time-frame-1.0.json"
+        },
+        "distance": {
+            "description": "The distance covered, if applicable.",
+            "$ref": "http://www.openmhealth.org/schema/omh/generic/length-unit-value-1.0.json"
+        }
+    },
+
+    "properties": {
+        "activity-name": {
+            "$ref": "#/definitions/activity-name"
+        },
+        "effective-time-frame": {
+            "$ref": "#/definitions/effective-time-frame"
+        },
+        "distance": {
+            "$ref": "#/definitions/distance"
+        },
+        "reported-activity-intensity": {
+            "description": "Self-reported intensity of the activity performed.",
+            "type": "string",
+            "enum": ["light", "moderate", "vigorous"]
+        }
+    },
+
+    "required": ["activity-name"]
+}
