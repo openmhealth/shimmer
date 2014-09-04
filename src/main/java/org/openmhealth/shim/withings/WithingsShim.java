@@ -290,10 +290,13 @@ public class WithingsShim extends OAuth1ShimBase {
                     for (Object rawSleep : wSleeps) {
                         JsonNode wSleep = mapper.readTree(((JSONObject) rawSleep).toJSONString());
                         DateTime startTime = new DateTime(wSleep.get("startdate").asLong() * 1000);
+                        DateTime endTime = new DateTime(wSleep.get("enddate").asLong() * 1000);
                         long duration = wSleep.get("enddate").asLong() - wSleep.get("startdate").asLong();
                         sleeps.add(new SleepDurationBuilder()
-                            .withStartAndDuration(
-                                startTime, Double.parseDouble(duration + ""), sec)
+                            .withStartAndEndAndDuration(
+                                startTime, endTime,
+                                Double.parseDouble(duration + "") / 60d,
+                                SleepDurationUnitValue.Unit.min)
                             .build());
                     }
                     Map<String, Object> results = new HashMap<>();

@@ -76,4 +76,11 @@ public class TimeInterval {
     public void setPartOfDay(PartOfDay partOfDay) {
         this.partOfDay = partOfDay;
     }
+
+    public static TimeInterval withStartAndEnd(DateTime start, DateTime end) {
+        TimeInterval interval = new TimeInterval();
+        interval.setDateTime(start);
+        interval.setEndTime(end);
+        return interval;
+    }
 }

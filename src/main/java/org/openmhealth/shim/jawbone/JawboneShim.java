@@ -178,10 +178,14 @@ public class JawboneShim extends OAuth2ShimBase {
                 for (Object rawSleep : jbSleeps) {
                     JsonNode jbSleep = mapper.readTree(((JSONObject) rawSleep).toJSONString());
                     DateTime timeStamp = new DateTime(jbSleep.get("time_created").asLong() * 1000);
+                    DateTime timeCompleted = new DateTime(jbSleep.get("time_completed").asLong() * 1000);
+
 
                     SleepDuration sleepDuration = new SleepDurationBuilder()
-                        .withStartAndDuration(
-                            timeStamp, jbSleep.get("details").get("duration").asDouble(), sec)
+                        .withStartAndEndAndDuration(
+                            timeStamp, timeCompleted,
+                            jbSleep.get("details").get("duration").asDouble() / 60d,
+                            SleepDurationUnitValue.Unit.min)
                         .build();
 
                     sleepDurations.add(sleepDuration);
@@ -214,7 +218,7 @@ public class JawboneShim extends OAuth2ShimBase {
 
                     Activity activity = new ActivityBuilder()
                         .setActivityName(jbWorkout.get("title").asText())
-                        .setDistance(jbWorkout.get("details").get("meters").asDouble(),LengthUnit.m)
+                        .setDistance(jbWorkout.get("details").get("meters").asDouble(), LengthUnit.m)
                         .withStartAndDuration(
                             timeStamp, jbWorkout.get("details").get("time").asDouble(), sec)
                         .build();
