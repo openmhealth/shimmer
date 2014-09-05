@@ -1,7 +1,6 @@
 package org.openmhealth.shim.withings;
 
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -13,13 +12,12 @@ import net.minidev.json.JSONObject;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
-import org.eclipse.jdt.internal.compiler.ast.TypeReference;
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.openmhealth.schema.pojos.*;
 import org.openmhealth.schema.pojos.build.*;
-import org.openmhealth.schema.pojos.generic.DurationUnitValue;
 import org.openmhealth.schema.pojos.generic.LengthUnitValue;
 import org.openmhealth.schema.pojos.generic.MassUnitValue;
 import org.openmhealth.schema.pojos.generic.TimeFrame;
@@ -30,7 +28,6 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URL;
-import java.sql.Time;
 import java.util.*;
 
 import static org.openmhealth.schema.pojos.generic.DurationUnitValue.DurationUnit.*;
@@ -163,7 +160,7 @@ public class WithingsShim extends OAuth1ShimBase {
                     ObjectMapper mapper = new ObjectMapper();
                     for (Object wMeasureGroup : wMeasureGroups) {
                         JsonNode wMeasure = mapper.readTree(((JSONObject) wMeasureGroup).toJSONString());
-                        DateTime dateTime = new DateTime(Long.parseLong(wMeasure.get("date").asText()) * 1000);
+                        DateTime dateTime = new DateTime(Long.parseLong(wMeasure.get("date").asText()) * 1000l);
                         ArrayNode measureNodes = (ArrayNode) wMeasure.get("measures");
                         SystolicBloodPressure systolic = null;
                         DiastolicBloodPressure diastolic = null;
@@ -249,7 +246,7 @@ public class WithingsShim extends OAuth1ShimBase {
                     JsonNode responseNode = jsonParser.getCodec().readTree(jsonParser);
                     String rawJson = responseNode.toString();
 
-                    List<NumberOfSteps> steps = new ArrayList<>();
+                    List<StepCount> steps = new ArrayList<>();
 
                     JsonPath stepsPath = JsonPath.compile("$.body.series[*]");
                     Object wStepsObject = JsonPath.read(rawJson, stepsPath.getPath());
@@ -262,7 +259,7 @@ public class WithingsShim extends OAuth1ShimBase {
                         mapper.readValue(((JSONObject) wStepsObject).toJSONString(), HashMap.class);
 
                     for (String timestampStr : wSteps.keySet()) {
-                        DateTime dateTime = new DateTime(Long.parseLong(timestampStr) * 1000);
+                        DateTime dateTime = new DateTime(Long.parseLong(timestampStr) * 1000, DateTimeZone.UTC);
                         Map<String, Object> stepEntry = (Map<String, Object>) wSteps.get(timestampStr);
 
                         steps.add(new NumberOfStepsBuilder()
@@ -271,7 +268,7 @@ public class WithingsShim extends OAuth1ShimBase {
                             .setSteps((Integer) stepEntry.get("steps")).build());
                     }
                     Map<String, Object> results = new HashMap<>();
-                    results.put(NumberOfSteps.SCHEMA_NUMBER_OF_STEPS, steps);
+                    results.put(StepCount.SCHEMA_STEP_COUNT, steps);
                     return ShimDataResponse.result(results);
                 }
             }),
@@ -296,8 +293,8 @@ public class WithingsShim extends OAuth1ShimBase {
                     ObjectMapper mapper = new ObjectMapper();
                     for (Object rawSleep : wSleeps) {
                         JsonNode wSleep = mapper.readTree(((JSONObject) rawSleep).toJSONString());
-                        DateTime startTime = new DateTime(wSleep.get("startdate").asLong() * 1000);
-                        DateTime endTime = new DateTime(wSleep.get("enddate").asLong() * 1000);
+                        DateTime startTime = new DateTime(wSleep.get("startdate").asLong() * 1000, DateTimeZone.UTC);
+                        DateTime endTime = new DateTime(wSleep.get("enddate").asLong() * 1000, DateTimeZone.UTC);
                         long duration = wSleep.get("enddate").asLong() - wSleep.get("startdate").asLong();
                         sleeps.add(new SleepDurationBuilder()
                             .withStartAndEndAndDuration(

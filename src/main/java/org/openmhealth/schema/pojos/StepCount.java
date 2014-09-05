@@ -8,24 +8,24 @@ import org.joda.time.DateTime;
 import org.openmhealth.schema.pojos.generic.TimeFrame;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonRootName(value = NumberOfSteps.SCHEMA_NUMBER_OF_STEPS, namespace = DataPoint.NAMESPACE)
-public class NumberOfSteps extends BaseDataPoint {
+@JsonRootName(value = StepCount.SCHEMA_STEP_COUNT, namespace = DataPoint.NAMESPACE)
+public class StepCount extends BaseDataPoint {
 
     @JsonProperty(value = "value", required = true)
     private Integer value;
 
-    @JsonProperty(value = "effective-time-frame", required = true)
+    @JsonProperty(value = "effective_time_frame", required = true)
     private TimeFrame effectiveTimeFrame;
 
-    public static final String SCHEMA_NUMBER_OF_STEPS = "number-of-steps";
+    public static final String SCHEMA_STEP_COUNT = "step_count";
 
-    public NumberOfSteps() {
+    public StepCount() {
     }
 
     @Override
     @JsonIgnore
     public String getSchemaName() {
-        return SCHEMA_NUMBER_OF_STEPS;
+        return SCHEMA_STEP_COUNT;
     }
 
     @Override

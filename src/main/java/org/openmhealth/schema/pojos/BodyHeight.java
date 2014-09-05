@@ -13,16 +13,16 @@ import org.openmhealth.schema.pojos.generic.TimeFrame;
 @JsonRootName(value = BodyHeight.SCHEMA_BODY_HEIGHT, namespace = DataPoint.NAMESPACE)
 public class BodyHeight extends BaseDataPoint {
 
-    @JsonProperty(value = "body-height", required = true)
+    @JsonProperty(value = "body_height", required = true)
     private LengthUnitValue lengthUnitValue;
 
-    @JsonProperty(value = "effective-time-frame", required = true)
+    @JsonProperty(value = "effective_time_frame", required = true)
     private TimeFrame effectiveTimeFrame;
 
-    @JsonProperty(value = "descriptive-statistic", required = true)
+    @JsonProperty(value = "descriptive_statistic", required = true)
     private DescriptiveStatistic descriptiveStatistic;
 
-    public static final String SCHEMA_BODY_HEIGHT = "body-height";
+    public static final String SCHEMA_BODY_HEIGHT = "body_height";
 
     public BodyHeight() {
     }

@@ -17,26 +17,26 @@ import org.openmhealth.schema.pojos.serialize.TemporalRelationshipToPhysicalActi
 @JsonRootName(value = BloodPressure.SCHEMA_BLOOD_PRESSURE, namespace = DataPoint.NAMESPACE)
 public class BloodPressure extends BaseDataPoint {
 
-    @JsonProperty(value = "systolic-blood-pressure", required = false)
+    @JsonProperty(value = "systolic_blood_pressure", required = false)
     private SystolicBloodPressure systolic;
 
-    @JsonProperty(value = "diastolic-blood-pressure", required = false)
+    @JsonProperty(value = "diastolic_blood_pressure", required = false)
     private DiastolicBloodPressure diastolic;
 
-    @JsonProperty(value = "effective-time-frame", required = false)
+    @JsonProperty(value = "effective_time_frame", required = false)
     private TimeFrame effectiveTimeFrame;
 
-    @JsonProperty(value = "position-during-measurement", required = false)
+    @JsonProperty(value = "position_during_measurement", required = false)
     @JsonSerialize(using = LabeledEnumSerializer.class)
     @JsonDeserialize(using = PositionDuringMeasurementDeserializer.class)
     private PositionDuringMeasurement positionDuringMeasurement;
 
-    @JsonProperty(value = "descriptive-statistic", required = false)
+    @JsonProperty(value = "descriptive_statistic", required = false)
     private DescriptiveStatistic descriptiveStatistic;
 
-    public static final String SCHEMA_BLOOD_PRESSURE = "blood-pressure";
+    public static final String SCHEMA_BLOOD_PRESSURE = "blood_pressure";
 
-    @JsonProperty(value = "user-notes", required = false)
+    @JsonProperty(value = "user_notes", required = false)
     private String notes;
 
     @Override

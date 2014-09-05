@@ -14,29 +14,23 @@ import net.minidev.json.JSONObject;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.openmhealth.schema.pojos.*;
 import org.openmhealth.schema.pojos.build.*;
-import org.openmhealth.schema.pojos.generic.DurationUnitValue;
-import org.openmhealth.schema.pojos.generic.LengthUnitValue;
 import org.openmhealth.schema.pojos.generic.MassUnitValue;
 import org.openmhealth.shim.*;
 import org.springframework.http.HttpMethod;
-import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import java.io.IOException;
 import java.io.StringWriter;
 import java.math.BigDecimal;
-import java.net.URL;
 import java.util.*;
 
 import static org.openmhealth.schema.pojos.generic.DurationUnitValue.*;
-import static org.openmhealth.schema.pojos.generic.LengthUnitValue.*;
 import static org.openmhealth.schema.pojos.generic.LengthUnitValue.LengthUnit.*;
 
 public class FitbitShim extends OAuth1ShimBase {
@@ -290,7 +284,7 @@ public class FitbitShim extends OAuth1ShimBase {
                 JsonNode responseNode = jsonParser.getCodec().readTree(jsonParser);
                 String rawJson = responseNode.toString();
 
-                List<NumberOfSteps> steps = new ArrayList<>();
+                List<StepCount> steps = new ArrayList<>();
                 JsonPath stepsPath = JsonPath.compile("$.[*].result.content[*]");
 
                 Object oneMinStepEntries = JsonPath.read(rawJson, stepsPath.getPath());
@@ -338,7 +332,7 @@ public class FitbitShim extends OAuth1ShimBase {
                     }
                 }
                 Map<String, Object> results = new HashMap<>();
-                results.put(NumberOfSteps.SCHEMA_NUMBER_OF_STEPS, steps);
+                results.put(StepCount.SCHEMA_STEP_COUNT, steps);
                 return ShimDataResponse.result(results);
             }
         }),

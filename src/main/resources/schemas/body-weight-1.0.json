@@ -10,26 +10,26 @@
         }
     ],
     "definitions": {
-        "effective-time-frame": {
+        "effective_time_frame": {
             "$ref": "http://www.openmhealth.org/schema/omh/generic/time-frame-1.0.json"
         },
-        "descriptive-statistic": {
+        "descriptive_statistic": {
             "$ref": "http://www.openmhealth.org/schema/omh/generic/descriptive-statistic-1.0.json"
         }
     },
 
     "properties": {
-        "body-weight": {
+        "body_weight": {
             "$ref": "http://www.openmhealth.org/schema/omh/generic/mass-unit-value-1.0.json"
         },
-        "effective-time-frame": {
-            "$ref": "#/definitions/effective-time-frame"
+        "effective_time_frame": {
+            "$ref": "#/definitions/effective_time_frame"
         },
-        "descriptive-statistic": {
-            "$ref": "#/definitions/descriptive-statistic"
+        "descriptive_statistic": {
+            "$ref": "#/definitions/descriptive_statistic"
         }
     },
 
-    "required": [ "body-weight"]
+    "required": [ "body_weight"]
 
 }

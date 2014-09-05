@@ -9,7 +9,7 @@ public class SchemaPojoUtils {
     private final static Map<String, Class<? extends DataPoint>> schemaToNormalizedTypeMap =
         new HashMap<String, Class<? extends DataPoint>>() {{
             put(Activity.SCHEMA_ACTIVITY, Activity.class);
-            put(NumberOfSteps.SCHEMA_NUMBER_OF_STEPS, NumberOfSteps.class);
+            put(StepCount.SCHEMA_STEP_COUNT, StepCount.class);
             put(BodyWeight.SCHEMA_BODY_WEIGHT, BodyWeight.class);
             put(BodyHeight.SCHEMA_BODY_HEIGHT, BodyHeight.class);
             put(BloodPressure.SCHEMA_BLOOD_PRESSURE, BloodPressure.class);

@@ -21,12 +21,12 @@ public class TimeInterval {
     @JsonDeserialize(using = SimpleDateDeserializer.class)
     private DateTime date;
 
-    @JsonProperty(value = "start-time", required = false)
+    @JsonProperty(value = "start_time", required = false)
     @JsonSerialize(using = ISODateSerializer.class)
     @JsonDeserialize(using = ISODateDeserializer.class)
     private DateTime dateTime;
 
-    @JsonProperty(value = "end-time", required = false)
+    @JsonProperty(value = "end_time", required = false)
     @JsonSerialize(using = ISODateSerializer.class)
     @JsonDeserialize(using = ISODateDeserializer.class)
     private DateTime endTime;
@@ -34,7 +34,7 @@ public class TimeInterval {
     @JsonProperty(value = "duration", required = false)
     private DurationUnitValue duration;
 
-    @JsonProperty(value = "part-of-day", required = false)
+    @JsonProperty(value = "part_of_day", required = false)
     private PartOfDay partOfDay;
 
     public DateTime getDate() {

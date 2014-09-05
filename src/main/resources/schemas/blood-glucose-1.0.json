@@ -12,28 +12,28 @@
     ],
 
     "definitions": {
-        "blood-specimen-type": {
+        "blood_specimen_type": {
             "$ref": "http://www.openmhealth.org/schema/omh/clinical/blood-specimen-type-1.0.json"
         },
-        "effective-time-frame": {
+        "effective_time_frame": {
             "$ref": "http://www.openmhealth.org/schema/omh/generic/time-frame-1.0.json"
         },
-        "temporal-relationship-to-meal": {
+        "temporal_relationship_to_meal": {
             "$ref": "http://www.openmhealth.org/schema/omh/clinical/temporal-relationship-to-meal-1.0.json"
         },
-        "temporal-relationship-to-sleep": {
+        "temporal_relationship_to_sleep": {
             "$ref": "http://www.openmhealth.org/schema/omh/clinical/temporal-relationship-to-sleep-1.0.json"
         },
-        "descriptive-statistic": {
+        "descriptive_statistic": {
             "$ref": "http://www.openmhealth.org/schema/omh/generic/descriptive-statistic-1.0.json"
         },
-        "user-notes": {
+        "user_notes": {
             "type": "string"
         }
     },
 
     "properties": {
-        "blood-glucose": {
+        "blood_glucose": {
             "allOf": [
                 {
                     "$ref": "http://www.openmhealth.org/schema/omh/generic/unit-value-1.0.json"
@@ -50,27 +50,27 @@
                 }
             ]
         },
-        "blood-specimen-type": {
-            "$ref": "#/definitions/blood-specimen-type"
+        "blood_specimen_type": {
+            "$ref": "#/definitions/blood_specimen_type"
         },
-        "effective-time-frame": {
-            "$ref": "#/definitions/effective-time-frame"
+        "effective_time_frame": {
+            "$ref": "#/definitions/effective_time_frame"
         },
-        "temporal-relationship-to-meal": {
-            "$ref": "#/definitions/temporal-relationship-to-meal"
+        "temporal_relationship_to_meal": {
+            "$ref": "#/definitions/temporal_relationship_to_meal"
         },
 
-        "temporal-relationship-to-sleep": {
-            "$ref": "#/definitions/temporal-relationship-to-sleep"
+        "temporal_relationship_to_sleep": {
+            "$ref": "#/definitions/temporal_relationship_to_sleep"
         },
-        "descriptive-statistic": {
-            "$ref": "#/definitions/descriptive-statistic"
+        "descriptive_statistic": {
+            "$ref": "#/definitions/descriptive_statistic"
         },
-        "user-notes": {
-            "$ref": "#/definitions/user-notes"
+        "user_notes": {
+            "$ref": "#/definitions/user_notes"
         }
     },
 
-    "required": ["blood-glucose"]
+    "required": ["blood_glucose"]
 
 }

@@ -1,50 +1,37 @@
 package org.openmhealth.shim.jawbone;
 
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.jayway.jsonpath.JsonPath;
-import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.openmhealth.schema.pojos.*;
 import org.openmhealth.schema.pojos.build.ActivityBuilder;
 import org.openmhealth.schema.pojos.build.BodyWeightBuilder;
-import org.openmhealth.schema.pojos.build.NumberOfStepsBuilder;
 import org.openmhealth.schema.pojos.build.SleepDurationBuilder;
-import org.openmhealth.schema.pojos.generic.DurationUnitValue;
-import org.openmhealth.schema.pojos.generic.LengthUnitValue;
 import org.openmhealth.schema.pojos.generic.MassUnitValue;
 import org.openmhealth.shim.*;
 import org.springframework.http.*;
-import org.springframework.security.oauth2.client.DefaultOAuth2ClientContext;
 import org.springframework.security.oauth2.client.OAuth2RestOperations;
-import org.springframework.security.oauth2.client.OAuth2RestTemplate;
 import org.springframework.security.oauth2.client.resource.OAuth2ProtectedResourceDetails;
 import org.springframework.security.oauth2.client.resource.UserRedirectRequiredException;
-import org.springframework.security.oauth2.client.token.AccessTokenProviderChain;
 import org.springframework.security.oauth2.client.token.AccessTokenRequest;
-import org.springframework.security.oauth2.client.token.DefaultAccessTokenRequest;
 import org.springframework.security.oauth2.client.token.RequestEnhancer;
 import org.springframework.security.oauth2.client.token.grant.code.AuthorizationCodeAccessTokenProvider;
-import org.springframework.security.oauth2.client.token.grant.code.AuthorizationCodeResourceDetails;
-import org.springframework.security.oauth2.common.exceptions.OAuth2Exception;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.MultiValueMap;
 import org.springframework.util.StringUtils;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.*;
 
-import static org.openmhealth.schema.pojos.generic.DurationUnitValue.*;
 import static org.openmhealth.schema.pojos.generic.DurationUnitValue.DurationUnit.*;
 import static org.openmhealth.schema.pojos.generic.LengthUnitValue.LengthUnit;
 
@@ -142,8 +129,17 @@ public class JawboneShim extends OAuth2ShimBase {
                 }
                 ObjectMapper mapper = new ObjectMapper();
                 for (Object rawWeight : jbWeights) {
+
                     JsonNode jbWeight = mapper.readTree(((JSONObject) rawWeight).toJSONString());
-                    DateTime timeStamp = new DateTime(jbWeight.get("time_created").asLong() * 1000);
+
+                    DateTimeZone dateTimeZone = DateTimeZone.UTC;
+                    if (jbWeight.get("details") != null && jbWeight.get("tz") != null) {
+                        DateTimeZone.forID(jbWeight.get("details").get("tz").asText());
+                    }
+
+                    DateTime timeStamp = new DateTime(
+                        jbWeight.get("time_created").asLong() * 1000, dateTimeZone)
+                        .withZone(DateTimeZone.UTC);
 
                     BodyWeight bodyWeight = new BodyWeightBuilder()
                         .setWeight(
@@ -177,9 +173,18 @@ public class JawboneShim extends OAuth2ShimBase {
                 ObjectMapper mapper = new ObjectMapper();
                 for (Object rawSleep : jbSleeps) {
                     JsonNode jbSleep = mapper.readTree(((JSONObject) rawSleep).toJSONString());
-                    DateTime timeStamp = new DateTime(jbSleep.get("time_created").asLong() * 1000);
-                    DateTime timeCompleted = new DateTime(jbSleep.get("time_completed").asLong() * 1000);
 
+                    DateTimeZone dateTimeZone = DateTimeZone.UTC;
+                    if (jbSleep.get("details") != null && jbSleep.get("tz") != null) {
+                        DateTimeZone.forID(jbSleep.get("details").get("tz").asText());
+                    }
+
+                    DateTime timeStamp = new DateTime(
+                        jbSleep.get("time_created").asLong() * 1000, dateTimeZone)
+                        .withZone(DateTimeZone.UTC);
+                    DateTime timeCompleted = new DateTime(
+                        jbSleep.get("time_completed").asLong() * 1000, dateTimeZone)
+                        .withZone(DateTimeZone.UTC);
 
                     SleepDuration sleepDuration = new SleepDurationBuilder()
                         .withStartAndEndAndDuration(
@@ -214,7 +219,15 @@ public class JawboneShim extends OAuth2ShimBase {
                 ObjectMapper mapper = new ObjectMapper();
                 for (Object rawWorkout : jbWorkouts) {
                     JsonNode jbWorkout = mapper.readTree(((JSONObject) rawWorkout).toJSONString());
-                    DateTime timeStamp = new DateTime(jbWorkout.get("time_created").asLong() * 1000);
+
+                    DateTimeZone dateTimeZone = DateTimeZone.UTC;
+                    if (jbWorkout.get("details") != null && jbWorkout.get("tz") != null) {
+                        DateTimeZone.forID(jbWorkout.get("details").get("tz").asText());
+                    }
+
+                    DateTime timeStamp = new DateTime(
+                        jbWorkout.get("time_created").asLong() * 1000, dateTimeZone)
+                        .withZone(DateTimeZone.UTC);
 
                     Activity activity = new ActivityBuilder()
                         .setActivityName(jbWorkout.get("title").asText())
@@ -241,18 +254,18 @@ public class JawboneShim extends OAuth2ShimBase {
                 JsonNode responseNode = jsonParser.getCodec().readTree(jsonParser);
                 String rawJson = responseNode.toString();
 
-                List<NumberOfSteps> steps = new ArrayList<>();
-                JsonPath stepsPath = JsonPath.compile("$.data.items[*].details.hourly_totals[*]");
+                List<StepCount> steps = new ArrayList<>();
+                JsonPath stepsPath = JsonPath.compile("$.data.items[*].details[*]");
 
-                Object hourlyStepTotalsMap = JsonPath.read(rawJson, stepsPath.getPath());
+                List<Object> jbStepEntries = JsonPath.read(rawJson, stepsPath.getPath());
 
-                if (hourlyStepTotalsMap == null) {
+                if (CollectionUtils.isEmpty(jbStepEntries)) {
                     return ShimDataResponse.empty();
                 }
 
                 DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyyMMddHH");
 
-                ObjectMapper mapper = new ObjectMapper();
+                /*ObjectMapper mapper = new ObjectMapper();
                 String jsonString = ((JSONArray) hourlyStepTotalsMap).toJSONString();
                 ArrayNode nodes = (ArrayNode) mapper.readTree(jsonString);
 
@@ -268,9 +281,9 @@ public class JawboneShim extends OAuth2ShimBase {
                                 dateTime, Double.parseDouble(stepEntry.get("active_time") + ""), sec)
                             .setSteps((Integer) stepEntry.get("steps")).build());
                     }
-                }
+                }*/
                 Map<String, Object> results = new HashMap<>();
-                results.put(NumberOfSteps.SCHEMA_NUMBER_OF_STEPS, steps);
+                results.put(StepCount.SCHEMA_STEP_COUNT, steps);
                 return ShimDataResponse.result(results);
 
             }

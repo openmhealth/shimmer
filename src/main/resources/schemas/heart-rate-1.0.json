@@ -11,16 +11,16 @@
     ],
 
     "definitions": {
-        "effective-time-frame": {
+        "effective_time_frame": {
             "$ref": "http://www.openmhealth.org/schema/omh/generic/time-frame-1.0.json"
         },
-        "descriptive-statistic": {
+        "descriptive_statistic": {
             "$ref": "http://www.openmhealth.org/schema/omh/generic/descriptive-statistic-1.0.json"
         },
-        "temporal-relationship-to-physical-activity": {
+        "temporal_relationship_to_physical_activity": {
             "$ref": "http://www.openmhealth.org/schema/omh/clinical/temporal-relationship-to-physical-activity-1.0.json"
         },
-        "user-notes": {
+        "user_notes": {
             "type": "string"
         }
     },
@@ -42,20 +42,20 @@
                 }
             ]
         },
-        "effective-time-frame": {
-            "$ref": "#/definitions/effective-time-frame"
+        "effective_time_frame": {
+            "$ref": "#/definitions/effective_time_frame"
         },
-        "descriptive-statistic": {
-            "$ref": "#/definitions/descriptive-statistic"
+        "descriptive_statistic": {
+            "$ref": "#/definitions/descriptive_statistic"
         },
-        "temporal-relationship-to-physical-activity": {
-            "$ref": "#/definitions/temporal-relationship-to-physical-activity"
+        "temporal_relationship_to_physical_activity": {
+            "$ref": "#/definitions/temporal_relationship_to_physical_activity"
         },
-        "user-notes": {
-            "$ref": "#/definitions/user-notes"
+        "user_notes": {
+            "$ref": "#/definitions/user_notes"
         }
     },
 
-    "required": ["heart-rate"]
+    "required": ["heart_rate"]
 
 }

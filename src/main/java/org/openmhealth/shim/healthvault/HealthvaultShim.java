@@ -16,11 +16,8 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.openmhealth.schema.pojos.build.*;
 import org.openmhealth.schema.pojos.*;
-import org.openmhealth.schema.pojos.generic.DurationUnitValue;
-import org.openmhealth.schema.pojos.generic.LengthUnitValue;
 import org.openmhealth.schema.pojos.generic.MassUnitValue;
 import org.openmhealth.shim.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -112,7 +109,7 @@ public class HealthvaultShim implements Shim {
                     String rawJson = responseNode.toString();
 
                     List<Activity> activities = new ArrayList<>();
-                    List<NumberOfSteps> numberOfStepsList = new ArrayList<>();
+                    List<StepCount> stepCountList = new ArrayList<>();
 
                     JsonPath activityPath = JsonPath.compile("$.things[*].data-xml.aerobic-session");
 
@@ -138,16 +135,16 @@ public class HealthvaultShim implements Shim {
                                 startTime, sessionNode.get("minutes").asDouble(), DurationUnit.min)
                             .build();
 
-                        NumberOfSteps numberOfSteps = new NumberOfStepsBuilder()
+                        StepCount stepCount = new NumberOfStepsBuilder()
                             .setSteps(sessionNode.get("number-of-steps").asInt()).build();
-                        numberOfSteps.setEffectiveTimeFrame(activity.getEffectiveTimeFrame());
+                        stepCount.setEffectiveTimeFrame(activity.getEffectiveTimeFrame());
 
                         activities.add(activity);
-                        numberOfStepsList.add(numberOfSteps);
+                        stepCountList.add(stepCount);
                     }
                     Map<String, Object> results = new HashMap<>();
                     results.put(Activity.SCHEMA_ACTIVITY, activities);
-                    results.put(NumberOfSteps.SCHEMA_NUMBER_OF_STEPS, numberOfStepsList);
+                    results.put(StepCount.SCHEMA_STEP_COUNT, stepCountList);
                     return ShimDataResponse.result(results);
                 }
             }
@@ -165,7 +162,7 @@ public class HealthvaultShim implements Shim {
 
                     List<BloodPressure> bloodPressures = new ArrayList<>();
                     List<HeartRate> heartRates = new ArrayList<>();
-                    JsonPath bloodPressurePath = JsonPath.compile("$.things[*].data-xml.blood-pressure");
+                    JsonPath bloodPressurePath = JsonPath.compile("$.things[*].data-xml.blood_pressure");
 
                     List<Object> hvBloodPressures = JsonPath.read(rawJson, bloodPressurePath.getPath());
                     if (CollectionUtils.isEmpty(hvBloodPressures)) {
@@ -246,7 +243,7 @@ public class HealthvaultShim implements Shim {
                     String rawJson = responseNode.toString();
 
                     List<BloodGlucose> bloodGlucoses = new ArrayList<>();
-                    JsonPath bloodGlucosePath = JsonPath.compile("$.things[*].data-xml.blood-glucose");
+                    JsonPath bloodGlucosePath = JsonPath.compile("$.things[*].data-xml.blood_glucose");
 
                     List<Object> hvbloodGlucoses = JsonPath.read(rawJson, bloodGlucosePath.getPath());
                     if (CollectionUtils.isEmpty(hvbloodGlucoses)) {

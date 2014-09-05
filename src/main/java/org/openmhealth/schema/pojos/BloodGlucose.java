@@ -18,30 +18,30 @@ import java.math.BigDecimal;
 @JsonRootName(value = BloodGlucose.SCHEMA_BLOOD_GLUCOSE, namespace = DataPoint.NAMESPACE)
 public class BloodGlucose extends BaseDataPoint {
 
-    @JsonProperty(value = "blood-glucose", required = true)
+    @JsonProperty(value = "blood_glucose", required = true)
     private BloodGlucoseUnitValue bloodGlucose;
 
-    @JsonProperty(value = "effective-time-frame", required = false)
+    @JsonProperty(value = "effective_time_frame", required = false)
     private TimeFrame effectiveTimeFrame;
 
-    @JsonProperty(value = "descriptive-statistic", required = false)
+    @JsonProperty(value = "descriptive_statistic", required = false)
     private DescriptiveStatistic descriptiveStatistic;
 
-    @JsonProperty(value = "user-notes", required = false)
+    @JsonProperty(value = "user_notes", required = false)
     private String notes;
 
-    @JsonProperty(value = "temporal-relationship-to-meal", required = false)
+    @JsonProperty(value = "temporal_relationship_to_meal", required = false)
     private TemporalRelationshipToMeal temporalRelationshipToMeal;
 
-    @JsonProperty(value = "temporal-relationship-to-sleep", required = false)
+    @JsonProperty(value = "temporal_relationship_to_sleep", required = false)
     private TemporalRelationshipToSleep temporalRelationshipToSleep;
 
-    @JsonProperty(value = "blood-specimen-type", required = false)
+    @JsonProperty(value = "blood_specimen_type", required = false)
     @JsonSerialize(using = LabeledEnumSerializer.class)
     @JsonDeserialize(using = PositionDuringMeasurementDeserializer.class)
     private BloodSpecimenType bloodSpecimenType;
 
-    public static final String SCHEMA_BLOOD_GLUCOSE = "blood-glucose";
+    public static final String SCHEMA_BLOOD_GLUCOSE = "blood_glucose";
 
     public BloodGlucose() {
     }

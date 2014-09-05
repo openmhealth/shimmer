@@ -14,12 +14,12 @@ import java.math.BigDecimal;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class TimeFrame {
 
-    @JsonProperty(value = "date-time", required = false)
+    @JsonProperty(value = "date_time", required = false)
     @JsonSerialize(using = ISODateSerializer.class)
     @JsonDeserialize(using = ISODateDeserializer.class)
     private DateTime dateTime;
 
-    @JsonProperty(value = "time-interval", required = false)
+    @JsonProperty(value = "time_interval", required = false)
     private TimeInterval timeInterval;
 
     public TimeFrame() {

@@ -10,10 +10,10 @@
         }
     ],
     "definitions": {
-        "activity-name": {
+        "activity_name": {
             "$ref": "http://www.openmhealth.org/schema/omh/clinical/activity-name-1.0.json"
         },
-        "effective-time-frame": {
+        "effective_time_frame": {
             "$ref": "http://www.openmhealth.org/schema/omh/generic/time-frame-1.0.json"
         },
         "distance": {
@@ -23,21 +23,21 @@
     },
 
     "properties": {
-        "activity-name": {
-            "$ref": "#/definitions/activity-name"
+        "activity_name": {
+            "$ref": "#/definitions/activity_name"
         },
-        "effective-time-frame": {
-            "$ref": "#/definitions/effective-time-frame"
+        "effective_time_frame": {
+            "$ref": "#/definitions/effective_time_frame"
         },
         "distance": {
             "$ref": "#/definitions/distance"
         },
-        "reported-activity-intensity": {
+        "reported_activity_intensity": {
             "description": "Self-reported intensity of the activity performed.",
             "type": "string",
             "enum": ["light", "moderate", "vigorous"]
         }
     },
 
-    "required": ["activity-name"]
+    "required": ["activity_name"]
 }

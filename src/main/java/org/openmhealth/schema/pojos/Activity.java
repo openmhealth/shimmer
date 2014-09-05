@@ -13,18 +13,18 @@ import org.openmhealth.schema.pojos.generic.TimeFrame;
 @JsonRootName(value = Activity.SCHEMA_ACTIVITY, namespace = DataPoint.NAMESPACE)
 public class Activity extends BaseDataPoint {
 
-    @JsonProperty(value = "activity-name", required = true)
+    @JsonProperty(value = "activity_name", required = true)
     private String activityName;
 
     @JsonProperty(value = "distance", required = false)
     private LengthUnitValue distance;
 
-    @JsonProperty(value = "reported-activity-intensity", required = false)
+    @JsonProperty(value = "reported_activity_intensity", required = false)
     private ActivityIntensity reportedActivityIntensity;
 
     public enum ActivityIntensity {light, moderate, vigorous}
 
-    @JsonProperty("effective-time-frame")
+    @JsonProperty("effective_time_frame")
     private TimeFrame effectiveTimeFrame;
 
     public static final String SCHEMA_ACTIVITY = "physical-activity";

@@ -17,24 +17,24 @@ import org.openmhealth.schema.pojos.serialize.TemporalRelationshipToPhysicalActi
 @JsonRootName(value = HeartRate.SCHEMA_HEART_RATE, namespace = DataPoint.NAMESPACE)
 public class HeartRate extends BaseDataPoint {
 
-    @JsonProperty(value = "effective-time-frame", required = false)
+    @JsonProperty(value = "effective_time_frame", required = false)
     private TimeFrame effectiveTimeFrame;
 
-    @JsonProperty(value = "descriptive-statistic", required = false)
+    @JsonProperty(value = "descriptive_statistic", required = false)
     private DescriptiveStatistic descriptiveStatistic;
 
-    @JsonProperty(value = "user-notes", required = false)
+    @JsonProperty(value = "user_notes", required = false)
     private String userNotes;
 
-    @JsonProperty(value = "heart-rate", required = true)
+    @JsonProperty(value = "heart_rate", required = true)
     private HeartRateUnitValue heartRate;
 
-    @JsonProperty(value = "temporal-relationship-to-physical-activity", required = false)
+    @JsonProperty(value = "temporal_relationship_to_physical_activity", required = false)
     @JsonSerialize(using = LabeledEnumSerializer.class)
     @JsonDeserialize(using = TemporalRelationshipToPhysicalActivityDeserializer.class)
     private TemporalRelationshipToPhysicalActivity temporalRelationshipToPhysicalActivity;
 
-    public static final String SCHEMA_HEART_RATE = "heart-rate";
+    public static final String SCHEMA_HEART_RATE = "heart_rate";
 
     public HeartRate() {
     }
