@@ -169,8 +169,15 @@ public class WithingsShim extends OAuth1ShimBase {
                         DiastolicBloodPressure diastolic = null;
                         for (JsonNode measureNode : measureNodes) {
                             MeasureType measureType = MeasureType.valueFor(measureNode.get("type").asInt());
+                            if(measureType == null){
+                                continue;
+                            }
                             Double valueAsDouble = measureNode.get("value").asDouble();
-                            Double multiplier = Math.pow(10, measureNode.get("unit").asDouble());
+                            if(valueAsDouble == null){
+                                continue;
+                            }
+                            Double multiplier = measureNode.get("unit") == null ?
+                                1 : Math.pow(10, measureNode.get("unit").asDouble());
                             BigDecimal measureValue = new BigDecimal(valueAsDouble * multiplier);
                             switch (measureType) {
                                 case WEIGHT:
