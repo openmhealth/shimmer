@@ -16,7 +16,6 @@ import org.openmhealth.schema.pojos.BodyWeight;
 import org.openmhealth.schema.pojos.build.ActivityBuilder;
 import org.openmhealth.schema.pojos.build.BodyWeightBuilder;
 import org.openmhealth.schema.pojos.generic.DurationUnitValue;
-import org.openmhealth.schema.pojos.generic.LengthUnitValue;
 import org.openmhealth.schema.pojos.generic.MassUnitValue;
 import org.openmhealth.shim.*;
 import org.springframework.http.*;
@@ -30,8 +29,6 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.MultiValueMap;
 
 import java.io.IOException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static org.openmhealth.schema.pojos.generic.LengthUnitValue.LengthUnit.m;
@@ -127,7 +124,7 @@ public class RunkeeperShim extends OAuth2ShimBase {
                         Activity activity = new ActivityBuilder()
                             .setActivityName(rkActivity.get("type").asText())
                             .setDistance(
-                                rkActivity.get("total_distance").asDouble(),m)
+                                rkActivity.get("total_distance").asDouble(), m)
                             .withStartAndDuration(
                                 startTime,
                                 rkActivity.get("duration").asDouble(),
@@ -140,6 +137,39 @@ public class RunkeeperShim extends OAuth2ShimBase {
                     return ShimDataResponse.result(results);
                 }
             }),
+
+        GENERAL_MEASUREMENT(
+            "application/vnd.com.runkeeper.GeneralMeasurementSetFeed+json",
+            "generalMeasurements", new JsonDeserializer<ShimDataResponse>() {
+            @Override
+            public ShimDataResponse deserialize(
+                JsonParser jsonParser, DeserializationContext deserializationContext)
+                throws IOException {
+                return ShimDataResponse.empty();
+            }
+        }),
+
+        DIABETES(
+            "application/vnd.com.runkeeper.DiabetesMeasurementSet+json",
+            "diabetes", new JsonDeserializer<ShimDataResponse>() {
+            @Override
+            public ShimDataResponse deserialize(
+                JsonParser jsonParser, DeserializationContext deserializationContext)
+                throws IOException {
+                return ShimDataResponse.empty();
+            }
+        }),
+
+        SLEEP(
+            "application/vnd.com.runkeeper.SleepSetFeed+json",
+            "sleep", new JsonDeserializer<ShimDataResponse>() {
+            @Override
+            public ShimDataResponse deserialize(
+                JsonParser jsonParser, DeserializationContext deserializationContext)
+                throws IOException {
+                return ShimDataResponse.empty();
+            }
+        }),
 
         WEIGHT(
             "application/vnd.com.runkeeper.WeightSetFeed+json",
