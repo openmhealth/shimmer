@@ -37,14 +37,14 @@ In order to read data from a third-party we must initiate the oauth process and 
 
 To initiate the OAuth process, do the following:
  
-1. Go to the url http://localhost:8083/authorize/<shim_name>?username=<unique_identifier>. 
+1. Go to the url *http://localhost:8083/authorize/SHIM_NAME?username=UNIQUE_IDENTIFIER*. 
 Unique identifier can be any unique string you'd like to use. 
 2. In the JSON response, find the value 'authorizationUrl' and open this URL in a new browser window. 
 You should be redirected to the third-party website where you can login and authorize access to your third party user account. 
-3. Once authorized you should be redirected to http://localhost:8083/authorize/<shim_name>/callback and you'll see an approved JSON response.
+3. Once authorized you should be redirected to *http://localhost:8083/authorize/SHIM_NAME/callback* and you'll see an approved JSON response.
 
 ### Reading Data
 Now you can pull data from the third party's available end points by going to 
-http://localhost:8083/data/<shim_name>/<end_point>?username=<unique_identifier>&dateStart=yyyy-MM-dd&dateEnd=yyyy-MM-dd
+*http://localhost:8083/data/SHIM_NAME/END_POINT?username=UNIQUE_IDENTIFIER&dateStart=yyyy-MM-dd&dateEnd=yyyy-MM-dd*
 
 The available shims and end points are:
