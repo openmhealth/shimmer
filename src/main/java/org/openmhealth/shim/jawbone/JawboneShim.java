@@ -135,7 +135,8 @@ public class JawboneShim extends OAuth2ShimBase {
 
                     DateTimeZone dateTimeZone = DateTimeZone.UTC;
                     if (jbWeight.get("details") != null && jbWeight.get("details").get("tz") != null) {
-                        dateTimeZone = DateTimeZone.forID(jbWeight.get("details").get("tz").asText());
+                        dateTimeZone = DateTimeZone.forID(jbWeight.get("details").get("tz")
+                            .asText().replaceAll(" ","_"));
                     }
 
                     DateTime timeStamp = new DateTime(
@@ -177,7 +178,8 @@ public class JawboneShim extends OAuth2ShimBase {
 
                     DateTimeZone dateTimeZone = DateTimeZone.UTC;
                     if (jbSleep.get("details") != null && jbSleep.get("details").get("tz") != null) {
-                        dateTimeZone = DateTimeZone.forID(jbSleep.get("details").get("tz").asText());
+                        dateTimeZone = DateTimeZone.forID(jbSleep.get("details").get("tz")
+                            .asText().replaceAll(" ","_"));
                     }
 
                     DateTime timeStamp = new DateTime(
@@ -224,7 +226,8 @@ public class JawboneShim extends OAuth2ShimBase {
 
                     DateTimeZone dateTimeZone = DateTimeZone.UTC;
                     if (jbWorkout.get("details") != null && jbWorkout.get("details").get("tz") != null) {
-                        dateTimeZone = DateTimeZone.forID(jbWorkout.get("details").get("tz").asText());
+                        dateTimeZone = DateTimeZone.forID(jbWorkout.get("details").get("tz")
+                            .asText().replaceAll(" ","_"));
                     }
 
                     DateTime timeStamp = new DateTime(
@@ -273,7 +276,8 @@ public class JawboneShim extends OAuth2ShimBase {
 
                     DateTimeZone dateTimeZone = DateTimeZone.UTC;
                     if (jbStepEntry.get("details") != null && jbStepEntry.get("details").get("tz") != null) {
-                        dateTimeZone = DateTimeZone.forID(jbStepEntry.get("details").get("tz").asText());
+                        dateTimeZone = DateTimeZone.forID(jbStepEntry.get("details").get("tz")
+                            .asText().replaceAll(" ","_"));
                     }
 
                     JsonNode hourlyTotals = jbStepEntry.get("details").get("hourly_totals");

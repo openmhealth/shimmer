@@ -92,19 +92,19 @@
                         [1385055720, "America/Los_Angeles"]
                     ],
                     "hourly_totals": {
-                        "2013112201": {
+                        "2013112204": {
                             "distance": 1324,
                             "calories": 90.0120018125,
-                            "steps": 1603,
+                            "steps": 1604,
                             "active_time": 793,
                             "inactive_time": 220,
                             "longest_active_time": 302,
                             "longest_idle_time": 780
                         },
-                        "2013112202": {
+                        "2013112205": {
                             "distance": 626,
                             "calories": 47.0120018125,
-                            "steps": 455,
+                            "steps": 456,
                             "active_time": 246,
                             "inactive_time": 260,
                             "longest_active_time": 203,

@@ -17,11 +17,29 @@
 package org.openmhealth.shim.jawbone;
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.junit.Test;
+import org.openmhealth.schema.pojos.BloodPressure;
+import org.openmhealth.schema.pojos.BloodPressureUnit;
+import org.openmhealth.schema.pojos.StepCount;
+import org.openmhealth.shim.ShimDataResponse;
+import org.openmhealth.shim.withings.WithingsShim;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.net.URL;
+import java.util.List;
+import java.util.Map;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * @author Danilo Bonilla
@@ -35,6 +53,44 @@ public class JawboneShimTest {
         assert url != null;
         InputStream inputStream = url.openStream();
 
-        //todo: Fix assertions here
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        JawboneShim.JawboneDataTypes.MOVES.getNormalizer();
+        SimpleModule module = new SimpleModule();
+        module.addDeserializer(ShimDataResponse.class,
+            JawboneShim.JawboneDataTypes.MOVES.getNormalizer());
+
+        objectMapper.registerModule(module);
+
+        ShimDataResponse response =
+            objectMapper.readValue(inputStream, ShimDataResponse.class);
+
+        assertNotNull(response);
+
+        Map<String, Object> map = (Map<String, Object>) response.getBody();
+        assertTrue(map.containsKey(StepCount.SCHEMA_STEP_COUNT));
+
+        List<StepCount> stepCounts = (List<StepCount>) map.get(StepCount.SCHEMA_STEP_COUNT);
+        assertTrue(stepCounts != null && stepCounts.size() == 4);
+
+        final String EXPECTED_HOURLY_TOTAL_TIMESTAMP = "2013112101";
+
+        DateTime expectedTimeUTC =
+            DateTimeFormat.forPattern("yyyyMMddHH").withZone(DateTimeZone.forID("America/Los_Angeles"))
+                .parseDateTime(EXPECTED_HOURLY_TOTAL_TIMESTAMP);
+        expectedTimeUTC = expectedTimeUTC.toDateTime(DateTimeZone.UTC);
+
+        BigDecimal expectedDuration = new BigDecimal(793);
+        Integer expectedSteps = 1603;
+
+        Boolean found = false;
+        for (StepCount sc : stepCounts) {
+            if (sc.getEffectiveTimeFrame().getDateTime().equals(expectedTimeUTC)) {
+                assertEquals(sc.getStepCount(), expectedSteps);
+                assertEquals(sc.getEffectiveTimeFrame().getDuration().getValue(), expectedDuration);
+                found = true;
+            }
+        }
+        assertTrue(found);
     }
 }
