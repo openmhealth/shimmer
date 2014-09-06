@@ -16,6 +16,7 @@ import org.openmhealth.schema.pojos.*;
 import org.openmhealth.schema.pojos.build.ActivityBuilder;
 import org.openmhealth.schema.pojos.build.BodyWeightBuilder;
 import org.openmhealth.schema.pojos.build.SleepDurationBuilder;
+import org.openmhealth.schema.pojos.build.StepCountBuilder;
 import org.openmhealth.schema.pojos.generic.MassUnitValue;
 import org.openmhealth.shim.*;
 import org.springframework.http.*;
@@ -253,9 +254,7 @@ public class JawboneShim extends OAuth2ShimBase {
 
                 JsonNode responseNode = jsonParser.getCodec().readTree(jsonParser);
                 String rawJson = responseNode.toString();
-
-                List<StepCount> steps = new ArrayList<>();
-                JsonPath stepsPath = JsonPath.compile("$.data.items[*].details[*]");
+                JsonPath stepsPath = JsonPath.compile("$.data.items[*]");
 
                 List<Object> jbStepEntries = JsonPath.read(rawJson, stepsPath.getPath());
 
@@ -265,25 +264,35 @@ public class JawboneShim extends OAuth2ShimBase {
 
                 DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyyMMddHH");
 
-                /*ObjectMapper mapper = new ObjectMapper();
-                String jsonString = ((JSONArray) hourlyStepTotalsMap).toJSONString();
-                ArrayNode nodes = (ArrayNode) mapper.readTree(jsonString);
+                List<StepCount> stepCounts = new ArrayList<>();
 
-                for (Object node1 : nodes) {
-                    Map<String, JsonNode> jbSteps = mapper.convertValue(node1, HashMap.class);
-                    for (String timestampStr : jbSteps.keySet()) {
+                ObjectMapper mapper = new ObjectMapper();
+                for (Object rawStepEntry : jbStepEntries) {
+                    JsonNode jbStepEntry = mapper.readTree(((JSONObject) rawStepEntry).toJSONString());
+
+                    DateTimeZone dateTimeZone = DateTimeZone.UTC;
+                    if (jbStepEntry.get("details") != null && jbStepEntry.get("tz") != null) {
+                        DateTimeZone.forID(jbStepEntry.get("details").get("tz").asText());
+                    }
+
+                    JsonNode hourlyTotals = jbStepEntry.get("hourly_totals");
+                    for (Iterator<Map.Entry<String, JsonNode>> iterator = hourlyTotals.fields(); iterator.hasNext(); ) {
+                        Map.Entry<String, JsonNode> item = iterator.next();
+
+                        String timestampStr = item.getKey();
+                        JsonNode node = item.getValue();
 
                         DateTime dateTime = formatter.parseDateTime(timestampStr);
-                        Map<String, Object> stepEntry = (Map<String, Object>) jbSteps.get(timestampStr);
+                        dateTime = dateTime.withZone(dateTimeZone).withZone(DateTimeZone.UTC);
 
-                        steps.add(new NumberOfStepsBuilder()
+                        stepCounts.add(new StepCountBuilder()
                             .withStartAndDuration(
-                                dateTime, Double.parseDouble(stepEntry.get("active_time") + ""), sec)
-                            .setSteps((Integer) stepEntry.get("steps")).build());
+                                dateTime, Double.parseDouble(node.get("active_time") + ""), sec)
+                            .setSteps(node.get("steps").asInt()).build());
                     }
-                }*/
+                }
                 Map<String, Object> results = new HashMap<>();
-                results.put(StepCount.SCHEMA_STEP_COUNT, steps);
+                results.put(StepCount.SCHEMA_STEP_COUNT, stepCounts);
                 return ShimDataResponse.result(results);
 
             }
