@@ -27,7 +27,7 @@ public class Activity extends BaseDataPoint {
     @JsonProperty("effective_time_frame")
     private TimeFrame effectiveTimeFrame;
 
-    public static final String SCHEMA_ACTIVITY = "physical-activity";
+    public static final String SCHEMA_ACTIVITY = "physical_activity";
 
     public Activity() {
     }

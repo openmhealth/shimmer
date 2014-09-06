@@ -46,9 +46,11 @@ public class RunkeeperShim extends OAuth2ShimBase {
 
     private static final String TOKEN_URL = "https://runkeeper.com/apps/token";
 
-    public static final String RUNKEEPER_CLIENT_ID = "e83ac7fc3c9c4a89bac029921253d495";
+    //public static final String RUNKEEPER_CLIENT_ID = "e83ac7fc3c9c4a89bac029921253d495";
 
-    public static final String RUNKEEPER_CLIENT_SECRET = "fe9e8bd9f60e4ff5812a1b0b4744d5e9";
+    //public static final String RUNKEEPER_CLIENT_SECRET = "fe9e8bd9f60e4ff5812a1b0b4744d5e9";
+
+    private RunkeeperConfig config;
 
     public static final ArrayList<String> RUNKEEPER_SCOPES =
         new ArrayList<String>(Arrays.asList(
@@ -57,8 +59,10 @@ public class RunkeeperShim extends OAuth2ShimBase {
 
     public RunkeeperShim(AuthorizationRequestParametersRepo authorizationRequestParametersRepo,
                          AccessParametersRepo accessParametersRepo,
-                         ShimServerConfig shimServerConfig1) {
+                         ShimServerConfig shimServerConfig1,
+                         RunkeeperConfig runkeeperConfig) {
         super(authorizationRequestParametersRepo, accessParametersRepo, shimServerConfig1);
+        this.config = runkeeperConfig;
     }
 
     @Override
@@ -68,12 +72,12 @@ public class RunkeeperShim extends OAuth2ShimBase {
 
     @Override
     public String getClientSecret() {
-        return RUNKEEPER_CLIENT_SECRET;
+        return config.getClientSecret();
     }
 
     @Override
     public String getClientId() {
-        return RUNKEEPER_CLIENT_ID;
+        return config.getClientId();
     }
 
     @Override

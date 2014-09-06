@@ -30,13 +30,13 @@ public class FatsecretShim extends OAuth1ShimBase {
 
     private static final String TOKEN_URL = "http://www.fatsecret.com/oauth/access_token";
 
-    public static final String FATSECRET_CLIENT_ID = "d1c59d7f9c8243f0b2eaef9ea43278a0";
-
-    public static final String FATSECRET_CLIENT_SECRET = "c16dd2eeea804a7cba1180293d4b770c";
+    private FatsecretConfig config;
 
     public FatsecretShim(AuthorizationRequestParametersRepo authorizationRequestParametersRepo,
-                         ShimServerConfig shimServerConfig) {
+                         ShimServerConfig shimServerConfig,
+                         FatsecretConfig fatsecretConfig) {
         super(authorizationRequestParametersRepo, shimServerConfig);
+        this.config = fatsecretConfig;
     }
 
     @Override
@@ -51,12 +51,12 @@ public class FatsecretShim extends OAuth1ShimBase {
 
     @Override
     public String getClientSecret() {
-        return FATSECRET_CLIENT_SECRET;
+        return config.getClientSecret();
     }
 
     @Override
     public String getClientId() {
-        return FATSECRET_CLIENT_ID;
+        return config.getClientId();
     }
 
     @Override

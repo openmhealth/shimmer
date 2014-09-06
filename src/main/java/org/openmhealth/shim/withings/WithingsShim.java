@@ -44,13 +44,17 @@ public class WithingsShim extends OAuth1ShimBase {
 
     private static final String TOKEN_URL = "https://oauth.withings.com/account/access_token";
 
-    public static final String WITHINGS_CLIENT_ID = "bfb8c6b3bffd8b83b39e67dfe40f81c8289b8d0bbfb97b27953925d6f3bc";
+    //public static final String WITHINGS_CLIENT_ID = "bfb8c6b3bffd8b83b39e67dfe40f81c8289b8d0bbfb97b27953925d6f3bc";
 
-    public static final String WITHINGS_CLIENT_SECRET = "d9182878bc9999158cd748fc2fe12d81ffcce9c9f77093972e93c0f";
+    //public static final String WITHINGS_CLIENT_SECRET = "d9182878bc9999158cd748fc2fe12d81ffcce9c9f77093972e93c0f";
+
+    private WithingsConfig config;
 
     public WithingsShim(AuthorizationRequestParametersRepo authorizationRequestParametersRepo,
-                        ShimServerConfig shimServerConfig) {
+                        ShimServerConfig shimServerConfig,
+                        WithingsConfig withingsConfig) {
         super(authorizationRequestParametersRepo, shimServerConfig);
+        this.config = withingsConfig;
     }
 
     @Override
@@ -65,12 +69,12 @@ public class WithingsShim extends OAuth1ShimBase {
 
     @Override
     public String getClientSecret() {
-        return WITHINGS_CLIENT_SECRET;
+        return config.getClientSecret();
     }
 
     @Override
     public String getClientId() {
-        return WITHINGS_CLIENT_ID;
+        return config.getClientId();
     }
 
     @Override
@@ -166,11 +170,11 @@ public class WithingsShim extends OAuth1ShimBase {
                         DiastolicBloodPressure diastolic = null;
                         for (JsonNode measureNode : measureNodes) {
                             MeasureType measureType = MeasureType.valueFor(measureNode.get("type").asInt());
-                            if(measureType == null){
+                            if (measureType == null) {
                                 continue;
                             }
                             Double valueAsDouble = measureNode.get("value").asDouble();
-                            if(valueAsDouble == null){
+                            if (valueAsDouble == null) {
                                 continue;
                             }
                             Double multiplier = measureNode.get("unit") == null ?

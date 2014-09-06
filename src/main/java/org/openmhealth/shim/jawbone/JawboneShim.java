@@ -49,9 +49,11 @@ public class JawboneShim extends OAuth2ShimBase {
 
     private static final String TOKEN_URL = "https://jawbone.com/auth/oauth2/token";
 
-    public static final String JAWBONE_CLIENT_ID = "q3Nsl0zMbkg";
+    //public static final String JAWBONE_CLIENT_ID = "q3Nsl0zMbkg";
 
-    public static final String JAWBONE_CLIENT_SECRET = "ed722cc43adce63f5abb34bf7bc5485132bd2a19";
+    //public static final String JAWBONE_CLIENT_SECRET = "ed722cc43adce63f5abb34bf7bc5485132bd2a19";
+
+    private JawboneConfig config;
 
     public static final ArrayList<String> JAWBONE_SCOPES =
         new ArrayList<String>(Arrays.asList("extended_read", "weight_read",
@@ -59,8 +61,10 @@ public class JawboneShim extends OAuth2ShimBase {
 
     public JawboneShim(AuthorizationRequestParametersRepo authorizationRequestParametersRepo,
                        AccessParametersRepo accessParametersRepo,
-                       ShimServerConfig shimServerConfig1) {
+                       ShimServerConfig shimServerConfig1,
+                       JawboneConfig jawboneConfig) {
         super(authorizationRequestParametersRepo, accessParametersRepo, shimServerConfig1);
+        this.config = jawboneConfig;
     }
 
     @Override
@@ -70,12 +74,12 @@ public class JawboneShim extends OAuth2ShimBase {
 
     @Override
     public String getClientSecret() {
-        return JAWBONE_CLIENT_SECRET;
+        return config.getClientSecret();
     }
 
     @Override
     public String getClientId() {
-        return JAWBONE_CLIENT_ID;
+        return config.getClientId();
     }
 
     @Override
@@ -277,7 +281,7 @@ public class JawboneShim extends OAuth2ShimBase {
                     }
 
                     JsonNode hourlyTotals = jbStepEntry.get("details").get("hourly_totals");
-                    if(hourlyTotals == null){
+                    if (hourlyTotals == null) {
                         continue;
                     }
                     for (Iterator<Map.Entry<String, JsonNode>> iterator = hourlyTotals.fields(); iterator.hasNext(); ) {

@@ -51,7 +51,7 @@ public class HealthvaultShim implements Shim {
 
     public static final String SHIM_KEY = "healthvault";
 
-    public static final String CLIENT_ID = "bafb1313-d4e0-421c-b3b5-4e3a55639c19";
+    //public static final String CLIENT_ID = "bafb1313-d4e0-421c-b3b5-4e3a55639c19";
 
     private static final String AUTHORIZE_URL = "https://account.healthvault-ppe.com";
 
@@ -70,10 +70,14 @@ public class HealthvaultShim implements Shim {
 
     private ShimServerConfig shimServerConfig;
 
+    private HealthvaultConfig config;
+
     public HealthvaultShim(AuthorizationRequestParametersRepo authorizationRequestParametersRepo,
-                           ShimServerConfig shimServerConfig) {
+                           ShimServerConfig shimServerConfig,
+                           HealthvaultConfig healthvaultConfig) {
         this.authorizationRequestParametersRepo = authorizationRequestParametersRepo;
         this.shimServerConfig = shimServerConfig;
+        this.config = healthvaultConfig;
     }
 
     @Override
@@ -83,7 +87,7 @@ public class HealthvaultShim implements Shim {
 
     @Override
     public String getClientId() {
-        return CLIENT_ID;
+        return config.getClientId();
     }
 
     @Override

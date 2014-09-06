@@ -23,7 +23,7 @@ import java.util.List;
 
 @Configuration
 @EnableAutoConfiguration
-@ComponentScan(basePackages = "org.openmhealth")
+@ComponentScan(basePackages = "org.openmhealth.*")
 @EnableWebSecurity
 @RestController
 public class Application extends WebSecurityConfigurerAdapter {

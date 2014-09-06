@@ -34,6 +34,7 @@ import static org.openmhealth.schema.pojos.generic.DurationUnitValue.*;
 import static org.openmhealth.schema.pojos.generic.LengthUnitValue.LengthUnit.*;
 
 public class FitbitShim extends OAuth1ShimBase {
+
     public static final String SHIM_KEY = "fitbit";
 
     private static final String DATA_URL = "https://api.fitbit.com";
@@ -44,17 +45,17 @@ public class FitbitShim extends OAuth1ShimBase {
 
     private static final String TOKEN_URL = "https://api.fitbit.com/oauth/access_token";
 
-    //public static final String FITBIT_CLIENT_ID = "7da3c2e5e74d4492ab6bb3286fc32c6b";
+    //public static final String FITBIT_CLIENT_ID = "7c6dd32fc6784dcca9ebfe54733b03dc";
 
-    //public static final String FITBIT_CLIENT_SECRET = "455a383f80de45d6a4f9b09e841da1f4";
+    //public static final String FITBIT_CLIENT_SECRET = "75f350a491c74796b5e79819483def47";
 
-    public static final String FITBIT_CLIENT_ID = "7c6dd32fc6784dcca9ebfe54733b03dc";
-
-    public static final String FITBIT_CLIENT_SECRET = "75f350a491c74796b5e79819483def47";
+    private FitbitConfig config;
 
     public FitbitShim(AuthorizationRequestParametersRepo authorizationRequestParametersRepo,
-                      ShimServerConfig shimServerConfig) {
+                      ShimServerConfig shimServerConfig,
+                      FitbitConfig fitbitConfig) {
         super(authorizationRequestParametersRepo, shimServerConfig);
+        this.config = fitbitConfig;
     }
 
     @Override
@@ -69,12 +70,12 @@ public class FitbitShim extends OAuth1ShimBase {
 
     @Override
     public String getClientSecret() {
-        return FITBIT_CLIENT_SECRET;
+        return config.getClientSecret();
     }
 
     @Override
     public String getClientId() {
-        return FITBIT_CLIENT_ID;
+        return config.getClientId();
     }
 
     @Override
@@ -367,7 +368,7 @@ public class FitbitShim extends OAuth1ShimBase {
 
                         Activity activity = new ActivityBuilder()
                             .setActivityName(fitbitActivity.get("activityParentName").asText())
-                            .setDistance(fitbitActivity.get("distance").asDouble(),m)
+                            .setDistance(fitbitActivity.get("distance").asDouble(), m)
                             .withStartAndDuration(
                                 startTime, fitbitActivity.get("duration").asDouble(), DurationUnit.ms)
                             .build();
