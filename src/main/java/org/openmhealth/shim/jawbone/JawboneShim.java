@@ -134,13 +134,13 @@ public class JawboneShim extends OAuth2ShimBase {
                     JsonNode jbWeight = mapper.readTree(((JSONObject) rawWeight).toJSONString());
 
                     DateTimeZone dateTimeZone = DateTimeZone.UTC;
-                    if (jbWeight.get("details") != null && jbWeight.get("tz") != null) {
-                        DateTimeZone.forID(jbWeight.get("details").get("tz").asText());
+                    if (jbWeight.get("details") != null && jbWeight.get("details").get("tz") != null) {
+                        dateTimeZone = DateTimeZone.forID(jbWeight.get("details").get("tz").asText());
                     }
 
                     DateTime timeStamp = new DateTime(
-                        jbWeight.get("time_created").asLong() * 1000, dateTimeZone)
-                        .withZone(DateTimeZone.UTC);
+                        jbWeight.get("time_created").asLong() * 1000, dateTimeZone);
+                    timeStamp = timeStamp.toDateTime(DateTimeZone.UTC);
 
                     BodyWeight bodyWeight = new BodyWeightBuilder()
                         .setWeight(
@@ -176,16 +176,17 @@ public class JawboneShim extends OAuth2ShimBase {
                     JsonNode jbSleep = mapper.readTree(((JSONObject) rawSleep).toJSONString());
 
                     DateTimeZone dateTimeZone = DateTimeZone.UTC;
-                    if (jbSleep.get("details") != null && jbSleep.get("tz") != null) {
-                        DateTimeZone.forID(jbSleep.get("details").get("tz").asText());
+                    if (jbSleep.get("details") != null && jbSleep.get("details").get("tz") != null) {
+                        dateTimeZone = DateTimeZone.forID(jbSleep.get("details").get("tz").asText());
                     }
 
                     DateTime timeStamp = new DateTime(
-                        jbSleep.get("time_created").asLong() * 1000, dateTimeZone)
-                        .withZone(DateTimeZone.UTC);
+                        jbSleep.get("time_created").asLong() * 1000, dateTimeZone);
+                    timeStamp = timeStamp.toDateTime(DateTimeZone.UTC);
+
                     DateTime timeCompleted = new DateTime(
-                        jbSleep.get("time_completed").asLong() * 1000, dateTimeZone)
-                        .withZone(DateTimeZone.UTC);
+                        jbSleep.get("time_completed").asLong() * 1000, dateTimeZone);
+                    timeCompleted = timeCompleted.toDateTime(DateTimeZone.UTC);
 
                     SleepDuration sleepDuration = new SleepDurationBuilder()
                         .withStartAndEndAndDuration(
@@ -222,13 +223,13 @@ public class JawboneShim extends OAuth2ShimBase {
                     JsonNode jbWorkout = mapper.readTree(((JSONObject) rawWorkout).toJSONString());
 
                     DateTimeZone dateTimeZone = DateTimeZone.UTC;
-                    if (jbWorkout.get("details") != null && jbWorkout.get("tz") != null) {
-                        DateTimeZone.forID(jbWorkout.get("details").get("tz").asText());
+                    if (jbWorkout.get("details") != null && jbWorkout.get("details").get("tz") != null) {
+                        dateTimeZone = DateTimeZone.forID(jbWorkout.get("details").get("tz").asText());
                     }
 
                     DateTime timeStamp = new DateTime(
-                        jbWorkout.get("time_created").asLong() * 1000, dateTimeZone)
-                        .withZone(DateTimeZone.UTC);
+                        jbWorkout.get("time_created").asLong() * 1000, dateTimeZone);
+                    timeStamp = timeStamp.toDateTime(DateTimeZone.UTC);
 
                     Activity activity = new ActivityBuilder()
                         .setActivityName(jbWorkout.get("title").asText())
@@ -271,24 +272,29 @@ public class JawboneShim extends OAuth2ShimBase {
                     JsonNode jbStepEntry = mapper.readTree(((JSONObject) rawStepEntry).toJSONString());
 
                     DateTimeZone dateTimeZone = DateTimeZone.UTC;
-                    if (jbStepEntry.get("details") != null && jbStepEntry.get("tz") != null) {
-                        DateTimeZone.forID(jbStepEntry.get("details").get("tz").asText());
+                    if (jbStepEntry.get("details") != null && jbStepEntry.get("details").get("tz") != null) {
+                        dateTimeZone = DateTimeZone.forID(jbStepEntry.get("details").get("tz").asText());
                     }
 
-                    JsonNode hourlyTotals = jbStepEntry.get("hourly_totals");
+                    JsonNode hourlyTotals = jbStepEntry.get("details").get("hourly_totals");
+                    if(hourlyTotals == null){
+                        continue;
+                    }
                     for (Iterator<Map.Entry<String, JsonNode>> iterator = hourlyTotals.fields(); iterator.hasNext(); ) {
                         Map.Entry<String, JsonNode> item = iterator.next();
 
                         String timestampStr = item.getKey();
                         JsonNode node = item.getValue();
 
-                        DateTime dateTime = formatter.parseDateTime(timestampStr);
-                        dateTime = dateTime.withZone(dateTimeZone).withZone(DateTimeZone.UTC);
+                        DateTime dateTime = formatter.withZone(dateTimeZone).parseDateTime(timestampStr);
+                        dateTime = dateTime.toDateTime(DateTimeZone.UTC);
 
-                        stepCounts.add(new StepCountBuilder()
-                            .withStartAndDuration(
-                                dateTime, Double.parseDouble(node.get("active_time") + ""), sec)
-                            .setSteps(node.get("steps").asInt()).build());
+                        if (node.get("steps").asInt() > 0) {
+                            stepCounts.add(new StepCountBuilder()
+                                .withStartAndDuration(
+                                    dateTime, Double.parseDouble(node.get("active_time") + ""), sec)
+                                .setSteps(node.get("steps").asInt()).build());
+                        }
                     }
                 }
                 Map<String, Object> results = new HashMap<>();
