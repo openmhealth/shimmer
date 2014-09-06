@@ -16,10 +16,10 @@ public class BodyHeight extends BaseDataPoint {
     @JsonProperty(value = "body_height", required = true)
     private LengthUnitValue lengthUnitValue;
 
-    @JsonProperty(value = "effective_time_frame", required = true)
+    @JsonProperty(value = "effective_time_frame", required = false)
     private TimeFrame effectiveTimeFrame;
 
-    @JsonProperty(value = "descriptive_statistic", required = true)
+    @JsonProperty(value = "descriptive_statistic", required = false)
     private DescriptiveStatistic descriptiveStatistic;
 
     public static final String SCHEMA_BODY_HEIGHT = "body_height";

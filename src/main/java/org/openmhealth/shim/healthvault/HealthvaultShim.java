@@ -135,9 +135,10 @@ public class HealthvaultShim implements Shim {
                                 startTime, sessionNode.get("minutes").asDouble(), DurationUnit.min)
                             .build();
 
-                        StepCount stepCount = new NumberOfStepsBuilder()
+                        StepCount stepCount = new StepCountBuilder()
                             .setSteps(sessionNode.get("number-of-steps").asInt()).build();
-                        stepCount.setEffectiveTimeFrame(activity.getEffectiveTimeFrame());
+                        stepCount.setEffectiveTimeFrame(
+                            activity.getEffectiveTimeFrame().getTimeInterval());
 
                         activities.add(activity);
                         stepCountList.add(stepCount);

@@ -1,0 +1,33 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+
+    "description": "This schema represents a single measurement of number of steps. The ability to represent descriptive statistics (e.g., mean, median) will be added shortly. ",
+
+    "type": "object",
+    "references": [
+        {
+            "description": "The LOINC code refers to Number of steps in unspecified time Pedometer",
+            "url": "http://purl.bioontology.org/ontology/LNC/55423-8"
+        }
+    ],
+
+    "definitions": {
+        "step_count": {
+            "type": "number"
+        },
+        "effective_time_frame": {
+            "$ref": "http://www.openmhealth.org/schema/omh/generic/time-interval-1.0.json"
+        }
+    },
+
+    "properties": {
+        "step_count": {
+            "$ref": "#/definitions/step_count"
+        },
+        "effective_time_frame": {
+            "$ref": "#/definitions/effective_time_frame"
+        }
+    },
+
+    "required": ["step_count"]
+}

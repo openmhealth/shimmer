@@ -321,7 +321,7 @@ public class FitbitShim extends OAuth1ShimBase {
 
                     for (JsonNode stepMinute : dataset) {
                         if (stepMinute.get("value").asInt() > 0) {
-                            steps.add(new NumberOfStepsBuilder()
+                            steps.add(new StepCountBuilder()
                                 .withStartAndDuration(
                                     formatter.parseDateTime(
                                         dateString + " " + stepMinute.get("time").asText()),

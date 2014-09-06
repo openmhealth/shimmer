@@ -262,7 +262,7 @@ public class WithingsShim extends OAuth1ShimBase {
                         DateTime dateTime = new DateTime(Long.parseLong(timestampStr) * 1000, DateTimeZone.UTC);
                         Map<String, Object> stepEntry = (Map<String, Object>) wSteps.get(timestampStr);
 
-                        steps.add(new NumberOfStepsBuilder()
+                        steps.add(new StepCountBuilder()
                             .withStartAndDuration(
                                 dateTime, Double.parseDouble(stepEntry.get("duration") + ""), sec)
                             .setSteps((Integer) stepEntry.get("steps")).build());

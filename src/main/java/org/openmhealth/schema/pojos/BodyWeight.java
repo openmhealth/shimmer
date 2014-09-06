@@ -16,10 +16,10 @@ public class BodyWeight extends BaseDataPoint {
     @JsonProperty(value = "body_weight", required = true)
     private MassUnitValue massUnitValue;
 
-    @JsonProperty(value = "effective_time_frame", required = true)
+    @JsonProperty(value = "effective_time_frame", required = false)
     private TimeFrame effectiveTimeFrame;
 
-    @JsonProperty(value = "descriptive_statistic", required = true)
+    @JsonProperty(value = "descriptive_statistic", required = false)
     private DescriptiveStatistic descriptiveStatistic;
 
     public static final String SCHEMA_BODY_WEIGHT = "body_weight";

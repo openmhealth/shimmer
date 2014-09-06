@@ -11,8 +11,8 @@ import org.openmhealth.schema.pojos.generic.TimeInterval;
 @JsonRootName(value = SleepDuration.SCHEMA_SLEEP_DURATION, namespace = DataPoint.NAMESPACE)
 public class SleepDuration extends BaseDataPoint {
 
-    @JsonProperty(value = "effective_time")
-    private TimeInterval effectiveTime;
+    @JsonProperty(value = "effective_time_frame")
+    private TimeInterval effectiveTimeFrame;
 
     @JsonProperty(value = "sleep_duration")
     private SleepDurationUnitValue sleepDurationUnitValue;
@@ -34,15 +34,15 @@ public class SleepDuration extends BaseDataPoint {
     @Override
     @JsonIgnore
     public DateTime getTimeStamp() {
-        return effectiveTime.getDateTime();
+        return effectiveTimeFrame.getDateTime();
     }
 
-    public TimeInterval getEffectiveTime() {
-        return effectiveTime;
+    public TimeInterval getEffectiveTimeFrame() {
+        return effectiveTimeFrame;
     }
 
-    public void setEffectiveTime(TimeInterval effectiveTime) {
-        this.effectiveTime = effectiveTime;
+    public void setEffectiveTimeFrame(TimeInterval effectiveTimeFrame) {
+        this.effectiveTimeFrame = effectiveTimeFrame;
     }
 
     public SleepDurationUnitValue getSleepDurationUnitValue() {

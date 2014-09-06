@@ -11,6 +11,8 @@ import org.openmhealth.schema.pojos.serialize.dates.ISODateSerializer;
 import org.openmhealth.schema.pojos.serialize.dates.SimpleDateDeserializer;
 import org.openmhealth.schema.pojos.serialize.dates.SimpleDateSerializer;
 
+import java.math.BigDecimal;
+
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class TimeInterval {
 
@@ -81,6 +83,18 @@ public class TimeInterval {
         TimeInterval interval = new TimeInterval();
         interval.setDateTime(start);
         interval.setEndTime(end);
+        return interval;
+    }
+
+    public static TimeInterval withStartAndDuration(DateTime startTime,
+                                                    Double durationValue,
+                                                    DurationUnitValue.DurationUnit unit) {
+        TimeInterval interval = new TimeInterval();
+        interval.setDateTime(startTime);
+        DurationUnitValue durationUnitValue = new DurationUnitValue();
+        durationUnitValue.setUnit(unit);
+        durationUnitValue.setValue(new BigDecimal(durationValue));
+        interval.setDuration(durationUnitValue);
         return interval;
     }
 }

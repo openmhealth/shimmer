@@ -18,7 +18,7 @@ public class SleepDurationBuilder implements SchemaPojoBuilder<SleepDuration> {
     public SleepDurationBuilder withStartAndEndAndDuration(DateTime start,
                                                            DateTime end,
                                                            Double value,                                                           SleepDurationUnitValue.Unit unit) {
-        sleepDuration.setEffectiveTime(
+        sleepDuration.setEffectiveTimeFrame(
             TimeInterval.withStartAndEnd(start, end)
         );
         sleepDuration.setSleepDurationUnitValue(

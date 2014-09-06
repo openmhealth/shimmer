@@ -16,7 +16,6 @@
 
 package org.openmhealth.schema.pojos.build;
 
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.fge.jsonschema.core.exceptions.ProcessingException;
@@ -25,24 +24,22 @@ import com.github.fge.jsonschema.main.JsonSchema;
 import com.github.fge.jsonschema.main.JsonSchemaFactory;
 import org.joda.time.DateTime;
 import org.junit.Test;
-import org.openmhealth.schema.pojos.*;
+import org.openmhealth.schema.pojos.StepCount;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.openmhealth.schema.pojos.SleepDurationUnitValue.Unit.*;
+import static org.junit.Assert.*;
+import static org.openmhealth.schema.pojos.generic.DurationUnitValue.DurationUnit.*;
 
-public class SleepBuilderTest {
+public class StepBuilderTest {
 
     @Test
-    public void test() throws IOException, ProcessingException {
-        final String SLEEP_DURATION_SCHEMA = "schemas/sleep-duration-1.0.json";
+    public void testParse() throws IOException, ProcessingException {
+        final String STEP_COUNT_SCHEMA = "schemas/step-count-1.0.json";
 
-        URL url = Thread.currentThread().getContextClassLoader().getResource(SLEEP_DURATION_SCHEMA);
+        URL url = Thread.currentThread().getContextClassLoader().getResource(STEP_COUNT_SCHEMA);
         assertNotNull(url);
 
         ObjectMapper mapper = new ObjectMapper();
@@ -55,29 +52,28 @@ public class SleepBuilderTest {
 
         ProcessingReport report;
 
-        SleepDurationBuilder builder = new SleepDurationBuilder();
+        StepCountBuilder builder = new StepCountBuilder();
 
-        SleepDuration invalidSleepDuration = builder.build();
-        String invalidJson = mapper.writeValueAsString(invalidSleepDuration);
+        StepCount invalidStepCount = builder.build();
+        String invalidJson = mapper.writeValueAsString(invalidStepCount);
 
         report = schema.validate(mapper.readTree(invalidJson));
         System.out.println(report);
         assertFalse("Expected invalid result but got success", report.isSuccess());
 
-        SleepDuration sleepDuration = new SleepDurationBuilder()
-            .withStartAndEndAndDuration(
-                new DateTime(), new DateTime().plusMinutes(250), 3d, min)
-            .setNotes("Tossed and turned")
+        StepCount stepCount = new StepCountBuilder()
+            .withStartAndDuration(new DateTime(), 3d, sec)
+            .setSteps(345)
             .build();
 
-        String rawJson = mapper.writeValueAsString(sleepDuration);
+        String rawJson = mapper.writeValueAsString(stepCount);
 
-        SleepDuration deserialized = mapper.readValue(rawJson, SleepDuration.class);
+        StepCount deserialized = mapper.readValue(rawJson, StepCount.class);
 
         assertNotNull(deserialized.getEffectiveTimeFrame().getDateTime());
-        assertNotNull(deserialized.getEffectiveTimeFrame().getEndTime());
-        assertNotNull(deserialized.getSleepDurationUnitValue().getUnit());
-        assertNotNull(deserialized.getSleepDurationUnitValue().getValue());
+        assertNotNull(deserialized.getEffectiveTimeFrame().getDuration().getUnit());
+        assertNotNull(deserialized.getEffectiveTimeFrame().getDuration().getValue());
+        assertNotNull(deserialized.getStepCount());
 
         report = schema.validate(mapper.readTree(rawJson));
         System.out.println(report);
