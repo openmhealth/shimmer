@@ -13,22 +13,22 @@ openmhealth:
   shim:
     server:
       callbackUrlBase: http://localhost:8083
-    fitbit:
-      clientId: 7c6dd32fc6784dcca9ebfe54733b03dc
-      clientSecret: 75f350a491c74796b5e79819483def47
-    fatsecret:
-      clientId: d1c59d7f9c8243f0b2eaef9ea43278a0
-      clientSecret: c16dd2eeea804a7cba1180293d4b770c
-    jawbone:
-      clientId: q3Nsl0zMbkg
-      clientSecret: ed722cc43adce63f5abb34bf7bc5485132bd2a19
-    runkeeper:
-      clientId: e83ac7fc3c9c4a89bac029921253d495
-      clientSecret: fe9e8bd9f60e4ff5812a1b0b4744d5e9
-    withings:
-      clientId: bfb8c6b3bffd8b83b39e67dfe40f81c8289b8d0bbfb97b27953925d6f3bc
-      clientSecret: d9182878bc9999158cd748fc2fe12d81ffcce9c9f77093972e93c0f
-    healthvault:
-      clientId: bafb1313-d4e0-421c-b3b5-4e3a55639c19
+    #fitbit:
+    #  clientId: YOUR_FITBIT_CLIENT_ID
+    #  clientSecret: YOUR_FITBIT_SECRET
+    #fatsecret:
+    #  clientId: YOUR_FATSECRET_CLIENT_ID
+    #  clientSecret: YOUR_FATSECRET_SECRET
+    #jawbone:
+    #  clientId: YOUR_JAWBONE_CLIENT_ID
+    #  clientSecret: YOUR_JAWBONE_SECRET
+    #runkeeper:
+    #  clientId: YOUR_RUNKEEPER_CLIENT_ID
+    #  clientSecret: YOUR_RUNKEEPER_SECRET
+    #withings:
+    #  clientId: YOUR_WITHINGS_CLIENT_ID
+    #  clientSecret: YOUR_WITHINGS_SECRET
+    #healthvault:
+    #  clientId: YOUR_HEALTHVAULT_SECRET
 logging:
   file: omh-shims.log
