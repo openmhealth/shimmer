@@ -16,12 +16,28 @@
 
 package org.openmhealth.shim.withings;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.junit.Test;
+import org.openmhealth.schema.pojos.Activity;
+import org.openmhealth.schema.pojos.BloodPressure;
+import org.openmhealth.schema.pojos.BloodPressureUnit;
+import org.openmhealth.shim.ShimDataResponse;
 import org.openmhealth.shim.ShimDataType;
+import org.openmhealth.shim.runkeeper.RunkeeperShim;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.net.URL;
+import java.util.List;
+import java.util.Map;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * @author Danilo Bonilla
@@ -29,22 +45,42 @@ import java.net.URL;
 public class WithingsShimTest {
 
     @Test
-    public void testNormalize() throws IOException {
+    @SuppressWarnings("unchecked")
+    public void testNormalizeBody() throws IOException {
 
         URL url = Thread.currentThread().getContextClassLoader().getResource("withings-body.json");
         assert url != null;
         InputStream inputStream = url.openStream();
 
-        ShimDataType dataType = WithingsShim.WithingsDataType.BODY;
+        ObjectMapper objectMapper = new ObjectMapper();
 
-       /* SimpleModule module = new SimpleModule();
-        module.addDeserializer(ShimDataResponse.class, withingsDataType.getNormalizer());
+        WithingsShim.WithingsDataType.BODY.getNormalizer();
+        SimpleModule module = new SimpleModule();
+        module.addDeserializer(ShimDataResponse.class,
+            WithingsShim.WithingsDataType.BODY.getNormalizer());
+
         objectMapper.registerModule(module);
-        return objectMapper.readValue(responseEntity.getContent(), ShimDataResponse.class);
-        */
 
-        //todo: add more assertions and unit tests.
+        ShimDataResponse response =
+            objectMapper.readValue(inputStream, ShimDataResponse.class);
 
+        assertNotNull(response);
+
+        Map<String, Object> map = (Map<String, Object>) response.getBody();
+        assertTrue(map.containsKey(BloodPressure.SCHEMA_BLOOD_PRESSURE));
+
+        List<BloodPressure> bloodPressures = (List<BloodPressure>) map.get(BloodPressure.SCHEMA_BLOOD_PRESSURE);
+        assertTrue(bloodPressures != null && bloodPressures.size() == 2);
+
+        BloodPressure bloodPressure = bloodPressures.get(0);
+
+        DateTime expectedDateTime = new DateTime(1408276657l*1000l, DateTimeZone.UTC);
+
+        assertEquals(expectedDateTime,bloodPressure.getEffectiveTimeFrame().getDateTime());
+        assertEquals(bloodPressure.getDiastolic().getValue(),new BigDecimal(75d));
+        assertEquals(bloodPressure.getDiastolic().getUnit(), BloodPressureUnit.mmHg);
+        assertEquals(bloodPressure.getSystolic().getValue(),new BigDecimal(133d));
+        assertEquals(bloodPressure.getSystolic().getUnit(), BloodPressureUnit.mmHg);
     }
 
 }

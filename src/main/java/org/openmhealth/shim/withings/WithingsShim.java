@@ -182,7 +182,8 @@ public class WithingsShim extends OAuth1ShimBase {
                     ObjectMapper mapper = new ObjectMapper();
                     for (Object wMeasureGroup : wMeasureGroups) {
                         JsonNode wMeasure = mapper.readTree(((JSONObject) wMeasureGroup).toJSONString());
-                        DateTime dateTime = new DateTime(Long.parseLong(wMeasure.get("date").asText()) * 1000l);
+                        DateTime dateTime = new DateTime(
+                            Long.parseLong(wMeasure.get("date").asText()) * 1000l, DateTimeZone.UTC);
                         ArrayNode measureNodes = (ArrayNode) wMeasure.get("measures");
                         SystolicBloodPressure systolic = null;
                         DiastolicBloodPressure diastolic = null;
