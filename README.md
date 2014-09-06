@@ -52,11 +52,14 @@ Now you can pull data from the third party's available end points by going to
 **Open mHealth Compliant Data**  
 *http://localhost:8083/data/SHIM_NAME/END_POINT?username=UNIQUE_IDENTIFIER&dateStart=yyyy-MM-dd&dateEnd=yyyy-MM-dd&normalize=true*
 
-#### Fitbit
-Sample constructed url http://localhost:8083/data/**fitbit**/**weight**?username=UNIQUE_IDENTIFIER&dateStart=yyyy-MM-dd&dateEnd=yyyy-MM-dd&normalize=true
-* weight 
-* heart
-* blood_pressure
-* blood_glucose
-* steps
-* activity
+### Available Shims and End Points
+
+The data read url is constructed as follows: http://localhost:8083/data/**fitbit**/**weight**?username=UNIQUE_IDENTIFIER&dateStart=yyyy-MM-dd&dateEnd=yyyy-MM-dd&normalize=true
+
+* fitbit
+    * weight 
+    * heart
+    * blood_pressure
+    * blood_glucose
+    * steps
+    * activity
