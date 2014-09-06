@@ -54,7 +54,7 @@ Now you can pull data from the third party's available end points by going to
 
 ### Available Shims and End Points
 
-The data read url is constructed as follows: http://localhost:8083/data/**fitbit**/**weight**?username=UNIQUE_IDENTIFIER&dateStart=yyyy-MM-dd&dateEnd=yyyy-MM-dd&normalize=true
+The data read urls are constructed as follows: http://localhost:8083/data/**fitbit**/**weight**?username=UNIQUE_IDENTIFIER&dateStart=yyyy-MM-dd&dateEnd=yyyy-MM-dd&normalize=true
 
 * fitbit
     * weight 
@@ -63,3 +63,22 @@ The data read url is constructed as follows: http://localhost:8083/data/**fitbit
     * blood_glucose
     * steps
     * activity
+* healtvault
+    * activity 
+    * blood_pressure
+    * blood_glucose
+    * height
+    * weight
+* withings
+    * body 
+    * activity
+    * intraday
+    * sleep    
+* runkeeper
+    * activity
+    * weight  
+* jawbone
+    * body
+    * sleep
+    * workouts
+    * moves
