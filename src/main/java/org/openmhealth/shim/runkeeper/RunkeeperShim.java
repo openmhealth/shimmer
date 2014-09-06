@@ -213,7 +213,9 @@ public class RunkeeperShim extends OAuth2ShimBase {
                     for (Object fva : rkWeights) {
                         JsonNode rkWeight = mapper.readTree(((JSONObject) fva).toJSONString());
 
-                        DateTime timeStamp = dateFormatter.parseDateTime(rkWeight.get("timestamp").asText());
+                        DateTime timeStamp =
+                            dateFormatter.withZone(DateTimeZone.UTC)
+                                .parseDateTime(rkWeight.get("timestamp").asText());
 
                         BodyWeight bodyWeight = new BodyWeightBuilder()
                             .setWeight(
