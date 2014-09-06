@@ -25,6 +25,9 @@ import org.openmhealth.schema.pojos.BloodGlucoseUnitValue;
 
 import java.io.IOException;
 
+/**
+ * @author Danilo Bonilla
+ */
 public class BloodGlucoseUnitValueDeserializer extends JsonDeserializer<BloodGlucoseUnitValue.Unit> {
 
     @Override

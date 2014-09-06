@@ -11,6 +11,8 @@ import java.io.IOException;
 
 /**
  * Standard date serializer for Joda time in the regular schemas
+ *
+ * @author Danilo Bonilla
  */
 public class ISODateSerializer extends JsonSerializer<DateTime> {
 

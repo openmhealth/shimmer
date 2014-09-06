@@ -1,3 +1,19 @@
+/*
+ * Copyright 2014 Open mHealth
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * 	http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.openmhealth.shim.withings;
 
 import com.fasterxml.jackson.core.JsonParser;
@@ -32,6 +48,9 @@ import java.util.*;
 
 import static org.openmhealth.schema.pojos.generic.DurationUnitValue.DurationUnit.*;
 
+/**
+ * @author Danilo Bonilla
+ */
 public class WithingsShim extends OAuth1ShimBase {
 
     public static final String SHIM_KEY = "withings";
@@ -43,10 +62,6 @@ public class WithingsShim extends OAuth1ShimBase {
     private static final String AUTHORIZE_URL = "https://oauth.withings.com/account/authorize";
 
     private static final String TOKEN_URL = "https://oauth.withings.com/account/access_token";
-
-    //public static final String WITHINGS_CLIENT_ID = "bfb8c6b3bffd8b83b39e67dfe40f81c8289b8d0bbfb97b27953925d6f3bc";
-
-    //public static final String WITHINGS_CLIENT_SECRET = "d9182878bc9999158cd748fc2fe12d81ffcce9c9f77093972e93c0f";
 
     private WithingsConfig config;
 

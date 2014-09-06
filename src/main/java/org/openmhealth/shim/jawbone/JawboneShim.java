@@ -49,10 +49,6 @@ public class JawboneShim extends OAuth2ShimBase {
 
     private static final String TOKEN_URL = "https://jawbone.com/auth/oauth2/token";
 
-    //public static final String JAWBONE_CLIENT_ID = "q3Nsl0zMbkg";
-
-    //public static final String JAWBONE_CLIENT_SECRET = "ed722cc43adce63f5abb34bf7bc5485132bd2a19";
-
     private JawboneConfig config;
 
     public static final ArrayList<String> JAWBONE_SCOPES =

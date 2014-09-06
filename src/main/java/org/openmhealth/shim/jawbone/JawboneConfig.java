@@ -19,13 +19,16 @@ package org.openmhealth.shim.jawbone;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
+/**
+ * @author Danilo Bonilla
+ */
 @Component
 @ConfigurationProperties(prefix = "openmhealth.shim.jawbone")
 public class JawboneConfig {
 
-    private String clientId; // = "q3Nsl0zMbkg";
+    private String clientId;
 
-    private String clientSecret; // = "ed722cc43adce63f5abb34bf7bc5485132bd2a19";
+    private String clientSecret;
 
     public String getClientId() {
         return clientId;

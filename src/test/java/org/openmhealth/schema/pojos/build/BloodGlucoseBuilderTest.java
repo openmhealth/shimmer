@@ -35,6 +35,9 @@ import java.net.URL;
 
 import static org.junit.Assert.*;
 
+/**
+ * @author Danilo Bonilla
+ */
 public class BloodGlucoseBuilderTest {
 
     @Test

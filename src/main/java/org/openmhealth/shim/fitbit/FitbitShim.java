@@ -1,3 +1,19 @@
+/*
+ * Copyright 2014 Open mHealth
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * 	http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.openmhealth.shim.fitbit;
 
 import com.fasterxml.jackson.core.JsonParser;
@@ -33,6 +49,9 @@ import java.util.*;
 import static org.openmhealth.schema.pojos.generic.DurationUnitValue.*;
 import static org.openmhealth.schema.pojos.generic.LengthUnitValue.LengthUnit.*;
 
+/**
+ * @author Danilo Bonilla
+ */
 public class FitbitShim extends OAuth1ShimBase {
 
     public static final String SHIM_KEY = "fitbit";
@@ -44,10 +63,6 @@ public class FitbitShim extends OAuth1ShimBase {
     private static final String AUTHORIZE_URL = "https://www.fitbit.com/oauth/authenticate";
 
     private static final String TOKEN_URL = "https://api.fitbit.com/oauth/access_token";
-
-    //public static final String FITBIT_CLIENT_ID = "7c6dd32fc6784dcca9ebfe54733b03dc";
-
-    //public static final String FITBIT_CLIENT_SECRET = "75f350a491c74796b5e79819483def47";
 
     private FitbitConfig config;
 

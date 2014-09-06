@@ -19,6 +19,8 @@ package org.openmhealth.schema.pojos;
 /**
  * Describes the position the patient was in
  * when a clinical measurement was taken.
+ *
+ * @author Danilo Bonilla
  */
 public enum PositionDuringMeasurement implements LabeledEnum {
 

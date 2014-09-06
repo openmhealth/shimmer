@@ -11,7 +11,6 @@
             <pattern>%-4relative [%thread] %-5level %class - %msg%n</pattern>
         </layout>
         <File>./omh-shims.log</File>
-        <!--<File>/usr/share/tomcat7/logs/hipbone-jobs.log</File>-->
     </appender>
 
     <include resource="org/springframework/boot/logging/logback/base.xml"/>

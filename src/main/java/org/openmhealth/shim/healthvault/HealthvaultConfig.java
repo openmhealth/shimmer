@@ -19,6 +19,9 @@ package org.openmhealth.shim.healthvault;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
+/**
+ * @author Danilo Bonilla
+ */
 @Component
 @ConfigurationProperties(prefix = "openmhealth.shim.healthvault")
 public class HealthvaultConfig {

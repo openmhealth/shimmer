@@ -8,7 +8,9 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * Abstraction for handling access parameters
+ * Abstraction for handling access parameters.
+ *
+ * @author Danilo Bonilla
  */
 public class AccessParameters {
 

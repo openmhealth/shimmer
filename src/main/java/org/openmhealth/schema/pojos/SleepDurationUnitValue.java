@@ -21,6 +21,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.math.BigDecimal;
 
+/**
+ * @author Danilo Bonilla
+ */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class SleepDurationUnitValue {
 

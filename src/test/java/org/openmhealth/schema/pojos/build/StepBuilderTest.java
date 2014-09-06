@@ -33,6 +33,9 @@ import java.net.URL;
 import static org.junit.Assert.*;
 import static org.openmhealth.schema.pojos.generic.DurationUnitValue.DurationUnit.*;
 
+/**
+ * @author Danilo Bonilla
+ */
 public class StepBuilderTest {
 
     @Test

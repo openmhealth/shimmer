@@ -21,6 +21,8 @@ import java.util.Map;
 
 /**
  * Common code for all OAuth1.0 based shims.
+ *
+ * @author Danilo Bonilla
  */
 public abstract class OAuth1ShimBase implements Shim, OAuth1Shim {
 

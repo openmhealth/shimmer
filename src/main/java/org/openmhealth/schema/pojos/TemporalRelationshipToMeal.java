@@ -16,6 +16,9 @@
 
 package org.openmhealth.schema.pojos;
 
+/**
+ * @author Danilo Bonilla
+ */
 public enum TemporalRelationshipToMeal implements LabeledEnum {
 
     fasting("fasting"),

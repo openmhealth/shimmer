@@ -36,6 +36,9 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.openmhealth.schema.pojos.SleepDurationUnitValue.Unit.*;
 
+/**
+ * @author Danilo Bonilla
+ */
 public class SleepBuilderTest {
 
     @Test

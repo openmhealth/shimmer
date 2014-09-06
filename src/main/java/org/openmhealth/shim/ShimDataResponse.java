@@ -6,6 +6,8 @@ import java.util.Calendar;
  * Wrapper for responses received from shims.
  * <p/>
  * todo: expand to include original parameters
+ *
+ * @author Danilo Bonilla
  */
 public class ShimDataResponse {
 

@@ -24,6 +24,9 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.openmhealth.schema.pojos.serialize.HeartRateUnitDeserializer;
 import org.openmhealth.schema.pojos.serialize.LabeledEnumSerializer;
 
+/**
+ * @author Danilo Bonilla
+ */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class HeartRateUnitValue {
 

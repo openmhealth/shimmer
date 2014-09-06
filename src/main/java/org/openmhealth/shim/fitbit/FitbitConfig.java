@@ -19,13 +19,16 @@ package org.openmhealth.shim.fitbit;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
+/**
+ * @author Danilo Bonilla
+ */
 @Component
 @ConfigurationProperties(prefix = "openmhealth.shim.fitbit")
 public class FitbitConfig {
 
-    private String clientId; // = "7c6dd32fc6784dcca9ebfe54733b03dc";
+    private String clientId;
 
-    private String clientSecret; // = "75f350a491c74796b5e79819483def47";
+    private String clientSecret;
 
     public String getClientId() {
         return clientId;

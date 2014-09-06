@@ -16,6 +16,9 @@
 
 package org.openmhealth.schema.pojos;
 
+/**
+ * @author Danilo Bonilla
+ */
 public enum BloodSpecimenType implements LabeledEnum {
 
     whole_blood("whole blood"), plasma("plasma");

@@ -16,6 +16,9 @@
 
 package org.openmhealth.schema.pojos;
 
+/**
+ * @author Danilo Bonilla
+ */
 public enum TemporalRelationshipToSleep implements LabeledEnum{
 
     before_sleeping("before sleeping"),

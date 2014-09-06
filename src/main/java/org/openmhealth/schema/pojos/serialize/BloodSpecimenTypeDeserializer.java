@@ -25,6 +25,9 @@ import org.openmhealth.schema.pojos.BloodSpecimenType;
 
 import java.io.IOException;
 
+/**
+ * @author Danilo Bonilla
+ */
 public class BloodSpecimenTypeDeserializer extends JsonDeserializer<BloodSpecimenType> {
 
     @Override

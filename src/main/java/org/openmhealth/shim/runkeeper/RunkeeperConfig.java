@@ -19,13 +19,16 @@ package org.openmhealth.shim.runkeeper;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
+/**
+ * @author Danilo Bonilla
+ */
 @Component
 @ConfigurationProperties(prefix = "openmhealth.shim.runkeeper")
 public class RunkeeperConfig {
 
-    private String clientId; // = "e83ac7fc3c9c4a89bac029921253d495";
+    private String clientId;
 
-    private String clientSecret; // = "fe9e8bd9f60e4ff5812a1b0b4744d5e9";
+    private String clientSecret;
 
     public String getClientId() {
         return clientId;

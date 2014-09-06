@@ -19,13 +19,16 @@ package org.openmhealth.shim.withings;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
+/**
+ * @author Danilo Bonilla
+ */
 @Component
 @ConfigurationProperties(prefix = "openmhealth.shim.withings")
 public class WithingsConfig {
 
-    private String clientId; // = "bfb8c6b3bffd8b83b39e67dfe40f81c8289b8d0bbfb97b27953925d6f3bc";
+    private String clientId;
 
-    private String clientSecret; // = "d9182878bc9999158cd748fc2fe12d81ffcce9c9f77093972e93c0f";
+    private String clientSecret;
 
     public String getClientId() {
         return clientId;

@@ -1,3 +1,19 @@
+/*
+ * Copyright 2014 Open mHealth
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * 	http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.openmhealth.shim.runkeeper;
 
 import com.fasterxml.jackson.core.JsonParser;
@@ -35,6 +51,8 @@ import static org.openmhealth.schema.pojos.generic.LengthUnitValue.LengthUnit.m;
 
 /**
  * Encapsulates parameters specific to jawbone api.
+ *
+ * @author Danilo Bonilla
  */
 public class RunkeeperShim extends OAuth2ShimBase {
 
@@ -45,10 +63,6 @@ public class RunkeeperShim extends OAuth2ShimBase {
     private static final String AUTHORIZE_URL = "https://runkeeper.com/apps/authorize";
 
     private static final String TOKEN_URL = "https://runkeeper.com/apps/token";
-
-    //public static final String RUNKEEPER_CLIENT_ID = "e83ac7fc3c9c4a89bac029921253d495";
-
-    //public static final String RUNKEEPER_CLIENT_SECRET = "fe9e8bd9f60e4ff5812a1b0b4744d5e9";
 
     private RunkeeperConfig config;
 

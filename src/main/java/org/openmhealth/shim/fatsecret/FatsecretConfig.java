@@ -19,13 +19,16 @@ package org.openmhealth.shim.fatsecret;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
+/**
+ * @author Danilo Bonilla
+ */
 @Component
 @ConfigurationProperties(prefix = "openmhealth.shim.fatsecret")
 public class FatsecretConfig {
 
-    private String clientId; // = "d1c59d7f9c8243f0b2eaef9ea43278a0";
+    private String clientId;
 
-    private String clientSecret; // = "c16dd2eeea804a7cba1180293d4b770c";
+    private String clientSecret;
 
     public String getClientId() {
         return clientId;

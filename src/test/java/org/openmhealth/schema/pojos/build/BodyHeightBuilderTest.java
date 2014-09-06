@@ -22,6 +22,9 @@ import static org.openmhealth.schema.pojos.generic.LengthUnitValue.*;
 import static org.openmhealth.schema.pojos.generic.LengthUnitValue.LengthUnit.*;
 import static org.openmhealth.schema.pojos.generic.MassUnitValue.MassUnit.lb;
 
+/**
+ * @author Danilo Bonilla
+ */
 public class BodyHeightBuilderTest {
 
     @Test

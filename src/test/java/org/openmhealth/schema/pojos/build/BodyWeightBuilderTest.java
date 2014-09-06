@@ -21,6 +21,8 @@ import static org.openmhealth.schema.pojos.generic.MassUnitValue.MassUnit.lb;
 /**
  * Ensures that the body weight builder class
  * generates JSON that conforms to the body weight clinical schema.
+ *
+ * @author Danilo Bonilla
  */
 public class BodyWeightBuilderTest {
 

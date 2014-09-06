@@ -25,6 +25,9 @@ import org.openmhealth.schema.pojos.PositionDuringMeasurement;
 
 import java.io.IOException;
 
+/**
+ * @author Danilo Bonilla
+ */
 public class PositionDuringMeasurementDeserializer
     extends JsonDeserializer<PositionDuringMeasurement> {
 
