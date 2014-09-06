@@ -125,7 +125,10 @@ public class WithingsShim extends OAuth1ShimBase {
 
     public enum MeasureType {
 
-        WEIGHT(1), HEIGHT(4), FAT_FREE_MASS(5), FAT_RATIO(6),
+        WEIGHT(1),
+        HEIGHT(4),
+        FAT_FREE_MASS(5),
+        FAT_RATIO(6),
         FAT_MASS_WEIGHT(8),
         BLOOD_PRESSURE_DIASTOLIC(9),
         BLOOD_PRESSURE_SYSTOLIC(10),

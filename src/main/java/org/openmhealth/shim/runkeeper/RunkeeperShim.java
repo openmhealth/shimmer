@@ -25,6 +25,7 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.jayway.jsonpath.JsonPath;
 import net.minidev.json.JSONObject;
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.openmhealth.schema.pojos.Activity;
@@ -137,7 +138,9 @@ public class RunkeeperShim extends OAuth2ShimBase {
                     for (Object fva : rkActivities) {
                         final JsonNode rkActivity = mapper.readTree(((JSONObject) fva).toJSONString());
 
-                        DateTime startTime = dateFormatter.parseDateTime(rkActivity.get("start_time").asText());
+                        DateTime startTime =
+                            dateFormatter.withZone(DateTimeZone.UTC)
+                                .parseDateTime(rkActivity.get("start_time").asText());
 
                         Activity activity = new ActivityBuilder()
                             .setActivityName(rkActivity.get("type").asText())
