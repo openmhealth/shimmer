@@ -48,3 +48,6 @@ Now you can pull data from the third party's available end points by going to
 *http://localhost:8083/data/SHIM_NAME/END_POINT?username=UNIQUE_IDENTIFIER&dateStart=yyyy-MM-dd&dateEnd=yyyy-MM-dd*
 
 The available shims and end points are:
+
+* fitbit
+** weight, heart, blood_pressure, blood_glucose, steps, activity
