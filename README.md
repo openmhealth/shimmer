@@ -2,38 +2,44 @@
 
 ### Overview
 
-The shim server is a standalone application which can be used to read data from third-party data sources. The data can be read in the 'raw' format from the third-party or in an Open mHealth compliant format.
+A *shim* is an adapter that reads raw health data from a specific data source, typically a third-party API, and converts 
+the data into an [Open mHealth compliant data format](http://www.openmhealth.org/developers/schemas/). It's called a shim
+because it lets you treat a third-party API like any other Open mHealth compliant endpoint when writing your application.   
+ 
+A shim is a library, not an application. To use shims, they need to be hosted in a standalone application called a *shim server*. 
+The shim server lets your application make HTTP calls to read data in both the raw format produced by the third-party API, and in the 
+converted Open mHealth compliant format. To choose the shims you want to enable in the shim server, please follow the instructions below.
+ 
+This repository contains a shim server and shims for third-party APIs. The currently supported APIs are:
 
-Each [Shim](http://www.openmhealth.org/) is a third-party adapter that runs within the shim server and reads/converts data. The shim server will only run as many shims as are configured (see below).    
+* [RunKeeper](http://developer.runkeeper.com/healthgraph)
+* [Fitbit](http://dev.fitbit.com/)
+* [Fat Secret](http://platform.fatsecret.com/api/)
+* [Withings](http://oauth.withings.com/api)
+* [Microsoft HealthVault](https://developer.healthvault.com/)
+* [Jawbone UP](https://jawbone.com/up/developer)
 
-The shims currently supported are:
-* RunKeeper
-* Fitbit
-* Fat Secret
-* Withings
-* Microsoft HealthVault
-* Jawbone UP
 
 ### Technical Requirements
 
-1. You must have [Java 7](https://java.com/en/) or higher installed. 
-2. A Running [Mongo DB](http://http://docs.mongodb.org/manual/) installation is required.
-3. [Gradle](http://www.gradle.org/) or [Maven](http://maven.apache.org/) to build the source code.  
+1. You must have the [Java 7](https://java.com/en/) SDK or higher installed. 
+1. A running [MongoDB](http://http://docs.mongodb.org/manual/) installation is required.
+1. [Gradle](http://www.gradle.org/) or [Maven](http://maven.apache.org/) to build the source code.  
 
 ### Installation
 
-1. Clone this git repo.
-2. Navigate to the src/main/resources/ directory and edit the application.yaml file.
-3. Ensure mongodb parameter points to your locally running mongo instance.
-3. Obtain a clientId/clientSecret for each shim you'd like to run. These are obtained from the third-party developer websites.
-4. Un-comment and replace the obtained clientId/clientSecret their respective section(s).
-5. If using maven you can use the spring-boot goal from the root directory: mvn spring-boot:run
-6. If using gradle you can use the command: gradle bootRun
-7. The server should now be running on the default port 8083. You can change the port number in the application.yaml file as well.
+1. Clone this Git repository.
+1. Navigate to the `src/main/resources` directory and edit the `application.yaml` file.
+1. Ensure mongodb parameter points to your locally running mongo instance.
+1. Obtain authentication credentials, typically an OAuth client ID and client secret, for each shim you'd like to run. These are obtained from the third-party developer websites.
+1. Un-comment and replace the obtained `clientId` and `clientSecret` in their respective section(s).
+1. If using Maven you can use the spring-boot goal from the root directory: mvn spring-boot:run
+1. If using Gradle you can use the command: `gradle bootRun`
+1. The server should now be running on the default port 8083. You can change the port number in the `application.yaml` file as well.
 
 ### Authorizing A Data Source
 
-In order to read data from a third-party we must initiate the oauth process and authorize data from a third-party account.
+In order to read data from a third-party we must initiate the OAuth process and authorize data from a third-party account.
 
 To initiate the OAuth process, do the following:
  
