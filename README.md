@@ -30,6 +30,7 @@ If any of links are incorrect or out of date, please [submit an issue](https://g
 1. You must have a [Java 7](http://www.oracle.com/technetwork/java/javase/downloads/index-jsp-138363.html/) or higher JDK installed. 
 1. A running [MongoDB](http://http://docs.mongodb.org/manual/) installation is required.
 1. [Gradle](http://www.gradle.org/) or [Maven](http://maven.apache.org/) is required to build the source code.  
+1. [Maven](http://maven.apache.org/) is required to build and install Microsoft HealthVault libraries.  
 
 
 ### Installation
@@ -37,12 +38,13 @@ If any of links are incorrect or out of date, please [submit an issue](https://g
 1. Clone this Git repository.
 1. Navigate to the `src/main/resources` directory and edit the `application.yaml` file.
 1. Check that the `spring:data:mongodb:uri` parameter points to your running MongoDB instance.
-1. Obtain authentication credentials, typically an OAuth client ID and client secret, for each shim you'd like to run. These are obtained from the developer websites of the third-party APIs.
-1. Uncomment and replace the corresponding `clientId` and `clientSecret` placeholders with your credentials.
-1. Follow [these instructions](#preparing-to-use-microsoft-healthvault) to install HealthVault libraries.
+1. Obtain authentication credentials, typically an OAuth client ID and client secret, for each shim you'd like to run. 
+  * These are obtained from the developer websites of the third-party APIs.
+1. Uncomment and replace the corresponding `clientId` and `clientSecret` placeholders in the `application.yaml` file with your credentials.
+1. Follow [these instructions](#preparing-to-use-microsoft-healthvault) to install Microsoft HealthVault libraries.
 1. To build and run the shim server, navigate to the project directory in a terminal. 
-  1. If you're using Maven, run `mvn spring-boot:run`
-  1. If using Gradle, run `gradle bootRun`
+  * If you're using Maven, run `mvn spring-boot:run`
+  * If using Gradle, run `gradle bootRun`
 1. The server should now be running on the default port 8083. You can change the port number in the `application.yaml` file.
 
 ### Preparing to use Microsoft HealthVault
