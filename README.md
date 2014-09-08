@@ -3,24 +3,27 @@
 ### Overview
 
 A *shim* is an adapter that reads raw health data from a specific data source, typically a third-party API, and converts 
-the data into an [Open mHealth compliant data format](http://www.openmhealth.org/developers/schemas/). It's called a shim
-because it lets you treat a third-party API like any other Open mHealth compliant endpoint when writing your application.   
+that data into an [Open mHealth compliant data format](http://www.openmhealth.org/developers/schemas/). It's called a shim
+because it lets you treat a third-party API like any other Open mHealth compliant endpoint when writing your application. 
+To learn more about shims, please visit the [shim section](http://www.openmhealth.org/developers/apis/) on the main site.
  
 A shim is a library, not an application. To use shims, they need to be hosted in a standalone application called a *shim server*. 
-The shim server lets your application make HTTP calls to read data in both the raw format produced by the third-party API, and in the 
-converted Open mHealth compliant format. To choose the shims you want to enable in the shim server, please follow the instructions below.
+The shim server is a web server that exposes an API to access shims. This API lets your application read data in both the raw format produced by the third-party API, and in the 
+converted Open mHealth compliant format produced by the shim. To choose the shims you want to enable in the shim server, please follow the instructions below.
  
-This repository contains a shim server and shims for third-party APIs. The currently supported APIs are:
+This repository contains a shim server and shims. The currently supported third-party APIs are:
 
-* [RunKeeper](http://developer.runkeeper.com/healthgraph)
-* [Fitbit](http://dev.fitbit.com/)
 * [Fat Secret](http://platform.fatsecret.com/api/)
-* [Withings](http://oauth.withings.com/api)
+* [Fitbit](http://dev.fitbit.com/)
 * [Microsoft HealthVault](https://developer.healthvault.com/)
 * [Jawbone UP](https://jawbone.com/up/developer)
+* RunKeeper
+    * [developer portal](http://developer.runkeeper.com/healthgraph)
+    * [authentication credentials](http://runkeeper.com/partner)
+* [Withings](http://oauth.withings.com/api)
 
-The above links point to the developer website of each API. You'll need to visit these websites to obtain 
-authentication credentials for each of the shims you want to enable.  
+The above links point to the developer website of each API. You'll need to visit these websites 
+to register your application and obtain authentication credentials for each of the shims you want to enable.  
 
 If any of links are incorrect or out of date, please [submit an issue](https://github.com/openmhealth/omh-shims/issues) to let us know. 
   
@@ -59,56 +62,82 @@ not yet. To integrate with HealthVault,
   
 This will make the HealthVault libraries available to both Maven and Gradle.  
 
-### Authorizing a data source
+### Authorizing access to a third-party user account
 
-In order to read data from a third-party we must initiate the OAuth process and authorize data from a third-party account.
+The data produced by a third-party API belongs to some user account registered on the third-party platform. In order 
+for a shim to read that data, you'll need to initiate an authorization process that lets user account holders grant access to their data.
 
-To initiate the OAuth process, do the following:
+To initiate the authorization process, do the following:
  
-1. Go to the URL `http://localhost:8083/authorize/SHIM_NAME?username=UNIQUE_IDENTIFIER` in a browser or make a `GET` request
-  using `curl` or some other tool.
-  * The `SHIM_NAME` should be one of the names listed [below](#available-shims-and-endpoints). 
-  * The `UNIQUE_IDENTIFIER` can be any unique string you'd like to use. 
-1. In the JSON response, find the value `authorizationUrl` and open this URL in a new browser window. 
+1. Go to the URL `http://localhost:8083/authorize/{shim}?username={userId}` in a browser.
+  * The `shim` path parameter should be one of the names listed [below](#available-shims-and-endpoints), e.g. `fitbit`. 
+  * The `username` query parameter can be set to any unique identifier you'd like to use to identify the user. 
+1. In the returned JSON response, find the `authorizationUrl` value and open this URL in a new browser window. 
 You should be redirected to the third-party website where you can login and authorize access to your third-party user account. 
-1. Once authorized, you should be redirected to `http://localhost:8083/authorize/SHIM_NAME/callback` and you'll see an approved JSON response.
+1. Once authorized, you should be redirected to `http://localhost:8083/authorize/{shim_name}/callback` and you'll see an approval response.
 
 ### Reading data
-Now you can pull data from the third party's available end points by going to
+You can now pull data from the third-party API by making requests in the format
  
-**Raw Data**  
-*http://localhost:8083/data/SHIM_NAME/END_POINT?username=UNIQUE_IDENTIFIER&dateStart=yyyy-MM-dd&dateEnd=yyyy-MM-dd*
+`http://localhost:8083/data/{shim}/{endPoint}?username={userId}&dateStart=yyyy-MM-dd&dateEnd=yyyy-MM-dd&normalize=true|false`
 
-**Open mHealth Compliant Data**  
-*http://localhost:8083/data/SHIM_NAME/END_POINT?username=UNIQUE_IDENTIFIER&dateStart=yyyy-MM-dd&dateEnd=yyyy-MM-dd&normalize=true*
-
-### Available shims and end points
-
-The data read urls are constructed as follows: http://localhost:8083/data/**fitbit**/**weight**?username=UNIQUE_IDENTIFIER&dateStart=yyyy-MM-dd&dateEnd=yyyy-MM-dd&normalize=true
-
+The URL can be broken down as follows
+* The `shim` and `userId` path variables are the same as [above](#authorizing-access-to-a-third-party-user-account).
+* The `endPoint` path variable roughly corresponds to the type of data you want as named in the third-party API. There's a full list of these below.
+* The `normalize` parameter controls whether you want the shim to provide data in a raw third-party API format (`false`) or in an Open mHealth compliant format (`true`).  
+ 
+The following is a simple nested list keyed by `shim` names. Under each shim is a list of supported `endPoint`s.
+Under each end point is a list of the Open mHealth schemas the end point can produce data for..
+ 
 * fitbit
-    * weight 
+    * activity
+        * [omh:physical-activity](http://www.openmhealth.org/developers/schemas/#physical-activity)
+    * blood_pressure
+        * [omh:blood-pressure](http://www.openmhealth.org/developers/schemas/#blood-pressure)
+    * blood_glucose
+        * [omh:blood-glucose](http://www.openmhealth.org/developers/schemas/#blood-glucose)
     * heart
-    * blood_pressure
-    * blood_glucose
+        * [omh:heart-rate](http://www.openmhealth.org/developers/schemas/#heart-rate)
     * steps
-    * activity
-* healtvault
-    * activity 
-    * blood_pressure
-    * blood_glucose
-    * height
+        * [omh:step-count](http://www.openmhealth.org/developers/schemas/#step-count)
     * weight
-* withings
-    * body 
-    * activity
-    * intraday
-    * sleep    
-* runkeeper
-    * activity
-    * weight  
+        * [omh:body-weight](http://www.openmhealth.org/developers/schemas/#body-weight)
+* healthvault
+    * activity 
+        * [omh:physical-activity](http://www.openmhealth.org/developers/schemas/#physical-activity)
+    * blood_glucose
+        * [omh:blood-glucose](http://www.openmhealth.org/developers/schemas/#blood-glucose)
+    * blood_pressure
+        * [omh:blood-pressure](http://www.openmhealth.org/developers/schemas/#blood-pressure)
+        * [omh:heart-rate](http://www.openmhealth.org/developers/schemas/#heart-rate)
+    * height
+        * [omh:body-height](http://www.openmhealth.org/developers/schemas/#body-height)
+    * weight
+        * [omh:body-weight](http://www.openmhealth.org/developers/schemas/#body-weight)
 * jawbone
     * body
-    * sleep
-    * workouts
+        * [omh:body-weight](http://www.openmhealth.org/developers/schemas/#body-weight)
     * moves
+        * [omh:step-count](http://www.openmhealth.org/developers/schemas/#step-count)
+    * sleep
+        * [omh:sleep-duration](http://www.openmhealth.org/developers/schemas/#sleep-duration)
+    * workouts
+        * [omh:physical-activity](http://www.openmhealth.org/developers/schemas/#physical-activity)
+* runkeeper
+    * activity
+        * [omh:physical-activity](http://www.openmhealth.org/developers/schemas/#physical-activity)
+    * weight  
+        * [omh:body-weight](http://www.openmhealth.org/developers/schemas/#body-weight)
+* withings
+    * body 
+        * [omh:blood-pressure](http://www.openmhealth.org/developers/schemas/#blood-pressure)
+        * [omh:body-height](http://www.openmhealth.org/developers/schemas/#body-height)
+        * [omh:body-weight](http://www.openmhealth.org/developers/schemas/#body-weight)
+        * [omh:heart-rate](http://www.openmhealth.org/developers/schemas/#heart-rate)
+    * intraday
+        * [omh:step-count](http://www.openmhealth.org/developers/schemas/#step-count)
+    * sleep    
+        * [omh:sleep-duration](http://www.openmhealth.org/developers/schemas/#sleep-duration)
+    
+You can learn more about the Open mHealth compliant data schemas these endpoints correspond to in the 
+[shim section](http://www.openmhealth.org/developers/apis/) of the main site.
