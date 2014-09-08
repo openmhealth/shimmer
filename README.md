@@ -2,28 +2,27 @@
 
 ### Overview
 
-A *shim* is an adapter that reads raw health data from a specific data source, typically a third-party API, and converts 
+A *shim* is an adapter that reads raw health data from a third-party API and converts 
 that data into an [Open mHealth compliant data format](http://www.openmhealth.org/developers/schemas/). It's called a shim
-because it lets you treat a third-party API like any other Open mHealth compliant endpoint when writing your application. 
+because it lets you treat the third-party API like an Open mHealth compliant endpoint when writing your application. 
 To learn more about shims, please visit the [shim section](http://www.openmhealth.org/developers/apis/) on the main site.
  
-A shim is a library, not an application. To use shims, they need to be hosted in a standalone application called a *shim server*. 
-The shim server is a web server that exposes an API to access shims. This API lets your application read data in both the raw format produced by the third-party API, and in the 
-converted Open mHealth compliant format produced by the shim. To choose the shims you want to enable in the shim server, please follow the instructions below.
+A shim is a library, not an application. To use a shim, it needs to be hosted in a standalone application called a *shim server*. 
+The API exposed by the shim server lets your application use a shim to read data in either the raw format produced by the third-party API or in a 
+converted Open mHealth compliant format. To choose the shims you want to enable in the shim server, please follow the instructions below.
  
-This repository contains a shim server and shims. The currently supported third-party APIs are:
+This repository contains a shim server and shims for third-party APIs. The currently supported APIs are:
 
 * [Fat Secret](http://platform.fatsecret.com/api/)
 * [Fitbit](http://dev.fitbit.com/)
 * [Microsoft HealthVault](https://developer.healthvault.com/)
 * [Jawbone UP](https://jawbone.com/up/developer)
-* RunKeeper
-    * [developer portal](http://developer.runkeeper.com/healthgraph)
-    * [authentication credentials](http://runkeeper.com/partner)
+* [RunKeeper](http://developer.runkeeper.com/healthgraph)
+    * [application management portal](http://runkeeper.com/partner)
 * [Withings](http://oauth.withings.com/api)
 
-The above links point to the developer website of each API. You'll need to visit these websites 
-to register your application and obtain authentication credentials for each of the shims you want to enable.  
+The above links point to the developer website of each API. You'll need to visit these websites to register your 
+application and obtain authentication credentials for each of the shims you want to enable.  
 
 If any of links are incorrect or out of date, please [submit an issue](https://github.com/openmhealth/omh-shims/issues) to let us know. 
   
@@ -43,8 +42,10 @@ If any of links are incorrect or out of date, please [submit an issue](https://g
 1. Check that the `spring:data:mongodb:uri` parameter points to your running MongoDB instance.
 1. Obtain authentication credentials, typically an OAuth client ID and client secret, for each shim you'd like to run. 
   * These are obtained from the developer websites of the third-party APIs.
-1. Uncomment and replace the corresponding `clientId` and `clientSecret` placeholders in the `application.yaml` file with your credentials.
-1. Follow [these instructions](#preparing-to-use-microsoft-healthvault) to install Microsoft HealthVault libraries.
+1. Uncomment and replace the corresponding `clientId` and `clientSecret` placeholders in the `application.yaml` file 
+with your new credentials.
+1. Follow [these instructions](#preparing-to-use-microsoft-healthvault) to install Microsoft HealthVault libraries. These libraries are
+ currently required for the shim server to work.
 1. To build and run the shim server, navigate to the project directory in a terminal. 
   * If you're using Maven, run `mvn spring-boot:run`
   * If using Gradle, run `gradle bootRun`
@@ -53,7 +54,7 @@ If any of links are incorrect or out of date, please [submit an issue](https://g
 ### Preparing to use Microsoft HealthVault
     
 The Microsoft HealthVault shim has dependencies which can't be automatically downloaded from public servers, at least 
-not yet. To integrate with HealthVault,
+not yet. To add HealthVault support to the shim server,
 
 1. Download the HealthVault Java Library version [R1.6.0](https://healthvaultjavalib.codeplex.com/releases/view/125355) archive.
 1. Extract the archive.
@@ -64,13 +65,13 @@ This will make the HealthVault libraries available to both Maven and Gradle.
 
 ### Authorizing access to a third-party user account
 
-The data produced by a third-party API belongs to some user account registered on the third-party platform. In order 
-for a shim to read that data, you'll need to initiate an authorization process that lets user account holders grant access to their data.
+The data produced by a third-party API belongs to some user account registered on the third-party system. To allow 
+ a shim read that data, you'll need to initiate an authorization process that lets the account holder grant the shim access to their data.
 
 To initiate the authorization process, do the following:
  
 1. Go to the URL `http://localhost:8083/authorize/{shim}?username={userId}` in a browser.
-  * The `shim` path parameter should be one of the names listed [below](#available-shims-and-endpoints), e.g. `fitbit`. 
+  * The `shim` path parameter should be one of the names listed [below](#supported-apis-and-end-points), e.g. `fitbit`. 
   * The `username` query parameter can be set to any unique identifier you'd like to use to identify the user. 
 1. In the returned JSON response, find the `authorizationUrl` value and open this URL in a new browser window. 
 You should be redirected to the third-party website where you can login and authorize access to your third-party user account. 
@@ -79,15 +80,17 @@ You should be redirected to the third-party website where you can login and auth
 ### Reading data
 You can now pull data from the third-party API by making requests in the format
  
-`http://localhost:8083/data/{shim}/{endPoint}?username={userId}&dateStart=yyyy-MM-dd&dateEnd=yyyy-MM-dd&normalize=true|false`
+`http://localhost:8083/data/{shim}/{endPoint}?username={userId}&dateStart=yyyy-MM-dd&dateEnd=yyyy-MM-dd&normalize={true|false}`
 
 The URL can be broken down as follows
-* The `shim` and `userId` path variables are the same as [above](#authorizing-access-to-a-third-party-user-account).
-* The `endPoint` path variable roughly corresponds to the type of data you want as named in the third-party API. There's a full list of these below.
-* The `normalize` parameter controls whether you want the shim to provide data in a raw third-party API format (`false`) or in an Open mHealth compliant format (`true`).  
+* The `shim` and `username` path variables are the same as [above](#authorizing-access-to-a-third-party-user-account).
+* The `endPoint` path variable roughly corresponds to the type of data to retrieve. There's a list of these [below](#supported-apis-and-end-points).
+* The `normalize` parameter controls whether the shim returns data in a raw third-party API format (`false`) or in an Open mHealth compliant format (`true`).  
  
+### Supported APIs and endpoints
+
 The following is a simple nested list keyed by `shim` names. Under each shim is a list of supported `endPoint`s.
-Under each end point is a list of the Open mHealth schemas the end point can produce data for..
+Under each end point is a list of the Open mHealth schemas the end point can produce data for.
  
 * fitbit
     * activity
@@ -139,5 +142,4 @@ Under each end point is a list of the Open mHealth schemas the end point can pro
     * sleep    
         * [omh:sleep-duration](http://www.openmhealth.org/developers/schemas/#sleep-duration)
     
-You can learn more about the Open mHealth compliant data schemas these endpoints correspond to in the 
-[shim section](http://www.openmhealth.org/developers/apis/) of the main site.
+You can learn more about the shims and endpoints on the Open mHealth [developer site](http://www.openmhealth.org/developers/getting-started/). 
