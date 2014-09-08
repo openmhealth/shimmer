@@ -71,7 +71,7 @@ The data produced by a third-party API belongs to some user account registered o
 To initiate the authorization process, do the following:
  
 1. Go to the URL `http://localhost:8083/authorize/{shim}?username={userId}` in a browser.
-  * The `shim` path parameter should be one of the names listed [below](#supported-apis-and-end-points), e.g. `fitbit`. 
+  * The `shim` path parameter should be one of the names listed [below](#supported-apis-and-endpoints), e.g. `fitbit`. 
   * The `username` query parameter can be set to any unique identifier you'd like to use to identify the user. 
 1. In the returned JSON response, find the `authorizationUrl` value and open this URL in a new browser window. 
 You should be redirected to the third-party website where you can login and authorize access to your third-party user account. 
@@ -84,13 +84,13 @@ You can now pull data from the third-party API by making requests in the format
 
 The URL can be broken down as follows
 * The `shim` and `username` path variables are the same as [above](#authorizing-access-to-a-third-party-user-account).
-* The `endPoint` path variable roughly corresponds to the type of data to retrieve. There's a list of these [below](#supported-apis-and-end-points).
+* The `endPoint` path variable roughly corresponds to the type of data to retrieve. There's a list of these [below](#supported-apis-and-endpoints).
 * The `normalize` parameter controls whether the shim returns data in a raw third-party API format (`false`) or in an Open mHealth compliant format (`true`).  
  
 ### Supported APIs and endpoints
 
 The following is a simple nested list keyed by `shim` names. Under each shim is a list of supported `endPoint`s.
-Under each end point is a list of the Open mHealth schemas the end point can produce data for.
+Under each endpoint is a list of the Open mHealth schemas the endpoint can produce data for.
  
 * fitbit
     * activity
