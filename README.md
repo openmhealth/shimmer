@@ -89,8 +89,13 @@ The URL can be broken down as follows
  
 ### Supported APIs and endpoints
 
-The following is a simple nested list keyed by `shim` names. Under each shim is a list of supported `endPoint`s.
-Under each endpoint is a list of the Open mHealth schemas the endpoint can produce data for.
+The following is a nested list in the format  
+
+* shim name
+   * endpoint name
+      * Open mHealth compliant data the endpoint can produce
+
+The currently supported shims are
  
 * fitbit
     * activity
@@ -141,5 +146,11 @@ Under each endpoint is a list of the Open mHealth schemas the endpoint can produ
         * [omh:step-count](http://www.openmhealth.org/developers/schemas/#step-count)
     * sleep    
         * [omh:sleep-duration](http://www.openmhealth.org/developers/schemas/#sleep-duration)
-    
-You can learn more about the shims and endpoints on the Open mHealth [developer site](http://www.openmhealth.org/developers/getting-started/). 
+
+You can learn more about these shims and endpoints on the Open mHealth [developer site](http://www.openmhealth.org/developers/getting-started/). 
+
+The list of supported third-party APIs will grow over time as more shims are added. If you'd like to contribute a shim to work with your API or a third-party API,
+send us a [pull request](https://github.com/openmhealth/omh-shims/pulls). If you need any help, feel free to
+reach out on [admin@openmhealth.org](mailto://admin@openmhealth.org) or on the Open mHealth [developer group](https://groups.google.com/forum/#!forum/omh-developers).
+      
+
