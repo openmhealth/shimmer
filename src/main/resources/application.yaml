@@ -1,6 +1,6 @@
 spring:
   application:
-    name: OMH OAuth2 Client
+    name: Open mHealth shim server
   data:
     mongodb:
       uri: mongodb://localhost:27017/omh_dsu
@@ -9,6 +9,12 @@ server:
 security:
   basic:
     enabled: false
+logging:
+  file: omh-shims.log
+http:
+  mappers:
+    jsonPrettyPrint: true
+
 openmhealth:
   shim:
     server:
@@ -30,5 +36,3 @@ openmhealth:
     #  clientSecret: YOUR_WITHINGS_SECRET
     #healthvault:
     #  clientId: YOUR_HEALTHVAULT_SECRET
-logging:
-  file: omh-shims.log
