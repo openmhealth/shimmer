@@ -43,18 +43,13 @@ public class BloodPressureBuilderTest {
     @Test
     @SuppressWarnings("unchecked")
     public void testParse() throws IOException, ProcessingException {
-        final String BLOOD_PRESSURE_SCHEMA = "schemas/blood-pressure-1.0.json";
 
-        URL url = Thread.currentThread().getContextClassLoader().getResource(BLOOD_PRESSURE_SCHEMA);
-        assertNotNull(url);
+        final String BLOOD_PRESSURE_SCHEMA = "http://www.openmhealth.org/schema/omh/clinical/blood-pressure-1.0.json";
 
         ObjectMapper mapper = new ObjectMapper();
 
-        InputStream inputStream = url.openStream();
-        JsonNode schemaNode = mapper.readTree(inputStream);
-
         final JsonSchemaFactory factory = JsonSchemaFactory.byDefault();
-        final JsonSchema schema = factory.getJsonSchema(schemaNode);
+        final JsonSchema schema = factory.getJsonSchema(BLOOD_PRESSURE_SCHEMA);
 
         ProcessingReport report;
 

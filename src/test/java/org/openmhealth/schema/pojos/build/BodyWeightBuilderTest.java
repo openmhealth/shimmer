@@ -45,18 +45,12 @@ public class BodyWeightBuilderTest {
     @Test
     public void test() throws IOException, ProcessingException {
 
-        final String BODY_WEIGHT_SCHEMA = "schemas/body-weight-1.0.json";
-
-        URL url = Thread.currentThread().getContextClassLoader().getResource(BODY_WEIGHT_SCHEMA);
-        assertNotNull(url);
+        final String BODY_WEIGHT_SCHEMA = "http://www.openmhealth.org/schema/omh/clinical/body-weight-1.0.json";
 
         ObjectMapper mapper = new ObjectMapper();
 
-        InputStream inputStream = url.openStream();
-        JsonNode schemaNode = mapper.readTree(inputStream);
-
         final JsonSchemaFactory factory = JsonSchemaFactory.byDefault();
-        final JsonSchema schema = factory.getJsonSchema(schemaNode);
+        final JsonSchema schema = factory.getJsonSchema(BODY_WEIGHT_SCHEMA);
 
         ProcessingReport report;
 

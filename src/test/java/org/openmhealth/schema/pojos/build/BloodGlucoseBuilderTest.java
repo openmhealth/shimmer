@@ -31,6 +31,7 @@ import org.openmhealth.schema.pojos.generic.DescriptiveStatistic;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
+import java.net.URI;
 import java.net.URL;
 
 import static org.junit.Assert.*;
@@ -43,18 +44,13 @@ public class BloodGlucoseBuilderTest {
     @Test
     @SuppressWarnings("unchecked")
     public void testParse() throws IOException, ProcessingException {
-        final String BLOOD_GLUCOSE_SCHEMA = "schemas/blood-glucose-1.0.json";
 
-        URL url = Thread.currentThread().getContextClassLoader().getResource(BLOOD_GLUCOSE_SCHEMA);
-        assertNotNull(url);
+        final String BLOOD_GLUCOSE_SCHEMA = "http://www.openmhealth.org/schema/omh/clinical/blood-glucose-1.0.json";
 
         ObjectMapper mapper = new ObjectMapper();
 
-        InputStream inputStream = url.openStream();
-        JsonNode schemaNode = mapper.readTree(inputStream);
-
         final JsonSchemaFactory factory = JsonSchemaFactory.byDefault();
-        final JsonSchema schema = factory.getJsonSchema(schemaNode);
+        final JsonSchema schema = factory.getJsonSchema(BLOOD_GLUCOSE_SCHEMA);
 
         ProcessingReport report;
 

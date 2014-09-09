@@ -16,7 +16,6 @@
 
 package org.openmhealth.schema.pojos.build;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.fge.jsonschema.core.exceptions.ProcessingException;
 import com.github.fge.jsonschema.core.report.ProcessingReport;
@@ -27,11 +26,9 @@ import org.junit.Test;
 import org.openmhealth.schema.pojos.StepCount;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
 
 import static org.junit.Assert.*;
-import static org.openmhealth.schema.pojos.generic.DurationUnitValue.DurationUnit.*;
+import static org.openmhealth.schema.pojos.generic.DurationUnitValue.DurationUnit.sec;
 
 /**
  * @author Danilo Bonilla
@@ -40,18 +37,13 @@ public class StepBuilderTest {
 
     @Test
     public void testParse() throws IOException, ProcessingException {
-        final String STEP_COUNT_SCHEMA = "schemas/step-count-1.0.json";
 
-        URL url = Thread.currentThread().getContextClassLoader().getResource(STEP_COUNT_SCHEMA);
-        assertNotNull(url);
+        final String STEP_COUNT_SCHEMA = "http://www.openmhealth.org/schema/omh/clinical/step-count-1.0.json";
 
         ObjectMapper mapper = new ObjectMapper();
 
-        InputStream inputStream = url.openStream();
-        JsonNode schemaNode = mapper.readTree(inputStream);
-
         final JsonSchemaFactory factory = JsonSchemaFactory.byDefault();
-        final JsonSchema schema = factory.getJsonSchema(schemaNode);
+        final JsonSchema schema = factory.getJsonSchema(STEP_COUNT_SCHEMA);
 
         ProcessingReport report;
 

@@ -42,18 +42,13 @@ public class HeartRateBuilderTest {
 
     @Test
     public void test() throws IOException, ProcessingException {
-        final String HEART_RATE_SCHEMA = "schemas/heart-rate-1.0.json";
 
-        URL url = Thread.currentThread().getContextClassLoader().getResource(HEART_RATE_SCHEMA);
-        assertNotNull(url);
+        final String HEART_RATE_SCHEMA = "http://www.openmhealth.org/schema/omh/clinical/heart-rate-1.0.json";
 
         ObjectMapper mapper = new ObjectMapper();
 
-        InputStream inputStream = url.openStream();
-        JsonNode schemaNode = mapper.readTree(inputStream);
-
         final JsonSchemaFactory factory = JsonSchemaFactory.byDefault();
-        final JsonSchema schema = factory.getJsonSchema(schemaNode);
+        final JsonSchema schema = factory.getJsonSchema(HEART_RATE_SCHEMA);
 
         ProcessingReport report;
 

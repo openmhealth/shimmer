@@ -42,18 +42,12 @@ public class BodyHeightBuilderTest {
     @Test
     public void test() throws IOException, ProcessingException {
 
-        final String BODY_HEIGHT_SCHEMA = "schemas/body-height-1.0.json";
-
-        URL url = Thread.currentThread().getContextClassLoader().getResource(BODY_HEIGHT_SCHEMA);
-        assertNotNull(url);
+        final String BODY_HEIGHT_SCHEMA = "http://www.openmhealth.org/schema/omh/clinical/body-height-1.0.json";
 
         ObjectMapper mapper = new ObjectMapper();
 
-        InputStream inputStream = url.openStream();
-        JsonNode schemaNode = mapper.readTree(inputStream);
-
         final JsonSchemaFactory factory = JsonSchemaFactory.byDefault();
-        final JsonSchema schema = factory.getJsonSchema(schemaNode);
+        final JsonSchema schema = factory.getJsonSchema(BODY_HEIGHT_SCHEMA);
 
         ProcessingReport report;
 

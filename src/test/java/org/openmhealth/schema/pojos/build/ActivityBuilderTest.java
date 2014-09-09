@@ -42,18 +42,13 @@ public class ActivityBuilderTest {
     @Test
     @SuppressWarnings("unchecked")
     public void testParse() throws IOException, ProcessingException {
-        final String PHYSICAL_ACTIVITY_SCHEMA = "schemas/physical-activity-1.0.json";
 
-        URL url = Thread.currentThread().getContextClassLoader().getResource(PHYSICAL_ACTIVITY_SCHEMA);
-        assertNotNull(url);
+        final String PHYSICAL_ACTIVITY_SCHEMA = "http://www.openmhealth.org/schema/omh/clinical/physical-activity-1.0.json";
 
         ObjectMapper mapper = new ObjectMapper();
 
-        InputStream inputStream = url.openStream();
-        JsonNode schemaNode = mapper.readTree(inputStream);
-
         final JsonSchemaFactory factory = JsonSchemaFactory.byDefault();
-        final JsonSchema schema = factory.getJsonSchema(schemaNode);
+        final JsonSchema schema = factory.getJsonSchema(PHYSICAL_ACTIVITY_SCHEMA);
 
         ProcessingReport report;
 

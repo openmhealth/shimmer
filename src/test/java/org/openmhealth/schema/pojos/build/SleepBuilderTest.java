@@ -43,18 +43,13 @@ public class SleepBuilderTest {
 
     @Test
     public void test() throws IOException, ProcessingException {
-        final String SLEEP_DURATION_SCHEMA = "schemas/sleep-duration-1.0.json";
 
-        URL url = Thread.currentThread().getContextClassLoader().getResource(SLEEP_DURATION_SCHEMA);
-        assertNotNull(url);
+        final String SLEEP_DURATION_SCHEMA = "http://www.openmhealth.org/schema/omh/clinical/sleep-duration-1.0.json";
 
         ObjectMapper mapper = new ObjectMapper();
 
-        InputStream inputStream = url.openStream();
-        JsonNode schemaNode = mapper.readTree(inputStream);
-
         final JsonSchemaFactory factory = JsonSchemaFactory.byDefault();
-        final JsonSchema schema = factory.getJsonSchema(schemaNode);
+        final JsonSchema schema = factory.getJsonSchema(SLEEP_DURATION_SCHEMA);
 
         ProcessingReport report;
 
