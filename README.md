@@ -39,8 +39,8 @@ If you don't have Docker installed, download [Docker](https://docs.docker.com/in
  
 Then
 
-1. Download the [docker](https://github.com/openmhealth/omh-shims/docker) directory.
-1. Navigate to the directory in a terminal.
+1. Download the latest [release](https://github.com/openmhealth/omh-shims/releases) of this Git repository or clone it. 
+1. Navigate to the `docker` directory in a terminal.
 1. Run `docker build -t="openmhealth/omh-shim-server" .`
 1. Run `docker run -d -p 8083:8083 -p 2022:22 openmhealth/omh-shim-server`. 
 1. The server should now be running on the default port 8083. You can change the port number in the Docker `run` command.
