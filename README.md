@@ -32,7 +32,7 @@ If any of links are incorrect or out of date, please [submit an issue](https://g
 There are two ways to install and run the shim server. You can either run it in a Docker container, or you can install and
 run it manually.
 
-### Docker installation
+#### Docker installation
 
 If you don't have Docker installed, download [Docker](https://docs.docker.com/installation/#installation/) 
  and follow the installation instructions for your platform.
@@ -47,7 +47,7 @@ Then
 
 If you want to SSH into the container, run `ssh root@<your-docker-host> -p 2022`. The password is `docker`.
 
-### Manual installation
+#### Manual installation
 
 If you prefer not to use Docker,  
 
@@ -68,7 +68,7 @@ Then
   * If using Gradle, run `gradle bootRun`
 1. The server should now be running on the default port 8083. You can change the port number in the `application.yaml` file.
 
-#### Preparing to use Microsoft HealthVault
+##### Preparing to use Microsoft HealthVault
     
 The Microsoft HealthVault shim has dependencies which can't be automatically downloaded from public servers, at least 
 not yet. To add HealthVault support to the shim server,
