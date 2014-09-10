@@ -31,7 +31,7 @@ RUN curl -o /root/healthvault-sdk-1.6.0.zip 'http://download-codeplex.sec.s-msft
 RUN cd /root && unzip healthvault-sdk-1.6.0.zip && cd healthvault-sdk-1.6.0 && mvn install -N && mvn install --pl sdk,hv-jaxb -DskipTests
 
 # clone the repository and build it
-RUN cd /root && git clone https://github.com/openmhealth/omh-shims.git && cd /root/omh-shims && git branch v0.1.0 && mvn compile
+RUN cd /root && git clone https://github.com/openmhealth/omh-shims.git && cd /root/omh-shims && mvn compile
 
 # install container tools
 RUN apt-get -y install openssh-server supervisor
