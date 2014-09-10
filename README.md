@@ -27,23 +27,40 @@ application and obtain authentication credentials for each of the shims you want
 If any of links are incorrect or out of date, please [submit an issue](https://github.com/openmhealth/omh-shims/issues) to let us know. 
   
 
-### Technical requirements
+### Installation
+
+There are two ways to install and run the shim server. You can either run it in a Docker container, or you can install and
+run it manually.
+
+### Docker installation
+
+If you don't have Docker installed, download [Docker](https://docs.docker.com/installation/#installation/) 
+ and follow the installation instructions for your platform.
+ 
+Then
+
+1. Download the [docker](https://github.com/openmhealth/omh-shims/docker) directory.
+1. Navigate to the directory in a terminal.
+1. Run `docker build -t="openmhealth/omh-shim-server" .`
+1. Run `docker run -d -p 8083:8083 -p 2022:22 openmhealth/omh-shim-server`. 
+1. The server should now be running on the default port 8083. You can change the port number in the Docker `run` command.
+
+If you want to SSH into the container, run `ssh root@<your-docker-host> -p 2022`. The password is `docker`.
+
+### Manual installation
+
+If you prefer not to use Docker,  
 
 1. You must have a [Java 7](http://www.oracle.com/technetwork/java/javase/downloads/index-jsp-138363.html/) or higher JDK installed. 
 1. A running [MongoDB](http://http://docs.mongodb.org/manual/) installation is required.
 1. [Gradle](http://www.gradle.org/) or [Maven](http://maven.apache.org/) is required to build the source code.  
 1. [Maven](http://maven.apache.org/) is required to build and install Microsoft HealthVault libraries.  
 
-
-### Installation
+Then
 
 1. Clone this Git repository.
 1. Navigate to the `src/main/resources` directory and edit the `application.yaml` file.
 1. Check that the `spring:data:mongodb:uri` parameter points to your running MongoDB instance.
-1. Obtain authentication credentials, typically an OAuth client ID and client secret, for each shim you'd like to run. 
-  * These are obtained from the developer websites of the third-party APIs.
-1. Uncomment and replace the corresponding `clientId` and `clientSecret` placeholders in the `application.yaml` file 
-with your new credentials.
 1. Follow [these instructions](#preparing-to-use-microsoft-healthvault) to install Microsoft HealthVault libraries. These libraries are
  currently required for the shim server to work.
 1. To build and run the shim server, navigate to the project directory in a terminal. 
@@ -51,7 +68,7 @@ with your new credentials.
   * If using Gradle, run `gradle bootRun`
 1. The server should now be running on the default port 8083. You can change the port number in the `application.yaml` file.
 
-### Preparing to use Microsoft HealthVault
+#### Preparing to use Microsoft HealthVault
     
 The Microsoft HealthVault shim has dependencies which can't be automatically downloaded from public servers, at least 
 not yet. To add HealthVault support to the shim server,
@@ -62,6 +79,17 @@ not yet. To add HealthVault support to the shim server,
 1. Run `mvn install`
   
 This will make the HealthVault libraries available to both Maven and Gradle.  
+
+### Setting up your credentials
+
+You need to obtain authentication credentials, typically an OAuth client ID and client secret, for each shim you'd like to run. 
+These are obtained from the developer websites of the third-party APIs.
+
+Once obtained, uncomment and replace the corresponding `clientId` and `clientSecret` placeholders in the `application.yaml` file 
+with your new credentials and restart Jetty. 
+
+If you installed using Docker, you can restart Jetty using `supervisord restart jetty`. If you installed manually,
+terminate your running Gradle or Maven process and restart it.
 
 ### Authorizing access to a third-party user account
 
