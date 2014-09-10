@@ -37,13 +37,13 @@ run it manually.
 If you don't have Docker installed, download [Docker](https://docs.docker.com/installation/#installation/) 
  and follow the installation instructions for your platform.
  
-Then
+Then,
 
 1. Download the latest [release](https://github.com/openmhealth/omh-shims/releases) of this Git repository or clone it. 
 1. Navigate to the `docker` directory in a terminal.
 1. Run `docker build -t="openmhealth/omh-shim-server" .`
 1. Run `docker run -d -p 8083:8083 -p 2022:22 openmhealth/omh-shim-server`. 
-1. The server should now be running on the default port 8083. You can change the port number in the Docker `run` command.
+1. The server should now be running on the Docker host on default port 8083. You can change the port number in the Docker `run` command.
 
 If you want to SSH into the container, run `ssh root@<your-docker-host> -p 2022`. The password is `docker`.
 
@@ -56,7 +56,7 @@ If you prefer not to use Docker,
 1. [Gradle](http://www.gradle.org/) or [Maven](http://maven.apache.org/) is required to build the source code.  
 1. [Maven](http://maven.apache.org/) is required to build and install Microsoft HealthVault libraries.  
 
-Then
+Then,
 
 1. Clone this Git repository.
 1. Navigate to the `src/main/resources` directory and edit the `application.yaml` file.
@@ -66,7 +66,7 @@ Then
 1. To build and run the shim server, navigate to the project directory in a terminal. 
   * If you're using Maven, run `mvn spring-boot:run`
   * If using Gradle, run `gradle bootRun`
-1. The server should now be running on the default port 8083. You can change the port number in the `application.yaml` file.
+1. The server should now be running on `localhost` on port 8083. You can change the port number in the `application.yaml` file.
 
 ##### Preparing to use Microsoft HealthVault
     
@@ -96,19 +96,19 @@ terminate your running Gradle or Maven process and restart it.
 The data produced by a third-party API belongs to some user account registered on the third-party system. To allow 
  a shim read that data, you'll need to initiate an authorization process that lets the account holder grant the shim access to their data.
 
-To initiate the authorization process, do the following:
+To initiate the authorization process,
  
-1. Go to the URL `http://localhost:8083/authorize/{shim}?username={userId}` in a browser.
+1. Go to the URL `http://<host>:8083/authorize/{shim}?username={userId}` in a browser.
   * The `shim` path parameter should be one of the names listed [below](#supported-apis-and-endpoints), e.g. `fitbit`. 
   * The `username` query parameter can be set to any unique identifier you'd like to use to identify the user. 
 1. In the returned JSON response, find the `authorizationUrl` value and open this URL in a new browser window. 
 You should be redirected to the third-party website where you can login and authorize access to your third-party user account. 
-1. Once authorized, you should be redirected to `http://localhost:8083/authorize/{shim_name}/callback` and you'll see an approval response.
+1. Once authorized, you should be redirected to `http://<host>:8083/authorize/{shim_name}/callback` and you'll see an approval response.
 
 ### Reading data
 You can now pull data from the third-party API by making requests in the format
  
-`http://localhost:8083/data/{shim}/{endPoint}?username={userId}&dateStart=yyyy-MM-dd&dateEnd=yyyy-MM-dd&normalize={true|false}`
+`http://<host>:8083/data/{shim}/{endPoint}?username={userId}&dateStart=yyyy-MM-dd&dateEnd=yyyy-MM-dd&normalize={true|false}`
 
 The URL can be broken down as follows
 * The `shim` and `username` path variables are the same as [above](#authorizing-access-to-a-third-party-user-account).
