@@ -33,6 +33,8 @@ import org.springframework.stereotype.Component;
 
 import java.util.LinkedHashMap;
 
+import static java.lang.String.format;
+
 /**
  * @author Danilo Bonilla
  */
@@ -114,6 +116,11 @@ public class ShimRegistryImpl implements ShimRegistry {
         if (registryMap == null) {
             init();
         }
+
+        if (!registryMap.containsKey(shimKey)) {
+            throw new RuntimeException(format("A configuration for shim '%s' wasn't found.", shimKey));
+        }
+
         return registryMap.get(shimKey);
     }
 }
