@@ -11,7 +11,8 @@
     "angular-cookies": "1.2.15",
     "angular-sanitize": "1.2.15",
     "angular-route": "1.2.15",
-    "angular-bootstrap": "~0.11.0"
+    "angular-bootstrap": "~0.11.0",
+    "momentjs": "~2.8.3"
   },
   "devDependencies": {
     "angular-mocks": "1.2.15",

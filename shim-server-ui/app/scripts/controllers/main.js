@@ -100,14 +100,26 @@ angular.module('sandboxConsoleApp')
             var suffix = record.username + "-" + shimKey + "-" + endPoint;
             var spinner = $("#shim-spinner-" + suffix)[0];
             var responseBox = $("#shim-results-" + suffix)[0];
+            var fromDate = $($("#fromDate-" + suffix)[0]).val();
+            var toDate = $($("#toDate-" + suffix)[0]).val();
+
+            if (!fromDate || fromDate == "") {
+                fromDate = moment().subtract(2, "days").format("YYYY-MM-DD");
+            }
+
+            if (!toDate || toDate == "") {
+                toDate = moment().add(1, "days").format("YYYY-MM-DD");
+            }
+
             /*
              * Hide previous results, show spinner.
              */
             $(responseBox).css("display", "none");
             $(spinner).css("display", "block");
 
-            var url = "data/" + shimKey + "/" + endPoint +"?"
-                + (doNormalize ? "normalize=true" : "");
+            var url = "data/" + shimKey + "/" + endPoint + "?"
+                + "dateStart=" + fromDate + "&dateEnd=" + toDate
+                + (doNormalize ? "&normalize=true" : "");
 
             console.info("The URL to be used is: ", url);
 
@@ -130,7 +142,8 @@ angular.module('sandboxConsoleApp')
          */
         $scope.openEndpoints = function (event, record, shimKey) {
             var elm = $("#shim-panel-" + record.username + "-" + shimKey)[0];
-            console.info("Looking for element: ", "#shim-panel-" + record.username + "-" + shimKey);
+            console.info("Looking for element: ",
+                    "#shim-panel-" + record.username + "-" + shimKey);
             console.info("Element is: ", elm.id);
 
             if ($(elm).css("display") == "none") {

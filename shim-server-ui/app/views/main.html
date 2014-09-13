@@ -69,7 +69,9 @@
 
                                             <div class="form-group col-md-4">
                                                 <div class="input-group">
-                                                    <input id="fromDate" type="text" class="form-control"
+                                                    <input id=
+                                                    "fromDate-{{record.username}}-{{shim.shimKey}}-{{endpoint.name}}"
+                                                           type="text" class="form-control"
                                                            datepicker-popup="{{format}}" ng-model="fromDate"
                                                            is-open="openedFrom"
                                                            min-date="minDate" max-date="'2015-06-22'"
@@ -88,7 +90,9 @@
 
                                             <div class="form-group col-md-4">
                                                 <div class="input-group">
-                                                    <input id="toDate" type="text" class="form-control"
+                                                    <input id=
+                                                    "toDate-{{record.username}}-{{shim.shimKey}}-{{endpoint.name}}"
+                                                           type="text" class="form-control"
                                                            datepicker-popup="{{format}}" ng-model="toDate"
                                                            is-open="openedTo"
                                                            min-date="minDate" max-date="'2015-06-22'"
