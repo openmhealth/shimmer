@@ -81,8 +81,43 @@ angular.module('sandboxConsoleApp')
          *
          * @param searchTerm - term to
          */
-        $scope.doLookup = function(searchTerm){
+        $scope.doLookup = function (searchTerm) {
 
+        };
+
+
+        /**
+         * Retrieve data from shim server for the given
+         * endpoint.
+         *
+         * @param record - The record whose data is being retrieved.
+         * @param shimKey - The shim to use to pull data.
+         * @param endPoint - The shim endpoint.
+         * @param doNormalize - if true, data will be converted to OMH format,
+         * if not it will be retrieved raw.
+         */
+        $scope.getData = function (record, shimKey, endPoint, doNormalize) {
+            var suffix = record.username + "-" + shimKey + "-" + endPoint;
+            var spinner = $("#shim-spinner-" + suffix)[0];
+            var responseBox = $("#shim-results-" + suffix)[0];
+            /*
+             * Hide previous results, show spinner.
+             */
+            $(responseBox).css("display", "none");
+            $(spinner).css("display", "block");
+
+            var url = "data/" + shimKey + "/" + endPoint +"?"
+                + (doNormalize ? "normalize=true" : "");
+
+            console.info("The URL to be used is: ", url);
+
+            setTimeout(function () {
+                /*
+                 * Hide spinner, show results.
+                 */
+                $(spinner).css("display", "none");
+                $(responseBox).css("display", "block");
+            }, 1000);
         };
 
         /**
@@ -94,13 +129,13 @@ angular.module('sandboxConsoleApp')
          * @param shimKey
          */
         $scope.openEndpoints = function (event, record, shimKey) {
-            var elm = $("#shim-panel-"+record.username+"-"+shimKey)[0];
-            console.info("Looking for element: ","#shim-panel-"+record.username+"-"+shimKey);
+            var elm = $("#shim-panel-" + record.username + "-" + shimKey)[0];
+            console.info("Looking for element: ", "#shim-panel-" + record.username + "-" + shimKey);
             console.info("Element is: ", elm.id);
 
-            if($(elm).css("display") == "none"){
+            if ($(elm).css("display") == "none") {
                 $(elm).slideDown(250);
-            }else{
+            } else {
                 $(elm).slideUp(250);
             }
         };

@@ -62,10 +62,10 @@
                             <ul id="shim-panel-{{record.username}}-{{shim.shimKey}}"
                                 class="list-group" style="display: none;">
 
-                                <li class="list-group-item">
+                                <li class="list-group-item" ng-repeat="endpoint in shim.endpoints">
                                     <div class="panel-heading">
                                         <form class="form-inline" role="form" novalidate>
-                                            <div class="form-group col-md-1"><span>Body</span></div>
+                                            <div class="form-group col-md-1"><span>{{endpoint.name}}</span></div>
 
                                             <div class="form-group col-md-4">
                                                 <div class="input-group">
@@ -108,11 +108,14 @@
 
                                             <div class="form-group col-md-3" style="text-align: left;">
                                                 <div class="input-group btn-group">
-                                                    <button ng-click="getRawData()"
+                                                    <button ng-click=
+                                                    "getData(record, shim.shimKey, endpoint.name, false)"
                                                             type="button" style="font-size: 10px;"
                                                             class="btn btn-default">Raw
                                                     </button>
-                                                    <button type="button" style="font-size: 10px;"
+                                                    <button ng-click=
+                                                    "getData(record, shim.shimKey, endpoint.name, true)"
+                                                            type="button" style="font-size: 10px;"
                                                             class="btn btn-default">Normalized
                                                     </button>
                                                 </div>
@@ -124,8 +127,11 @@
                                      -- A textbox which displays the JSON results from the shim server.
                                     -->
                                     <div class="panel-body">
-                                        <textarea id="shim-results-{{record.username}}-{{shim.shimKey}}"
-                                                style="width: 100%"></textarea>
+                                        <div id="shim-spinner-{{record.username}}-{{shim.shimKey}}-{{endpoint.name}}"
+                                             class="spinner">&nbsp;</div>
+                                        <textarea class="jsonResponseBox"
+                                        id="shim-results-{{record.username}}-{{shim.shimKey}}-{{endpoint.name}}"
+                                                ></textarea>
                                     </div>
                                 </li>
                             </ul>
