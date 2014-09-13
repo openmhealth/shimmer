@@ -18,72 +18,51 @@ package org.openmhealth.shim.fitbit;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.fasterxml.jackson.dataformat.xml.XmlMapper;
-import org.junit.Ignore;
 import org.junit.Test;
+import org.openmhealth.schema.pojos.HeartRate;
+import org.openmhealth.schema.pojos.StepCount;
 import org.openmhealth.shim.ShimDataResponse;
-import org.openmhealth.shim.healthvault.HealthvaultShim;
+import org.openmhealth.shim.jawbone.JawboneShim;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.List;
+import java.util.Map;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * @author Danilo Bonilla
  */
 public class FitbitShimTest {
 
-
     @Test
     @SuppressWarnings("unchecked")
-    public void testParse() throws IOException {
-        URL url = Thread.currentThread().getContextClassLoader().getResource("fitbit-activities-1m.json");
+    public void testNormalize() throws IOException {
+        URL url = Thread.currentThread().getContextClassLoader().getResource("fitbit-heart.json");
         assert url != null;
         InputStream inputStream = url.openStream();
-
-        //todo: fix assertions here!!
-    }
-
-    @Test
-    @Ignore
-    public void testXml() throws IOException {
-        XmlMapper xmlMapper = new XmlMapper();
-        SimpleModule module = new SimpleModule();
-        module.addDeserializer(ShimDataResponse.class,
-            HealthvaultShim.HealthVaultDataType.WEIGHT.getNormalizer());
-        xmlMapper.registerModule(module);
-
-        URL url = Thread.currentThread().getContextClassLoader().getResource("data-response-weight.xml");
-        assert url != null;
-        InputStream inputStream = url.openStream();
-
-        ShimDataResponse response = xmlMapper.readValue(inputStream, ShimDataResponse.class);
-
-        assertNotNull(response.getBody());
-
-        inputStream.close();
-    }
-
-    @Test
-    @Ignore
-    public void testConvert() throws IOException {
 
         ObjectMapper objectMapper = new ObjectMapper();
 
+        FitbitShim.FitbitDataType.HEART.getNormalizer();
         SimpleModule module = new SimpleModule();
-        module.addDeserializer(ShimDataResponse.class, FitbitShim.FitbitDataType.ACTIVITY.getNormalizer());
+        module.addDeserializer(ShimDataResponse.class,
+            FitbitShim.FitbitDataType.HEART.getNormalizer());
+
         objectMapper.registerModule(module);
 
-        URL url = Thread.currentThread().getContextClassLoader().getResource("data-response-activity.json");
-        assert url != null;
-        InputStream inputStream = url.openStream();
+        ShimDataResponse response =
+            objectMapper.readValue(inputStream, ShimDataResponse.class);
 
-        ShimDataResponse shimDataResponse = objectMapper.readValue(inputStream, ShimDataResponse.class);
+        assertNotNull(response);
 
-        assertNotNull(shimDataResponse.getBody());
+        Map<String, Object> map = (Map<String, Object>) response.getBody();
+        assertTrue(map.containsKey(HeartRate.SCHEMA_HEART_RATE));
 
-        inputStream.close();
+        List<HeartRate> stepCounts = (List<HeartRate>) map.get(HeartRate.SCHEMA_HEART_RATE);
+        assertTrue(stepCounts != null && stepCounts.size() == 6);
     }
 }
