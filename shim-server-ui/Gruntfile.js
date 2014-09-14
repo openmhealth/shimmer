@@ -1,6 +1,11 @@
 // Generated on 2014-09-12 using generator-angular 0.8.0
 'use strict';
 
+var proxySnippet = require('grunt-connect-proxy/lib/utils').proxyRequest;
+var mountFolder = function (connect, dir) {
+    return connect.static(require('path').resolve(dir));
+};
+
 // # Globbing
 // for performance reasons we're only matching one level down:
 // 'test/spec/{,*/}*.js'
@@ -55,7 +60,7 @@ module.exports = function (grunt) {
                 },
                 files: [
                     '<%= yeoman.app %>/{,*/}*.html',
-                    '.tmp/styles/{,*/}*.css',
+                    '<%= yeoman.app %>/styles/{,*/}*.css',
                     '<%= yeoman.app %>/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}'
                 ]
             }
@@ -66,17 +71,20 @@ module.exports = function (grunt) {
             options: {
                 port: 9000,
                 // Change this to '0.0.0.0' to access the server from outside.
-                hostname: 'localhost',
+                hostname: '127.0.0.1',
                 livereload: 35729
             },
             //server: {
             proxies: [
                 {
-                    context: '/shim-server',
-                    //host: '127.0.0.1',
+                    context: '/api',
                     host: 'localhost',
                     port: 8083,
-                    changeOrigin: true
+                    https: false,
+                    changeOrigin: false,
+                    rewrite: {
+                        '^/api': ''
+                    }
                 }
             ],
             livereload: {
@@ -85,7 +93,14 @@ module.exports = function (grunt) {
                     base: [
                         '.tmp',
                         '<%= yeoman.app %>'
-                    ]
+                    ],
+                    middleware: function (connect) {
+                        return [
+                            proxySnippet,
+                            mountFolder(connect, '.tmp'),
+                            mountFolder(connect, 'app')
+                        ];
+                    }
                 }
             },
             test: {
@@ -366,6 +381,9 @@ module.exports = function (grunt) {
         }
     });
 
+    grunt.loadNpmTasks('grunt-connect-proxy');
+
+    grunt.loadNpmTasks('grunt-bower-install');
 
     grunt.registerTask('serve', function (target) {
         if (target === 'dist') {
@@ -374,6 +392,7 @@ module.exports = function (grunt) {
 
         grunt.task.run([
             'clean:server',
+            'configureProxies',
             'bowerInstall',
             'concurrent:server',
             'autoprefixer',
@@ -414,7 +433,7 @@ module.exports = function (grunt) {
 
     grunt.registerTask('default', [
         'newer:jshint',
-        'test',
+        //'test',
         'build'
     ]);
 };
