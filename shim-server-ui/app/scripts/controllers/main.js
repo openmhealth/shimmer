@@ -13,52 +13,32 @@ angular.module('sandboxConsoleApp')
             {
                 shimKey: 'fitbit',
                 label: 'Fitbit',
-                description: 'Description of fitbit',
-                endpoints: [
-                    {name: 'body', description: 'body measurements'},
-                    {name: 'steps', description: 'steps stuff'}
-                ]
+                endpoints: ['body', 'steps']
             },
             {
                 shimKey: 'healthvault',
                 label: 'Microsoft Healthvault',
-                description: 'Description of healthvault',
-                endpoints: [
-                    {name: 'blood-pressure', description: 'blood pressure'},
-                    {name: 'activity', description: 'blood pressure'}
-                ]
+                endpoints: ['blood-pressure', 'activity']
             },
             {
                 shimKey: 'runkeeper',
                 label: 'Runkeeper',
-                description: 'Description of runkeeper',
-                endpoints: [
-                    {name: 'body', description: 'body measurements'}
-                ]
+                endpoints: ['body']
             },
             {
                 shimKey: 'fatsecret',
                 label: 'Fat secret',
-                description: 'Description of fatsecret',
-                endpoints: [
-                    {name: 'body', description: 'body measurements'}
-                ]
+                endpoints: ['body']
             },
             {
                 shimKey: 'jawbone',
                 label: 'Jawbone UP',
-                description: 'Description of jawbone',
-                endpoints: [
-                    {name: 'body', description: 'body measurements'}
-                ]
+                endpoints: ['body']
             },
             {
                 shimKey: 'withings',
                 label: 'Withings',
-                description: 'Description of withings endpoint',
-                endpoints: [
-                    {name: 'body', description: 'body measurements'}
-                ]
+                endpoints: ['body']
             }
         ];
 

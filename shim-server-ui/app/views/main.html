@@ -65,12 +65,12 @@
                                 <li class="list-group-item" ng-repeat="endpoint in shim.endpoints">
                                     <div class="panel-heading">
                                         <form class="form-inline" role="form" novalidate>
-                                            <div class="form-group col-md-1"><span>{{endpoint.name}}</span></div>
+                                            <div class="form-group col-md-1"><span>{{endpoint}}</span></div>
 
                                             <div class="form-group col-md-4">
                                                 <div class="input-group">
                                                     <input id=
-                                                    "fromDate-{{record.username}}-{{shim.shimKey}}-{{endpoint.name}}"
+                                                    "fromDate-{{record.username}}-{{shim.shimKey}}-{{endpoint}}"
                                                            type="text" class="form-control"
                                                            datepicker-popup="{{format}}" ng-model="fromDate"
                                                            is-open="openedFrom"
@@ -91,7 +91,7 @@
                                             <div class="form-group col-md-4">
                                                 <div class="input-group">
                                                     <input id=
-                                                    "toDate-{{record.username}}-{{shim.shimKey}}-{{endpoint.name}}"
+                                                    "toDate-{{record.username}}-{{shim.shimKey}}-{{endpoint}}"
                                                            type="text" class="form-control"
                                                            datepicker-popup="{{format}}" ng-model="toDate"
                                                            is-open="openedTo"
@@ -113,12 +113,12 @@
                                             <div class="form-group col-md-3" style="text-align: left;">
                                                 <div class="input-group btn-group">
                                                     <button ng-click=
-                                                    "getData(record, shim.shimKey, endpoint.name, false)"
+                                                    "getData(record, shim.shimKey, endpoint, false)"
                                                             type="button" style="font-size: 10px;"
                                                             class="btn btn-default">Raw
                                                     </button>
                                                     <button ng-click=
-                                                    "getData(record, shim.shimKey, endpoint.name, true)"
+                                                    "getData(record, shim.shimKey, endpoint, true)"
                                                             type="button" style="font-size: 10px;"
                                                             class="btn btn-default">Normalized
                                                     </button>
@@ -131,10 +131,10 @@
                                      -- A textbox which displays the JSON results from the shim server.
                                     -->
                                     <div class="panel-body">
-                                        <div id="shim-spinner-{{record.username}}-{{shim.shimKey}}-{{endpoint.name}}"
+                                        <div id="shim-spinner-{{record.username}}-{{shim.shimKey}}-{{endpoint}}"
                                              class="spinner">&nbsp;</div>
                                         <textarea class="jsonResponseBox"
-                                        id="shim-results-{{record.username}}-{{shim.shimKey}}-{{endpoint.name}}"
+                                        id="shim-results-{{record.username}}-{{shim.shimKey}}-{{endpoint}}"
                                                 ></textarea>
                                     </div>
                                 </li>
