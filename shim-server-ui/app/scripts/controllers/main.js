@@ -47,13 +47,13 @@ angular.module('sandboxConsoleApp')
          */
         $scope.records = [
             /*{
-                username: 'Anna',
-                auths: ['fitbit', 'runkeeper']
-            },
-            {
-                username: 'David',
-                auths: ['healthvault']
-            }*/
+             username: 'Anna',
+             auths: ['fitbit', 'runkeeper']
+             },
+             {
+             username: 'David',
+             auths: ['healthvault']
+             }*/
         ];
 
 
@@ -102,6 +102,7 @@ angular.module('sandboxConsoleApp')
          */
         $scope.getData = function (record, shimKey, endPoint, doNormalize) {
             var suffix = record.username + "-" + shimKey + "-" + endPoint;
+            var error = $("#shim-error-" + suffix)[0];
             var spinner = $("#shim-spinner-" + suffix)[0];
             var responseBox = $("#shim-results-" + suffix)[0];
             var fromDate = $($("#fromDate-" + suffix)[0]).val();
@@ -118,22 +119,30 @@ angular.module('sandboxConsoleApp')
             /*
              * Hide previous results, show spinner.
              */
+            $(error).css("display", "none");
             $(responseBox).css("display", "none");
             $(spinner).css("display", "block");
 
-            var url = "data/" + shimKey + "/" + endPoint + "?"
-                + "dateStart=" + fromDate + "&dateEnd=" + toDate
+            var url = "/api/data/" + shimKey + "/" + endPoint + "?"
+                + "username=" + record.username
+                + "&dateStart=" + fromDate + "&dateEnd=" + toDate
                 + (doNormalize ? "&normalize=true" : "");
 
             console.info("The URL to be used is: ", url);
 
-            setTimeout(function () {
-                /*
-                 * Hide spinner, show results.
-                 */
-                $(spinner).css("display", "none");
-                $(responseBox).css("display", "block");
-            }, 1000);
+            $http.get(url)
+                .success(function (data) {
+                    $(responseBox).val(JSON.stringify(data));
+                    $(spinner).css("display", "none");
+                    $(responseBox).css("display", "block");
+                })
+                .error(function (data, status) {
+                    var msg = "Error, could not get data from server" + status;
+                    console.error(msg);
+                    $(error).css("display", "block");
+                    $(error).html(msg);
+                    $(spinner).css("display", "none");
+                });
         };
 
         /**
@@ -158,7 +167,7 @@ angular.module('sandboxConsoleApp')
         };
 
         /*
-        * Loads the shims from the shim registry.
-        */
+         * Loads the shims from the shim registry.
+         */
         $scope.loadShims();
     }]);
