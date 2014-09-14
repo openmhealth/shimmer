@@ -4,65 +4,89 @@
  * Simple UI for managing shim data on the shim server.
  */
 angular.module('sandboxConsoleApp')
-    .controller('MainCtrl', function ($scope) {
+    .controller('MainCtrl', ['$scope', '$http', function ($scope, $http) {
 
         /**
          * Configurations for shim server shims.
          */
         $scope.shims = [
-            {
-                shimKey: 'fitbit',
-                label: 'Fitbit',
-                endpoints: ['body', 'steps']
-            },
-            {
-                shimKey: 'healthvault',
-                label: 'Microsoft Healthvault',
-                endpoints: ['blood-pressure', 'activity']
-            },
-            {
-                shimKey: 'runkeeper',
-                label: 'Runkeeper',
-                endpoints: ['body']
-            },
-            {
-                shimKey: 'fatsecret',
-                label: 'Fat secret',
-                endpoints: ['body']
-            },
-            {
-                shimKey: 'jawbone',
-                label: 'Jawbone UP',
-                endpoints: ['body']
-            },
-            {
-                shimKey: 'withings',
-                label: 'Withings',
-                endpoints: ['body']
-            }
+            /*{
+             shimKey: 'fitbit',
+             label: 'Fitbit',
+             endpoints: ['body', 'steps']
+             },
+             {
+             shimKey: 'healthvault',
+             label: 'Microsoft Healthvault',
+             endpoints: ['blood-pressure', 'activity']
+             },
+             {
+             shimKey: 'runkeeper',
+             label: 'Runkeeper',
+             endpoints: ['body']
+             },
+             {
+             shimKey: 'fatsecret',
+             label: 'Fat secret',
+             endpoints: ['body']
+             },
+             {
+             shimKey: 'jawbone',
+             label: 'Jawbone UP',
+             endpoints: ['body']
+             },
+             {
+             shimKey: 'withings',
+             label: 'Withings',
+             endpoints: ['body']
+             }*/
         ];
 
         /**
          * Records received from the server based on search term.
          */
         $scope.records = [
-            {
+            /*{
                 username: 'Anna',
                 auths: ['fitbit', 'runkeeper']
             },
             {
                 username: 'David',
                 auths: ['healthvault']
-            }
+            }*/
         ];
+
+
+        /**
+         * Loads all the available authorizations
+         * from the shim server
+         */
+        $scope.loadShims = function () {
+            var url = "/api/registry";
+            $http.get(url)
+                .success(function (data) {
+                    $scope.shims = data;
+                }).error(function (data, status) {
+                    console.error("Error querying the registry, try again.", status);
+                });
+        };
 
         /**
          * Perform a lookup against the shim server.
+         * Authorizations will be retrieved for records that
+         * match the search terms.
          *
-         * @param searchTerm - term to
+         * fragment of a name.
          */
-        $scope.doLookup = function (searchTerm) {
-
+        $scope.doLookup = function () {
+            var searchTerm = $($("#uid-term")[0]).val();
+            var url = "/api/authorizations?username=" + searchTerm.trim();
+            $http.get(url)
+                .success(function (data) {
+                    $scope.records = data;
+                }).error(function (data, status) {
+                    console.error("Error querying the registry, try again.", status);
+                });
         };
 
 
@@ -132,4 +156,9 @@ angular.module('sandboxConsoleApp')
                 $(elm).slideUp(250);
             }
         };
-    });
+
+        /*
+        * Loads the shims from the shim registry.
+        */
+        $scope.loadShims();
+    }]);
