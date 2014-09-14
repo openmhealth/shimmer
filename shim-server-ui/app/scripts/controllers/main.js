@@ -132,7 +132,7 @@ angular.module('sandboxConsoleApp')
 
             $http.get(url)
                 .success(function (data) {
-                    $(responseBox).val(JSON.stringify(data));
+                    $(responseBox).val(JSON.stringify(data,undefined,2));
                     $(spinner).css("display", "none");
                     $(responseBox).css("display", "block");
                 })

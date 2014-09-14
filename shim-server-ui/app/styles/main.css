@@ -80,9 +80,11 @@ body {
   display: none;
 }
 
-.jsonResponseBox{
+.jsonResponseBox {
   width: 100%;
   display: none;
+  font-size: .85em;
+  height: 15em;
 }
 
 /* Responsive: Portrait tablets and up */
