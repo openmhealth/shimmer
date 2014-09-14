@@ -16,6 +16,8 @@
 
 package org.openmhealth.shim;
 
+import java.util.List;
+
 /**
  * Basic contract for a shim registry.
  *
@@ -25,4 +27,5 @@ public interface ShimRegistry {
 
     Shim getShim(String shimKey);
 
+    List<Shim> getShims();
 }

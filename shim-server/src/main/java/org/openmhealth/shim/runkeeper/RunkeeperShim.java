@@ -81,6 +81,11 @@ public class RunkeeperShim extends OAuth2ShimBase {
     }
 
     @Override
+    public String getLabel() {
+        return "Runkeeper";
+    }
+
+    @Override
     public String getShimKey() {
         return SHIM_KEY;
     }

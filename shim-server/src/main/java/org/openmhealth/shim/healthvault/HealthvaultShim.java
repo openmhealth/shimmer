@@ -69,8 +69,6 @@ public class HealthvaultShim implements Shim {
 
     public static final String SHIM_KEY = "healthvault";
 
-    //public static final String CLIENT_ID = "bafb1313-d4e0-421c-b3b5-4e3a55639c19";
-
     private static final String AUTHORIZE_URL = "https://account.healthvault-ppe.com";
 
     private static final String ACTION_QS = "/";
@@ -96,6 +94,11 @@ public class HealthvaultShim implements Shim {
         this.authorizationRequestParametersRepo = authorizationRequestParametersRepo;
         this.shimServerConfig = shimServerConfig;
         this.config = healthvaultConfig;
+    }
+
+    @Override
+    public String getLabel() {
+        return "Microsoft Healthvault";
     }
 
     @Override
@@ -648,9 +651,8 @@ public class HealthvaultShim implements Shim {
             HVAccessor accessor = new HVAccessor();
             accessor.send(request, ConnectionFactory.getConnection());
             try {
-                try (InputStream istream = accessor.getResponse().getInputStream()) {
-                    return marshaller.marshal(istream);
-                }
+                InputStream istream = accessor.getResponse().getInputStream();
+                return marshaller.marshal(istream);
             } catch (HVException e) {
                 throw e;
             } catch (Exception e) {

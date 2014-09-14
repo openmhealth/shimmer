@@ -33,9 +33,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author Danilo Bonilla
@@ -71,6 +69,66 @@ public class Application extends WebSecurityConfigurerAdapter {
          */
         http.csrf().disable()
             .authorizeRequests().anyRequest().permitAll();
+    }
+
+    /**
+     * Return shims available in the registry and all endpoints.
+     *
+     * @return - list of shims + endpoints in a map.
+     * @throws ShimException
+     */
+    @RequestMapping("registry")
+    public
+    @ResponseBody
+    List<Map<String, Object>> shimList() throws ShimException {
+
+        List<Map<String, Object>> results = new ArrayList<>();
+        List<Shim> shims = shimRegistry.getShims();
+
+        for (Shim shim : shims) {
+            List<String> endpoints = new ArrayList<>();
+            for (ShimDataType dataType : shim.getShimDataTypes()) {
+                endpoints.add(dataType.name());
+            }
+            Map<String, Object> row = new HashMap<>();
+            row.put("shimKey", shim.getShimKey());
+            row.put("label", shim.getLabel());
+            row.put("endpoints", endpoints);
+            results.add(row);
+        }
+        return results;
+    }
+
+    /**
+     * Retrieve access parameters for the given username/fragment.
+     *
+     * @param username - username fragment to search.
+     * @return List of access parameters.
+     * @throws ShimException
+     */
+    @RequestMapping("authorizations")
+    public
+    @ResponseBody
+    List<Map<String, Object>> authorizations(
+        @RequestParam(value = "username") String username) throws ShimException {
+        List<AccessParameters> accessParameters =
+            accessParametersRepo.findAllByUsernameLike(username);
+
+        List<Map<String, Object>> results = new ArrayList<>();
+        Map<String, Set<String>> auths = new HashMap<>();
+        for (AccessParameters accessParameter : accessParameters) {
+            if (!auths.containsKey(accessParameter.getUsername())) {
+                auths.put(accessParameter.getUsername(), new HashSet<String>());
+            }
+            auths.get(accessParameter.getUsername()).add(accessParameter.getShimKey());
+        }
+        for (final String uid : auths.keySet()) {
+            Map<String, Object> row = new HashMap<>();
+            row.put("username", uid);
+            row.put("auths", auths.get(uid));
+            results.add(row);
+        }
+        return results;
     }
 
     /**

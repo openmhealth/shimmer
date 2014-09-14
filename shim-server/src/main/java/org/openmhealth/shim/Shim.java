@@ -24,7 +24,7 @@ import java.util.Map;
  * High level abstraction contract for shims. This version
  * does not take into account any details (oauth, oauth2, custom, etc)
  *
- * @author  Danilo Bonilla
+ * @author Danilo Bonilla
  */
 public interface Shim {
 
@@ -72,7 +72,18 @@ public interface Shim {
      */
     List<String> getScopes();
 
+    /**
+     * Get a list of the shim's data types.
+     *
+     * @return Data types supported by the shim.
+     */
     ShimDataType[] getShimDataTypes();
+
+    /**
+     * A formal display label for the shim.
+     * @return -  The label.
+     */
+    String getLabel();
 
     /**
      * Retrieve authorization parameter object so that an external

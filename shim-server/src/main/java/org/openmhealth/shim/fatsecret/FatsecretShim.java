@@ -58,6 +58,11 @@ public class FatsecretShim extends OAuth1ShimBase {
     }
 
     @Override
+    public String getLabel() {
+        return "Fat Secret";
+    }
+
+    @Override
     public List<String> getScopes() {
         return null; //noop!
     }
@@ -94,7 +99,7 @@ public class FatsecretShim extends OAuth1ShimBase {
 
     @Override
     public ShimDataType[] getShimDataTypes() {
-        return null;
+        return new ShimDataType[]{};
     }
 
     @Override

@@ -32,4 +32,5 @@ public interface AccessParametersRepo extends MongoRepository<AccessParameters, 
 
     List<AccessParameters> findAllByUsernameAndShimKey(String username, String shimKey);
 
+    List<AccessParameters> findAllByUsernameLike(String username);
 }

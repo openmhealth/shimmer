@@ -74,6 +74,11 @@ public class FitbitShim extends OAuth1ShimBase {
     }
 
     @Override
+    public String getLabel() {
+        return "Fitbit";
+    }
+
+    @Override
     public List<String> getScopes() {
         return null; //noop!
     }

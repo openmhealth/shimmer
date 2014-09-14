@@ -31,7 +31,9 @@ import org.openmhealth.shim.withings.WithingsShim;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 
 import static java.lang.String.format;
 
@@ -122,5 +124,13 @@ public class ShimRegistryImpl implements ShimRegistry {
         }
 
         return registryMap.get(shimKey);
+    }
+
+    @Override
+    public List<Shim> getShims() {
+        if (registryMap == null) {
+            init();
+        }
+        return new ArrayList<Shim>(registryMap.values());
     }
 }

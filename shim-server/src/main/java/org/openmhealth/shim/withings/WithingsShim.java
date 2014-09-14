@@ -73,6 +73,11 @@ public class WithingsShim extends OAuth1ShimBase {
     }
 
     @Override
+    public String getLabel() {
+        return "Withings";
+    }
+
+    @Override
     public List<String> getScopes() {
         return null; //noop!
     }
