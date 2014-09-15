@@ -76,7 +76,7 @@ angular.module('sandboxConsoleApp')
                      */
                     var interval = window.setInterval(function () {
                         try {
-                            if (win == null || win.closed) {
+                            if (newTab == null || newTab.closed) {
                                 window.clearInterval(interval);
                                 $scope.doLookup();
                             }
