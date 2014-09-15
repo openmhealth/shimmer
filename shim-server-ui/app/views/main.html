@@ -1,10 +1,10 @@
 <div ng-controller="MainCtrl">
     <div class="row header">
         <ul class="nav nav-pills pull-right">
-            <li class="active"><a ng-href="#">Shims</a></li>
+            <!--<li class="active"><a ng-href="#">Shims</a></li>-->
             <!--<li><a ng-href="#">Settings</a></li>-->
         </ul>
-        <h3 class="text-muted">Open mHealth: Shim Server</h3>
+        <h3 class="text-muted logo">Shim Server</h3>
     </div>
 
     <form ng-submit="doLookup()">
@@ -55,9 +55,11 @@
                                 <span>{{shim.label}}</span>
 
                                 <span class="label label-lg label-success glyphicon glyphicon-ok">&nbsp;</span>
-                            <span ng-click="disconnect($event, record, shim.shimKey)"
-                                  class="glyphicon glyphicon-remove pull-right"
-                                  style="font-size: 16px; color: #BE0A0A; cursor: pointer;"></span>
+
+                                <button ng-click="disconnect($event, record, shim.shimKey)"
+                                        type="button"
+                                        class="btn btn-danger pull-right">Disconnect
+                                </button>
                             </div>
                             <div class="clearfix"></div>
 
@@ -98,8 +100,7 @@
 
                                             <div class="form-group col-md-4">
                                                 <div class="input-group">
-                                                    <input id=
-                                                                   "toDate-{{record.username}}-{{shim.shimKey}}-{{endpoint}}"
+                                                    <input id="toDate-{{record.username}}-{{shim.shimKey}}-{{endpoint}}"
                                                            type="text" class="form-control"
                                                            datepicker-popup="{{format}}"
                                                            ng-model="toDate"

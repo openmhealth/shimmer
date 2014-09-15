@@ -87,8 +87,17 @@ body {
   height: 15em;
 }
 
+.logo{
+  background-image: url("/images/omh_logo-monochromatic.png");
+  background-repeat: no-repeat;  
+  background-size: 35%;
+  background-position: left top;
+  text-align: right; 
+  padding: 30px;
+}
+
 .connected-row {
-  padding: 15px 25px 15px 15px;  
+  /*padding: 15px 25px 15px 15px;*/
 }
 
 .connected-row:hover {

@@ -92,25 +92,28 @@ angular.module('sandboxConsoleApp')
 
         /**
          * Disconnects a user from a shim, removes all authorizations.
+         * @param $event
          * @param record
          * @param shimKey
          */
         $scope.disconnect = function ($event, record, shimKey) {
 
-            $event.preventDefault();
-            $event.stopPropagation();
+            if ($window.confirm("Disconnect this shim, are you sure?")) {
+                $event.preventDefault();
+                $event.stopPropagation();
 
-            var url = API_ROOT_URL + "/de-authorize/" + shimKey + "?username=" + record.username;
-            $http({
-                url: url,
-                method: 'DELETE'
-            }).success(function () {
-                console.info("successfully disconnected.");
-                $scope.doLookup();
-            }).error(function (data, status) {
-                console.error("Could not disconnect, " +
-                    "error occurred.", data, status);
-            });
+                var url = API_ROOT_URL + "/de-authorize/" + shimKey + "?username=" + record.username;
+                $http({
+                    url: url,
+                    method: 'DELETE'
+                }).success(function () {
+                    console.info("successfully disconnected.");
+                    $scope.doLookup();
+                }).error(function (data, status) {
+                    console.error("Could not disconnect, " +
+                        "error occurred.", data, status);
+                });
+            }
         };
 
         /**
