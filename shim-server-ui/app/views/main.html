@@ -43,7 +43,8 @@
                             <span>{{shim.label}}</span>
                             <button ng-click="initOAuthFlow(record,shim.shimKey)"
                                     type="button"
-                                    class="btn btn-primary pull-right">Connect</button>
+                                    class="btn btn-primary pull-right">Connect
+                            </button>
                             <div class="clearfix"></div>
                         </div>
 
@@ -53,7 +54,8 @@
                                 <span>{{shim.label}}</span>
 
                                 <span class="label label-lg label-success glyphicon glyphicon-ok">&nbsp;</span>
-                            <span class="glyphicon glyphicon-remove pull-right"
+                            <span ng-click="disconnect(record, shim.shimKey)"
+                                  class="glyphicon glyphicon-remove pull-right"
                                   style="font-size: 16px; color: #BE0A0A;"></span>
                             </div>
                             <div class="clearfix"></div>
@@ -72,8 +74,7 @@
                                             <div class="clearfix"></div>
                                             <div class="form-group col-md-4">
                                                 <div class="input-group">
-                                                    <input id=
-                                                    "fromDate-{{record.username}}-{{shim.shimKey}}-{{endpoint}}"
+                                                    <input id="fromDate-{{record.username}}-{{shim.shimKey}}-{{endpoint}}"
                                                            type="text" class="form-control"
                                                            datepicker-popup="{{format}}"
                                                            ng-model="fromDate"
@@ -97,7 +98,7 @@
                                             <div class="form-group col-md-4">
                                                 <div class="input-group">
                                                     <input id=
-                                                    "toDate-{{record.username}}-{{shim.shimKey}}-{{endpoint}}"
+                                                                   "toDate-{{record.username}}-{{shim.shimKey}}-{{endpoint}}"
                                                            type="text" class="form-control"
                                                            datepicker-popup="{{format}}"
                                                            ng-model="toDate"

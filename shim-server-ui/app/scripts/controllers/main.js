@@ -65,6 +65,10 @@ angular.module('sandboxConsoleApp')
                     var specs = 'resizable=0,scrollbars=1,width=500'
                         + ',height=500,left=' + left + ",top=" + top;
                     var newTab = $window.open(data.authorizationUrl, '_blank', specs);
+                    /**
+                     * Continuously check if the window has been closed.
+                     * then refresh.
+                     */
                     var interval = window.setInterval(function () {
                         try {
                             if (win == null || win.closed) {
@@ -79,6 +83,25 @@ angular.module('sandboxConsoleApp')
                 }).error(function (data, status) {
                     console.error("Error querying the registry, try again.", status);
                 });
+        };
+
+        /**
+         * Disconnects a user from a shim, removes all authorizations.
+         * @param record
+         * @param shimKey
+         */
+        $scope.disconnect = function (record, shimKey) {
+            var url = "/api/de-authorize/" + shimKey + "?username=" + record.username;
+            $http({
+                url: url,
+                method: 'DELETE'
+            }).success(function () {
+                console.info("successfully disconnected.");
+                $scope.doLookup();
+            }).error(function (data, status) {
+                console.error("Could not disconnect, " +
+                    "error occurred.", data, status);
+            });
         };
 
         /**
