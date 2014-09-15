@@ -10,7 +10,7 @@ RUN apt-get -y install software-properties-common
 # install the Oracle Java 7 SDK
 RUN add-apt-repository ppa:webupd8team/java
 RUN apt-get update && apt-get -y upgrade
-RUN echo oracle-java7-installer shared/accepted-oracle-license-v1-1 select true | /usr/bin/debconf-set-selections && apt-get -y install oracle-java7-installer
+RUN echo oracle-java7-installer shared/accepted-oracle-license-v1-1 select true | /usr/bin/debconf-set-selections && apt-get -y install oracle-java7-installer && rm /var/cache/oracle-jdk7-installer/jdk-*-linux-x64.tar.gz
 RUN apt-get clean && update-alternatives --display java
 ENV JAVA_HOME /usr/lib/jvm/java-7-oracle
 
