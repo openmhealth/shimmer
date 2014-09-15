@@ -4,58 +4,18 @@
  * Simple UI for managing shim data on the shim server.
  */
 angular.module('sandboxConsoleApp')
-    .controller('MainCtrl', ['$scope', '$http', function ($scope, $http) {
+    .controller('MainCtrl', ['$scope', '$http', '$window', function ($scope, $http, $window) {
 
         /**
          * Configurations for shim server shims.
          */
-        $scope.shims = [
-            /*{
-             shimKey: 'fitbit',
-             label: 'Fitbit',
-             endpoints: ['body', 'steps']
-             },
-             {
-             shimKey: 'healthvault',
-             label: 'Microsoft Healthvault',
-             endpoints: ['blood-pressure', 'activity']
-             },
-             {
-             shimKey: 'runkeeper',
-             label: 'Runkeeper',
-             endpoints: ['body']
-             },
-             {
-             shimKey: 'fatsecret',
-             label: 'Fat secret',
-             endpoints: ['body']
-             },
-             {
-             shimKey: 'jawbone',
-             label: 'Jawbone UP',
-             endpoints: ['body']
-             },
-             {
-             shimKey: 'withings',
-             label: 'Withings',
-             endpoints: ['body']
-             }*/
-        ];
+        $scope.shims = [];
+
 
         /**
          * Records received from the server based on search term.
          */
-        $scope.records = [
-            /*{
-             username: 'Anna',
-             auths: ['fitbit', 'runkeeper']
-             },
-             {
-             username: 'David',
-             auths: ['healthvault']
-             }*/
-        ];
-
+        $scope.records = [];
 
         /**
          * Loads all the available authorizations
@@ -85,10 +45,41 @@ angular.module('sandboxConsoleApp')
                 .success(function (data) {
                     $scope.records = data;
                 }).error(function (data, status) {
-                    console.error("Error querying the registry, try again.", status);
+                    console.error("Error doing lookup, nothing found!", status);
                 });
         };
 
+        /**
+         * Initiate OAuth flow for the given username
+         * @param record - user record for which the flow is being authorized.
+         * generated.
+         * @param shimKey   - Shim to authorize
+         */
+        $scope.initOAuthFlow = function (record, shimKey) {
+            var url = "/api/authorize/" + shimKey + "?username=" + record.username;
+            $http.get(url)
+                .success(function (data) {
+                    console.info("Retrieved authorization URL: ", data.authorizationUrl);
+                    var left = (screen.width / 2) - (500 / 2);
+                    var top = (screen.height / 2) - (500 / 2);
+                    var specs = 'resizable=0,scrollbars=1,width=500'
+                        + ',height=500,left=' + left + ",top=" + top;
+                    var newTab = $window.open(data.authorizationUrl, '_blank', specs);
+                    var interval = window.setInterval(function () {
+                        try {
+                            if (win == null || win.closed) {
+                                window.clearInterval(interval);
+                                $scope.doLookup();
+                            }
+                        }
+                        catch (e) {
+                        }
+                    }, 1000);
+                    newTab.focus();
+                }).error(function (data, status) {
+                    console.error("Error querying the registry, try again.", status);
+                });
+        };
 
         /**
          * Retrieve data from shim server for the given
@@ -132,7 +123,7 @@ angular.module('sandboxConsoleApp')
 
             $http.get(url)
                 .success(function (data) {
-                    $(responseBox).val(JSON.stringify(data,undefined,2));
+                    $(responseBox).val(JSON.stringify(data, undefined, 2));
                     $(spinner).css("display", "none");
                     $(responseBox).css("display", "block");
                 })

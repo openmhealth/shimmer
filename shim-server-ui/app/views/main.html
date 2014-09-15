@@ -41,7 +41,9 @@
                     <li class="list-group-item" ng-repeat="shim in shims">
                         <div ng-show="record.auths.indexOf(shim.shimKey) == -1">
                             <span>{{shim.label}}</span>
-                            <button type="button" class="btn btn-primary pull-right">Connect</button>
+                            <button ng-click="initOAuthFlow(record,shim.shimKey)"
+                                    type="button"
+                                    class="btn btn-primary pull-right">Connect</button>
                             <div class="clearfix"></div>
                         </div>
 
@@ -67,17 +69,20 @@
                                     <div class="panel-heading">
                                         <form class="form-inline" role="form" novalidate>
                                             <div class="form-group col-md-1"><span>{{endpoint}}</span></div>
-
+                                            <div class="clearfix"></div>
                                             <div class="form-group col-md-4">
                                                 <div class="input-group">
                                                     <input id=
-                                                                   "fromDate-{{record.username}}-{{shim.shimKey}}-{{endpoint}}"
+                                                    "fromDate-{{record.username}}-{{shim.shimKey}}-{{endpoint}}"
                                                            type="text" class="form-control"
-                                                           datepicker-popup="{{format}}" ng-model="fromDate"
+                                                           datepicker-popup="{{format}}"
+                                                           ng-model="fromDate"
                                                            is-open="openedFrom"
-                                                           min-date="minDate" max-date="'2015-06-22'"
+                                                           min-date="minDate"
+                                                           max-date="'2015-06-22'"
                                                            datepicker-options="dateOptions"
-                                                           date-disabled="disabled(date, mode)" ng-required="true"
+                                                           date-disabled="disabled(date, mode)"
+                                                           ng-required="true"
                                                            close-text="Close"/>
                                                   <span class="input-group-btn">
                                                     <button id="fromBtn" type="button"
@@ -92,13 +97,16 @@
                                             <div class="form-group col-md-4">
                                                 <div class="input-group">
                                                     <input id=
-                                                                   "toDate-{{record.username}}-{{shim.shimKey}}-{{endpoint}}"
+                                                    "toDate-{{record.username}}-{{shim.shimKey}}-{{endpoint}}"
                                                            type="text" class="form-control"
-                                                           datepicker-popup="{{format}}" ng-model="toDate"
+                                                           datepicker-popup="{{format}}"
+                                                           ng-model="toDate"
                                                            is-open="openedTo"
-                                                           min-date="minDate" max-date="'2015-06-22'"
+                                                           min-date="minDate"
+                                                           max-date="'2015-06-22'"
                                                            datepicker-options="dateOptions"
-                                                           date-disabled="disabled(date, mode)" ng-required="true"
+                                                           date-disabled="disabled(date, mode)"
+                                                           ng-required="true"
                                                            close-text="Close"/>
                                                   <span class="input-group-btn">
                                                     <button id="toBtn"
