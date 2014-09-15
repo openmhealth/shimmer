@@ -6,11 +6,12 @@
 angular.module('sandboxConsoleApp')
     .controller('MainCtrl', ['$scope', '$http', '$window', function ($scope, $http, $window) {
 
+        var API_ROOT_URL = "/omh-shims-api";
+
         /**
          * Configurations for shim server shims.
          */
         $scope.shims = [];
-
 
         /**
          * Records received from the server based on search term.
@@ -22,7 +23,7 @@ angular.module('sandboxConsoleApp')
          * from the shim server
          */
         $scope.loadShims = function () {
-            var url = "/api/registry";
+            var url = API_ROOT_URL + "/registry";
             $http.get(url)
                 .success(function (data) {
                     $scope.shims = data;
@@ -40,7 +41,7 @@ angular.module('sandboxConsoleApp')
          */
         $scope.doLookup = function () {
             var searchTerm = $($("#uid-term")[0]).val();
-            var url = "/api/authorizations?username=" + searchTerm.trim();
+            var url = API_ROOT_URL + "/authorizations?username=" + searchTerm.trim();
             $http.get(url)
                 .success(function (data) {
                     $scope.records = data;
@@ -56,7 +57,7 @@ angular.module('sandboxConsoleApp')
          * @param shimKey   - Shim to authorize
          */
         $scope.initOAuthFlow = function (record, shimKey) {
-            var url = "/api/authorize/" + shimKey + "?username=" + record.username;
+            var url = API_ROOT_URL + "/authorize/" + shimKey + "?username=" + record.username;
             $http.get(url)
                 .success(function (data) {
                     console.info("Retrieved authorization URL: ", data.authorizationUrl);
@@ -91,7 +92,7 @@ angular.module('sandboxConsoleApp')
          * @param shimKey
          */
         $scope.disconnect = function (record, shimKey) {
-            var url = "/api/de-authorize/" + shimKey + "?username=" + record.username;
+            var url = API_ROOT_URL + "/de-authorize/" + shimKey + "?username=" + record.username;
             $http({
                 url: url,
                 method: 'DELETE'
@@ -137,7 +138,7 @@ angular.module('sandboxConsoleApp')
             $(responseBox).css("display", "none");
             $(spinner).css("display", "block");
 
-            var url = "/api/data/" + shimKey + "/" + endPoint + "?"
+            var url = API_ROOT_URL + "/data/" + shimKey + "/" + endPoint + "?"
                 + "username=" + record.username
                 + "&dateStart=" + fromDate + "&dateEnd=" + toDate
                 + (doNormalize ? "&normalize=true" : "");
@@ -163,7 +164,7 @@ angular.module('sandboxConsoleApp')
          * Opens the 'endpoints' panel below a shim, which allows
          * the user to input a date range and retrieve data.
          *
-         * @param event
+         * @param event - event that triggered this.
          * @param record
          * @param shimKey
          */

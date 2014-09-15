@@ -77,13 +77,13 @@ module.exports = function (grunt) {
             //server: {
             proxies: [
                 {
-                    context: '/api',
+                    context: '/omh-shims-api',
                     host: 'localhost',
                     port: 8083,
                     https: false,
                     changeOrigin: false,
                     rewrite: {
-                        '^/api': ''
+                        '^/omh-shims-api': ''
                     }
                 }
             ],
@@ -331,6 +331,26 @@ module.exports = function (grunt) {
             }
         },
 
+        replace: {
+            css_relative_paths: {
+                overwrite: true, // overwrite matched source files
+                src: ['dist/styles/*.vendor.css','dist/styles/*.main.css'],
+                replacements: [
+                    {
+                        from: '/bower_components/bootstrap/dist/fonts',
+                        to: '/fonts/'
+                    }
+                ]
+            },
+            api_settings: {
+                overwrite: true, // overwrite matched source files
+                src: ['dist/scripts/*.scripts.js'],
+                replacements: [
+                    {from: '"/omh-shims-api";', to: '"";'}
+                ]
+            }
+        },
+
         // Run some tasks in parallel to speed up the build process
         concurrent: {
             server: [
@@ -428,7 +448,9 @@ module.exports = function (grunt) {
         'uglify',
         'rev',
         'usemin',
-        'htmlmin'
+        'htmlmin',
+        'replace:css_relative_paths',
+        'replace:api_settings'
     ]);
 
     grunt.registerTask('default', [
