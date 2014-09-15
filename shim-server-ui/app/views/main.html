@@ -2,9 +2,9 @@
     <div class="row header">
         <ul class="nav nav-pills pull-right">
             <li class="active"><a ng-href="#">Shims</a></li>
-            <li><a ng-href="#">Settings</a></li>
+            <!--<li><a ng-href="#">Settings</a></li>-->
         </ul>
-        <h3 class="text-muted">OMH Console</h3>
+        <h3 class="text-muted">Open mHealth: Shim Server</h3>
     </div>
 
     <form ng-submit="doLookup()">
@@ -38,7 +38,8 @@
 
                 <ul class="list-group">
 
-                    <li class="list-group-item" ng-repeat="shim in shims">
+                    <li ng-class="{'connected-row':record.auths.indexOf(shim.shimKey) > -1}"
+                        class="list-group-item" ng-repeat="shim in shims">
                         <div ng-show="record.auths.indexOf(shim.shimKey) == -1">
                             <span>{{shim.label}}</span>
                             <button ng-click="initOAuthFlow(record,shim.shimKey)"
@@ -54,9 +55,9 @@
                                 <span>{{shim.label}}</span>
 
                                 <span class="label label-lg label-success glyphicon glyphicon-ok">&nbsp;</span>
-                            <span ng-click="disconnect(record, shim.shimKey)"
+                            <span ng-click="disconnect($event, record, shim.shimKey)"
                                   class="glyphicon glyphicon-remove pull-right"
-                                  style="font-size: 16px; color: #BE0A0A;"></span>
+                                  style="font-size: 16px; color: #BE0A0A; cursor: pointer;"></span>
                             </div>
                             <div class="clearfix"></div>
 

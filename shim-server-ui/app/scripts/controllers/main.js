@@ -95,7 +95,11 @@ angular.module('sandboxConsoleApp')
          * @param record
          * @param shimKey
          */
-        $scope.disconnect = function (record, shimKey) {
+        $scope.disconnect = function ($event, record, shimKey) {
+
+            $event.preventDefault();
+            $event.stopPropagation();
+
             var url = API_ROOT_URL + "/de-authorize/" + shimKey + "?username=" + record.username;
             $http({
                 url: url,
