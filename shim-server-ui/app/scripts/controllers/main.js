@@ -44,7 +44,11 @@ angular.module('sandboxConsoleApp')
             var url = API_ROOT_URL + "/authorizations?username=" + searchTerm.trim();
             $http.get(url)
                 .success(function (data) {
+                    console.info("The data is: ", data);
                     $scope.records = data;
+                    if (data.length == 0) {
+                        $scope.records.push({username: searchTerm, auths: []})
+                    }
                 }).error(function (data, status) {
                     console.error("Error doing lookup, nothing found!", status);
                 });
