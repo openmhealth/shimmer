@@ -59,7 +59,8 @@ public class TimeFrame {
     }
 
     public DateTime getDateTime() {
-        return dateTime;
+        return timeInterval != null && timeInterval.getDateTime() != null
+            ? timeInterval.getDateTime() : dateTime;
     }
 
     public void setDateTime(DateTime dateTime) {
