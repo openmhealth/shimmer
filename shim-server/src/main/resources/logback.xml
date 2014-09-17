@@ -5,12 +5,11 @@
     <!--</encoder>-->
     <!--</appender>-->
 
-    <appender name="FILE"
-              class="ch.qos.logback.core.FileAppender">
-        <layout class="ch.qos.logback.classic.PatternLayout">
+    <appender name="FILE" class="ch.qos.logback.core.FileAppender">
+        <file>./omh-shims.log</file>
+        <encoder>
             <pattern>%-4relative [%thread] %-5level %class - %msg%n</pattern>
-        </layout>
-        <File>./omh-shims.log</File>
+        </encoder>
     </appender>
 
     <include resource="org/springframework/boot/logging/logback/base.xml"/>

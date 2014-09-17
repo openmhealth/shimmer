@@ -6,7 +6,7 @@
 
     <groupId>org.openmhealth.shim</groupId>
     <artifactId>omh-shims</artifactId>
-    <version>0.1.2</version>
+    <version>0.2.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>Open mHealth Shim Server</name>
@@ -44,9 +44,21 @@
         <url>git@github.com:openmhealth/omh-shims.git</url>
     </scm>
 
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>1.1.6.RELEASE</version>
+    </parent>
+
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <start-class>org.openmhealth.shim.Application</start-class>
+
+        <health-vault.version>1.6</health-vault.version>
+        <jackson.version>2.4.2</jackson.version>
+        <joda-time.version>2.4</joda-time.version>
+        <signpost.version>1.2.1.2</signpost.version>
+        <spring-security-oauth.version>2.0.3.RELEASE</spring-security-oauth.version>
     </properties>
 
     <dependencies>
@@ -59,37 +71,40 @@
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
-            <version>4.3.3</version>
         </dependency>
 
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpcore</artifactId>
-            <version>4.3</version>
+            <version>4.3.2</version>
         </dependency>
 
         <dependency>
             <groupId>com.microsoft.hsg</groupId>
             <artifactId>hv-jaxb</artifactId>
-            <version>1.6</version>
+            <version>${health-vault.version}</version>
         </dependency>
 
         <dependency>
             <groupId>com.microsoft.hsg</groupId>
             <artifactId>hv-sdk</artifactId>
-            <version>1.6</version>
+            <version>${health-vault.version}</version>
         </dependency>
 
         <dependency>
             <groupId>com.fasterxml.jackson.dataformat</groupId>
             <artifactId>jackson-dataformat-xml</artifactId>
-            <version>2.4.0</version>
+            <version>${jackson.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
         </dependency>
 
         <dependency>
             <groupId>joda-time</groupId>
             <artifactId>joda-time</artifactId>
-            <version>2.4</version>
         </dependency>
 
         <dependency>
@@ -107,8 +122,6 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.11</version>
-            <scope>test</scope>
         </dependency>
 
         <dependency>
@@ -121,37 +134,38 @@
         <dependency>
             <groupId>oauth.signpost</groupId>
             <artifactId>signpost-commonshttp4</artifactId>
-            <version>1.2.1.2</version>
+            <version>${signpost.version}</version>
         </dependency>
 
         <dependency>
             <groupId>oauth.signpost</groupId>
             <artifactId>signpost-core</artifactId>
-            <version>1.2.1.2</version>
+            <version>${signpost.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-autoconfigure</artifactId>
-            <version>1.1.1.RELEASE</version>
         </dependency>
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-mongodb</artifactId>
-            <version>1.1.1.RELEASE</version>
         </dependency>
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-jetty</artifactId>
-            <version>1.1.1.RELEASE</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
         </dependency>
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
-            <version>1.1.1.RELEASE</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.springframework.boot</groupId>
@@ -163,13 +177,13 @@
         <dependency>
             <groupId>org.springframework.security.oauth</groupId>
             <artifactId>spring-security-oauth</artifactId>
-            <version>2.0.1.RELEASE</version>
+            <version>${spring-security-oauth.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.springframework.security.oauth</groupId>
             <artifactId>spring-security-oauth2</artifactId>
-            <version>2.0.1.RELEASE</version>
+            <version>${spring-security-oauth.version}</version>
         </dependency>
 
         <dependency>
