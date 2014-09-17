@@ -648,7 +648,8 @@ public class HealthvaultShim implements Shim {
             request.setRecordId(
                 accessInfo.getAdditionalParameters().get(RECORD_ID_PARAM).toString());
             HVAccessor accessor = new HVAccessor();
-            accessor.send(request, ConnectionFactory.getConnection());
+            accessor.send(request,
+                ConnectionFactory.getConnection(config.getClientId()));
             try {
                 InputStream istream = accessor.getResponse().getInputStream();
                 return marshaller.marshal(istream);

@@ -26,7 +26,7 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties(prefix = "openmhealth.shim.healthvault")
 public class HealthvaultConfig {
 
-    private String clientId; // = "bafb1313-d4e0-421c-b3b5-4e3a55639c19";
+    private String clientId;
 
     public String getClientId() {
         return clientId;
