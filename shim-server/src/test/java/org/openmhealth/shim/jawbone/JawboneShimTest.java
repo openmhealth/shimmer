@@ -87,7 +87,7 @@ public class JawboneShimTest {
         for (StepCount sc : stepCounts) {
             if (sc.getEffectiveTimeFrame().getDateTime().equals(expectedTimeUTC)) {
                 assertEquals(sc.getStepCount(), expectedSteps);
-                assertEquals(sc.getEffectiveTimeFrame().getDuration().getValue(), expectedDuration);
+                assertEquals(sc.getEffectiveTimeFrame().getTimeInterval().getDuration().getValue(), expectedDuration);
                 found = true;
             }
         }

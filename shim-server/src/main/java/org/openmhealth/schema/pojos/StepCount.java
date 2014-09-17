@@ -35,7 +35,7 @@ public class StepCount extends BaseDataPoint {
     private Integer stepCount;
 
     @JsonProperty(value = "effective_time_frame", required = false)
-    private TimeInterval effectiveTimeFrame;
+    private TimeFrame effectiveTimeFrame;
 
     public static final String SCHEMA_STEP_COUNT = "step_count";
 
@@ -62,11 +62,11 @@ public class StepCount extends BaseDataPoint {
         this.stepCount = stepCount;
     }
 
-    public TimeInterval getEffectiveTimeFrame() {
+    public TimeFrame getEffectiveTimeFrame() {
         return effectiveTimeFrame;
     }
 
-    public void setEffectiveTimeFrame(TimeInterval effectiveTimeFrame) {
+    public void setEffectiveTimeFrame(TimeFrame effectiveTimeFrame) {
         this.effectiveTimeFrame = effectiveTimeFrame;
     }
 }

@@ -40,12 +40,12 @@ public class StepCountBuilder implements SchemaPojoBuilder<StepCount> {
 
     public StepCountBuilder withStartAndDuration(DateTime start, Double value,
                                                  DurationUnitValue.DurationUnit unit) {
-        stepCount.setEffectiveTimeFrame(TimeInterval.withStartAndDuration(start, value, unit));
+        stepCount.setEffectiveTimeFrame(TimeFrame.withTimeInterval(start, value, unit));
         return this;
     }
 
     public StepCountBuilder withStartAndEnd(DateTime start, DateTime end) {
-        stepCount.setEffectiveTimeFrame(TimeInterval.withStartAndEnd(start, end));
+        stepCount.setEffectiveTimeFrame(TimeFrame.withTimeInterval(start, end));
         return this;
     }
 

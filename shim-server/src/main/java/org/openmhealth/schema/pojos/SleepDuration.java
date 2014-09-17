@@ -21,6 +21,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
 import org.joda.time.DateTime;
+import org.openmhealth.schema.pojos.generic.TimeFrame;
 import org.openmhealth.schema.pojos.generic.TimeInterval;
 
 /**
@@ -31,7 +32,7 @@ import org.openmhealth.schema.pojos.generic.TimeInterval;
 public class SleepDuration extends BaseDataPoint {
 
     @JsonProperty(value = "effective_time_frame")
-    private TimeInterval effectiveTimeFrame;
+    private TimeFrame effectiveTimeFrame;
 
     @JsonProperty(value = "sleep_duration")
     private SleepDurationUnitValue sleepDurationUnitValue;
@@ -56,11 +57,11 @@ public class SleepDuration extends BaseDataPoint {
         return effectiveTimeFrame.getDateTime();
     }
 
-    public TimeInterval getEffectiveTimeFrame() {
+    public TimeFrame getEffectiveTimeFrame() {
         return effectiveTimeFrame;
     }
 
-    public void setEffectiveTimeFrame(TimeInterval effectiveTimeFrame) {
+    public void setEffectiveTimeFrame(TimeFrame effectiveTimeFrame) {
         this.effectiveTimeFrame = effectiveTimeFrame;
     }
 
