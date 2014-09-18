@@ -3,7 +3,7 @@ spring:
     name: Open mHealth shim server
   data:
     mongodb:
-      uri: mongodb://localhost:27017/omh_dsu
+      uri: mongodb://mongo:27017/omh_dsu
 server:
   port: 8083
 security:
