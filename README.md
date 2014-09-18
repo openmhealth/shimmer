@@ -60,8 +60,9 @@ Then in a terminal,
   * Note that this will download up to 600MB of Docker images. (203MB for Ubuntu, 350MB for the OpenJDK 7 JRE, and 30MB 
     for the shim server and its dependencies.)
 1. Start the shim server by running
-  * `docker run -e openmhealth.shim.server.callbackUrlBase=<your-docker-host> --link some-mongo:mongo -d -p 8083:8083 'openmhealth/omh-shim-server'`
+  * `docker run -e openmhealth.shim.server.callbackUrlBase=http://<your-docker-host>:8083 --link some-mongo:mongo -d -p 8083:8083 'openmhealth/omh-shim-server:latest'`
 1. The server should now be running on the Docker host on default port 8083. You can change the port number in the Docker `run` command.
+1. Visit `http://<your-docker-host>:8083` in a browser.
 
 #### Option 2. Building from source and running on your host system
 
