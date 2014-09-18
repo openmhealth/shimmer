@@ -1,10 +1,11 @@
 <div ng-controller="MainCtrl">
     <div class="row header">
-        <ul class="nav nav-pills pull-right">
-            <!--<li class="active"><a ng-href="#">Shims</a></li>-->
-            <!--<li><a ng-href="#">Settings</a></li>-->
+        <h3 class="text-muted logo pull-left">Shim Server</h3>
+        <ul class="shim-nav nav nav-pills pull-right">
+            <li class="active"><a class="pull-right sublink" ng-href="#">Shims</a></li>
+            <li><a class="pull-right sublink" ng-href="#">Settings</a></li>
         </ul>
-        <h3 class="text-muted logo">Shim Server</h3>
+        <div class="clearfix"></div>
     </div>
 
     <form ng-submit="doLookup()">

@@ -87,13 +87,20 @@ body {
   height: 15em;
 }
 
-.logo{
+.logo {
   background-image: url("/images/omh_logo-monochromatic.png");
-  background-repeat: no-repeat;  
-  background-size: 35%;
+  background-repeat: no-repeat;
+  background-size: 70%;
   background-position: left top;
-  text-align: right; 
+  text-align: right;
   padding: 30px;
+  padding-left: 200px;
+  color: transparent;
+}
+
+.shim-nav{
+  /*border: 1px solid red;*/
+  margin-top: 30px;
 }
 
 .connected-row {
@@ -113,6 +120,12 @@ body {
 
 .connected-row .glyphicon {
   padding-left: 10px;
+}
+
+.sublink {
+  margin-right: 30px;
+  margin-bottom: 10px;
+  font-size: 13px;
 }
 
 /* Responsive: Portrait tablets and up */
