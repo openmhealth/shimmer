@@ -69,7 +69,7 @@ public class SleepBuilderTest {
 
         SleepDuration deserialized = mapper.readValue(rawJson, SleepDuration.class);
 
-        assertNotNull(deserialized.getEffectiveTimeFrame().getTimeInterval().getDateTime());
+        assertNotNull(deserialized.getEffectiveTimeFrame().getTimeInterval().getStartTime());
         assertNotNull(deserialized.getEffectiveTimeFrame().getTimeInterval().getEndTime());
         assertNotNull(deserialized.getSleepDurationUnitValue().getUnit());
         assertNotNull(deserialized.getSleepDurationUnitValue().getValue());

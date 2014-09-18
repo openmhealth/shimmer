@@ -22,13 +22,9 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 import org.junit.Test;
-import org.openmhealth.schema.pojos.BloodPressure;
-import org.openmhealth.schema.pojos.BloodPressureUnit;
 import org.openmhealth.schema.pojos.StepCount;
 import org.openmhealth.shim.ShimDataResponse;
-import org.openmhealth.shim.withings.WithingsShim;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -85,7 +81,7 @@ public class JawboneShimTest {
 
         Boolean found = false;
         for (StepCount sc : stepCounts) {
-            if (sc.getEffectiveTimeFrame().getTimeInterval().getDateTime().equals(expectedTimeUTC)) {
+            if (sc.getEffectiveTimeFrame().getTimeInterval().getStartTime().equals(expectedTimeUTC)) {
                 assertEquals(sc.getStepCount(), expectedSteps);
                 assertEquals(sc.getEffectiveTimeFrame().getTimeInterval().getDuration().getValue(), expectedDuration);
                 found = true;
