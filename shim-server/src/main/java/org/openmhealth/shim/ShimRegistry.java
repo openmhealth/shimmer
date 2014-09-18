@@ -30,4 +30,6 @@ public interface ShimRegistry {
     List<Shim> getShims();
 
     List<Shim> getAvailableShims();
+
+    void init();
 }

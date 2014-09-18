@@ -76,7 +76,7 @@ public class ShimRegistryImpl implements ShimRegistry {
     public ShimRegistryImpl() {
     }
 
-    private void init() {
+    public void init() {
         registryMap = new LinkedHashMap<>();
 
         if (jawboneConfig.getClientId() != null && jawboneConfig.getClientSecret() != null) {
@@ -130,12 +130,12 @@ public class ShimRegistryImpl implements ShimRegistry {
     @Override
     public List<Shim> getAvailableShims() {
         return Arrays.asList(
-            new JawboneShim(null, null, null, null),
-            new FatsecretShim(null, null, null),
-            new RunkeeperShim(null, null, null, null),
-            new WithingsShim(null, null, null),
-            new HealthvaultShim(null, null, null),
-            new FitbitShim(null, null, null)
+            new JawboneShim(null, null, null, jawboneConfig),
+            new FatsecretShim(null, null, fatsecretConfig),
+            new RunkeeperShim(null, null, null, runkeeperConfig),
+            new WithingsShim(null, null, withingsConfig),
+            new HealthvaultShim(null, null, healthvaultConfig),
+            new FitbitShim(null, null, fitbitConfig)
         );
     }
 

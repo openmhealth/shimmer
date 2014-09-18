@@ -133,6 +133,7 @@ public class Application extends WebSecurityConfigurerAdapter {
         parameters.setClientId(clientId);
         parameters.setClientSecret(clientSecret);
         applicationAccessParametersRepo.save(parameters);
+        shimRegistry.init();
         return Arrays.asList("success");
     }
 
