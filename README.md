@@ -4,14 +4,15 @@
 
 A *shim* is an adapter that reads raw health data from a third-party API and converts 
 that data into an [Open mHealth compliant data format](http://www.openmhealth.org/developers/schemas/). It's called a shim
-because it lets you treat the third-party API like an Open mHealth compliant endpoint when writing your application. 
-To learn more about shims, please visit the [shim section](http://www.openmhealth.org/developers/apis/) on the main site.
+because it lets you treat third-party data like Open mHealth compliant data when writing your application. 
+To learn more about shims, please visit the [shim section](http://www.openmhealth.org/developers/apis/) on our site.
  
 A shim is a library, not an application. To use a shim, it needs to be hosted in a standalone application called a *shim server*. 
-The API exposed by the shim server lets your application use a shim to read data in either the raw format produced by the third-party API or in a 
-converted Open mHealth compliant format. To choose the shims you want to enable in the shim server, please follow the instructions below.
+The shim server API lets your application use a shim to read data from a third-party API. This data is available in two formats;
+ the raw format produced by the third-party API and the converted Open mHealth compliant format. To make it easier to use the shim
+ server, we've provided a *shim server UI* that can trigger authentication flows and make requests.
  
-This repository contains a shim server and shims for third-party APIs. The currently supported APIs are:
+This repository contains a shim server, a shim server UI, and shims for third-party APIs. The currently supported APIs are:
 
 * [Fat Secret](http://platform.fatsecret.com/api/)
 * [Fitbit](http://dev.fitbit.com/)
@@ -29,45 +30,65 @@ If any of links are incorrect or out of date, please [submit an issue](https://g
 
 ### Installation
 
-There are two ways to install and run the shim server. You can either run it in a Docker container, or you can install and
-run it manually.
+There are three ways to build and run the shim server. 
 
-#### Docker installation
+1. You can run a Docker container that executes a pre-built binary. 
+  * This is the fastest way to get up and running and isolates the install from your system.
+1. You can build all the code from source and run it on your host system. This is a quick way to get up and running
+   if your system already has MongoDB and is prepped to build Java code. 
+1. You can run a Docker container that builds all the code from source and executes the resulting binary.
+  * This isolates the install from your system while still letting you hack the code. But it can take a while to build
+   the container due to the large number of libraries and subsystems that need to be downloaded and installed.
+  * If you know Docker and want to speed things up, remove optional components from the Dockerfile and link them
+  from separate containers.
+
+#### Option 1. Running a pre-built binary in Docker
 
 If you don't have Docker installed, download [Docker](https://docs.docker.com/installation/#installation/) 
  and follow the installation instructions for your platform.
- 
-Then,
 
-1. Download the latest [release](https://github.com/openmhealth/omh-shims/releases) of this Git repository or clone it. 
-1. Navigate to the `docker` directory in a terminal.
-1. Run `docker build -t="openmhealth/omh-shim-server" .`
-1. Run `docker run -d -p 8083:8083 -p 2022:22 openmhealth/omh-shim-server`. 
+Then in a terminal,
+
+1. If you don't already have a MongoDB container, download one by running `docker pull mongo:latest`
+  * Note that this will download around 400 MB of Docker images.
+1. If your MongoDB container isn't running, start it by running `docker run --name some-mongo -d mongo:latest`
+1. Download the shim server image by running `docker pull openmhealth/omh-shim-server:latest` 
+  * Note that this will download up to 600MB of Docker images. (203MB for Ubuntu, 350MB for the OpenJDK 7 JRE, and 30MB 
+    for the shim server and its dependencies.)
+1. Start the shim server by running `docker run -e openmhealth.shim.server.callbackUrlBase=<your-docker-host> --link some-mongo:mongo -d -p 8083:8083 'openmhealth/omh-shim-server'`
 1. The server should now be running on the Docker host on default port 8083. You can change the port number in the Docker `run` command.
 
-If you want to SSH into the container, run `ssh root@<your-docker-host> -p 2022`. The password is `docker`.
-
-#### Manual installation
+#### Option 2. Building from source and running on your host system
 
 If you prefer not to use Docker,  
 
 1. You must have a [Java 7](http://www.oracle.com/technetwork/java/javase/downloads/index-jsp-138363.html/) or higher JDK installed. 
 1. A running [MongoDB](http://http://docs.mongodb.org/manual/) installation is required.
 1. [Gradle](http://www.gradle.org/) or [Maven](http://maven.apache.org/) is required to build the source code.  
-1. [Maven](http://maven.apache.org/) is required to build and install Microsoft HealthVault libraries.  
+1. [Maven](http://maven.apache.org/) is required to build and install Microsoft HealthVault libraries.
+1. You technically don't need to run the shim server UI, but it makes your life easier. If you're building the UI,
+  1. [Node.js](http://nodejs.org/download/) is required.
+  1. [Xcode Command Line Tools](https://developer.apple.com/xcode/) are required if you're on a Mac.
 
 Then,
 
 1. Clone this Git repository.
-1. Navigate to the `src/main/resources` directory and edit the `application.yaml` file.
+1. Navigate to the `shim-server-ui` directory in a terminal and run
+  1. `npm install`
+  1. `sudo npm install -g grunt-cli bower`
+  1. `bower install`
+  1. `grunt build`
+  1. `ln -s dist ../shim-server/src/main/resources/public`
+1. Navigate to the `shim-server/src/main/resources` directory and edit the `application.yaml` file.
 1. Check that the `spring:data:mongodb:uri` parameter points to your running MongoDB instance.
+  * You might need to change the host to `localhost`, for example.
 1. Follow [these instructions](#preparing-to-use-microsoft-healthvault) to install Microsoft HealthVault libraries. These libraries are
  currently required for the shim server to work.
-1. To build and run the shim server, navigate to the project directory in a terminal. 
+1. To build and run the shim server, navigate to the `shim-server` directory and 
   * If you're using Maven, run `mvn spring-boot:run`
   * If using Gradle, run `gradle bootRun`
 1. The server should now be running on `localhost` on port 8083. You can change the port number in the `application.yaml` file.
-
+                           
 ##### Preparing to use Microsoft HealthVault
     
 The Microsoft HealthVault shim has dependencies which can't be automatically downloaded from public servers, at least 
@@ -76,22 +97,38 @@ not yet. To add HealthVault support to the shim server,
 1. Download the HealthVault Java Library version [R1.6.0](https://healthvaultjavalib.codeplex.com/releases/view/125355) archive.
 1. Extract the archive.
 1. Navigate to the extracted directory in a terminal.
-1. Run `mvn install`
+1. Run `mvn install -N && mvn install --pl sdk,hv-jaxb -DskipTests`
   
 This will make the HealthVault libraries available to both Maven and Gradle.  
 
+#### Option 3. Building from source and running in Docker
+
+If you don't have Docker installed, download [Docker](https://docs.docker.com/installation/#installation/) 
+ and follow the installation instructions for your platform.
+
+Then,
+
+1. Download the latest [release](https://github.com/openmhealth/omh-shims/releases) of this Git repository or clone it. 
+1. Navigate to the `docker/source` directory in a terminal.
+1. Run `docker build -t="openmhealth/omh-shim-server" .`
+  * This will require about 1.5GB of disk space.  
+1. Run `docker run -d -p 8083:8083 -p 2022:22 openmhealth/omh-shim-server`
+1. The server should now be running on the Docker host on default port 8083. You can change the port number in the Docker `run` command.
+
+If you want to SSH into the container, run `ssh root@<your-docker-host> -p 2022`. The password is `docker`.
+
 ### Setting up your credentials
 
-You need to obtain authentication credentials, typically an OAuth client ID and client secret, for each shim you'd like to run. 
+You need to obtain authentication credentials, typically an OAuth client ID and client secret, for any shim you'd like to run. 
 These are obtained from the developer websites of the third-party APIs.
 
-Once obtained, uncomment and replace the corresponding `clientId` and `clientSecret` placeholders in the `application.yaml` file 
-with your new credentials and restart Jetty. 
+Once credentials are obtained for a particular API, navigate to the settings tab of the shim server UI and fill them in. 
 
-If you installed using Docker, you can restart Jetty using `supervisord restart jetty`. If you installed manually,
-terminate your running Gradle or Maven process and restart it.
+(If you didn't build the UI, uncomment and replace the corresponding `clientId` and `clientSecret` placeholders in the `application.yaml` file 
+with your new credentials and restart Jetty. If you installed using Docker, you can restart Jetty using `supervisorctl restart jetty`. 
+If you installed manually, terminate your running Gradle or Maven process and restart it.)
 
-### Authorizing access to a third-party user account
+### Authorizing access to a third-party user account by hand
 
 The data produced by a third-party API belongs to some user account registered on the third-party system. To allow 
  a shim read that data, you'll need to initiate an authorization process that lets the account holder grant the shim access to their data.
@@ -105,7 +142,7 @@ To initiate the authorization process,
 You should be redirected to the third-party website where you can login and authorize access to your third-party user account. 
 1. Once authorized, you should be redirected to `http://<host>:8083/authorize/{shim_name}/callback` and you'll see an approval response.
 
-### Reading data
+### Reading data by hand
 You can now pull data from the third-party API by making requests in the format
  
 `http://<host>:8083/data/{shim}/{endPoint}?username={userId}&dateStart=yyyy-MM-dd&dateEnd=yyyy-MM-dd&normalize={true|false}`
