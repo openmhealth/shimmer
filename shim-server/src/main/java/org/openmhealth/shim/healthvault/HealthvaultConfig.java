@@ -38,7 +38,7 @@ public class HealthvaultConfig implements ShimConfig {
     public String getClientId() {
         ApplicationAccessParameters parameters =
             applicationParametersRepo.findByShimKey(HealthvaultShim.SHIM_KEY);
-        return parameters.getClientId() != null ? parameters.getClientId() : clientId;
+        return parameters != null ? parameters.getClientId() : clientId;
     }
 
     @Override

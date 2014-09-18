@@ -40,7 +40,7 @@ public class JawboneConfig implements ShimConfig {
     public String getClientId() {
         ApplicationAccessParameters parameters =
             applicationParametersRepo.findByShimKey(JawboneShim.SHIM_KEY);
-        return parameters.getClientId() != null ? parameters.getClientId() : clientId;
+        return parameters != null ? parameters.getClientId() : clientId;
     }
 
     public void setClientId(String clientId) {
@@ -50,7 +50,7 @@ public class JawboneConfig implements ShimConfig {
     public String getClientSecret() {
         ApplicationAccessParameters parameters =
             applicationParametersRepo.findByShimKey(JawboneShim.SHIM_KEY);
-        return parameters.getClientSecret() != null ? parameters.getClientSecret() : clientSecret;
+        return parameters != null ? parameters.getClientSecret() : clientSecret;
     }
 
     public void setClientSecret(String clientSecret) {

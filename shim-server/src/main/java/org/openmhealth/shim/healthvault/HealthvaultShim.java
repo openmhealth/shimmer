@@ -77,7 +77,7 @@ public class HealthvaultShim implements Shim {
 
     public static final String RECORD_ID_PARAM = "recordId";
 
-    private Connection connection = ConnectionFactory.getConnection();
+    private Connection connection = null; //ConnectionFactory.getConnection();
 
     private static DateTimeFormatter formatterMins = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm");
     private static DateTimeFormatter formatterDate = DateTimeFormat.forPattern("yyyy-MM-dd");
@@ -94,6 +94,9 @@ public class HealthvaultShim implements Shim {
         this.authorizationRequestParametersRepo = authorizationRequestParametersRepo;
         this.shimServerConfig = shimServerConfig;
         this.config = healthvaultConfig;
+        if(config.getClientId() != null){
+            this.connection = ConnectionFactory.getConnection(config.getClientId());
+        }
     }
 
     @Override
