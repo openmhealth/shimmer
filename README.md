@@ -26,7 +26,10 @@ The above links point to the developer website of each API. You'll need to visit
 application and obtain authentication credentials for each of the shims you want to enable.  
 
 If any of links are incorrect or out of date, please [submit an issue](https://github.com/openmhealth/omh-shims/issues) to let us know. 
-  
+
+Please note that the shim server is meant as a discovery and experimentation tool. It has not been secured and does not
+attempt to protect the data retrieved from third-party APIs.
+
 
 ### Installation
 
@@ -94,6 +97,7 @@ Then,
   * If you're using Maven, run `mvn spring-boot:run`
   * If using Gradle, run `gradle bootRun`
 1. The server should now be running on `localhost` on port 8083. You can change the port number in the `application.yaml` file.
+1. Visit `http://localhost:8083` in a browser.
                            
 ##### Preparing to use Microsoft HealthVault
     
@@ -120,6 +124,7 @@ Then,
   * This will require about 1.5GB of disk space.  
 1. Run `docker run -d -p 8083:8083 -p 2022:22 openmhealth/omh-shim-server`
 1. The server should now be running on the Docker host on default port 8083. You can change the port number in the Docker `run` command.
+1. Visit `http://<your-docker-host>:8083` in a browser.
 
 If you want to SSH into the container, run `ssh root@<your-docker-host> -p 2022`. The password is `docker`.
 
@@ -134,22 +139,40 @@ Once credentials are obtained for a particular API, navigate to the settings tab
 with your new credentials and restart Jetty. If you installed using Docker, you can restart Jetty using `supervisorctl restart jetty`. 
 If you installed manually, terminate your running Gradle or Maven process and restart it.)
 
-### Authorizing access to a third-party user account by hand
+### Authorising access to a third-party user account from the UI
 
 The data produced by a third-party API belongs to some user account registered on the third-party system. To allow 
  a shim read that data, you'll need to initiate an authorization process that lets the account holder grant the shim access to their data.
 
-To initiate the authorization process,
+To initiate the authorization process from the UI,
  
-1. Go to the URL `http://<host>:8083/authorize/{shim}?username={userId}` in a browser.
+1. Type in an arbitrary user handle. This handle can be anything, it's just your way of referring to third-party API users. 
+1. Press *Find* and the UI will show you a *Connect* button for each API whose authentication credentials have been [configured](#setting-up-your-credentials).
+1. Click *Connect* and a pop-up will open.
+1. Follow the authorization prompts. You should see an `AUTHORIZE` JSON response.
+1. Close the pop-up.
+
+### Authorising access to a third-party user account programmatically
+
+To initiate the authorization process programmatically,
+ 
+1. Make a GET request to `http://<host>:8083/authorize/{shim}?username={userId}`
   * The `shim` path parameter should be one of the names listed [below](#supported-apis-and-endpoints), e.g. `fitbit`. 
   * The `username` query parameter can be set to any unique identifier you'd like to use to identify the user. 
-1. In the returned JSON response, find the `authorizationUrl` value and open this URL in a new browser window. 
-You should be redirected to the third-party website where you can login and authorize access to your third-party user account. 
-1. Once authorized, you should be redirected to `http://<host>:8083/authorize/{shim_name}/callback` and you'll see an approval response.
+1. In the returned JSON response, find the `authorizationUrl` value and redirect your user to this URL. Your user will land on the third-party website where they can login and authorize access to their third-party user account. 
+1. Once authorized, they will be redirected to `http://<host>:8083/authorize/{shim_name}/callback` along with an approval response.
 
-### Reading data by hand
-You can now pull data from the third-party API by making requests in the format
+### Reading data using the UI
+
+To pull data from the third-party API using the UI,
+ 
+1. Click the nam of the connected third-party API.
+1. Fill in the date range you're interested in.
+1. Press the *Raw* button for raw data, or the *Normalized* button for data that has been converted to an Open mHealth compliant data format. 
+
+### Reading data programmatically
+
+To pull data from the third-party API programmatically, make requests in the format
  
 `http://<host>:8083/data/{shim}/{endPoint}?username={userId}&dateStart=yyyy-MM-dd&dateEnd=yyyy-MM-dd&normalize={true|false}`
 
