@@ -1,0 +1,40 @@
+spring:
+  application:
+    name: Open mHealth shim server
+  data:
+    mongodb:
+      uri: mongodb://mongo:27017/omh_dsu
+server:
+  port: 8083
+security:
+  basic:
+    enabled: false
+logging:
+  file: omh-shims.log
+http:
+  mappers:
+    jsonPrettyPrint: true
+
+openmhealth:
+  shim:
+    server:
+      callbackUrlBase: http://localhost:8083
+
+    #NOTE: Un-comment and fill in with your credentials if you're not using the UI
+    #fitbit:
+    #  clientId: [YOUR_CLIENT_ID]
+    #  clientSecret: [YOUR_CLIENT_SECRET]
+    #fatsecret:
+    #  clientId: [YOUR_CLIENT_ID]
+    #  clientSecret: [YOUR_CLIENT_SECRET]
+    #jawbone:
+    #  clientId: [YOUR_CLIENT_ID]
+    #  clientSecret: [YOUR_CLIENT_SECRET]
+    #runkeeper:
+    #  clientId: [YOUR_CLIENT_ID]
+    #  clientSecret: [YOUR_CLIENT_SECRET]
+    #withings:
+    #  clientId: [YOUR_CLIENT_ID]
+    #  clientSecret: [YOUR_CLIENT_SECRET]
+    #healthvault:
+    #  clientId: [YOUR_CLIENT_ID]

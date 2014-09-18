@@ -1,0 +1,89 @@
+{
+    "result": {
+        "date": "2014-07-13",
+        "content": {
+            "average": [
+                {
+                    "heartRate": 50,
+                    "tracker": "Resting Heart Rate"
+                },
+                {
+                    "heartRate": 61,
+                    "tracker": "Normal Heart Rate"
+                },
+                {
+                    "heartRate": 75,
+                    "tracker": "Exertive Heart Rate"
+                }
+            ],
+            "heart": [
+                {
+                    "heartRate": 50,
+                    "logId": 437197297,
+                    "tracker": "Resting Heart Rate"
+                },
+                {
+                    "heartRate": 51,
+                    "logId": 437186452,
+                    "tracker": "Resting Heart Rate"
+                },
+                {
+                    "heartRate": 50,
+                    "logId": 438204160,
+                    "time": "03:30",
+                    "tracker": "Resting Heart Rate"
+                },
+                {
+                    "heartRate": 50,
+                    "logId": 458225625,
+                    "time": "10:13",
+                    "tracker": "Resting Heart Rate"
+                },
+                {
+                    "heartRate": 60,
+                    "logId": 437197296,
+                    "tracker": "Normal Heart Rate"
+                },
+                {
+                    "heartRate": 62,
+                    "logId": 437186451,
+                    "tracker": "Normal Heart Rate"
+                },
+                {
+                    "heartRate": 61,
+                    "logId": 438204159,
+                    "time": "05:50",
+                    "tracker": "Normal Heart Rate"
+                },
+                {
+                    "heartRate": 61,
+                    "logId": 458225624,
+                    "time": "20:14",
+                    "tracker": "Normal Heart Rate"
+                },
+                {
+                    "heartRate": 77,
+                    "logId": 437197298,
+                    "tracker": "Exertive Heart Rate"
+                },
+                {
+                    "heartRate": 73,
+                    "logId": 437186453,
+                    "tracker": "Exertive Heart Rate"
+                },
+                {
+                    "heartRate": 75,
+                    "logId": 438204161,
+                    "time": "07:23",
+                    "tracker": "Exertive Heart Rate"
+                },
+                {
+                    "heartRate": 75,
+                    "logId": 458225626,
+                    "time": "15:30",
+                    "tracker": "Exertive Heart Rate"
+                }
+            ]
+        }
+    }
+}

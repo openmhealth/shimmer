@@ -1,0 +1,169 @@
+/* Space out content a bit */
+
+body {
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+
+/* Everything but the jumbotron gets side spacing for mobile first views */
+
+.header,
+.marketing,
+.footer {
+  padding-left: 15px;
+  padding-right: 15px;
+}
+
+/* Custom page header */
+
+.header {
+  border-bottom: 1px solid #e5e5e5;
+}
+
+/* Make the masthead heading the same height as the navigation */
+
+.header h3 {
+  margin-top: 0;
+  margin-bottom: 0;
+  line-height: 40px;
+  padding-bottom: 19px;
+}
+
+/* Custom page footer */
+
+.footer {
+  padding-top: 19px;
+  color: #777;
+  border-top: 1px solid #e5e5e5;
+}
+
+/* Customize container */
+
+@media (min-width: 768px) {
+  .container {
+    max-width: 730px;
+  }
+}
+
+.container-narrow > hr {
+  margin: 30px 0;
+}
+
+/* Main marketing message and sign up button */
+
+.jumbotron {
+  text-align: center;
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.jumbotron .btn {
+  font-size: 21px;
+  padding: 14px 24px;
+}
+
+/* Supporting marketing content */
+
+.marketing {
+  margin: 40px 0;
+}
+
+.marketing p + h4 {
+  margin-top: 28px;
+}
+
+.spinner {
+  background-image: url("/images/spinner.gif");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 2em;
+  padding: 1em;
+  display: none;
+}
+
+.jsonResponseBox {
+  width: 100%;
+  display: none;
+  font-size: .85em;
+  height: 15em;
+}
+
+.logo {
+  background-image: url("/images/omh_logo-monochromatic.png");
+  background-repeat: no-repeat;
+  background-size: 70%;
+  background-position: left top;
+  text-align: right;
+  padding: 30px;
+  padding-left: 200px;
+  color: transparent;
+}
+
+.shim-nav {
+  /*border: 1px solid red;*/
+  margin-top: 30px;
+}
+
+.connected-row {
+  /*padding: 15px 25px 15px 15px;*/
+}
+
+.connected-row:hover {
+  background-color: #eee;
+  cursor: pointer;
+}
+
+.connected-row .label-success {
+  border-radius: 100px;
+  padding: 3px;
+  margin-left: 10px;
+}
+
+.connected-row .glyphicon {
+  padding-left: 10px;
+}
+
+.sublink {
+  margin-right: 30px;
+  margin-bottom: 10px;
+  font-size: 13px;
+}
+
+.settings-form {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.settings-form input{
+  font-size: 1.2em;
+  margin-right: 15px;
+  margin-left: 15px;
+}
+
+.settings-form button{
+  margin-left: 20px;
+}
+
+/* Responsive: Portrait tablets and up */
+
+@media screen and (min-width: 768px) {
+  /* Remove the padding we set earlier */
+
+  .header,
+  .marketing,
+  .footer {
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  /* Space out the masthead */
+
+  .header {
+    margin-bottom: 30px;
+  }
+
+  /* Remove the bottom border on the jumbotron for visual effect */
+
+  .jumbotron {
+    border-bottom: 0;
+  }
+}
