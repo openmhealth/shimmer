@@ -52,15 +52,14 @@ public class TimeFrame {
         if (timeInterval != null && timeInterval.getDate() != null) {
             return timeInterval.getDate();
         }
-        if (timeInterval != null && timeInterval.getDateTime() != null) {
-            return timeInterval.getDateTime();
+        if (timeInterval != null && timeInterval.getStartTime() != null) {
+            return timeInterval.getStartTime();
         }
         return null;
     }
 
     public DateTime getDateTime() {
-        return timeInterval != null && timeInterval.getDateTime() != null
-            ? timeInterval.getDateTime() : dateTime;
+        return dateTime;
     }
 
     public void setDateTime(DateTime dateTime) {
@@ -84,7 +83,7 @@ public class TimeFrame {
     public static TimeFrame withTimeInterval(DateTime startTime, DateTime endTime) {
         TimeFrame timeFrame = new TimeFrame();
         TimeInterval interval = new TimeInterval();
-        interval.setDateTime(startTime);
+        interval.setStartTime(startTime);
         interval.setEndTime(endTime);
         timeFrame.setTimeInterval(interval);
         return timeFrame;
@@ -95,7 +94,7 @@ public class TimeFrame {
                                              DurationUnitValue.DurationUnit unit) {
         TimeFrame timeFrame = new TimeFrame();
         TimeInterval interval = new TimeInterval();
-        interval.setDateTime(startTime);
+        interval.setStartTime(startTime);
         DurationUnitValue durationUnitValue = new DurationUnitValue();
         durationUnitValue.setUnit(unit);
         durationUnitValue.setValue(new BigDecimal(durationValue));

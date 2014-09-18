@@ -45,7 +45,7 @@ public class TimeInterval {
     @JsonProperty(value = "start_time", required = false)
     @JsonSerialize(using = ISODateSerializer.class)
     @JsonDeserialize(using = ISODateDeserializer.class)
-    private DateTime dateTime;
+    private DateTime startTime;
 
     @JsonProperty(value = "end_time", required = false)
     @JsonSerialize(using = ISODateSerializer.class)
@@ -66,12 +66,12 @@ public class TimeInterval {
         this.date = date;
     }
 
-    public DateTime getDateTime() {
-        return dateTime;
+    public DateTime getStartTime() {
+        return startTime;
     }
 
-    public void setDateTime(DateTime dateTime) {
-        this.dateTime = dateTime;
+    public void setStartTime(DateTime startTime) {
+        this.startTime = startTime;
     }
 
     public DateTime getEndTime() {
@@ -100,7 +100,7 @@ public class TimeInterval {
 
     public static TimeInterval withStartAndEnd(DateTime start, DateTime end) {
         TimeInterval interval = new TimeInterval();
-        interval.setDateTime(start);
+        interval.setStartTime(start);
         interval.setEndTime(end);
         return interval;
     }
@@ -109,7 +109,7 @@ public class TimeInterval {
                                                     Double durationValue,
                                                     DurationUnitValue.DurationUnit unit) {
         TimeInterval interval = new TimeInterval();
-        interval.setDateTime(startTime);
+        interval.setStartTime(startTime);
         DurationUnitValue durationUnitValue = new DurationUnitValue();
         durationUnitValue.setUnit(unit);
         durationUnitValue.setValue(new BigDecimal(durationValue));

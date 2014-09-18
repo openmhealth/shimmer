@@ -52,6 +52,9 @@ public class Application extends WebSecurityConfigurerAdapter {
     private AuthorizationRequestParametersRepo authParametersRepo;
 
     @Autowired
+    private ApplicationAccessParametersRepo applicationAccessParametersRepo;
+
+    @Autowired
     private ShimRegistry shimRegistry;
 
     private static DateTimeFormatter formatterDate = DateTimeFormat.forPattern("yyyy-MM-dd");
@@ -80,10 +83,12 @@ public class Application extends WebSecurityConfigurerAdapter {
     @RequestMapping("registry")
     public
     @ResponseBody
-    List<Map<String, Object>> shimList() throws ShimException {
+    List<Map<String, Object>> shimList(
+        @RequestParam(value = "available", defaultValue = "") String available
+    ) throws ShimException {
 
         List<Map<String, Object>> results = new ArrayList<>();
-        List<Shim> shims = shimRegistry.getShims();
+        List<Shim> shims = "".equals(available) ? shimRegistry.getShims() : shimRegistry.getAvailableShims();
 
         for (Shim shim : shims) {
             List<String> endpoints = new ArrayList<>();
@@ -94,9 +99,42 @@ public class Application extends WebSecurityConfigurerAdapter {
             row.put("shimKey", shim.getShimKey());
             row.put("label", shim.getLabel());
             row.put("endpoints", endpoints);
+            if (shim.getClientId() != null) {
+                row.put("clientId", shim.getClientId());
+            }
+            if (shim.getClientSecret() != null) {
+                row.put("clientSecret", shim.getClientSecret());
+            }
             results.add(row);
         }
         return results;
+    }
+
+    /**
+     * Update shim configuration
+     *
+     * @return - list of shims + endpoints in a map.
+     * @throws ShimException
+     */
+    @RequestMapping(value = "shim/{shim}/config", method = {RequestMethod.PUT, RequestMethod.POST})
+    public
+    @ResponseBody
+    List<String> updateShimConfig(
+        @PathVariable("shim") String shimKey,
+        @RequestParam("clientId") String clientId,
+        @RequestParam("clientSecret") String clientSecret
+    ) throws ShimException {
+        ApplicationAccessParameters parameters =
+            applicationAccessParametersRepo.findByShimKey(shimKey);
+        if (parameters == null) {
+            parameters = new ApplicationAccessParameters();
+            parameters.setShimKey(shimKey);
+        }
+        parameters.setClientId(clientId);
+        parameters.setClientSecret(clientSecret);
+        applicationAccessParametersRepo.save(parameters);
+        shimRegistry.init();
+        return Arrays.asList("success");
     }
 
     /**

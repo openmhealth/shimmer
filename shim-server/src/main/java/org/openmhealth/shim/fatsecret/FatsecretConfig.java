@@ -16,6 +16,10 @@
 
 package org.openmhealth.shim.fatsecret;
 
+import org.openmhealth.shim.ApplicationAccessParameters;
+import org.openmhealth.shim.ApplicationAccessParametersRepo;
+import org.openmhealth.shim.ShimConfig;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
@@ -24,14 +28,19 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @ConfigurationProperties(prefix = "openmhealth.shim.fatsecret")
-public class FatsecretConfig {
+public class FatsecretConfig implements ShimConfig {
+
+    @Autowired
+    private ApplicationAccessParametersRepo applicationParametersRepo;
 
     private String clientId;
 
     private String clientSecret;
 
     public String getClientId() {
-        return clientId;
+        ApplicationAccessParameters parameters =
+            applicationParametersRepo.findByShimKey(FatsecretShim.SHIM_KEY);
+        return parameters != null ? parameters.getClientId() : clientId;
     }
 
     public void setClientId(String clientId) {
@@ -39,7 +48,9 @@ public class FatsecretConfig {
     }
 
     public String getClientSecret() {
-        return clientSecret;
+        ApplicationAccessParameters parameters =
+            applicationParametersRepo.findByShimKey(FatsecretShim.SHIM_KEY);
+        return parameters != null ? parameters.getClientSecret() : clientSecret;
     }
 
     public void setClientSecret(String clientSecret) {

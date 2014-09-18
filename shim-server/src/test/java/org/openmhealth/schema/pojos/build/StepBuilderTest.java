@@ -67,7 +67,7 @@ public class StepBuilderTest {
 
         StepCount deserialized = mapper.readValue(rawJson, StepCount.class);
 
-        assertNotNull(deserialized.getEffectiveTimeFrame().getTimeInterval().getDateTime());
+        assertNotNull(deserialized.getEffectiveTimeFrame().getTimeInterval().getStartTime());
         assertNotNull(deserialized.getEffectiveTimeFrame().getTimeInterval().getDuration().getUnit());
         assertNotNull(deserialized.getEffectiveTimeFrame().getTimeInterval().getDuration().getValue());
         assertNotNull(deserialized.getStepCount());

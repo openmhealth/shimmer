@@ -72,7 +72,7 @@ public class ActivityBuilderTest {
 
         Activity deserialized = mapper.readValue(rawJson, Activity.class);
 
-        assertNotNull(deserialized.getEffectiveTimeFrame().getTimeInterval().getDateTime());
+        assertNotNull(deserialized.getEffectiveTimeFrame().getTimeInterval().getStartTime());
         assertNotNull(deserialized.getEffectiveTimeFrame().getTimeInterval().getDuration());
         assertNotNull(deserialized.getActivityName());
         assertNotNull(deserialized.getDistance().getUnit());

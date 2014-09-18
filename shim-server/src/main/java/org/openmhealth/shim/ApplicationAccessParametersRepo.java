@@ -16,20 +16,15 @@
 
 package org.openmhealth.shim;
 
-import java.util.List;
+import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.stereotype.Repository;
 
 /**
- * Basic contract for a shim registry.
- *
  * @author Danilo Bonilla
  */
-public interface ShimRegistry {
+@Repository
+public interface ApplicationAccessParametersRepo extends MongoRepository<ApplicationAccessParameters, String> {
 
-    Shim getShim(String shimKey);
+    ApplicationAccessParameters findByShimKey(String shimKey);
 
-    List<Shim> getShims();
-
-    List<Shim> getAvailableShims();
-
-    void init();
 }

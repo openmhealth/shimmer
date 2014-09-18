@@ -86,7 +86,7 @@ public class RunkeeperShimTest {
         assertEquals(activity.getDistance().getUnit(), LengthUnitValue.LengthUnit.m);
         assertEquals(activity.getActivityName(), "Rowing");
         assertEquals(
-            activity.getEffectiveTimeFrame().getTimeInterval().getDateTime(),
+            activity.getEffectiveTimeFrame().getTimeInterval().getStartTime(),
             expectedStartTimeUTC);
         assertEquals(
             activity.getEffectiveTimeFrame().getTimeInterval().getDuration().getUnit(),
