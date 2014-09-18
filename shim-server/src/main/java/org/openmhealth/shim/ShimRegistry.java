@@ -28,4 +28,6 @@ public interface ShimRegistry {
     Shim getShim(String shimKey);
 
     List<Shim> getShims();
+
+    List<Shim> getAvailableShims();
 }

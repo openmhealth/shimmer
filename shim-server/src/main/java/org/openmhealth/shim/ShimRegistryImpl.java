@@ -32,6 +32,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -127,10 +128,22 @@ public class ShimRegistryImpl implements ShimRegistry {
     }
 
     @Override
+    public List<Shim> getAvailableShims() {
+        return Arrays.asList(
+            new JawboneShim(null, null, null, null),
+            new FatsecretShim(null, null, null),
+            new RunkeeperShim(null, null, null, null),
+            new WithingsShim(null, null, null),
+            new HealthvaultShim(null, null, null),
+            new FitbitShim(null, null, null)
+        );
+    }
+
+    @Override
     public List<Shim> getShims() {
         if (registryMap == null) {
             init();
         }
-        return new ArrayList<Shim>(registryMap.values());
+        return new ArrayList<>(registryMap.values());
     }
 }
