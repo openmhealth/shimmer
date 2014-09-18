@@ -74,6 +74,7 @@ angular.module('sandboxConsoleApp')
             }).success(function () {
                 console.info("successfully disconnected.");
                 spinner.hide();
+                $scope.loadShims();
             }).error(function (data, status) {
                 spinner.hide();
                 console.error("Could not disconnect, " +
