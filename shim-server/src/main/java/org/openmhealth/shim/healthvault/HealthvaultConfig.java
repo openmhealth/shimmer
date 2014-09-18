@@ -16,6 +16,10 @@
 
 package org.openmhealth.shim.healthvault;
 
+import org.openmhealth.shim.ApplicationAccessParameters;
+import org.openmhealth.shim.ApplicationAccessParametersRepo;
+import org.openmhealth.shim.ShimConfig;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
@@ -24,12 +28,22 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @ConfigurationProperties(prefix = "openmhealth.shim.healthvault")
-public class HealthvaultConfig {
+public class HealthvaultConfig implements ShimConfig {
 
     private String clientId;
 
+    @Autowired
+    private ApplicationAccessParametersRepo applicationParametersRepo;
+
     public String getClientId() {
-        return clientId;
+        ApplicationAccessParameters parameters =
+            applicationParametersRepo.findByShimKey(HealthvaultShim.SHIM_KEY);
+        return parameters.getClientId() != null ? parameters.getClientId() : clientId;
+    }
+
+    @Override
+    public String getClientSecret() {
+        return null; //Not required by health vault.
     }
 
     public void setClientId(String clientId) {
