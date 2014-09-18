@@ -9,6 +9,13 @@ angular.module('sandboxConsoleApp')
         var API_ROOT_URL = "/omh-shims-api";
 
         /**
+         * A list of all the shims currently supported by the shim server. Whether configured
+         * or not.
+         * @type {Array}
+         */
+        $scope.availables = [];
+
+        /**
          * Configurations for shim server shims.
          */
         $scope.shims = [];
@@ -17,6 +24,55 @@ angular.module('sandboxConsoleApp')
          * Records received from the server based on search term.
          */
         $scope.records = [];
+
+        /**
+         * Simple flag for navigating between settings and list page.
+         * @type {boolean}
+         */
+        $scope.settingsOpen = false;
+
+        /**
+         * Simple function to flip between shims and settings.
+         */
+        $scope.goto = function ($event, section) {
+            $event.preventDefault();
+            $event.stopPropagation();
+
+            $(".shim-nav li").removeClass("active");
+
+            var elm = $($event.currentTarget)[0];
+            $(elm).parent().addClass("active");
+            $scope.settingsOpen = section == 'settings';
+        };
+
+        /**
+         * Allows user to save clientId/clientSecret settings
+         * in the form.
+         * @param shimKey - The shim whose settings we're trying
+         * to save.
+         */
+        $scope.saveSettings = function (shimKey) {
+            var clientId = $($("#clientId-" + shimKey)[0]).val();
+            var clientSecret = $($("#clientSecret-" + shimKey)[0]).val();
+            var spinner = $("#settings-spinner-" + shimKey);
+
+            spinner.show();
+
+            var url = API_ROOT_URL + "/shim/" + shimKey + "/config";
+            url += "?clientId=" + clientId + "&clientSecret=" + clientSecret;
+
+            $http({
+                url: url,
+                method: 'PUT'
+            }).success(function () {
+                console.info("successfully disconnected.");
+                spinner.hide();
+            }).error(function (data, status) {
+                spinner.hide();
+                console.error("Could not disconnect, " +
+                    "error occurred.", data, status);
+            });
+        };
 
         /**
          * Loads all the available authorizations
@@ -30,6 +86,29 @@ angular.module('sandboxConsoleApp')
                 }).error(function (data, status) {
                     console.error("Error querying the registry, try again.", status);
                 });
+            $http.get(url + "?available=true")
+                .success(function (data) {
+                    $scope.availables = data;
+                }).error(function (data, status) {
+                    console.error("Error querying the registry, " +
+                        "could not retrieve available shims.", status);
+                });
+        };
+
+        /**
+         * Retrieve settings for a specific shim.
+         */
+        $scope.getShim = function (shimKey) {
+            var elm = {};
+            if (!$scope.shims || $scope.shims.length == 0) {
+                return elm;
+            }
+            angular.forEach($scope.shims, function (value,key) {
+                if (value.shimKey == shimKey) {
+                    elm = value;
+                }
+            });
+            return elm;
         };
 
         /**

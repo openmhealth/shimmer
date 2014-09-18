@@ -1,94 +1,136 @@
 <div ng-controller="MainCtrl">
-    <div class="row header">
-        <h3 class="text-muted logo pull-left">Shim Server</h3>
-        <ul class="shim-nav nav nav-pills pull-right">
-            <li class="active"><a class="pull-right sublink" ng-href="#">Shims</a></li>
-            <li><a class="pull-right sublink" ng-href="#">Settings</a></li>
-        </ul>
-        <div class="clearfix"></div>
-    </div>
+<div class="row header">
+    <h3 class="text-muted logo pull-left">Shim Server</h3>
+    <ul class="shim-nav nav nav-pills pull-right">
+        <li class="active"><a ng-click="goto($event, 'shims')" class="pull-right sublink" ng-href="#">Shims</a></li>
+        <li><a ng-click="goto($event, 'settings')" class="pull-right sublink" ng-href="#">Settings</a></li>
+    </ul>
+    <div class="clearfix"></div>
+</div>
 
-    <form ng-submit="doLookup()">
-        <div class="row">
-            <div class="col-lg-12">
-                <div class="input-group input-group-lg">
-                    <input placeholder="Enter a unique identifier"
-                           id="uid-term" type="text" class="form-control">
+<form ng-submit="doLookup()" ng-show="!settingsOpen">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="input-group input-group-lg">
+                <input placeholder="Enter a unique identifier"
+                       id="uid-term" type="text" class="form-control">
                   <span class="input-group-btn">
                     <button class="btn btn-default" type="submit">Find</button>
                   </span>
+            </div>
+        </div>
+    </div>
+</form>
+
+<br/>
+
+<!--
+ -- Lookup Search Results: Displays a panel for each user that was found with the given
+ -- user label.
+-->
+<div class="row">
+    <div class="col-lg-12">
+
+        <!--
+        -- Settings section: allows setting clientId/clientSecret
+        -->
+        <div class="panel panel-default" ng-repeat="available in availables" ng-show="settingsOpen">
+            <div class="panel-heading">
+                <h3 class="panel-title">{{available.label}}</h3>
+            </div>
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-lg-12" style="text-align: center;">
+                        <form class="settings-form form-inline" role="form">
+                            <div class="form-group">
+                                <input id="clientId-{{available.shimKey}}"
+                                       class="form-control input-lg"
+                                       value="{{getShim(available.shimKey).clientId}}"
+                                       placeholder="{{available.label}} clientId">
+                            </div>
+                            <div class="form-group">
+                                <input id="clientSecret-{{available.shimKey}}"
+                                       class="form-control input-lg"
+                                       value="{{getShim(available.shimKey).clientSecret}}"
+                                       ng-show="available.shimKey != 'healthvault'"
+                                       placeholder="{{available.label}} clientSecret">
+                            </div>
+                            <button id="saveSettingsBtn-{{available.shimKey}}"
+                                    ng-click="saveSettings(available.shimKey)"
+                                    class="btn btn-primary btn-lg">Save
+                            </button>
+                            <div id="settings-spinner-{{available.shimKey}}"
+                                 class="spinner pull-right">&nbsp;</div>
+                            <div class="clearfix"></div>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
-    </form>
 
-    <br/>
+        <!--
+         -- Shim Authorization and Data Section:
+         -- In this section users can lookup records and authorize new ones.
+        -->
+        <div class="panel panel-default" ng-repeat="record in records" ng-show="!settingsOpen">
+            <div class="panel-heading">
+                <h3 class="panel-title">
+                    <span class="glyphicon glyphicon-user"></span>&nbsp; {{record.username}}
+                </h3>
+            </div>
 
-    <!--
-     -- Lookup Search Results: Displays a panel for each user that was found with the given
-     -- user label.
-    -->
-    <div class="row">
-        <div class="col-lg-12">
-            <div class="panel panel-default" ng-repeat="record in records">
-                <div class="panel-heading">
-                    <h3 class="panel-title">
-                        <span class="glyphicon glyphicon-user"></span>&nbsp; {{record.username}}
-                    </h3>
-                </div>
+            <ul class="list-group">
 
-                <ul class="list-group">
+                <li ng-class="{'connected-row':record.auths.indexOf(shim.shimKey) > -1}"
+                    class="list-group-item" ng-repeat="shim in shims">
+                    <div ng-show="record.auths.indexOf(shim.shimKey) == -1">
+                        <span>{{shim.label}}</span>
+                        <button ng-click="initOAuthFlow(record,shim.shimKey)"
+                                type="button"
+                                class="btn btn-primary pull-right">Connect
+                        </button>
+                        <div class="clearfix"></div>
+                    </div>
 
-                    <li ng-class="{'connected-row':record.auths.indexOf(shim.shimKey) > -1}"
-                        class="list-group-item" ng-repeat="shim in shims">
-                        <div ng-show="record.auths.indexOf(shim.shimKey) == -1">
+                    <div ng-show="record.auths.indexOf(shim.shimKey) > -1">
+
+                        <div style="width: 100%" ng-click="openEndpoints($event,record,shim.shimKey)">
                             <span>{{shim.label}}</span>
-                            <button ng-click="initOAuthFlow(record,shim.shimKey)"
+
+                            <span class="label label-lg label-success glyphicon glyphicon-ok">&nbsp;</span>
+
+                            <button ng-click="disconnect($event, record, shim.shimKey)"
                                     type="button"
-                                    class="btn btn-primary pull-right">Connect
+                                    class="btn btn-danger pull-right">Disconnect
                             </button>
-                            <div class="clearfix"></div>
                         </div>
+                        <div class="clearfix"></div>
 
-                        <div ng-show="record.auths.indexOf(shim.shimKey) > -1">
+                        <!--
+                        -- Shim Data Panel: Presents endpoints for shim, allows for date range
+                        -- selectors and clicking on data for verification purposes.
+                        -->
+                        <ul id="shim-panel-{{record.username}}-{{shim.shimKey}}"
+                            class="list-group" style="display: none;">
 
-                            <div style="width: 100%" ng-click="openEndpoints($event,record,shim.shimKey)">
-                                <span>{{shim.label}}</span>
-
-                                <span class="label label-lg label-success glyphicon glyphicon-ok">&nbsp;</span>
-
-                                <button ng-click="disconnect($event, record, shim.shimKey)"
-                                        type="button"
-                                        class="btn btn-danger pull-right">Disconnect
-                                </button>
-                            </div>
-                            <div class="clearfix"></div>
-
-                            <!--
-                            -- Shim Data Panel: Presents endpoints for shim, allows for date range
-                            -- selectors and clicking on data for verification purposes.
-                            -->
-                            <ul id="shim-panel-{{record.username}}-{{shim.shimKey}}"
-                                class="list-group" style="display: none;">
-
-                                <li class="list-group-item" ng-repeat="endpoint in shim.endpoints">
-                                    <div class="panel-heading">
-                                        <form class="form-inline" role="form" novalidate>
-                                            <div class="form-group col-md-1"><span>{{endpoint}}</span></div>
-                                            <div class="clearfix"></div>
-                                            <div class="form-group col-md-4">
-                                                <div class="input-group">
-                                                    <input id="fromDate-{{record.username}}-{{shim.shimKey}}-{{endpoint}}"
-                                                           type="text" class="form-control"
-                                                           datepicker-popup="{{format}}"
-                                                           ng-model="fromDate"
-                                                           is-open="openedFrom"
-                                                           min-date="minDate"
-                                                           max-date="'2015-06-22'"
-                                                           datepicker-options="dateOptions"
-                                                           date-disabled="disabled(date, mode)"
-                                                           ng-required="true"
-                                                           close-text="Close"/>
+                            <li class="list-group-item" ng-repeat="endpoint in shim.endpoints">
+                                <div class="panel-heading">
+                                    <form class="form-inline" role="form" novalidate>
+                                        <div class="form-group col-md-1"><span>{{endpoint}}</span></div>
+                                        <div class="clearfix"></div>
+                                        <div class="form-group col-md-4">
+                                            <div class="input-group">
+                                                <input id="fromDate-{{record.username}}-{{shim.shimKey}}-{{endpoint}}"
+                                                       type="text" class="form-control"
+                                                       datepicker-popup="{{format}}"
+                                                       ng-model="fromDate"
+                                                       is-open="openedFrom"
+                                                       min-date="minDate"
+                                                       max-date="'2015-06-22'"
+                                                       datepicker-options="dateOptions"
+                                                       date-disabled="disabled(date, mode)"
+                                                       ng-required="true"
+                                                       close-text="Close"/>
                                                   <span class="input-group-btn">
                                                     <button id="fromBtn" type="button"
                                                             class="btn btn-default"
@@ -96,22 +138,22 @@
                                                             class="glyphicon glyphicon-calendar"></i>
                                                     </button>
                                                   </span>
-                                                </div>
                                             </div>
+                                        </div>
 
-                                            <div class="form-group col-md-4">
-                                                <div class="input-group">
-                                                    <input id="toDate-{{record.username}}-{{shim.shimKey}}-{{endpoint}}"
-                                                           type="text" class="form-control"
-                                                           datepicker-popup="{{format}}"
-                                                           ng-model="toDate"
-                                                           is-open="openedTo"
-                                                           min-date="minDate"
-                                                           max-date="'2015-06-22'"
-                                                           datepicker-options="dateOptions"
-                                                           date-disabled="disabled(date, mode)"
-                                                           ng-required="true"
-                                                           close-text="Close"/>
+                                        <div class="form-group col-md-4">
+                                            <div class="input-group">
+                                                <input id="toDate-{{record.username}}-{{shim.shimKey}}-{{endpoint}}"
+                                                       type="text" class="form-control"
+                                                       datepicker-popup="{{format}}"
+                                                       ng-model="toDate"
+                                                       is-open="openedTo"
+                                                       min-date="minDate"
+                                                       max-date="'2015-06-22'"
+                                                       datepicker-options="dateOptions"
+                                                       date-disabled="disabled(date, mode)"
+                                                       ng-required="true"
+                                                       close-text="Close"/>
                                                   <span class="input-group-btn">
                                                     <button id="toBtn"
                                                             type="button"
@@ -120,52 +162,52 @@
                                                         <i class="glyphicon glyphicon-calendar"></i>
                                                     </button>
                                                   </span>
-                                                </div>
                                             </div>
+                                        </div>
 
-                                            <div class="form-group col-md-3" style="text-align: left;">
-                                                <div class="input-group btn-group">
-                                                    <button ng-click=
-                                                                    "getData(record, shim.shimKey, endpoint, false)"
-                                                            type="button" style="font-size: 10px;"
-                                                            class="btn btn-default">Raw
-                                                    </button>
-                                                    <button ng-click=
-                                                                    "getData(record, shim.shimKey, endpoint, true)"
-                                                            type="button" style="font-size: 10px;"
-                                                            class="btn btn-default">Normalized
-                                                    </button>
-                                                </div>
+                                        <div class="form-group col-md-3" style="text-align: left;">
+                                            <div class="input-group btn-group">
+                                                <button ng-click=
+                                                                "getData(record, shim.shimKey, endpoint, false)"
+                                                        type="button" style="font-size: 10px;"
+                                                        class="btn btn-default">Raw
+                                                </button>
+                                                <button ng-click=
+                                                                "getData(record, shim.shimKey, endpoint, true)"
+                                                        type="button" style="font-size: 10px;"
+                                                        class="btn btn-default">Normalized
+                                                </button>
                                             </div>
-                                        </form>
-                                    </div>
-                                    <br>
-                                    <!--
-                                     -- A textbox which displays the JSON results from the shim server.
-                                    -->
-                                    <div class="panel-body">
-                                        <div id="shim-error-{{record.username}}-{{shim.shimKey}}-{{endpoint}}"
-                                             class="error"></div>
-                                        <div id="shim-spinner-{{record.username}}-{{shim.shimKey}}-{{endpoint}}"
-                                             class="spinner">&nbsp;</div>
-                                        <textarea class="jsonResponseBox"
-                                                  id="shim-results-{{record.username}}-{{shim.shimKey}}-{{endpoint}}"
-                                                ></textarea>
-                                    </div>
-                                </li>
-                            </ul>
+                                        </div>
+                                    </form>
+                                </div>
+                                <br>
+                                <!--
+                                 -- A textbox which displays the JSON results from the shim server.
+                                -->
+                                <div class="panel-body">
+                                    <div id="shim-error-{{record.username}}-{{shim.shimKey}}-{{endpoint}}"
+                                         class="error"></div>
+                                    <div id="shim-spinner-{{record.username}}-{{shim.shimKey}}-{{endpoint}}"
+                                         class="spinner">&nbsp;</div>
+                                    <textarea class="jsonResponseBox"
+                                              id="shim-results-{{record.username}}-{{shim.shimKey}}-{{endpoint}}"
+                                            ></textarea>
+                                </div>
+                            </li>
+                        </ul>
 
-                        </div>
+                    </div>
 
-                    </li>
-                </ul>
-            </div>
+                </li>
+            </ul>
         </div>
     </div>
+</div>
 
-    <br><br><br>
+<br><br><br>
 
-    <div class="footer">
-        <p><span class="glyphicon glyphicon-heart"></span> Powered by Open mHealth</p>
-    </div>
+<div class="footer">
+    <p><span class="glyphicon glyphicon-heart"></span> Powered by Open mHealth</p>
+</div>
 </div>

@@ -98,7 +98,7 @@ body {
   color: transparent;
 }
 
-.shim-nav{
+.shim-nav {
   /*border: 1px solid red;*/
   margin-top: 30px;
 }
@@ -126,6 +126,21 @@ body {
   margin-right: 30px;
   margin-bottom: 10px;
   font-size: 13px;
+}
+
+.settings-form {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.settings-form input{
+  font-size: 1.2em;
+  margin-right: 15px;
+  margin-left: 15px;
+}
+
+.settings-form button{
+  margin-left: 20px;
 }
 
 /* Responsive: Portrait tablets and up */
