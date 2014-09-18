@@ -31,6 +31,13 @@ angular.module('sandboxConsoleApp')
          */
         $scope.settingsOpen = false;
 
+
+        /**
+         * Default date parameters for date pickers.
+         */
+        $scope.fromDate = moment().subtract(2, "days").format("MM/DD/YYYY");
+        $scope.toDate = moment().add(1, "days").format("MM/DD/YYYY");
+
         /**
          * Simple function to flip between shims and settings.
          */
@@ -103,7 +110,7 @@ angular.module('sandboxConsoleApp')
             if (!$scope.shims || $scope.shims.length == 0) {
                 return elm;
             }
-            angular.forEach($scope.shims, function (value,key) {
+            angular.forEach($scope.shims, function (value, key) {
                 if (value.shimKey == shimKey) {
                     elm = value;
                 }
@@ -210,8 +217,8 @@ angular.module('sandboxConsoleApp')
             var error = $("#shim-error-" + suffix)[0];
             var spinner = $("#shim-spinner-" + suffix)[0];
             var responseBox = $("#shim-results-" + suffix)[0];
-            var fromDate = $($("#fromDate-" + suffix)[0]).val();
-            var toDate = $($("#toDate-" + suffix)[0]).val();
+            var fromDate = moment(new Date($($("#fromDate-" + suffix)[0]).val())).format("YYYY-MM-DD");
+            var toDate = moment(new Date($($("#toDate-" + suffix)[0]).val())).format("YYYY-MM-DD");
 
             if (!fromDate || fromDate == "") {
                 fromDate = moment().subtract(2, "days").format("YYYY-MM-DD");
@@ -269,6 +276,18 @@ angular.module('sandboxConsoleApp')
             } else {
                 $(elm).slideUp(250);
             }
+        };
+
+        /**
+         * Opens the date picker to retrieve data from a specific endpoint.
+         * @param type
+         * @param record
+         * @param shimKey
+         * @param endpoint
+         */
+        $scope.pickDate = function (type, record, shimKey, endpoint) {
+            var elm = $("#"+type + "Date-" + record.username + "-" + shimKey + "-" + endpoint)[0];
+            $(elm).focus();
         };
 
         /*

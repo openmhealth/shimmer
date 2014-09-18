@@ -121,22 +121,17 @@
                                         <div class="form-group col-md-4">
                                             <div class="input-group">
                                                 <input id="fromDate-{{record.username}}-{{shim.shimKey}}-{{endpoint}}"
-                                                       type="text" class="form-control"
-                                                       datepicker-popup="{{format}}"
-                                                       ng-model="fromDate"
-                                                       is-open="openedFrom"
-                                                       min-date="minDate"
-                                                       max-date="'2015-06-22'"
-                                                       datepicker-options="dateOptions"
-                                                       date-disabled="disabled(date, mode)"
-                                                       ng-required="true"
-                                                       close-text="Close"/>
+                                                       type="text"
+                                                       class="form-control"
+                                                       value="{{fromDate}}"
+                                                       ui-date
+                                                        />
                                                   <span class="input-group-btn">
-                                                    <button id="fromBtn" type="button"
-                                                            class="btn btn-default"
-                                                            ng-click="open($event)"><i
-                                                            class="glyphicon glyphicon-calendar"></i>
-                                                    </button>
+                                                      <button id="fromBtn" type="button"
+                                                              class="btn btn-default"
+                                                              ng-click="pickDate('from',record,shim.shimKey,endpoint)"><i
+                                                              class="glyphicon glyphicon-calendar"></i>
+                                                      </button>
                                                   </span>
                                             </div>
                                         </div>
@@ -144,23 +139,17 @@
                                         <div class="form-group col-md-4">
                                             <div class="input-group">
                                                 <input id="toDate-{{record.username}}-{{shim.shimKey}}-{{endpoint}}"
-                                                       type="text" class="form-control"
-                                                       datepicker-popup="{{format}}"
-                                                       ng-model="toDate"
-                                                       is-open="openedTo"
-                                                       min-date="minDate"
-                                                       max-date="'2015-06-22'"
-                                                       datepicker-options="dateOptions"
-                                                       date-disabled="disabled(date, mode)"
-                                                       ng-required="true"
-                                                       close-text="Close"/>
+                                                       type="text"
+                                                       class="form-control"
+                                                       value="{{toDate}}"
+                                                       ui-date
+                                                        />
                                                   <span class="input-group-btn">
-                                                    <button id="toBtn"
-                                                            type="button"
-                                                            class="btn btn-default"
-                                                            ng-click="open($event)">
-                                                        <i class="glyphicon glyphicon-calendar"></i>
-                                                    </button>
+                                                      <button id="toBtn" type="button"
+                                                              class="btn btn-default"
+                                                              ng-click="pickDate('to',record,shim.shimKey,endpoint)"><i
+                                                              class="glyphicon glyphicon-calendar"></i>
+                                                      </button>
                                                   </span>
                                             </div>
                                         </div>
