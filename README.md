@@ -34,7 +34,8 @@ There are three ways to build and run the shim server.
 
 1. You can run a Docker container that executes a pre-built binary. 
   * This is the fastest way to get up and running and isolates the install from your system.
-1. You can build all the code from source and run it on your host system. This is a quick way to get up and running
+1. You can build all the code from source and run it on your host system.
+  * This is a quick way to get up and running
    if your system already has MongoDB and is prepped to build Java code. 
 1. You can run a Docker container that builds all the code from source and executes the resulting binary.
   * This isolates the install from your system while still letting you hack the code. But it can take a while to build
@@ -49,13 +50,17 @@ If you don't have Docker installed, download [Docker](https://docs.docker.com/in
 
 Then in a terminal,
 
-1. If you don't already have a MongoDB container, download one by running `docker pull mongo:latest`
+1. If you don't already have a MongoDB container, download one by running
+  * `docker pull mongo:latest`
   * Note that this will download around 400 MB of Docker images.
-1. If your MongoDB container isn't running, start it by running `docker run --name some-mongo -d mongo:latest`
-1. Download the shim server image by running `docker pull openmhealth/omh-shim-server:latest` 
+1. If your MongoDB container isn't running, start it by running
+  * `docker run --name some-mongo -d mongo:latest`
+1. Download the shim server image by running
+  * `docker pull openmhealth/omh-shim-server:latest` 
   * Note that this will download up to 600MB of Docker images. (203MB for Ubuntu, 350MB for the OpenJDK 7 JRE, and 30MB 
     for the shim server and its dependencies.)
-1. Start the shim server by running `docker run -e openmhealth.shim.server.callbackUrlBase=<your-docker-host> --link some-mongo:mongo -d -p 8083:8083 'openmhealth/omh-shim-server'`
+1. Start the shim server by running
+  * `docker run -e openmhealth.shim.server.callbackUrlBase=<your-docker-host> --link some-mongo:mongo -d -p 8083:8083 'openmhealth/omh-shim-server'`
 1. The server should now be running on the Docker host on default port 8083. You can change the port number in the Docker `run` command.
 
 #### Option 2. Building from source and running on your host system
