@@ -190,7 +190,7 @@ public class HealthvaultShim implements Shim {
 
                     List<BloodPressure> bloodPressures = new ArrayList<>();
                     List<HeartRate> heartRates = new ArrayList<>();
-                    JsonPath bloodPressurePath = JsonPath.compile("$.things[*].data-xml.blood_pressure");
+                    JsonPath bloodPressurePath = JsonPath.compile("$.things[*].data-xml.blood-pressure");
 
                     List<Object> hvBloodPressures = JsonPath.read(rawJson, bloodPressurePath.getPath());
                     if (CollectionUtils.isEmpty(hvBloodPressures)) {
@@ -271,7 +271,7 @@ public class HealthvaultShim implements Shim {
                     String rawJson = responseNode.toString();
 
                     List<BloodGlucose> bloodGlucoses = new ArrayList<>();
-                    JsonPath bloodGlucosePath = JsonPath.compile("$.things[*].data-xml.blood_glucose");
+                    JsonPath bloodGlucosePath = JsonPath.compile("$.things[*].data-xml.blood-glucose");
 
                     List<Object> hvbloodGlucoses = JsonPath.read(rawJson, bloodGlucosePath.getPath());
                     if (CollectionUtils.isEmpty(hvbloodGlucoses)) {
