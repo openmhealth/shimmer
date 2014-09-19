@@ -182,7 +182,7 @@ public class WithingsShim extends OAuth1ShimBase {
                     JsonPath measuresPath = JsonPath.compile("$.body.measuregrps[*]");
                     List<Object> wMeasureGroups = JsonPath.read(rawJson, measuresPath.getPath());
                     if (CollectionUtils.isEmpty(wMeasureGroups)) {
-                        return ShimDataResponse.result(null);
+                        return ShimDataResponse.result(WithingsShim.SHIM_KEY, null);
                     }
                     ObjectMapper mapper = new ObjectMapper();
                     for (Object wMeasureGroup : wMeasureGroups) {
@@ -249,7 +249,7 @@ public class WithingsShim extends OAuth1ShimBase {
                     results.put(BodyHeight.SCHEMA_BODY_HEIGHT, bodyHeights);
                     results.put(BloodPressure.SCHEMA_BLOOD_PRESSURE, bloodPressures);
                     results.put(HeartRate.SCHEMA_HEART_RATE, heartRates);
-                    return ShimDataResponse.result(results);
+                    return ShimDataResponse.result(WithingsShim.SHIM_KEY, results);
                 }
             }),
 
@@ -259,7 +259,7 @@ public class WithingsShim extends OAuth1ShimBase {
                 public ShimDataResponse deserialize(JsonParser jsonParser,
                                                     DeserializationContext ctxt)
                     throws IOException {
-                    return ShimDataResponse.empty();
+                    return ShimDataResponse.empty(WithingsShim.SHIM_KEY);
                 }
             }),
 
@@ -279,7 +279,7 @@ public class WithingsShim extends OAuth1ShimBase {
                     JsonPath stepsPath = JsonPath.compile("$.body.series[*]");
                     Object wStepsObject = JsonPath.read(rawJson, stepsPath.getPath());
                     if (wStepsObject == null) {
-                        return ShimDataResponse.empty();
+                        return ShimDataResponse.empty(WithingsShim.SHIM_KEY);
                     }
 
                     ObjectMapper mapper = new ObjectMapper();
@@ -297,7 +297,7 @@ public class WithingsShim extends OAuth1ShimBase {
                     }
                     Map<String, Object> results = new HashMap<>();
                     results.put(StepCount.SCHEMA_STEP_COUNT, steps);
-                    return ShimDataResponse.result(results);
+                    return ShimDataResponse.result(WithingsShim.SHIM_KEY, results);
                 }
             }),
 
@@ -315,7 +315,7 @@ public class WithingsShim extends OAuth1ShimBase {
                     JsonPath sleepsPath = JsonPath.compile("$.body.series[*]");
                     List<Object> wSleeps = JsonPath.read(rawJson, sleepsPath.getPath());
                     if (CollectionUtils.isEmpty(wSleeps)) {
-                        return ShimDataResponse.empty();
+                        return ShimDataResponse.empty(WithingsShim.SHIM_KEY);
                     }
 
                     ObjectMapper mapper = new ObjectMapper();
@@ -333,7 +333,7 @@ public class WithingsShim extends OAuth1ShimBase {
                     }
                     Map<String, Object> results = new HashMap<>();
                     results.put(SleepDuration.SCHEMA_SLEEP_DURATION, sleeps);
-                    return ShimDataResponse.result(results);
+                    return ShimDataResponse.result(WithingsShim.SHIM_KEY, results);
                 }
             });
 
@@ -460,7 +460,7 @@ public class WithingsShim extends OAuth1ShimBase {
                 objectMapper.registerModule(module);
                 return objectMapper.readValue(responseEntity.getContent(), ShimDataResponse.class);
             } else {
-                return ShimDataResponse.result(objectMapper.readTree(responseEntity.getContent()));
+                return ShimDataResponse.result(WithingsShim.SHIM_KEY, objectMapper.readTree(responseEntity.getContent()));
             }
         } catch (IOException e) {
             throw new ShimException("Could not fetch data", e);

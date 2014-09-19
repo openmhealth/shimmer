@@ -143,7 +143,7 @@ public class HealthvaultShim implements Shim {
 
                     final List<Object> hvActivities = JsonPath.read(rawJson, activityPath.getPath());
                     if (CollectionUtils.isEmpty(hvActivities)) {
-                        return ShimDataResponse.result(null);
+                        return ShimDataResponse.result(HealthvaultShim.SHIM_KEY, null);
                     }
 
                     ObjectMapper mapper = new ObjectMapper();
@@ -173,7 +173,7 @@ public class HealthvaultShim implements Shim {
                     Map<String, Object> results = new HashMap<>();
                     results.put(Activity.SCHEMA_ACTIVITY, activities);
                     results.put(StepCount.SCHEMA_STEP_COUNT, stepCountList);
-                    return ShimDataResponse.result(results);
+                    return ShimDataResponse.result(HealthvaultShim.SHIM_KEY, results);
                 }
             }
         ),
@@ -194,7 +194,7 @@ public class HealthvaultShim implements Shim {
 
                     List<Object> hvBloodPressures = JsonPath.read(rawJson, bloodPressurePath.getPath());
                     if (CollectionUtils.isEmpty(hvBloodPressures)) {
-                        return ShimDataResponse.result(null);
+                        return ShimDataResponse.result(HealthvaultShim.SHIM_KEY, null);
                     }
                     ObjectMapper mapper = new ObjectMapper();
                     for (Object fva : hvBloodPressures) {
@@ -217,7 +217,7 @@ public class HealthvaultShim implements Shim {
                     Map<String, Object> results = new HashMap<>();
                     results.put(BloodPressure.SCHEMA_BLOOD_PRESSURE, bloodPressures);
                     results.put(HeartRate.SCHEMA_HEART_RATE, heartRates);
-                    return ShimDataResponse.result(results);
+                    return ShimDataResponse.result(HealthvaultShim.SHIM_KEY, results);
                 }
             }
         ),
@@ -237,7 +237,7 @@ public class HealthvaultShim implements Shim {
 
                     List<Object> hvHeights = JsonPath.read(rawJson, bodyHeightsPath.getPath());
                     if (CollectionUtils.isEmpty(hvHeights)) {
-                        return ShimDataResponse.result(null);
+                        return ShimDataResponse.result(HealthvaultShim.SHIM_KEY, null);
                     }
                     ObjectMapper mapper = new ObjectMapper();
                     for (Object fva : hvHeights) {
@@ -255,7 +255,7 @@ public class HealthvaultShim implements Shim {
                     }
                     Map<String, Object> results = new HashMap<>();
                     results.put(BodyHeight.SCHEMA_BODY_HEIGHT, bodyHeights);
-                    return ShimDataResponse.result(results);
+                    return ShimDataResponse.result(HealthvaultShim.SHIM_KEY, results);
                 }
             }
         ),
@@ -275,7 +275,7 @@ public class HealthvaultShim implements Shim {
 
                     List<Object> hvbloodGlucoses = JsonPath.read(rawJson, bloodGlucosePath.getPath());
                     if (CollectionUtils.isEmpty(hvbloodGlucoses)) {
-                        return ShimDataResponse.result(null);
+                        return ShimDataResponse.result(HealthvaultShim.SHIM_KEY, null);
                     }
                     ObjectMapper mapper = new ObjectMapper();
                     for (Object fva : hvbloodGlucoses) {
@@ -320,7 +320,7 @@ public class HealthvaultShim implements Shim {
                     }
                     Map<String, Object> results = new HashMap<>();
                     results.put(BloodGlucose.SCHEMA_BLOOD_GLUCOSE, bloodGlucoses);
-                    return ShimDataResponse.result(results);
+                    return ShimDataResponse.result(HealthvaultShim.SHIM_KEY, results);
                 }
             }
         ),
@@ -341,7 +341,7 @@ public class HealthvaultShim implements Shim {
 
                     List<Object> hvWeights = JsonPath.read(rawJson, bodyWeightsPath.getPath());
                     if (CollectionUtils.isEmpty(hvWeights)) {
-                        return ShimDataResponse.result(null);
+                        return ShimDataResponse.result(HealthvaultShim.SHIM_KEY, null);
                     }
                     ObjectMapper mapper = new ObjectMapper();
                     for (Object fva : hvWeights) {
@@ -359,7 +359,7 @@ public class HealthvaultShim implements Shim {
                     }
                     Map<String, Object> results = new HashMap<>();
                     results.put(BodyWeight.SCHEMA_BODY_WEIGHT, bodyWeights);
-                    return ShimDataResponse.result(results);
+                    return ShimDataResponse.result(HealthvaultShim.SHIM_KEY, results);
                 }
             });
 
@@ -481,7 +481,8 @@ public class HealthvaultShim implements Shim {
                         objectMapper.registerModule(module);
                         return objectMapper.readValue(thingsJson, ShimDataResponse.class);
                     } else {
-                        return ShimDataResponse.result(objectMapper.readTree(thingsJson));
+                        return ShimDataResponse.result(HealthvaultShim.SHIM_KEY,
+                            objectMapper.readTree(thingsJson));
                     }
                 }
             });

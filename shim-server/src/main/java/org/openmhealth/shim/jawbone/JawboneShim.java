@@ -149,7 +149,7 @@ public class JawboneShim extends OAuth2ShimBase {
                 JsonPath bodyWeightsPath = JsonPath.compile("$.data.items[*]");
                 List<Object> jbWeights = JsonPath.read(rawJson, bodyWeightsPath.getPath());
                 if (CollectionUtils.isEmpty(jbWeights)) {
-                    return ShimDataResponse.result(null);
+                    return ShimDataResponse.result(JawboneShim.SHIM_KEY, null);
                 }
                 ObjectMapper mapper = new ObjectMapper();
                 for (Object rawWeight : jbWeights) {
@@ -176,7 +176,7 @@ public class JawboneShim extends OAuth2ShimBase {
                 }
                 Map<String, Object> results = new HashMap<>();
                 results.put(BodyWeight.SCHEMA_BODY_WEIGHT, bodyWeights);
-                return ShimDataResponse.result(results);
+                return ShimDataResponse.result(JawboneShim.SHIM_KEY, results);
             }
         }),
 
@@ -193,7 +193,7 @@ public class JawboneShim extends OAuth2ShimBase {
                 JsonPath sleepsPath = JsonPath.compile("$.data.items[*]");
                 List<Object> jbSleeps = JsonPath.read(rawJson, sleepsPath.getPath());
                 if (CollectionUtils.isEmpty(jbSleeps)) {
-                    return ShimDataResponse.result(null);
+                    return ShimDataResponse.result(JawboneShim.SHIM_KEY, null);
                 }
                 ObjectMapper mapper = new ObjectMapper();
                 for (Object rawSleep : jbSleeps) {
@@ -224,7 +224,7 @@ public class JawboneShim extends OAuth2ShimBase {
                 }
                 Map<String, Object> results = new HashMap<>();
                 results.put(SleepDuration.SCHEMA_SLEEP_DURATION, sleepDurations);
-                return ShimDataResponse.result(results);
+                return ShimDataResponse.result(JawboneShim.SHIM_KEY, results);
             }
         }),
 
@@ -241,7 +241,7 @@ public class JawboneShim extends OAuth2ShimBase {
                 JsonPath workoutsPath = JsonPath.compile("$.data.items[*]");
                 List<Object> jbWorkouts = JsonPath.read(rawJson, workoutsPath.getPath());
                 if (CollectionUtils.isEmpty(jbWorkouts)) {
-                    return ShimDataResponse.result(null);
+                    return ShimDataResponse.result(JawboneShim.SHIM_KEY, null);
                 }
                 ObjectMapper mapper = new ObjectMapper();
                 for (Object rawWorkout : jbWorkouts) {
@@ -268,7 +268,7 @@ public class JawboneShim extends OAuth2ShimBase {
                 }
                 Map<String, Object> results = new HashMap<>();
                 results.put(Activity.SCHEMA_ACTIVITY, activities);
-                return ShimDataResponse.result(results);
+                return ShimDataResponse.result(JawboneShim.SHIM_KEY, results);
             }
         }),
 
@@ -286,7 +286,7 @@ public class JawboneShim extends OAuth2ShimBase {
                 List<Object> jbStepEntries = JsonPath.read(rawJson, stepsPath.getPath());
 
                 if (CollectionUtils.isEmpty(jbStepEntries)) {
-                    return ShimDataResponse.empty();
+                    return ShimDataResponse.empty(JawboneShim.SHIM_KEY);
                 }
 
                 DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyyMMddHH");
@@ -326,7 +326,7 @@ public class JawboneShim extends OAuth2ShimBase {
                 }
                 Map<String, Object> results = new HashMap<>();
                 results.put(StepCount.SCHEMA_STEP_COUNT, stepCounts);
-                return ShimDataResponse.result(results);
+                return ShimDataResponse.result(JawboneShim.SHIM_KEY, results);
 
             }
         });
@@ -398,7 +398,7 @@ public class JawboneShim extends OAuth2ShimBase {
                     objectMapper.readValue(responseEntity.getBody(), ShimDataResponse.class), HttpStatus.OK);
             } else {
                 return new ResponseEntity<>(
-                    ShimDataResponse.result(objectMapper.readTree(responseEntity.getBody())), HttpStatus.OK);
+                    ShimDataResponse.result(JawboneShim.SHIM_KEY, objectMapper.readTree(responseEntity.getBody())), HttpStatus.OK);
             }
         } catch (IOException e) {
             e.printStackTrace();

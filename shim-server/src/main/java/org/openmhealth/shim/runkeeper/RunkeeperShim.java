@@ -136,7 +136,7 @@ public class RunkeeperShim extends OAuth2ShimBase {
 
                     final List<Object> rkActivities = JsonPath.read(rawJson, activityPath.getPath());
                     if (CollectionUtils.isEmpty(rkActivities)) {
-                        return ShimDataResponse.result(null);
+                        return ShimDataResponse.result(RunkeeperShim.SHIM_KEY, null);
                     }
 
                     ObjectMapper mapper = new ObjectMapper();
@@ -160,7 +160,7 @@ public class RunkeeperShim extends OAuth2ShimBase {
                     }
                     Map<String, Object> results = new HashMap<>();
                     results.put(Activity.SCHEMA_ACTIVITY, activities);
-                    return ShimDataResponse.result(results);
+                    return ShimDataResponse.result(RunkeeperShim.SHIM_KEY, results);
                 }
             }),
 
@@ -171,7 +171,7 @@ public class RunkeeperShim extends OAuth2ShimBase {
             public ShimDataResponse deserialize(
                 JsonParser jsonParser, DeserializationContext deserializationContext)
                 throws IOException {
-                return ShimDataResponse.empty();
+                return ShimDataResponse.empty(RunkeeperShim.SHIM_KEY);
             }
         }),
 
@@ -182,7 +182,7 @@ public class RunkeeperShim extends OAuth2ShimBase {
             public ShimDataResponse deserialize(
                 JsonParser jsonParser, DeserializationContext deserializationContext)
                 throws IOException {
-                return ShimDataResponse.empty();
+                return ShimDataResponse.empty(RunkeeperShim.SHIM_KEY);
             }
         }),
 
@@ -193,7 +193,7 @@ public class RunkeeperShim extends OAuth2ShimBase {
             public ShimDataResponse deserialize(
                 JsonParser jsonParser, DeserializationContext deserializationContext)
                 throws IOException {
-                return ShimDataResponse.empty();
+                return ShimDataResponse.empty(RunkeeperShim.SHIM_KEY);
             }
         }),
 
@@ -212,7 +212,7 @@ public class RunkeeperShim extends OAuth2ShimBase {
 
                     List<Object> rkWeights = JsonPath.read(rawJson, bodyWeightsPath.getPath());
                     if (CollectionUtils.isEmpty(rkWeights)) {
-                        return ShimDataResponse.result(null);
+                        return ShimDataResponse.result(RunkeeperShim.SHIM_KEY, null);
                     }
                     ObjectMapper mapper = new ObjectMapper();
                     for (Object fva : rkWeights) {
@@ -232,7 +232,7 @@ public class RunkeeperShim extends OAuth2ShimBase {
                     }
                     Map<String, Object> results = new HashMap<>();
                     results.put(BodyWeight.SCHEMA_BODY_WEIGHT, bodyWeights);
-                    return ShimDataResponse.result(results);
+                    return ShimDataResponse.result(RunkeeperShim.SHIM_KEY, results);
                 }
             });
 
@@ -347,7 +347,7 @@ public class RunkeeperShim extends OAuth2ShimBase {
                     ShimDataResponse.class), HttpStatus.OK);
             } else {
                 return new ResponseEntity<>(
-                    ShimDataResponse.result(objectMapper.readTree(response.getBody())), HttpStatus.OK);
+                    ShimDataResponse.result(RunkeeperShim.SHIM_KEY, objectMapper.readTree(response.getBody())), HttpStatus.OK);
             }
 
         } catch (IOException e) {

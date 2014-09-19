@@ -59,6 +59,8 @@ public class FitbitShimTest {
 
         assertNotNull(response);
 
+        assertNotNull(response.getShim());
+
         Map<String, Object> map = (Map<String, Object>) response.getBody();
         assertTrue(map.containsKey(HeartRate.SCHEMA_HEART_RATE));
 

@@ -57,16 +57,18 @@ public class ShimDataResponse {
         this.body = body;
     }
 
-    public static ShimDataResponse empty() {
+    public static ShimDataResponse empty(String shimKey) {
         ShimDataResponse response = new ShimDataResponse();
+        response.setShim(shimKey);
         response.setBody(null);
         response.setTimeStamp(
             Calendar.getInstance().getTimeInMillis() / 1000);
         return response;
     }
 
-    public static ShimDataResponse result(Object object) {
+    public static ShimDataResponse result(String shimKey, Object object) {
         ShimDataResponse response = new ShimDataResponse();
+        response.setShim(shimKey);
         response.setBody(object);
         response.setTimeStamp(
             Calendar.getInstance().getTimeInMillis() / 1000);

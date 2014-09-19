@@ -67,6 +67,7 @@ public class RunkeeperShimTest {
             objectMapper.readValue(inputStream, ShimDataResponse.class);
 
         assertNotNull(response);
+        assertNotNull(response.getShim());
 
         Map<String, Object> map = (Map<String, Object>) response.getBody();
         assertTrue(map.containsKey(Activity.SCHEMA_ACTIVITY));

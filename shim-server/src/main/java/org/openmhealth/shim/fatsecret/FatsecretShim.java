@@ -141,7 +141,7 @@ public class FatsecretShim extends OAuth1ShimBase {
             response = httpClient.execute(get);
             HttpEntity responseEntity = response.getEntity();
             jsonData = objectMapper.readTree(responseEntity.getContent());
-            return ShimDataResponse.result(jsonData);
+            return ShimDataResponse.result(FatsecretShim.SHIM_KEY,jsonData);
 
         } catch (IOException e) {
             throw new ShimException("Could not fetch data", e);

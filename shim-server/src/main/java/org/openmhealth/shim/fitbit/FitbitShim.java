@@ -148,7 +148,7 @@ public class FitbitShim extends OAuth1ShimBase {
 
                     List<Object> fbWeights = JsonPath.read(rawJson, bodyWeightsPath.getPath());
                     if (CollectionUtils.isEmpty(fbWeights)) {
-                        return ShimDataResponse.result(null);
+                        return ShimDataResponse.result(FitbitShim.SHIM_KEY, null);
                     }
                     ObjectMapper mapper = new ObjectMapper();
                     for (Object fva : fbWeights) {
@@ -168,7 +168,7 @@ public class FitbitShim extends OAuth1ShimBase {
                     }
                     Map<String, Object> results = new HashMap<>();
                     results.put(BodyWeight.SCHEMA_BODY_WEIGHT, bodyWeights);
-                    return ShimDataResponse.result(results);
+                    return ShimDataResponse.result(FitbitShim.SHIM_KEY, results);
                 }
             }
         ),
@@ -190,7 +190,7 @@ public class FitbitShim extends OAuth1ShimBase {
 
                     List<Object> fbHearts = JsonPath.read(rawJson, heartPath.getPath());
                     if (CollectionUtils.isEmpty(fbHearts)) {
-                        return ShimDataResponse.result(null);
+                        return ShimDataResponse.result(FitbitShim.SHIM_KEY, null);
                     }
 
                     ObjectMapper mapper = new ObjectMapper();
@@ -207,7 +207,7 @@ public class FitbitShim extends OAuth1ShimBase {
                     }
                     Map<String, Object> results = new HashMap<>();
                     results.put(HeartRate.SCHEMA_HEART_RATE, heartRates);
-                    return ShimDataResponse.result(results);
+                    return ShimDataResponse.result(FitbitShim.SHIM_KEY, results);
                 }
             }
         ),
@@ -229,7 +229,7 @@ public class FitbitShim extends OAuth1ShimBase {
 
                     List<Object> fbBloodPressures = JsonPath.read(rawJson, bpPath.getPath());
                     if (CollectionUtils.isEmpty(fbBloodPressures)) {
-                        return ShimDataResponse.result(null);
+                        return ShimDataResponse.result(FitbitShim.SHIM_KEY, null);
                     }
 
                     ObjectMapper mapper = new ObjectMapper();
@@ -250,7 +250,7 @@ public class FitbitShim extends OAuth1ShimBase {
                     }
                     Map<String, Object> results = new HashMap<>();
                     results.put(BloodPressure.SCHEMA_BLOOD_PRESSURE, bloodPressures);
-                    return ShimDataResponse.result(results);
+                    return ShimDataResponse.result(FitbitShim.SHIM_KEY, results);
                 }
             }
         ),
@@ -272,7 +272,7 @@ public class FitbitShim extends OAuth1ShimBase {
 
                     List<Object> fbBloodPressures = JsonPath.read(rawJson, bpPath.getPath());
                     if (CollectionUtils.isEmpty(fbBloodPressures)) {
-                        return ShimDataResponse.result(null);
+                        return ShimDataResponse.result(FitbitShim.SHIM_KEY, null);
                     }
 
                     ObjectMapper mapper = new ObjectMapper();
@@ -290,7 +290,7 @@ public class FitbitShim extends OAuth1ShimBase {
                     }
                     Map<String, Object> results = new HashMap<>();
                     results.put(BloodGlucose.SCHEMA_BLOOD_GLUCOSE, bloodGlucoses);
-                    return ShimDataResponse.result(results);
+                    return ShimDataResponse.result(FitbitShim.SHIM_KEY, results);
                 }
             }
         ),
@@ -310,7 +310,7 @@ public class FitbitShim extends OAuth1ShimBase {
                 Object oneMinStepEntries = JsonPath.read(rawJson, stepsPath.getPath());
 
                 if (oneMinStepEntries == null) {
-                    return ShimDataResponse.empty();
+                    return ShimDataResponse.empty(FitbitShim.SHIM_KEY);
                 }
 
                 DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
@@ -353,7 +353,7 @@ public class FitbitShim extends OAuth1ShimBase {
                 }
                 Map<String, Object> results = new HashMap<>();
                 results.put(StepCount.SCHEMA_STEP_COUNT, steps);
-                return ShimDataResponse.result(results);
+                return ShimDataResponse.result(FitbitShim.SHIM_KEY, results);
             }
         }),
 
@@ -373,7 +373,7 @@ public class FitbitShim extends OAuth1ShimBase {
 
                     final List<Object> fitbitActivities = JsonPath.read(rawJson, activityPath.getPath());
                     if (CollectionUtils.isEmpty(fitbitActivities)) {
-                        return ShimDataResponse.result(null);
+                        return ShimDataResponse.result(FitbitShim.SHIM_KEY, null);
                     }
                     ObjectMapper mapper = new ObjectMapper();
                     for (Object fva : fitbitActivities) {
@@ -397,7 +397,7 @@ public class FitbitShim extends OAuth1ShimBase {
 
                     Map<String, Object> results = new HashMap<>();
                     results.put(Activity.SCHEMA_ACTIVITY, activities);
-                    return ShimDataResponse.result(results);
+                    return ShimDataResponse.result(FitbitShim.SHIM_KEY, results);
                 }
             }
         );
@@ -474,7 +474,7 @@ public class FitbitShim extends OAuth1ShimBase {
     @SuppressWarnings("unchecked")
     private ShimDataResponse aggregateNormalized(List<ShimDataResponse> dayResponses) {
         if (CollectionUtils.isEmpty(dayResponses)) {
-            return ShimDataResponse.empty();
+            return ShimDataResponse.empty(FitbitShim.SHIM_KEY);
         }
         Map<String, Collection<Object>> aggregateMap = new HashMap<>();
         for (ShimDataResponse dayResponse : dayResponses) {
@@ -490,7 +490,8 @@ public class FitbitShim extends OAuth1ShimBase {
             }
         }
         return aggregateMap.size() == 0 ?
-            ShimDataResponse.empty() : ShimDataResponse.result(aggregateMap);
+            ShimDataResponse.empty(FitbitShim.SHIM_KEY) :
+            ShimDataResponse.result(FitbitShim.SHIM_KEY, aggregateMap);
     }
 
     /**
@@ -501,7 +502,7 @@ public class FitbitShim extends OAuth1ShimBase {
      */
     private ShimDataResponse aggregateIntoList(List<ShimDataResponse> dayResponses) {
         if (CollectionUtils.isEmpty(dayResponses)) {
-            return ShimDataResponse.empty();
+            return ShimDataResponse.empty(FitbitShim.SHIM_KEY);
         }
         List<Object> responses = new ArrayList<>();
         for (ShimDataResponse dayResponse : dayResponses) {
@@ -509,8 +510,8 @@ public class FitbitShim extends OAuth1ShimBase {
                 responses.add(dayResponse.getBody());
             }
         }
-        return responses.size() == 0 ? ShimDataResponse.empty() :
-            ShimDataResponse.result(responses);
+        return responses.size() == 0 ? ShimDataResponse.empty(FitbitShim.SHIM_KEY) :
+            ShimDataResponse.result(FitbitShim.SHIM_KEY, responses);
     }
 
     private ShimDataResponse getDaysData(DateTime dateTime,
@@ -552,7 +553,8 @@ public class FitbitShim extends OAuth1ShimBase {
                 objectMapper.registerModule(module);
                 return objectMapper.readValue(jsonContent, ShimDataResponse.class);
             } else {
-                return ShimDataResponse.result(objectMapper.readTree(jsonContent));
+                return ShimDataResponse.result(FitbitShim.SHIM_KEY,
+                    objectMapper.readTree(jsonContent));
             }
         } catch (IOException e) {
             throw new ShimException("Could not fetch data", e);
