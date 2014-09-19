@@ -63,6 +63,9 @@ public class HeartRateUnitValue {
         }
     }
 
+    public HeartRateUnitValue() {
+    }
+
     public HeartRateUnitValue(Integer value, Unit unit) {
         this.value = value;
         this.unit = unit;
