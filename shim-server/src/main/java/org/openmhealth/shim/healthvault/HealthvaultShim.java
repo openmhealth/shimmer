@@ -94,7 +94,7 @@ public class HealthvaultShim implements Shim {
         this.authorizationRequestParametersRepo = authorizationRequestParametersRepo;
         this.shimServerConfig = shimServerConfig;
         this.config = healthvaultConfig;
-        if(config.getClientId() != null){
+        if(config != null && config.getClientId() != null){
             this.connection = ConnectionFactory.getConnection(config.getClientId());
         }
     }
