@@ -51,7 +51,7 @@ public class StepCount extends BaseDataPoint {
     @Override
     @JsonIgnore
     public DateTime getTimeStamp() {
-        return effectiveTimeFrame.getDateTime();
+        return effectiveTimeFrame.getTimestamp();
     }
 
     public Integer getStepCount() {

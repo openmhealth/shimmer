@@ -66,6 +66,9 @@ public class ActivityBuilderTest {
                 .setActivityName("snow boarding")
                 .setDistance(5d, LengthUnitValue.LengthUnit.mi).build();
 
+        DateTime timeStamp = activity.getTimeStamp();
+        assertNotNull(timeStamp);
+
         String rawJson = mapper.writeValueAsString(activity);
 
         Activity deserialized = mapper.readValue(rawJson, Activity.class);

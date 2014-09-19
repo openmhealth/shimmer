@@ -63,6 +63,9 @@ public class StepBuilderTest {
             .setSteps(345)
             .build();
 
+        DateTime timeStamp = stepCount.getTimeStamp();
+        assertNotNull(timeStamp);
+
         String rawJson = mapper.writeValueAsString(stepCount);
 
         StepCount deserialized = mapper.readValue(rawJson, StepCount.class);

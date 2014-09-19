@@ -65,6 +65,9 @@ public class SleepBuilderTest {
             .setNotes("Tossed and turned")
             .build();
 
+        DateTime timeStamp = sleepDuration.getTimeStamp();
+        assertNotNull(timeStamp);
+
         String rawJson = mapper.writeValueAsString(sleepDuration);
 
         SleepDuration deserialized = mapper.readValue(rawJson, SleepDuration.class);
