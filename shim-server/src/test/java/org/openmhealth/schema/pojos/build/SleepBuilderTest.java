@@ -38,7 +38,7 @@ import static org.openmhealth.schema.pojos.SleepDurationUnitValue.Unit.min;
 public class SleepBuilderTest {
 
     @Test
-    @Ignore("requires updates to external schemas to pass")
+//    @Ignore("requires updates to external schemas to pass")
     public void test() throws IOException, ProcessingException {
 
         final String SLEEP_DURATION_SCHEMA = "http://www.openmhealth.org/schema/omh/clinical/sleep-duration-1.0.json";

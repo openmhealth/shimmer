@@ -39,8 +39,6 @@ public class ActivityBuilderTest {
 
     @Test
     @SuppressWarnings("unchecked")
-    // fixme: remove the ignore once the test is fixed
-    @Ignore("requires changes to Activity and ActivityBuilder to pass")
     public void testParse() throws IOException, ProcessingException {
 
         final String PHYSICAL_ACTIVITY_SCHEMA = "http://www.openmhealth.org/schema/omh/clinical/physical-activity-1.0.json";

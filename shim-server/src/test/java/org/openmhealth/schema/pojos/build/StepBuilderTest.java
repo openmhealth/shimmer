@@ -37,7 +37,7 @@ import static org.openmhealth.schema.pojos.generic.DurationUnitValue.DurationUni
 public class StepBuilderTest {
 
     @Test
-    @Ignore("requires updates to external schemas to pass")
+    //@Ignore("requires updates to external schemas to pass")
     public void testParse() throws IOException, ProcessingException {
 
         final String STEP_COUNT_SCHEMA = "http://www.openmhealth.org/schema/omh/clinical/step-count-1.0.json";
