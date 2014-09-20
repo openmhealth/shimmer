@@ -40,7 +40,7 @@ RUN unzip healthvault-sdk-1.6.0.zip && cd healthvault-sdk-1.6.0 && mvn install -
 WORKDIR /root
 RUN git clone https://github.com/openmhealth/omh-shims.git
 WORKDIR /root/omh-shims
-RUN git checkout v0.2.0
+RUN git checkout v0.2.1
 
 # build the frontend
 WORKDIR /root/omh-shims/shim-server-ui
