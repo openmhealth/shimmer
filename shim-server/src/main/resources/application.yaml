@@ -20,7 +20,7 @@ openmhealth:
     server:
       callbackUrlBase: http://localhost:8083
 
-    #NOTE: Un-comment and fill in with your clientId's and secrets
+    #NOTE: Un-comment and fill in with your credentials if you're not using the UI
     #fitbit:
     #  clientId: [YOUR_CLIENT_ID]
     #  clientSecret: [YOUR_CLIENT_SECRET]
