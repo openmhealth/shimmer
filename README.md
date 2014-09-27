@@ -140,7 +140,7 @@ If you installed manually, terminate your running Gradle or Maven process and re
 ### Authorising access to a third-party user account from the UI
 
 The data produced by a third-party API belongs to some user account registered on the third-party system. To allow 
- a shim read that data, you'll need to initiate an authorization process that lets the account holder grant the shim access to their data.
+ a shim to read that data, you'll need to initiate an authorization process that lets the account holder grant the shim access to their data.
 
 To initiate the authorization process from the UI,
  
