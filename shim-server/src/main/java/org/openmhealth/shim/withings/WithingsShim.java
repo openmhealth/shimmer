@@ -279,7 +279,7 @@ public class WithingsShim extends OAuth1ShimBase {
 
                     JsonPath stepsPath = JsonPath.compile("$.body.series[*]");
                     Object wStepsObject = JsonPath.read(rawJson, stepsPath.getPath());
-                    if (wStepsObject == null || ((JSONArray)wStepsObject).size() == 0) {
+                    if (wStepsObject == null || ((JSONArray) wStepsObject).size() == 0) {
                         return ShimDataResponse.empty(WithingsShim.SHIM_KEY);
                     }
 
@@ -322,15 +322,18 @@ public class WithingsShim extends OAuth1ShimBase {
                     ObjectMapper mapper = new ObjectMapper();
                     for (Object rawSleep : wSleeps) {
                         JsonNode wSleep = mapper.readTree(((JSONObject) rawSleep).toJSONString());
-                        DateTime startTime = new DateTime(wSleep.get("startdate").asLong() * 1000, DateTimeZone.UTC);
-                        DateTime endTime = new DateTime(wSleep.get("enddate").asLong() * 1000, DateTimeZone.UTC);
-                        long duration = wSleep.get("enddate").asLong() - wSleep.get("startdate").asLong();
-                        sleeps.add(new SleepDurationBuilder()
-                            .withStartAndEndAndDuration(
-                                startTime, endTime,
-                                Double.parseDouble(duration + "") / 60d,
-                                SleepDurationUnitValue.Unit.min)
-                            .build());
+                        //State = 0 is 'awake', must be filtered out.
+                        if (wSleep.get("state").asInt() != 0) {
+                            DateTime startTime = new DateTime(wSleep.get("startdate").asLong() * 1000, DateTimeZone.UTC);
+                            DateTime endTime = new DateTime(wSleep.get("enddate").asLong() * 1000, DateTimeZone.UTC);
+                            long duration = wSleep.get("enddate").asLong() - wSleep.get("startdate").asLong();
+                            sleeps.add(new SleepDurationBuilder()
+                                .withStartAndEndAndDuration(
+                                    startTime, endTime,
+                                    Double.parseDouble(duration + "") / 60d,
+                                    SleepDurationUnitValue.Unit.min)
+                                .build());
+                        }
                     }
                     Map<String, Object> results = new HashMap<>();
                     results.put(SleepDuration.SCHEMA_SLEEP_DURATION, sleeps);
