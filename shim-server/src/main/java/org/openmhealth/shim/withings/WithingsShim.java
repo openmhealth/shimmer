@@ -24,6 +24,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.jayway.jsonpath.JsonPath;
+import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -278,7 +279,7 @@ public class WithingsShim extends OAuth1ShimBase {
 
                     JsonPath stepsPath = JsonPath.compile("$.body.series[*]");
                     Object wStepsObject = JsonPath.read(rawJson, stepsPath.getPath());
-                    if (wStepsObject == null) {
+                    if (wStepsObject == null || ((JSONArray)wStepsObject).size() == 0) {
                         return ShimDataResponse.empty(WithingsShim.SHIM_KEY);
                     }
 
