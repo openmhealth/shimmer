@@ -36,7 +36,7 @@ angular.module('sandboxConsoleApp')
          * components within the UI's templates
          */
         $scope.getHtmlId = function(username){
-            var cleanUsername = username.replace(/\W+/g, " ");
+            var cleanUsername = username.replace(/\W+/g, "_");
             return cleanUsername;
         };
 
