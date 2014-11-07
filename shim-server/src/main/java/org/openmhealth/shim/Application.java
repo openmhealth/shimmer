@@ -116,7 +116,8 @@ public class Application extends WebSecurityConfigurerAdapter {
      * @return - list of shims + endpoints in a map.
      * @throws ShimException
      */
-    @RequestMapping(value = "shim/{shim}/config", method = {RequestMethod.PUT, RequestMethod.POST})
+    @RequestMapping(value = "shim/{shim}/config",
+        method = {RequestMethod.GET, RequestMethod.PUT, RequestMethod.POST})
     public
     @ResponseBody
     List<String> updateShimConfig(
