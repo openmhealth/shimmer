@@ -80,12 +80,12 @@ angular.module('sandboxConsoleApp')
                 url: url,
                 method: 'PUT'
             }).success(function () {
-                console.info("successfully disconnected.");
+                console.info("successfully updated settings.");
                 spinner.hide();
                 $scope.loadShims();
             }).error(function (data, status) {
                 spinner.hide();
-                console.error("Could not disconnect, " +
+                console.error("Could not update settings, " +
                     "error occurred.", data, status);
             });
         };
