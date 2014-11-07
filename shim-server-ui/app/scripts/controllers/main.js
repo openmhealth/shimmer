@@ -31,6 +31,14 @@ angular.module('sandboxConsoleApp')
          */
         $scope.settingsOpen = false;
 
+        /**
+         * Retrieves an HTML-safe ID for a username. This is used to flag
+         * components within the UI's templates
+         */
+        $scope.getHtmlId = function(username){
+            var cleanUsername = username.replace(/\W+/g, " ");
+            return cleanUsername;
+        };
 
         /**
          * Default date parameters for date pickers.
@@ -214,7 +222,7 @@ angular.module('sandboxConsoleApp')
          * if not it will be retrieved raw.
          */
         $scope.getData = function (record, shimKey, endPoint, doNormalize) {
-            var suffix = record.username + "-" + shimKey + "-" + endPoint;
+            var suffix = $scope.getHtmlId(record.username) + "-" + shimKey + "-" + endPoint;
             var error = $("#shim-error-" + suffix)[0];
             var spinner = $("#shim-spinner-" + suffix)[0];
             var responseBox = $("#shim-results-" + suffix)[0];
@@ -267,9 +275,9 @@ angular.module('sandboxConsoleApp')
          * @param shimKey
          */
         $scope.openEndpoints = function (event, record, shimKey) {
-            var elm = $("#shim-panel-" + record.username + "-" + shimKey)[0];
+            var elm = $("#shim-panel-" + $scope.getHtmlId(record.username) + "-" + shimKey)[0];
             console.info("Looking for element: ",
-                    "#shim-panel-" + record.username + "-" + shimKey);
+                    "#shim-panel-" + $scope.getHtmlId(record.username) + "-" + shimKey);
             console.info("Element is: ", elm.id);
 
             if ($(elm).css("display") == "none") {
@@ -287,7 +295,8 @@ angular.module('sandboxConsoleApp')
          * @param endpoint
          */
         $scope.pickDate = function (type, record, shimKey, endpoint) {
-            var elm = $("#"+type + "Date-" + record.username + "-" + shimKey + "-" + endpoint)[0];
+            var elm = $("#"+type + "Date-" +
+                $scope.getHtmlId(record.username) + "-" + shimKey + "-" + endpoint)[0];
             $(elm).focus();
         };
 
