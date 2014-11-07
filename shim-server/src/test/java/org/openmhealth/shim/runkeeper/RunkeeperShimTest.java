@@ -18,6 +18,10 @@ package org.openmhealth.shim.runkeeper;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.github.fge.jsonschema.core.exceptions.ProcessingException;
+import com.github.fge.jsonschema.core.report.ProcessingReport;
+import com.github.fge.jsonschema.main.JsonSchema;
+import com.github.fge.jsonschema.main.JsonSchemaFactory;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
@@ -49,7 +53,7 @@ public class RunkeeperShimTest {
 
     @Test
     @SuppressWarnings("unchecked")
-    public void testActivityNormalize() throws IOException {
+    public void testActivityNormalize() throws IOException, ProcessingException {
         URL url = Thread.currentThread().getContextClassLoader().getResource("runkeeper-activity.json");
         assert url != null;
         InputStream inputStream = url.openStream();
@@ -95,6 +99,27 @@ public class RunkeeperShimTest {
         assertEquals(
             activity.getEffectiveTimeFrame().getTimeInterval().getDuration().getValue(),
             new BigDecimal(3600d));
+
+        /**
+         * Verify that the output from runkeeper normalizer passes
+         * a schema check. Per github issue #9.
+         */
+        final String PHYSICAL_ACTIVITY_SCHEMA =
+            "http://www.openmhealth.org/schema/omh/clinical/physical-activity-1.0.json";
+
+        ObjectMapper mapper = new ObjectMapper();
+
+        final JsonSchemaFactory factory = JsonSchemaFactory.byDefault();
+        final JsonSchema schema = factory.getJsonSchema(PHYSICAL_ACTIVITY_SCHEMA);
+
+        ProcessingReport report;
+
+        String rawJson = mapper.writeValueAsString(activity);
+
+        report = schema.validate(mapper.readTree(rawJson));
+        System.out.println(report);
+
+        assertTrue("Expected valid result!", report.isSuccess());
     }
 
     /*@Test
