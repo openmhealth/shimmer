@@ -333,22 +333,41 @@ public class FitbitShim extends OAuth1ShimBase {
                 for (Object node1 : nodes) {
                     JsonNode fbStepNode = (JsonNode) node1;
 
+                    /**
+                     * The value 'activities-steps-intraday' will only be available
+                     * to apps that have partner level access to fitbit.
+                     *
+                     * https://wiki.fitbit.com/display/API/Fitbit+Partner+API
+                     *
+                     * Apps without this access will only get one step entry per day as a normalized
+                     * response. The minute level resolutions will be retrieved and parsed
+                     * only for partner level apps.
+                     */
                     String dateString =
                         (fbStepNode.get("activities-steps")).get(0).get("dateTime").asText();
-
-                    ArrayNode dataset = (ArrayNode)
-                        fbStepNode.get("activities-steps-intraday").get("dataset");
-
-                    for (JsonNode stepMinute : dataset) {
-                        if (stepMinute.get("value").asInt() > 0) {
-                            steps.add(new StepCountBuilder()
-                                .withStartAndDuration(
-                                    formatter.parseDateTime(
-                                        dateString + " " + stepMinute.get("time").asText()),
-                                    1d, DurationUnit.min
-                                ).setSteps(stepMinute.get("value").asInt())
-                                .build());
+                    if (fbStepNode.get("activities-steps-intraday") != null) {
+                        ArrayNode dataset = (ArrayNode)
+                            fbStepNode.get("activities-steps-intraday").get("dataset");
+                        for (JsonNode stepMinute : dataset) {
+                            if (stepMinute.get("value").asInt() > 0) {
+                                steps.add(new StepCountBuilder()
+                                    .withStartAndDuration(
+                                        formatter.parseDateTime(
+                                            dateString + " " + stepMinute.get("time").asText()),
+                                        1d, DurationUnit.min
+                                    ).setSteps(stepMinute.get("value").asInt())
+                                    .build());
+                            }
                         }
+                    } else {
+                        /**
+                         * One entry is created for the whole day. No finer resolution is available.
+                         */
+                        String dayString = dateString + " 00:00:00";
+                        Integer daySteps = (fbStepNode.get("activities-steps")).get(0).get("value").asInt();
+                        steps.add(new StepCountBuilder().withStartAndDuration(
+                            formatter.parseDateTime(dayString), 1d, DurationUnit.d
+                        ).setSteps(daySteps).build());
                     }
                 }
                 Map<String, Object> results = new HashMap<>();
