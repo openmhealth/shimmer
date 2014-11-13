@@ -279,7 +279,7 @@ public class WithingsShim extends OAuth1ShimBase {
 
                     JsonPath stepsPath = JsonPath.compile("$.body.series[*]");
                     Object wStepsObject = JsonPath.read(rawJson, stepsPath.getPath());
-                    if (wStepsObject == null || ((JSONObject) wStepsObject).size() == 0) {
+                    if (wStepsObject == null || ((JSONArray) wStepsObject).size() == 0) {
                         return ShimDataResponse.empty(WithingsShim.SHIM_KEY);
                     }
 
