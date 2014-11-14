@@ -144,7 +144,8 @@ public class FitbitShim extends OAuth1ShimBase {
                     String rawJson = responseNode.toString();
 
                     List<BodyWeight> bodyWeights = new ArrayList<>();
-                    JsonPath bodyWeightsPath = JsonPath.compile("$result.content.weight[*]");
+                    //JsonPath bodyWeightsPath = JsonPath.compile("$result.content.weight[*]");
+                    JsonPath bodyWeightsPath = JsonPath.compile("$weight[*]");
 
                     List<Object> fbWeights = JsonPath.read(rawJson, bodyWeightsPath.getPath());
                     if (CollectionUtils.isEmpty(fbWeights)) {
@@ -469,20 +470,26 @@ public class FitbitShim extends OAuth1ShimBase {
 
         DateTime currentDate = startDate;
 
-        /**
-         * Fitbit's API limits you to making a request for each given day
-         * of data. Thus we make a request for each day in the submitted time
-         * range and then aggregate the response based on the normalization parameter.
-         */
-        List<ShimDataResponse> dayResponses = new ArrayList<>();
-        while (currentDate.toDate().before(endDate.toDate()) ||
-            currentDate.toDate().equals(endDate.toDate())) {
-            dayResponses.add(getDaysData(currentDate, fitbitDataType,
-                shimDataRequest.getNormalize(), accessToken, tokenSecret));
-            currentDate = currentDate.plusDays(1);
+        if (fitbitDataType.equals(FitbitDataType.WEIGHT)) {
+            return getRangeData(
+                startDate, endDate, fitbitDataType,
+                shimDataRequest.getNormalize(), accessToken, tokenSecret);
+        } else {
+            /**
+             * Fitbit's API limits you to making a request for each given day
+             * of data. Thus we make a request for each day in the submitted time
+             * range and then aggregate the response based on the normalization parameter.
+             */
+            List<ShimDataResponse> dayResponses = new ArrayList<>();
+            while (currentDate.toDate().before(endDate.toDate()) ||
+                currentDate.toDate().equals(endDate.toDate())) {
+                dayResponses.add(getDaysData(currentDate, fitbitDataType,
+                    shimDataRequest.getNormalize(), accessToken, tokenSecret));
+                currentDate = currentDate.plusDays(1);
+            }
+            return shimDataRequest.getNormalize() ?
+                aggregateNormalized(dayResponses) : aggregateIntoList(dayResponses);
         }
-        return shimDataRequest.getNormalize() ?
-            aggregateNormalized(dayResponses) : aggregateIntoList(dayResponses);
     }
 
     /**
@@ -531,6 +538,62 @@ public class FitbitShim extends OAuth1ShimBase {
         }
         return responses.size() == 0 ? ShimDataResponse.empty(FitbitShim.SHIM_KEY) :
             ShimDataResponse.result(FitbitShim.SHIM_KEY, responses);
+    }
+
+    private ShimDataResponse executeRequest(String endPointUrl,
+                                            String accessToken,
+                                            String tokenSecret,
+                                            boolean normalize,
+                                            FitbitDataType fitbitDataType
+    ) throws ShimException {
+
+        HttpRequestBase dataRequest =
+            OAuth1Utils.getSignedRequest(HttpMethod.GET,
+                endPointUrl, getClientId(), getClientSecret(), accessToken, tokenSecret, null);
+
+        HttpResponse response;
+        try {
+            response = httpClient.execute(dataRequest);
+            HttpEntity responseEntity = response.getEntity();
+
+            StringWriter writer = new StringWriter();
+            IOUtils.copy(responseEntity.getContent(), writer);
+
+            String jsonContent = writer.toString();
+
+            ObjectMapper objectMapper = new ObjectMapper();
+            if (normalize) {
+                SimpleModule module = new SimpleModule();
+                module.addDeserializer(ShimDataResponse.class, fitbitDataType.getNormalizer());
+                objectMapper.registerModule(module);
+                return objectMapper.readValue(jsonContent, ShimDataResponse.class);
+            } else {
+                return ShimDataResponse.result(FitbitShim.SHIM_KEY,
+                    objectMapper.readTree(jsonContent));
+            }
+        } catch (IOException e) {
+            throw new ShimException("Could not fetch data", e);
+        } finally {
+            dataRequest.releaseConnection();
+        }
+    }
+
+    private ShimDataResponse getRangeData(DateTime fromTime,
+                                          DateTime toTime,
+                                          FitbitDataType fitbitDataType,
+                                          boolean normalize,
+                                          String accessToken, String tokenSecret) throws ShimException {
+
+        String fromDateString = fromTime.toString(dayFormatter);
+        String toDateString = toTime.toString(dayFormatter);
+
+        String endPointUrl = DATA_URL;
+        endPointUrl += "/1/user/-/"
+            + fitbitDataType.getEndPoint() + "/date/" + fromDateString + "/" + toDateString
+            + (fitbitDataType == FitbitDataType.STEPS ? "/1d/1min" : "") //special setting for time series
+            + ".json";
+
+        return executeRequest(endPointUrl, accessToken, tokenSecret, normalize, fitbitDataType);
     }
 
     private ShimDataResponse getDaysData(DateTime dateTime,
