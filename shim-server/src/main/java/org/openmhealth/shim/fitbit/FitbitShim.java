@@ -185,7 +185,7 @@ public class FitbitShim extends OAuth1ShimBase {
                     String rawJson = responseNode.toString();
 
                     List<HeartRate> heartRates = new ArrayList<>();
-                    JsonPath heartPath = JsonPath.compile("$heart[*]");
+                    JsonPath heartPath = JsonPath.compile("$.result.content.heart[*]");
 
                     String dateString = JsonPath.read(rawJson, "$.result.date").toString();
 
