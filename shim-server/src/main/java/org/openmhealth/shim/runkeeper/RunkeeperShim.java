@@ -143,9 +143,14 @@ public class RunkeeperShim extends OAuth2ShimBase {
                     for (Object fva : rkActivities) {
                         final JsonNode rkActivity = mapper.readTree(((JSONObject) fva).toJSONString());
 
+
+                        Integer utcOffset = rkActivity.get("utc_offset") != null ?
+                            rkActivity.get("utc_offset").asInt() : 0;
+
                         DateTime startTime =
-                            dateFormatter.withZone(DateTimeZone
-                                .forOffsetHours(rkActivity.get("utc_offset").asInt()))
+                            dateFormatter.withZone(
+                                utcOffset == 0 ? DateTimeZone.UTC :
+                                    DateTimeZone.forOffsetHours(utcOffset))
                                 .parseDateTime(rkActivity.get("start_time").asText());
 
                         Activity activity = new ActivityBuilder()
