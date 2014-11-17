@@ -163,7 +163,7 @@ public class WithingsShim extends OAuth1ShimBase {
 
     public enum WithingsDataType implements ShimDataType {
 
-        BODY("measure?action=getmeas", "startdate", "enddate", true, true,
+        BODY("measure?action=getmeas&category=1", "startdate", "enddate", true, true,
             new JsonDeserializer<ShimDataResponse>() {
 
                 @Override
