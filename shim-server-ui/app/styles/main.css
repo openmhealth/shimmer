@@ -122,6 +122,10 @@ body {
   padding-left: 10px;
 }
 
+.connected-row .glyphicon-calendar {
+  padding-left: 0px;
+}
+
 .sublink {
   margin-right: 30px;
   margin-bottom: 10px;

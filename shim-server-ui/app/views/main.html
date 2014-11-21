@@ -79,117 +79,119 @@
                 </h3>
             </div>
 
-            <ul class="list-group">
+            <div class="panel-body">
+                <ul class="list-group">
 
-                <li ng-class="{'connected-row':record.auths.indexOf(shim.shimKey) > -1}"
-                    class="list-group-item" ng-repeat="shim in shims">
-                    <div ng-show="record.auths.indexOf(shim.shimKey) == -1">
-                        <span>{{shim.label}}</span>
-                        <button ng-click="initOAuthFlow(record,shim.shimKey)"
-                                type="button"
-                                class="btn btn-primary pull-right">Connect
-                        </button>
-                        <div class="clearfix"></div>
-                    </div>
-
-                    <div ng-show="record.auths.indexOf(shim.shimKey) > -1">
-
-                        <div style="width: 100%" ng-click="openEndpoints($event,record,shim.shimKey)">
+                    <li ng-class="{'connected-row':record.auths.indexOf(shim.shimKey) > -1}"
+                        class="list-group-item" ng-repeat="shim in shims">
+                        <div ng-show="record.auths.indexOf(shim.shimKey) == -1">
                             <span>{{shim.label}}</span>
-
-                            <span class="label label-lg label-success glyphicon glyphicon-ok">&nbsp;</span>
-
-                            <button ng-click="disconnect($event, record, shim.shimKey)"
+                            <button ng-click="initOAuthFlow(record,shim.shimKey)"
                                     type="button"
-                                    class="btn btn-danger pull-right">Disconnect
+                                    class="btn btn-primary pull-right">Connect
                             </button>
+                            <div class="clearfix"></div>
                         </div>
-                        <div class="clearfix"></div>
 
-                        <!--
-                        -- Shim Data Panel: Presents endpoints for shim, allows for date range
-                        -- selectors and clicking on data for verification purposes.
-                        -->
-                        <ul id="shim-panel-{{getHtmlId(record.username)}}-{{shim.shimKey}}"
-                            class="list-group" style="display: none;">
+                        <div ng-show="record.auths.indexOf(shim.shimKey) > -1">
 
-                            <li class="list-group-item" ng-repeat="endpoint in shim.endpoints">
-                                <div class="panel-heading">
-                                    <form class="form-inline" role="form" novalidate>
-                                        <div class="form-group col-md-1"><span>{{endpoint}}</span></div>
-                                        <div class="clearfix"></div>
-                                        <div class="form-group col-md-4">
-                                            <div class="input-group">
-                                                <input id="fromDate-{{getHtmlId(record.username)}}-{{shim.shimKey}}-{{endpoint}}"
-                                                       type="text"
-                                                       class="form-control"
-                                                       value="{{fromDate}}"
-                                                       ui-date
-                                                        />
-                                                  <span class="input-group-btn">
-                                                      <button id="fromBtn" type="button"
-                                                              class="btn btn-default"
-                                                              ng-click="pickDate('from',record,shim.shimKey,endpoint)"><i
-                                                              class="glyphicon glyphicon-calendar"></i>
-                                                      </button>
-                                                  </span>
+                            <div style="width: 100%" ng-click="openEndpoints($event,record,shim.shimKey)">
+                                <span>{{shim.label}}</span>
+
+                                <span class="label label-lg label-success glyphicon glyphicon-ok">&nbsp;</span>
+
+                                <button ng-click="disconnect($event, record, shim.shimKey)"
+                                        type="button"
+                                        class="btn btn-danger pull-right">Disconnect
+                                </button>
+                            </div>
+                            <div class="clearfix"></div>
+
+                            <!--
+                            -- Shim Data Panel: Presents endpoints for shim, allows for date range
+                            -- selectors and clicking on data for verification purposes.
+                            -->
+                            <ul id="shim-panel-{{getHtmlId(record.username)}}-{{shim.shimKey}}"
+                                class="list-group" style="display: none;">
+
+                                <li class="list-group-item" ng-repeat="endpoint in shim.endpoints">
+                                    <div class="panel-heading">
+                                        <form class="form-inline" role="form" novalidate>
+                                            <div class="form-group col-md-1"><span>{{endpoint}}</span></div>
+                                            <div class="clearfix"></div>
+                                            <div class="col-md-4">
+                                                <div class="input-group">
+                                                    <input id="fromDate-{{getHtmlId(record.username)}}-{{shim.shimKey}}-{{endpoint}}"
+                                                           type="text"
+                                                           class="form-control"
+                                                           value="{{fromDate}}"
+                                                           ui-date
+                                                            />
+                                                      <span class="input-group-btn">
+                                                          <button id="fromBtn" type="button"
+                                                                  class="btn btn-default"
+                                                                  ng-click="pickDate('from',record,shim.shimKey,endpoint)"><i
+                                                                  class="glyphicon glyphicon-calendar"></i>
+                                                          </button>
+                                                      </span>
+                                                </div>
                                             </div>
-                                        </div>
 
-                                        <div class="form-group col-md-4">
-                                            <div class="input-group">
-                                                <input id="toDate-{{getHtmlId(record.username)}}-{{shim.shimKey}}-{{endpoint}}"
-                                                       type="text"
-                                                       class="form-control"
-                                                       value="{{toDate}}"
-                                                       ui-date
-                                                        />
-                                                  <span class="input-group-btn">
-                                                      <button id="toBtn" type="button"
-                                                              class="btn btn-default"
-                                                              ng-click="pickDate('to',record,shim.shimKey,endpoint)"><i
-                                                              class="glyphicon glyphicon-calendar"></i>
-                                                      </button>
-                                                  </span>
+                                            <div class="form-group col-md-4">
+                                                <div class="input-group">
+                                                    <input id="toDate-{{getHtmlId(record.username)}}-{{shim.shimKey}}-{{endpoint}}"
+                                                           type="text"
+                                                           class="form-control"
+                                                           value="{{toDate}}"
+                                                           ui-date
+                                                            />
+                                                      <span class="input-group-btn">
+                                                          <button id="toBtn" type="button"
+                                                                  class="btn btn-default"
+                                                                  ng-click="pickDate('to',record,shim.shimKey,endpoint)"><i
+                                                                  class="glyphicon glyphicon-calendar"></i>
+                                                          </button>
+                                                      </span>
+                                                </div>
                                             </div>
-                                        </div>
 
-                                        <div class="form-group col-md-3" style="text-align: left;">
-                                            <div class="input-group btn-group">
-                                                <button ng-click=
-                                                                "getData(record, shim.shimKey, endpoint, false)"
-                                                        type="button" style="font-size: 10px;"
-                                                        class="btn btn-default">Raw
-                                                </button>
-                                                <button ng-click=
-                                                                "getData(record, shim.shimKey, endpoint, true)"
-                                                        type="button" style="font-size: 10px;"
-                                                        class="btn btn-default">Normalized
-                                                </button>
+                                            <div class="form-group col-md-4" style="text-align: left;">
+                                                <div class="input-group btn-group">
+                                                    <button ng-click=
+                                                                    "getData(record, shim.shimKey, endpoint, false)"
+                                                            type="button" style="font-size: 10px;"
+                                                            class="btn btn-default">Raw
+                                                    </button>
+                                                    <button ng-click=
+                                                                    "getData(record, shim.shimKey, endpoint, true)"
+                                                            type="button" style="font-size: 10px;"
+                                                            class="btn btn-default">Normalized
+                                                    </button>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </form>
-                                </div>
-                                <br>
-                                <!--
-                                 -- A textbox which displays the JSON results from the shim server.
-                                -->
-                                <div class="panel-body">
-                                    <div id="shim-error-{{getHtmlId(record.username)}}-{{shim.shimKey}}-{{endpoint}}"
-                                         class="error"></div>
-                                    <div id="shim-spinner-{{getHtmlId(record.username)}}-{{shim.shimKey}}-{{endpoint}}"
-                                         class="spinner">&nbsp;</div>
-                                    <textarea class="jsonResponseBox"
-                                              id="shim-results-{{getHtmlId(record.username)}}-{{shim.shimKey}}-{{endpoint}}"
-                                            ></textarea>
-                                </div>
-                            </li>
-                        </ul>
+                                        </form>
+                                    </div>
+                                    <br>
+                                    <!--
+                                     -- A textbox which displays the JSON results from the shim server.
+                                    -->
+                                    <div class="panel-body">
+                                        <div id="shim-error-{{getHtmlId(record.username)}}-{{shim.shimKey}}-{{endpoint}}"
+                                             class="error"></div>
+                                        <div id="shim-spinner-{{getHtmlId(record.username)}}-{{shim.shimKey}}-{{endpoint}}"
+                                             class="spinner">&nbsp;</div>
+                                        <textarea class="jsonResponseBox"
+                                                  id="shim-results-{{getHtmlId(record.username)}}-{{shim.shimKey}}-{{endpoint}}"
+                                                ></textarea>
+                                    </div>
+                                </li>
+                            </ul>
 
-                    </div>
+                        </div>
 
-                </li>
-            </ul>
+                    </li>
+                </ul>
+            </div>
         </div>
     </div>
 </div>
