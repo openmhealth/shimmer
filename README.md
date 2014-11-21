@@ -19,6 +19,7 @@ This repository contains a shim server, a shim server UI, and shims for third-pa
 * [Jawbone UP](https://jawbone.com/up/developer)
 * [RunKeeper](http://developer.runkeeper.com/healthgraph) ([application management portal](http://runkeeper.com/partner))
 * [Withings](http://oauth.withings.com/api)
+* [Strava](http://strava.github.io/api/)
 
 The above links point to the developer website of each API. You'll need to visit these websites to register your 
 application and obtain authentication credentials for each of the shims you want to enable.  
@@ -238,6 +239,9 @@ The currently supported shims are
         * [omh:step-count](http://www.openmhealth.org/developers/schemas/#step-count)
     * sleep    
         * [omh:sleep-duration](http://www.openmhealth.org/developers/schemas/#sleep-duration)
+* strava
+    * activity 
+        * [omh:physical-activity](http://www.openmhealth.org/developers/schemas/#physical-activity)
 
 You can learn more about these shims and endpoints on the Open mHealth [developer site](http://www.openmhealth.org/developers/getting-started/). 
 

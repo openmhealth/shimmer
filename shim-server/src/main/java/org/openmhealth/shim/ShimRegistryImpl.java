@@ -28,6 +28,8 @@ import org.openmhealth.shim.runkeeper.RunkeeperConfig;
 import org.openmhealth.shim.runkeeper.RunkeeperShim;
 import org.openmhealth.shim.withings.WithingsConfig;
 import org.openmhealth.shim.withings.WithingsShim;
+import org.openmhealth.shim.strava.StravaConfig;
+import org.openmhealth.shim.strava.StravaShim;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -71,6 +73,9 @@ public class ShimRegistryImpl implements ShimRegistry {
     @Autowired
     private WithingsConfig withingsConfig;
 
+    @Autowired
+    private StravaConfig stravaConfig;
+
     private LinkedHashMap<String, Shim> registryMap;
 
     public ShimRegistryImpl() {
@@ -112,6 +117,12 @@ public class ShimRegistryImpl implements ShimRegistry {
                 new HealthvaultShim(
                     authParametersRepo, shimServerConfig, healthvaultConfig));
         }
+
+        if (stravaConfig.getClientId() != null) {
+            registryMap.put(StravaShim.SHIM_KEY,
+                new StravaShim(
+                    authParametersRepo, accessParametersRepo, shimServerConfig, stravaConfig));
+        }
     }
 
     @Override
@@ -135,7 +146,8 @@ public class ShimRegistryImpl implements ShimRegistry {
             new RunkeeperShim(null, null, null, runkeeperConfig),
             new WithingsShim(null, null, withingsConfig),
             new HealthvaultShim(null, null, healthvaultConfig),
-            new FitbitShim(null, null, fitbitConfig)
+            new FitbitShim(null, null, fitbitConfig),
+            new StravaShim(null, null, null, stravaConfig)
         );
     }
 
