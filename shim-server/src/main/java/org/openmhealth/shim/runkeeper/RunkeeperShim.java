@@ -170,7 +170,7 @@ public class RunkeeperShim extends OAuth2ShimBase {
                 }
             }),
 
-        /*GENERAL_MEASUREMENT(
+        GENERAL_MEASUREMENT(
             "application/vnd.com.runkeeper.GeneralMeasurementSetFeed+json",
             "generalMeasurements", new JsonDeserializer<ShimDataResponse>() {
             @Override
@@ -179,9 +179,9 @@ public class RunkeeperShim extends OAuth2ShimBase {
                 throws IOException {
                 return ShimDataResponse.empty(RunkeeperShim.SHIM_KEY);
             }
-        }),*/
+        }),
 
-        /*DIABETES(
+        DIABETES(
             "application/vnd.com.runkeeper.DiabetesMeasurementSet+json",
             "diabetes", new JsonDeserializer<ShimDataResponse>() {
             @Override
@@ -190,9 +190,9 @@ public class RunkeeperShim extends OAuth2ShimBase {
                 throws IOException {
                 return ShimDataResponse.empty(RunkeeperShim.SHIM_KEY);
             }
-        }),*/
+        }),
 
-        /*SLEEP(
+        SLEEP(
             "application/vnd.com.runkeeper.SleepSetFeed+json",
             "sleep", new JsonDeserializer<ShimDataResponse>() {
             @Override
@@ -201,9 +201,9 @@ public class RunkeeperShim extends OAuth2ShimBase {
                 throws IOException {
                 return ShimDataResponse.empty(RunkeeperShim.SHIM_KEY);
             }
-        }),*/
+        }),
 
-        /*WEIGHT(
+        WEIGHT(
             "application/vnd.com.runkeeper.WeightSetFeed+json",
             "weight",
             new JsonDeserializer<ShimDataResponse>() {
@@ -240,7 +240,7 @@ public class RunkeeperShim extends OAuth2ShimBase {
                     results.put(BodyWeight.SCHEMA_BODY_WEIGHT, bodyWeights);
                     return ShimDataResponse.result(RunkeeperShim.SHIM_KEY, results);
                 }
-            })*/;
+            });
 
         private String dataTypeHeader;
 
