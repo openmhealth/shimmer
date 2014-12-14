@@ -1,14 +1,21 @@
 buildscript {
     repositories {
+        mavenLocal()
         mavenCentral()
     }
+
+    ext {
+        springPlatformVersion = '1.0.3.RELEASE'
+        springBootVersion = '1.1.9.RELEASE'
+    }
+
     dependencies {
-        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.1.6.RELEASE")
+        classpath "org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}"
     }
 }
 
 apply plugin: 'java'
-apply plugin: 'spring-boot'
+apply plugin: 'spring-boot' // used for blessed dependencies and auto-configuration
 
 jar {
     baseName = 'omh-shims'
@@ -24,34 +31,49 @@ repositories {
     mavenCentral()
 }
 
+ext {
+    javaVersion = 1.7
+    jacksonVersion = '2.4.4' // platform's still on 2.3.4
+    signpostVersion = '1.2.1.2'
+}
+
+sourceCompatibility = javaVersion
+targetCompatibility = javaVersion
+
+configurations {
+    compile.exclude module: "spring-boot-starter-tomcat"
+}
+
 dependencies {
-    compile "commons-io:commons-io:2.4"
+    // Spring IO (http://platform.spring.io/platform) gives us curated and harmonised dependencies, whose versions
+    // you can find at http://docs.spring.io/platform/docs/${springPlatformVersion}/reference/htmlsingle/#appendix-dependency-versions
+    versionManagement "io.spring.platform:platform-versions:${springPlatformVersion}@properties"
+
+    compile "commons-io:commons-io"
     compile "org.apache.httpcomponents:httpclient"
-    compile "org.apache.httpcomponents:httpcore:4.3.2"
+    compile "org.apache.httpcomponents:httpcore"
     compile "com.microsoft.hsg:hv-jaxb:1.6"
     compile "com.microsoft.hsg:hv-sdk:1.6"
-    compile "com.fasterxml.jackson.core:jackson-annotations:2.4.2"
-    compile "com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.4.2"
+    compile "com.fasterxml.jackson.core:jackson-annotations:${jacksonVersion}"
+    compile "com.fasterxml.jackson.dataformat:jackson-dataformat-xml:${jacksonVersion}"
     compile "joda-time:joda-time:2.4"
     compile "com.jayway.jsonpath:json-path:0.9.1"
-    compile "com.github.fge:json-schema-validator:2.2.5"
-    compile "oauth.signpost:signpost-commonshttp4:1.2.1.2"
-    compile "oauth.signpost:signpost-core:1.2.1.2"
+    compile "com.github.fge:json-schema-validator:2.2.6"
+    compile "oauth.signpost:signpost-commonshttp4:${signpostVersion}"
+    compile "oauth.signpost:signpost-core:${signpostVersion}"
     compile "org.springframework.boot:spring-boot-autoconfigure"
     compile "org.springframework.boot:spring-boot-starter-data-mongodb"
     compile "org.springframework.boot:spring-boot-starter-jetty"
-    compile("org.springframework.boot:spring-boot-starter-web") {
-        exclude module: "spring-boot-starter-tomcat"
-    }
-    compile "org.springframework.security.oauth:spring-security-oauth:2.0.3.RELEASE"
-    compile "org.springframework.security.oauth:spring-security-oauth2:2.0.3.RELEASE"
-    compile "org.codehaus.woodstox:woodstox-core-asl:4.1.4"
+    compile "org.springframework.boot:spring-boot-starter-web"
+    compile "org.springframework.security.oauth:spring-security-oauth"
+    compile "org.springframework.security.oauth:spring-security-oauth2"
+    compile "org.codehaus.woodstox:woodstox-core-asl"
 
     testCompile "junit:junit"
-    testCompile "org.mockito:mockito-all:1.9.5"
+    testCompile "org.mockito:mockito-core"
     testCompile "org.springframework.boot:spring-boot-starter-test"
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '2.0'
+    gradleVersion = '2.1'
 }
