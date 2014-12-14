@@ -18,8 +18,8 @@ apply plugin: 'java'
 apply plugin: 'spring-boot' // used for blessed dependencies and auto-configuration
 
 jar {
-    baseName = 'omh-shims'
-    version = '0.2.1'
+    baseName = 'shim-server'
+    version = '0.2.2'
 }
 
 springBoot {
@@ -33,6 +33,7 @@ repositories {
 
 ext {
     javaVersion = 1.7
+    healthVaultSdkVersion = '1.6'
     jacksonVersion = '2.4.4' // platform's still on 2.3.4
     signpostVersion = '1.2.1.2'
 }
@@ -52,8 +53,8 @@ dependencies {
     compile "commons-io:commons-io"
     compile "org.apache.httpcomponents:httpclient"
     compile "org.apache.httpcomponents:httpcore"
-    compile "com.microsoft.hsg:hv-jaxb:1.6"
-    compile "com.microsoft.hsg:hv-sdk:1.6"
+    compile "com.microsoft.hsg:hv-jaxb:${healthVaultSdkVersion}"
+    compile "com.microsoft.hsg:hv-sdk:${healthVaultSdkVersion}"
     compile "com.fasterxml.jackson.core:jackson-annotations:${jacksonVersion}"
     compile "com.fasterxml.jackson.dataformat:jackson-dataformat-xml:${jacksonVersion}"
     compile "joda-time:joda-time:2.4"
@@ -74,6 +75,15 @@ dependencies {
     testCompile "org.springframework.boot:spring-boot-starter-test"
 }
 
+task copyArchiveJarToDockerContext(dependsOn: build, type: Copy) {
+    from 'build/libs'
+    into '../docker/binary'
+    include "${jar.archiveName}"
+    rename { String fileName ->
+        fileName.replace("${jar.archiveName}", "${jar.baseName}.jar")
+    }
+}
+
 task wrapper(type: Wrapper) {
-    gradleVersion = '2.1'
+    gradleVersion = '2.2.1'
 }
