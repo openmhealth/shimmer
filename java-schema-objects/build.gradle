@@ -1,9 +1,8 @@
 apply plugin: 'java'
+apply plugin: 'maven'
 
-jar {
-    baseName = 'java-schema-objects'
-    version = '0.1'
-}
+group = 'org.openmhealth'
+version = '0.1'
 
 repositories {
     mavenLocal()
@@ -20,7 +19,9 @@ targetCompatibility = javaVersion
 
 dependencies {
     compile "com.fasterxml.jackson.core:jackson-annotations:${jacksonVersion}"
+    compile "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}"
     compile "joda-time:joda-time:2.4"
 
-    testCompile "junit:junit"
+    testCompile "com.github.fge:json-schema-validator:2.2.6"
+    testCompile "junit:junit:4.11"
 }

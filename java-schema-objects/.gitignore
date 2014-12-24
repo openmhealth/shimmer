@@ -1,0 +1,3 @@
+# rename that package from build to builder, if we even keep them
+!src/main/java/org/openmhealth/schema/pojos/build
+!src/test/java/org/openmhealth/schema/pojos/build

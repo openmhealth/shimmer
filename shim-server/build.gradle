@@ -50,6 +50,7 @@ dependencies {
     // you can find at http://docs.spring.io/platform/docs/${springPlatformVersion}/reference/htmlsingle/#appendix-dependency-versions
     versionManagement "io.spring.platform:platform-versions:${springPlatformVersion}@properties"
 
+    compile project(':java-schema-objects')
     compile "commons-io:commons-io"
     compile "org.apache.httpcomponents:httpclient"
     compile "org.apache.httpcomponents:httpcore"
