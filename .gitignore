@@ -19,11 +19,11 @@ hs_err_pid*
 ### Intellij ###
 # Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm
 
-/*.iml
+*.iml
 
 ## Directory-based project format:
 .idea/
-# if you remove the above rule, at least ignore the follwing:
+# if you remove the above rule, at least ignore the following:
 
 # User-specific stuff:
 # .idea/workspace.xml
@@ -61,6 +61,8 @@ atlassian-ide-plugin.xml
 
 # Crashlytics plugin (for Android Studio and IntelliJ)
 com_crashlytics_export_strings.xml
+crashlytics.properties
+crashlytics-build.properties
 
 
 ### Gradle ###
