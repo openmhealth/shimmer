@@ -311,8 +311,7 @@ public class Application extends WebSecurityConfigurerAdapter {
 
         setPassThroughAuthentication(username, shim);
 
-        ShimDataRequest shimDataRequest =
-            ShimDataRequest.fromHttpRequest(servletRequest);
+        ShimDataRequest shimDataRequest = new ShimDataRequest();
 
         shimDataRequest.setDataTypeKey(dataTypeKey);
         shimDataRequest.setNormalize(!"".equals(normalize));

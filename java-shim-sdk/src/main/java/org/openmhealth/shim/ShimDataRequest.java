@@ -17,9 +17,7 @@
 package org.openmhealth.shim;
 
 import org.joda.time.DateTime;
-import org.springframework.beans.BeanUtils;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -157,10 +155,5 @@ public class ShimDataRequest {
 
     public void setNormalize(boolean normalize) {
         this.normalize = normalize;
-    }
-
-    public static ShimDataRequest fromHttpRequest(HttpServletRequest request) {
-        ShimDataRequest dataRequest = new ShimDataRequest();
-        return dataRequest;
     }
 }

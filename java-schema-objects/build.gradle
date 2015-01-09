@@ -1,6 +1,6 @@
 apply plugin: 'maven'
 
-group = 'org.openmhealth'
+group = 'org.openmhealth.schema'
 version = '0.1'
 
 ext {

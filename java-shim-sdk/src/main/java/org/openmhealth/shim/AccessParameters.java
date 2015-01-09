@@ -18,7 +18,6 @@ package org.openmhealth.shim;
 
 
 import org.joda.time.DateTime;
-import org.springframework.data.annotation.Id;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -30,7 +29,6 @@ import java.util.Map;
  */
 public class AccessParameters {
 
-    @Id
     private String id;
 
     private String username;

@@ -4,4 +4,5 @@ version = shimServerVersion
 
 dependencies {
     compile project(':java-schema-objects')
+    compile "joda-time:joda-time:2.4"
 }
