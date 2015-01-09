@@ -1,0 +1,7 @@
+apply plugin: 'maven'
+
+version = shimServerVersion
+
+dependencies {
+    compile project(':java-schema-objects')
+}

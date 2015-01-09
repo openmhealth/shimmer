@@ -1,5 +1,22 @@
+// TODO when Grunt is called from Gradle, rethink this section
+subprojects {
+    apply plugin: 'java'
 
-group = 'org.openmhealth'
+    repositories {
+        mavenLocal()
+        mavenCentral()
+    }
+
+    group = 'org.openmhealth.shim'
+
+    ext {
+        javaVersion = 1.7
+        shimServerVersion = '0.2.3'
+    }
+
+    sourceCompatibility = javaVersion
+    targetCompatibility = javaVersion
+}
 
 task wrapper(type: Wrapper) {
     gradleVersion = '2.2.1'

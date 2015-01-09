@@ -1,21 +1,11 @@
-apply plugin: 'java'
 apply plugin: 'maven'
 
 group = 'org.openmhealth'
 version = '0.1'
 
-repositories {
-    mavenLocal()
-    mavenCentral()
-}
-
 ext {
-    javaVersion = 1.7
     jacksonVersion = '2.4.4'
 }
-
-sourceCompatibility = javaVersion
-targetCompatibility = javaVersion
 
 dependencies {
     compile "com.fasterxml.jackson.core:jackson-annotations:${jacksonVersion}"

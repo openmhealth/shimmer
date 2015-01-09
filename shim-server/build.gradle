@@ -5,8 +5,7 @@ buildscript {
     }
 
     ext {
-        springPlatformVersion = '1.0.3.RELEASE'
-        springBootVersion = '1.1.9.RELEASE'
+        springBootVersion = '1.2.1.RELEASE'
     }
 
     dependencies {
@@ -14,52 +13,40 @@ buildscript {
     }
 }
 
-apply plugin: 'java'
-apply plugin: 'spring-boot' // used for blessed dependencies and auto-configuration
+apply plugin: 'spring-boot'
+
+version = shimServerVersion
 
 jar {
     baseName = 'shim-server'
-    version = '0.2.2'
 }
 
-springBoot {
+bootRepackage {
     mainClass = "org.openmhealth.shim.Application"
 }
 
-repositories {
-    mavenLocal()
-    mavenCentral()
-}
-
 ext {
-    javaVersion = 1.7
     healthVaultSdkVersion = '1.6'
-    jacksonVersion = '2.4.4' // platform's still on 2.3.4
     signpostVersion = '1.2.1.2'
+    springSecurityOAuthVersion = '2.0.5.RELEASE'
 }
-
-sourceCompatibility = javaVersion
-targetCompatibility = javaVersion
 
 configurations {
     compile.exclude module: "spring-boot-starter-tomcat"
 }
 
 dependencies {
-    // Spring IO (http://platform.spring.io/platform) gives us curated and harmonised dependencies, whose versions
-    // you can find at http://docs.spring.io/platform/docs/${springPlatformVersion}/reference/htmlsingle/#appendix-dependency-versions
-    versionManagement "io.spring.platform:platform-versions:${springPlatformVersion}@properties"
-
     compile project(':java-schema-objects')
-    compile "commons-io:commons-io"
+    compile project(':java-shim-sdk')
+    compile "commons-io:commons-io:2.4"
     compile "org.apache.httpcomponents:httpclient"
-    compile "org.apache.httpcomponents:httpcore"
+    compile "org.apache.httpcomponents:httpcore:4.3.3"
     compile "com.microsoft.hsg:hv-jaxb:${healthVaultSdkVersion}"
     compile "com.microsoft.hsg:hv-sdk:${healthVaultSdkVersion}"
-    compile "com.fasterxml.jackson.core:jackson-annotations:${jacksonVersion}"
-    compile "com.fasterxml.jackson.dataformat:jackson-dataformat-xml:${jacksonVersion}"
-    compile "joda-time:joda-time:2.4"
-    compile "com.jayway.jsonpath:json-path:0.9.1"
+    compile "com.fasterxml.jackson.core:jackson-annotations"
+    compile "com.fasterxml.jackson.dataformat:jackson-dataformat-xml"
+    compile "joda-time:joda-time"
+    compile "com.jayway.jsonpath:json-path"
     compile "com.github.fge:json-schema-validator:2.2.6"
     compile "oauth.signpost:signpost-commonshttp4:${signpostVersion}"
     compile "oauth.signpost:signpost-core:${signpostVersion}"
@@ -67,9 +54,9 @@ dependencies {
     compile "org.springframework.boot:spring-boot-starter-data-mongodb"
     compile "org.springframework.boot:spring-boot-starter-jetty"
     compile "org.springframework.boot:spring-boot-starter-web"
-    compile "org.springframework.security.oauth:spring-security-oauth"
-    compile "org.springframework.security.oauth:spring-security-oauth2"
-    compile "org.codehaus.woodstox:woodstox-core-asl"
+    compile "org.springframework.security.oauth:spring-security-oauth:${springSecurityOAuthVersion}"
+    compile "org.springframework.security.oauth:spring-security-oauth2:${springSecurityOAuthVersion}"
+    compile "org.codehaus.woodstox:woodstox-core-asl:4.2.1"
 
     testCompile "junit:junit"
     testCompile "org.mockito:mockito-core"
@@ -83,8 +70,4 @@ task copyArchiveJarToDockerContext(dependsOn: build, type: Copy) {
     rename { String fileName ->
         fileName.replace("${jar.archiveName}", "${jar.baseName}.jar")
     }
-}
-
-task wrapper(type: Wrapper) {
-    gradleVersion = '2.2.1'
 }
