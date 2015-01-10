@@ -1,9 +1,16 @@
 spring:
   application:
     name: Open mHealth shim server
+  # this is necessary to prevent proxy errors due https://github.com/spring-projects/spring-boot/issues/1929
+  dao:
+    exceptiontranslation:
+      enabled: false
   data:
     mongodb:
       uri: mongodb://mongo:27017/omh_dsu
+  jackson:
+    serialization:
+      INDENT_OUTPUT: true
 server:
   port: 8083
 security:
@@ -11,9 +18,6 @@ security:
     enabled: false
 logging:
   file: omh-shims.log
-http:
-  mappers:
-    jsonPrettyPrint: true
 
 openmhealth:
   shim:
