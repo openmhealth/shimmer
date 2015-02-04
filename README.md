@@ -84,13 +84,14 @@ Then,
   1. `sudo npm install -g grunt-cli bower`
   1. `bower install`
   1. `grunt build`
-  1. `ln -s dist ../shim-server/src/main/resources/public`
-1. Navigate to the `shim-server/src/main/resources` directory and edit the `application.yaml` file.
-1. Check that the `spring:data:mongodb:uri` parameter points to your running MongoDB instance.
+1. Navigate to the `shim-server/src/main/resources` directory and run
+  1. `ln -s ../../../../shim-server-ui/dist public`
+1. Edit the `application.yaml` file.
+  * Check that the `spring:data:mongodb:uri` parameter points to your running MongoDB instance.
   * You might need to change the host to `localhost`, for example.
 1. Follow [these instructions](#preparing-to-use-microsoft-healthvault) to install Microsoft HealthVault libraries. These libraries are
  currently required for the shim server to work.
-1. To build and run the shim server, navigate to the `shim-server` directory and run `./gradlew bootRun`
+1. To build and run the shim server, navigate to the base directory and run `./gradlew shim-server:bootRun`
 1. The server should now be running on `localhost` on port 8083. You can change the port number in the `application.yaml` file.
 1. Visit `http://localhost:8083` in a browser.
                            
