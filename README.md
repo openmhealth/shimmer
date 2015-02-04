@@ -69,7 +69,7 @@ Then in a terminal,
 
 If you prefer not to use Docker,  
 
-1. You must have a [Java 7](http://www.oracle.com/technetwork/java/javase/downloads/index-jsp-138363.html/) or higher JDK installed. 
+1. You must have a Java 7 or higher JDK installed. You can use either [OpenJDK](http://openjdk.java.net/install/) or the [Oracle JDK](http://www.oracle.com/technetwork/java/javase/downloads/index.html).
 1. A running [MongoDB](http://docs.mongodb.org/manual/) installation is required.
 1. [Gradle](http://www.gradle.org/) or [Maven](http://maven.apache.org/) is required to build the source code.  
 1. [Maven](http://maven.apache.org/) is required to build and install Microsoft HealthVault libraries.
