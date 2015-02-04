@@ -70,7 +70,7 @@ Then in a terminal,
 If you prefer not to use Docker,  
 
 1. You must have a [Java 7](http://www.oracle.com/technetwork/java/javase/downloads/index-jsp-138363.html/) or higher JDK installed. 
-1. A running [MongoDB](http://http://docs.mongodb.org/manual/) installation is required.
+1. A running [MongoDB](http://docs.mongodb.org/manual/) installation is required.
 1. [Gradle](http://www.gradle.org/) or [Maven](http://maven.apache.org/) is required to build the source code.  
 1. [Maven](http://maven.apache.org/) is required to build and install Microsoft HealthVault libraries.
 1. You technically don't need to run the shim server UI, but it makes your life easier. If you're building the UI,
