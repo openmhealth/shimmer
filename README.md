@@ -71,7 +71,6 @@ If you prefer not to use Docker,
 
 1. You must have a Java 7 or higher JDK installed. You can use either [OpenJDK](http://openjdk.java.net/install/) or the [Oracle JDK](http://www.oracle.com/technetwork/java/javase/downloads/index.html).
 1. A running [MongoDB](http://docs.mongodb.org/manual/) installation is required.
-1. [Gradle](http://www.gradle.org/) is required to build the source code.  
 1. [Maven](http://maven.apache.org/) is required to build and install Microsoft HealthVault libraries.
 1. You technically don't need to run the shim server UI, but it makes your life easier. If you're building the UI,
   1. [Node.js](http://nodejs.org/download/) is required.
@@ -91,7 +90,7 @@ Then,
   * You might need to change the host to `localhost`, for example.
 1. Follow [these instructions](#preparing-to-use-microsoft-healthvault) to install Microsoft HealthVault libraries. These libraries are
  currently required for the shim server to work.
-1. To build and run the shim server, navigate to the `shim-server` directory and run `gradle bootRun`
+1. To build and run the shim server, navigate to the `shim-server` directory and run `./gradlew bootRun`
 1. The server should now be running on `localhost` on port 8083. You can change the port number in the `application.yaml` file.
 1. Visit `http://localhost:8083` in a browser.
                            
