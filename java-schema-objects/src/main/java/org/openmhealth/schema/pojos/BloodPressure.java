@@ -22,9 +22,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import org.joda.time.DateTime;
 import org.openmhealth.schema.pojos.generic.DescriptiveStatistic;
-import org.openmhealth.schema.pojos.generic.TimeFrame;
 import org.openmhealth.schema.pojos.serialize.LabeledEnumSerializer;
 import org.openmhealth.schema.pojos.serialize.PositionDuringMeasurementDeserializer;
 
@@ -41,9 +39,6 @@ public class BloodPressure extends BaseDataPoint {
 
     @JsonProperty(value = "diastolic_blood_pressure", required = false)
     private DiastolicBloodPressure diastolic;
-
-    @JsonProperty(value = "effective_time_frame", required = false)
-    private TimeFrame effectiveTimeFrame;
 
     @JsonProperty(value = "position_during_measurement", required = false)
     @JsonSerialize(using = LabeledEnumSerializer.class)
@@ -62,20 +57,6 @@ public class BloodPressure extends BaseDataPoint {
     @JsonIgnore
     public String getSchemaName() {
         return SCHEMA_BLOOD_PRESSURE;
-    }
-
-    @Override
-    @JsonIgnore
-    public DateTime getTimeStamp() {
-        return effectiveTimeFrame.getTimestamp();
-    }
-
-    public TimeFrame getEffectiveTimeFrame() {
-        return effectiveTimeFrame;
-    }
-
-    public void setEffectiveTimeFrame(TimeFrame effectiveTimeFrame) {
-        this.effectiveTimeFrame = effectiveTimeFrame;
     }
 
     public PositionDuringMeasurement getPositionDuringMeasurement() {
