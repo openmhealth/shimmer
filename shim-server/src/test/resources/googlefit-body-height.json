@@ -1,0 +1,43 @@
+{
+    "minStartTimeNs": "1388563200000000000",
+    "maxEndTimeNs": "1425110400000000000",
+    "dataSourceId": "derived:com.google.height:com.google.android.gms:merge_height",
+    "point": [
+        {
+            "startTimeNanos": "1414528222587000000",
+            "endTimeNanos": "1414528222587000000",
+            "dataTypeName": "com.google.height",
+            "originDataSourceId": "raw:com.google.height:com.google.android.apps.fitness:user_input",
+            "value": [
+                {
+                    "fpVal": 1.850000023841858
+                }
+            ],
+            "modifiedTimeMillis": "1414528224884"
+        },
+        {
+            "startTimeNanos": "1414528237941000000",
+            "endTimeNanos": "1414528237941000000",
+            "dataTypeName": "com.google.height",
+            "originDataSourceId": "raw:com.google.height:com.google.android.apps.fitness:user_input",
+            "value": [
+                {
+                    "fpVal": 1.850000023841858
+                }
+            ],
+            "modifiedTimeMillis": "1414528240091"
+        },
+        {
+            "startTimeNanos": "1414528239467000000",
+            "endTimeNanos": "1414528239467000000",
+            "dataTypeName": "com.google.height",
+            "originDataSourceId": "raw:com.google.height:com.google.android.apps.fitness:user_input",
+            "value": [
+                {
+                    "fpVal": 1.850000023841858
+                }
+            ],
+            "modifiedTimeMillis": "1414528243205"
+        }
+    ]
+}

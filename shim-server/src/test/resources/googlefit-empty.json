@@ -1,0 +1,9 @@
+{
+  "shim": "googlefit",
+  "timeStamp": 1425448504,
+  "body": {
+    "minStartTimeNs": "1420099200000000000",
+    "maxEndTimeNs": "1425110400000000000",
+    "dataSourceId": "derived:com.google.step_count.delta:com.google.android.gms:merge_step_deltas"
+  }
+}
