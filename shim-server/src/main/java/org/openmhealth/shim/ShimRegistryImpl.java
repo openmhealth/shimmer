@@ -20,6 +20,8 @@ import org.openmhealth.shim.fatsecret.FatsecretConfig;
 import org.openmhealth.shim.fatsecret.FatsecretShim;
 import org.openmhealth.shim.fitbit.FitbitConfig;
 import org.openmhealth.shim.fitbit.FitbitShim;
+import org.openmhealth.shim.googlefit.GoogleFitConfig;
+import org.openmhealth.shim.googlefit.GoogleFitShim;
 import org.openmhealth.shim.healthvault.HealthvaultConfig;
 import org.openmhealth.shim.healthvault.HealthvaultShim;
 import org.openmhealth.shim.jawbone.JawboneConfig;
@@ -70,6 +72,9 @@ public class ShimRegistryImpl implements ShimRegistry {
 
     @Autowired
     private WithingsConfig withingsConfig;
+    
+    @Autowired
+    private GoogleFitConfig googleFitConfig;
 
     private LinkedHashMap<String, Shim> registryMap;
 
@@ -112,6 +117,11 @@ public class ShimRegistryImpl implements ShimRegistry {
                 new HealthvaultShim(
                     authParametersRepo, shimServerConfig, healthvaultConfig));
         }
+
+        if (googleFitConfig.getClientId() != null && googleFitConfig.getClientSecret() != null) {
+            registryMap.put(GoogleFitShim.SHIM_KEY,
+                new GoogleFitShim(authParametersRepo, accessParametersRepo, shimServerConfig, googleFitConfig));
+        }
     }
 
     @Override
@@ -135,7 +145,8 @@ public class ShimRegistryImpl implements ShimRegistry {
             new RunkeeperShim(null, null, null, runkeeperConfig),
             new WithingsShim(null, null, withingsConfig),
             new HealthvaultShim(null, null, healthvaultConfig),
-            new FitbitShim(null, null, fitbitConfig)
+            new FitbitShim(null, null, fitbitConfig),
+            new GoogleFitShim(null, null, null, googleFitConfig)
         );
     }
 
