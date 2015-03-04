@@ -16,14 +16,12 @@
 
 package org.openmhealth.schema.pojos;
 
+import org.openmhealth.schema.pojos.generic.DescriptiveStatistic;
+import org.openmhealth.schema.pojos.generic.MassUnitValue;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
-import org.joda.time.DateTime;
-import org.openmhealth.schema.pojos.generic.DescriptiveStatistic;
-import org.openmhealth.schema.pojos.generic.MassUnitValue;
-import org.openmhealth.schema.pojos.generic.TimeFrame;
 
 
 /**
@@ -35,9 +33,6 @@ public class BodyWeight extends BaseDataPoint {
 
     @JsonProperty(value = "body_weight", required = true)
     private MassUnitValue massUnitValue;
-
-    @JsonProperty(value = "effective_time_frame", required = false)
-    private TimeFrame effectiveTimeFrame;
 
     @JsonProperty(value = "descriptive_statistic", required = false)
     private DescriptiveStatistic descriptiveStatistic;
@@ -51,12 +46,6 @@ public class BodyWeight extends BaseDataPoint {
     @JsonIgnore
     public String getSchemaName() {
         return SCHEMA_BODY_WEIGHT;
-    }
-
-    @Override
-    @JsonIgnore
-    public DateTime getTimeStamp() {
-        return effectiveTimeFrame.getTimestamp();
     }
 
     public DescriptiveStatistic getDescriptiveStatistic() {
@@ -73,13 +62,5 @@ public class BodyWeight extends BaseDataPoint {
 
     public void setMassUnitValue(MassUnitValue massUnitValue) {
         this.massUnitValue = massUnitValue;
-    }
-
-    public TimeFrame getEffectiveTimeFrame() {
-        return effectiveTimeFrame;
-    }
-
-    public void setEffectiveTimeFrame(TimeFrame effectiveTimeFrame) {
-        this.effectiveTimeFrame = effectiveTimeFrame;
     }
 }

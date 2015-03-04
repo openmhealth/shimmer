@@ -16,6 +16,9 @@
 
 package org.openmhealth.schema.pojos;
 
+import org.joda.time.DateTime;
+import org.openmhealth.schema.pojos.generic.TimeFrame;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 
@@ -30,11 +33,28 @@ public abstract class BaseDataPoint implements DataPoint {
     @JsonProperty(value = "metadata")
     protected Metadata metadata;
 
-    public Metadata getMetadata() {
+    @JsonProperty(value = "effective_time_frame", required = false)
+    private TimeFrame effectiveTimeFrame;
+
+	public Metadata getMetadata() {
         return metadata;
     }
 
     public void setMetadata(Metadata metadata) {
         this.metadata = metadata;
+    }
+
+    @Override
+    @JsonIgnore
+    public DateTime getTimeStamp() {
+        return effectiveTimeFrame.getTimestamp();
+    }
+
+    public TimeFrame getEffectiveTimeFrame() {
+        return effectiveTimeFrame;
+    }
+
+    public void setEffectiveTimeFrame(TimeFrame effectiveTimeFrame) {
+        this.effectiveTimeFrame = effectiveTimeFrame;
     }
 }
