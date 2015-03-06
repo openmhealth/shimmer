@@ -24,6 +24,8 @@ import org.openmhealth.shim.healthvault.HealthvaultConfig;
 import org.openmhealth.shim.healthvault.HealthvaultShim;
 import org.openmhealth.shim.jawbone.JawboneConfig;
 import org.openmhealth.shim.jawbone.JawboneShim;
+import org.openmhealth.shim.moves.MovesConfig;
+import org.openmhealth.shim.moves.MovesShim;
 import org.openmhealth.shim.runkeeper.RunkeeperConfig;
 import org.openmhealth.shim.runkeeper.RunkeeperShim;
 import org.openmhealth.shim.withings.WithingsConfig;
@@ -71,6 +73,9 @@ public class ShimRegistryImpl implements ShimRegistry {
     @Autowired
     private WithingsConfig withingsConfig;
 
+    @Autowired
+    private MovesConfig movesConfig;
+
     private LinkedHashMap<String, Shim> registryMap;
 
     public ShimRegistryImpl() {
@@ -111,6 +116,12 @@ public class ShimRegistryImpl implements ShimRegistry {
             registryMap.put(HealthvaultShim.SHIM_KEY,
                 new HealthvaultShim(
                     authParametersRepo, shimServerConfig, healthvaultConfig));
+        }
+
+        if (movesConfig.getClientId() != null) {
+            registryMap.put(MovesShim.SHIM_KEY,
+                    new MovesShim(
+                            authParametersRepo, accessParametersRepo, shimServerConfig, movesConfig));
         }
     }
 
