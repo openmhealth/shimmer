@@ -10,6 +10,9 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.openmhealth.schema.pojos.Activity;
 import org.openmhealth.shim.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.security.oauth2.client.OAuth2RestOperations;
 import org.springframework.security.oauth2.client.resource.OAuth2ProtectedResourceDetails;
@@ -27,6 +30,8 @@ import java.util.*;
  * Created by Cheng-Kang Hsieh on 3/3/15.
  */
 public class MovesShim extends OAuth2ShimBase{
+    private static final Logger log = LoggerFactory.getLogger(MovesShim.class);
+
     public static final String SHIM_KEY = "moves";
 
     private static final String DATA_URL = "https://api.moves-app.com/api/1.1";
@@ -171,7 +176,7 @@ public class MovesShim extends OAuth2ShimBase{
         String dateStart = startDate.toString(formatter);
 
         DateTime endDate = shimDataRequest.getEndDate() == null ?
-                today.plusDays(1) : shimDataRequest.getEndDate();
+                today : shimDataRequest.getEndDate();
         String dateEnd = endDate.toString(formatter);
 
 
@@ -185,6 +190,7 @@ public class MovesShim extends OAuth2ShimBase{
         ObjectMapper objectMapper = new ObjectMapper();
 
         HttpHeaders headers = new HttpHeaders();
+
         headers.add("Authorization", "Bearer " + restTemplate.getAccessToken().getValue());
         ResponseEntity<byte[]> response = restTemplate.exchange(
                 urlRequest,
