@@ -3,23 +3,13 @@ package org.openmhealth.shim.moves;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.jayway.jsonpath.JsonPath;
-import net.minidev.json.JSONObject;
 import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.openmhealth.schema.pojos.Activity;
-import org.openmhealth.schema.pojos.BodyWeight;
-import org.openmhealth.schema.pojos.build.ActivityBuilder;
-import org.openmhealth.schema.pojos.build.BodyWeightBuilder;
-import org.openmhealth.schema.pojos.generic.DurationUnitValue;
-import org.openmhealth.schema.pojos.generic.MassUnitValue;
 import org.openmhealth.shim.*;
-import org.openmhealth.shim.runkeeper.RunkeeperConfig;
 import org.springframework.http.*;
 import org.springframework.security.oauth2.client.OAuth2RestOperations;
 import org.springframework.security.oauth2.client.resource.OAuth2ProtectedResourceDetails;
@@ -27,7 +17,6 @@ import org.springframework.security.oauth2.client.resource.UserRedirectRequiredE
 import org.springframework.security.oauth2.client.token.AccessTokenRequest;
 import org.springframework.security.oauth2.client.token.RequestEnhancer;
 import org.springframework.security.oauth2.client.token.grant.code.AuthorizationCodeAccessTokenProvider;
-import org.springframework.util.CollectionUtils;
 import org.springframework.util.MultiValueMap;
 
 import java.io.IOException;
@@ -232,7 +221,7 @@ public class MovesShim extends OAuth2ShimBase{
                 + resource.getClientId()
                 + "&response_type=code"
                 + "&redirect_uri=" + getCallbackUrl()
-                + "&scope=" + String.join(" ", getScopes());
+                + "&scope=" + "activity location";
 
         AuthorizationRequestParameters parameters = new AuthorizationRequestParameters();
         parameters.setRedirectUri(exception.getRedirectUri());
