@@ -101,10 +101,45 @@ public class MovesShim extends OAuth2ShimBase{
                     public ShimDataResponse deserialize(JsonParser jsonParser,
                                                         DeserializationContext ctxt)
                             throws IOException {
+                throw new UnsupportedOperationException("Moves normalizer is not supported yet!");
 
-                        Map<String, Object> results = new HashMap<>();
-                        results.put(Activity.SCHEMA_ACTIVITY, null);
-                        return ShimDataResponse.result(MovesShim.SHIM_KEY, results);
+                    }
+                }),
+        PROFILE("/user/profile",  new JsonDeserializer<ShimDataResponse>() {
+            @Override
+            public ShimDataResponse deserialize(JsonParser jsonParser,
+                    DeserializationContext ctxt) throws IOException {
+                throw new UnsupportedOperationException("Moves normalizer is not supported yet!");
+            }
+        }),
+        SUMMARY("/user/summary/daily",
+                        new JsonDeserializer<ShimDataResponse>() {
+            @Override
+            public ShimDataResponse deserialize(JsonParser jsonParser,
+                    DeserializationContext ctxt)
+            throws IOException {
+                throw new UnsupportedOperationException("Moves normalizer is not supported yet!");
+
+            }
+        }),
+        ACTIVITIES("/user/activities/daily",
+                new JsonDeserializer<ShimDataResponse>() {
+                    @Override
+                    public ShimDataResponse deserialize(JsonParser jsonParser,
+                                                        DeserializationContext ctxt)
+                            throws IOException {
+                        throw new UnsupportedOperationException("Moves normalizer is not supported yet!");
+
+                    }
+                }),
+        PLACES("/user/places/daily",
+                new JsonDeserializer<ShimDataResponse>() {
+                    @Override
+                    public ShimDataResponse deserialize(JsonParser jsonParser,
+                                                        DeserializationContext ctxt)
+                            throws IOException {
+                        throw new UnsupportedOperationException("Moves normalizer is not supported yet!");
+
                     }
                 });
 
@@ -163,30 +198,31 @@ public class MovesShim extends OAuth2ShimBase{
 
         String urlRequest = DATA_URL;
         urlRequest += "/" + movesDataType.getEndPointUrl();
+        String urlParams;
+        if(movesDataType.equals(MovesDataType.PROFILE)){
+            urlParams = "";
+        }else {
+            /***
+             * Setup default date parameters
+             */
+            final DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd");
+            DateTime today = new DateTime();
 
-        final DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd");
+            DateTime startDate = shimDataRequest.getStartDate() == null ?
+                    today.minusDays(1) : shimDataRequest.getStartDate();
+            String dateStart = startDate.toString(formatter);
 
-        /***
-         * Setup default date parameters
-         */
-        DateTime today = new DateTime();
+            DateTime endDate = shimDataRequest.getEndDate() == null ?
+                    today : shimDataRequest.getEndDate();
+            String dateEnd = endDate.toString(formatter);
 
-        DateTime startDate = shimDataRequest.getStartDate() == null ?
-                today.minusDays(1) : shimDataRequest.getStartDate();
-        String dateStart = startDate.toString(formatter);
+            urlParams = "&trackPoints=true";
+            urlParams += "&from=" + dateStart;
+            urlParams += "&to=" + dateEnd;
+            urlParams = urlParams.substring(1, urlParams.length());
+        }
 
-        DateTime endDate = shimDataRequest.getEndDate() == null ?
-                today : shimDataRequest.getEndDate();
-        String dateEnd = endDate.toString(formatter);
-
-
-        String urlParams = "&trackPoints=true";
-
-        urlParams += "&from=" + dateStart;
-        urlParams += "&to=" + dateEnd;
-
-        urlRequest += "?" + urlParams.substring(1, urlParams.length());
-
+        urlRequest += "?" + urlParams;
         ObjectMapper objectMapper = new ObjectMapper();
 
         HttpHeaders headers = new HttpHeaders();
@@ -199,12 +235,8 @@ public class MovesShim extends OAuth2ShimBase{
                 byte[].class);
 
         try {
-            if (false && shimDataRequest.getNormalize()) {
-                SimpleModule module = new SimpleModule();
-                module.addDeserializer(ShimDataResponse.class, movesDataType.getNormalizer());
-                objectMapper.registerModule(module);
-                return new ResponseEntity<>(objectMapper.readValue(response.getBody(),
-                        ShimDataResponse.class), HttpStatus.OK);
+            if (shimDataRequest.getNormalize()) {
+                throw new UnsupportedOperationException("Moves normalizer is not supported yet!");
             } else {
                 return new ResponseEntity<>(
                         ShimDataResponse.result(MovesShim.SHIM_KEY, objectMapper.readTree(response.getBody())), HttpStatus.OK);
