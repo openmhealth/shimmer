@@ -37,11 +37,15 @@ import org.openmhealth.schema.pojos.generic.TimeFrame;
 import org.openmhealth.shim.*;
 import org.springframework.http.*;
 import org.springframework.security.oauth2.client.OAuth2RestOperations;
+import org.springframework.security.oauth2.client.resource.OAuth2AccessDeniedException;
 import org.springframework.security.oauth2.client.resource.OAuth2ProtectedResourceDetails;
 import org.springframework.security.oauth2.client.resource.UserRedirectRequiredException;
 import org.springframework.security.oauth2.client.token.AccessTokenRequest;
 import org.springframework.security.oauth2.client.token.RequestEnhancer;
 import org.springframework.security.oauth2.client.token.grant.code.AuthorizationCodeAccessTokenProvider;
+import org.springframework.security.oauth2.common.DefaultOAuth2AccessToken;
+import org.springframework.security.oauth2.common.OAuth2AccessToken;
+import org.springframework.security.oauth2.common.OAuth2RefreshToken;
 import org.springframework.util.MultiValueMap;
 import org.springframework.util.StringUtils;
 
@@ -439,6 +443,7 @@ public class GoogleFitShim extends OAuth2ShimBase {
             + resource.getClientId()
             + "&response_type=code"
             + "&access_type=offline"
+            + "&approval_prompt=force" // required to get refresh tokens
             + "&scope=" + StringUtils.collectionToDelimitedString(resource.getScope(), " ")
             + "&redirect_uri=" + getCallbackUrl();
         AuthorizationRequestParameters parameters = new AuthorizationRequestParameters();
@@ -461,6 +466,20 @@ public class GoogleFitShim extends OAuth2ShimBase {
         protected HttpMethod getHttpMethod() {
             return HttpMethod.POST;
         }
+
+        @Override
+        public OAuth2AccessToken refreshAccessToken(
+                OAuth2ProtectedResourceDetails resource,
+                OAuth2RefreshToken refreshToken, AccessTokenRequest request)
+                throws UserRedirectRequiredException,
+                OAuth2AccessDeniedException {
+            OAuth2AccessToken accessToken = super.refreshAccessToken(resource, refreshToken, request);
+            // Google does not replace refresh tokens, so we need to hold on to the existing refresh token...
+            if (accessToken.getRefreshToken() == null) {
+                ((DefaultOAuth2AccessToken) accessToken).setRefreshToken(refreshToken);
+            }
+            return accessToken;
+        }
     }
 
     /**
@@ -473,8 +492,9 @@ public class GoogleFitShim extends OAuth2ShimBase {
                             MultiValueMap<String, String> form, HttpHeaders headers) {
             form.set("client_id", resource.getClientId());
             form.set("client_secret", resource.getClientSecret());
-            form.set("grant_type", resource.getGrantType());
-            form.set("redirect_uri", getCallbackUrl());
+            if (request.getStateKey() != null) {
+                form.set("redirect_uri", getCallbackUrl());
+            }
         }
     }
 }
