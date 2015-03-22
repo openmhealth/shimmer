@@ -22,9 +22,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import org.joda.time.DateTime;
 import org.openmhealth.schema.pojos.generic.DescriptiveStatistic;
-import org.openmhealth.schema.pojos.generic.TimeFrame;
 import org.openmhealth.schema.pojos.serialize.LabeledEnumSerializer;
 import org.openmhealth.schema.pojos.serialize.PositionDuringMeasurementDeserializer;
 
@@ -40,9 +38,6 @@ public class BloodGlucose extends BaseDataPoint {
 
     @JsonProperty(value = "blood_glucose", required = true)
     private BloodGlucoseUnitValue bloodGlucose;
-
-    @JsonProperty(value = "effective_time_frame", required = false)
-    private TimeFrame effectiveTimeFrame;
 
     @JsonProperty(value = "descriptive_statistic", required = false)
     private DescriptiveStatistic descriptiveStatistic;
@@ -74,20 +69,6 @@ public class BloodGlucose extends BaseDataPoint {
     @JsonIgnore
     public String getSchemaName() {
         return SCHEMA_BLOOD_GLUCOSE;
-    }
-
-    @Override
-    @JsonIgnore
-    public DateTime getTimeStamp() {
-        return effectiveTimeFrame.getTimestamp();
-    }
-
-    public TimeFrame getEffectiveTimeFrame() {
-        return effectiveTimeFrame;
-    }
-
-    public void setEffectiveTimeFrame(TimeFrame effectiveTimeFrame) {
-        this.effectiveTimeFrame = effectiveTimeFrame;
     }
 
     public DescriptiveStatistic getDescriptiveStatistic() {

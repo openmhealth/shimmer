@@ -451,7 +451,6 @@ public class JawboneShim extends OAuth2ShimBase {
                             MultiValueMap<String, String> form, HttpHeaders headers) {
             form.set("client_id", resource.getClientId());
             form.set("client_secret", resource.getClientSecret());
-            form.set("grant_type", resource.getGrantType());
         }
     }
 }
