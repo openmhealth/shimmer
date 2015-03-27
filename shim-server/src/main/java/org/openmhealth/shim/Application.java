@@ -59,6 +59,7 @@ public class Application extends WebSecurityConfigurerAdapter {
 
     private static DateTimeFormatter formatterDate = DateTimeFormat.forPattern("yyyy-MM-dd");
 
+    // TODO clarify what this is for
     private static final String REDIRECT_OOB = "oob";
 
     public static void main(String[] args) {
