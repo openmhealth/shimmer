@@ -35,6 +35,8 @@ import org.openmhealth.schema.pojos.generic.LengthUnitValue;
 import org.openmhealth.schema.pojos.generic.MassUnitValue;
 import org.openmhealth.schema.pojos.generic.TimeFrame;
 import org.openmhealth.shim.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.http.*;
 import org.springframework.security.oauth2.client.OAuth2RestOperations;
 import org.springframework.security.oauth2.client.resource.OAuth2AccessDeniedException;
@@ -46,6 +48,7 @@ import org.springframework.security.oauth2.client.token.grant.code.Authorization
 import org.springframework.security.oauth2.common.DefaultOAuth2AccessToken;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.common.OAuth2RefreshToken;
+import org.springframework.stereotype.Component;
 import org.springframework.util.MultiValueMap;
 import org.springframework.util.StringUtils;
 
@@ -57,6 +60,8 @@ import java.util.*;
  *
  * @author Eric Jain
  */
+@Component
+@ConfigurationProperties(prefix = "openmhealth.shim.googlefit")
 public class GoogleFitShim extends OAuth2ShimBase {
 
     public static final String SHIM_KEY = "googlefit";
@@ -67,20 +72,18 @@ public class GoogleFitShim extends OAuth2ShimBase {
 
     private static final String TOKEN_URL = "https://accounts.google.com/o/oauth2/token";
 
-    private GoogleFitConfig config;
-
     public static final List<String> GOOGLE_FIT_SCOPES = Arrays.asList(
         "https://www.googleapis.com/auth/userinfo.email",
         "https://www.googleapis.com/auth/fitness.activity.read",
         "https://www.googleapis.com/auth/fitness.body.read"
     );
 
-    public GoogleFitShim(AuthorizationRequestParametersRepo authorizationRequestParametersRepo,
+    @Autowired
+    public GoogleFitShim(ApplicationAccessParametersRepo applicationParametersRepo,
+                       AuthorizationRequestParametersRepo authorizationRequestParametersRepo,
                        AccessParametersRepo accessParametersRepo,
-                       ShimServerConfig shimServerConfig,
-                       GoogleFitConfig googleFitConfig) {
-        super(authorizationRequestParametersRepo, accessParametersRepo, shimServerConfig);
-        this.config = googleFitConfig;
+                       ShimServerConfig shimServerConfig) {
+        super(applicationParametersRepo, authorizationRequestParametersRepo, accessParametersRepo, shimServerConfig);
     }
 
     @Override
@@ -91,16 +94,6 @@ public class GoogleFitShim extends OAuth2ShimBase {
     @Override
     public String getShimKey() {
         return SHIM_KEY;
-    }
-
-    @Override
-    public String getClientSecret() {
-        return config.getClientSecret();
-    }
-
-    @Override
-    public String getClientId() {
-        return config.getClientId();
     }
 
     @Override

@@ -38,7 +38,10 @@ import org.openmhealth.schema.pojos.*;
 import org.openmhealth.schema.pojos.build.*;
 import org.openmhealth.schema.pojos.generic.MassUnitValue;
 import org.openmhealth.shim.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.http.HttpMethod;
+import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 import java.io.IOException;
@@ -52,6 +55,8 @@ import static org.openmhealth.schema.pojos.generic.LengthUnitValue.LengthUnit.*;
 /**
  * @author Danilo Bonilla
  */
+@Component
+@ConfigurationProperties(prefix = "openmhealth.shim.fitbit")
 public class FitbitShim extends OAuth1ShimBase {
 
     public static final String SHIM_KEY = "fitbit";
@@ -64,13 +69,11 @@ public class FitbitShim extends OAuth1ShimBase {
 
     private static final String TOKEN_URL = "https://api.fitbit.com/oauth/access_token";
 
-    private FitbitConfig config;
-
-    public FitbitShim(AuthorizationRequestParametersRepo authorizationRequestParametersRepo,
-                      ShimServerConfig shimServerConfig,
-                      FitbitConfig fitbitConfig) {
-        super(authorizationRequestParametersRepo, shimServerConfig);
-        this.config = fitbitConfig;
+    @Autowired
+    public FitbitShim(ApplicationAccessParametersRepo applicationParametersRepo,
+                      AuthorizationRequestParametersRepo authorizationRequestParametersRepo,
+                      ShimServerConfig shimServerConfig) {
+        super(applicationParametersRepo, authorizationRequestParametersRepo, shimServerConfig);
     }
 
     @Override
@@ -86,16 +89,6 @@ public class FitbitShim extends OAuth1ShimBase {
     @Override
     public String getShimKey() {
         return SHIM_KEY;
-    }
-
-    @Override
-    public String getClientSecret() {
-        return config.getClientSecret();
-    }
-
-    @Override
-    public String getClientId() {
-        return config.getClientId();
     }
 
     @Override

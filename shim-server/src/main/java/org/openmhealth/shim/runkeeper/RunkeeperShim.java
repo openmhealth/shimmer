@@ -35,6 +35,8 @@ import org.openmhealth.schema.pojos.build.BodyWeightBuilder;
 import org.openmhealth.schema.pojos.generic.DurationUnitValue;
 import org.openmhealth.schema.pojos.generic.MassUnitValue;
 import org.openmhealth.shim.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.http.*;
 import org.springframework.security.oauth2.client.OAuth2RestOperations;
 import org.springframework.security.oauth2.client.resource.OAuth2ProtectedResourceDetails;
@@ -42,6 +44,7 @@ import org.springframework.security.oauth2.client.resource.UserRedirectRequiredE
 import org.springframework.security.oauth2.client.token.AccessTokenRequest;
 import org.springframework.security.oauth2.client.token.RequestEnhancer;
 import org.springframework.security.oauth2.client.token.grant.code.AuthorizationCodeAccessTokenProvider;
+import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.MultiValueMap;
 
@@ -55,6 +58,8 @@ import static org.openmhealth.schema.pojos.generic.LengthUnitValue.LengthUnit.m;
  *
  * @author Danilo Bonilla
  */
+@Component
+@ConfigurationProperties(prefix = "openmhealth.shim.runkeeper")
 public class RunkeeperShim extends OAuth2ShimBase {
 
     public static final String SHIM_KEY = "runkeeper";
@@ -65,19 +70,15 @@ public class RunkeeperShim extends OAuth2ShimBase {
 
     private static final String TOKEN_URL = "https://runkeeper.com/apps/token";
 
-    private RunkeeperConfig config;
+    public static final List<String> RUNKEEPER_SCOPES = Arrays.asList(
+        "application/vnd.com.runkeeper.FitnessActivityFeed+json");
 
-    public static final ArrayList<String> RUNKEEPER_SCOPES =
-        new ArrayList<String>(Arrays.asList(
-            "application/vnd.com.runkeeper.FitnessActivityFeed+json"
-        ));
-
-    public RunkeeperShim(AuthorizationRequestParametersRepo authorizationRequestParametersRepo,
+    @Autowired
+    public RunkeeperShim(ApplicationAccessParametersRepo applicationParametersRepo,
+                         AuthorizationRequestParametersRepo authorizationRequestParametersRepo,
                          AccessParametersRepo accessParametersRepo,
-                         ShimServerConfig shimServerConfig1,
-                         RunkeeperConfig runkeeperConfig) {
-        super(authorizationRequestParametersRepo, accessParametersRepo, shimServerConfig1);
-        this.config = runkeeperConfig;
+                         ShimServerConfig shimServerConfig1) {
+        super(applicationParametersRepo, authorizationRequestParametersRepo, accessParametersRepo, shimServerConfig1);
     }
 
     @Override
@@ -88,16 +89,6 @@ public class RunkeeperShim extends OAuth2ShimBase {
     @Override
     public String getShimKey() {
         return SHIM_KEY;
-    }
-
-    @Override
-    public String getClientSecret() {
-        return config.getClientSecret();
-    }
-
-    @Override
-    public String getClientId() {
-        return config.getClientId();
     }
 
     @Override

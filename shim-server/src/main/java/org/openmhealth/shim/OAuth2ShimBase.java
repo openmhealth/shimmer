@@ -32,6 +32,7 @@ import org.springframework.security.oauth2.common.exceptions.OAuth2Exception;
 import org.springframework.security.oauth2.common.util.SerializationUtils;
 
 import javax.servlet.http.HttpServletRequest;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
@@ -41,7 +42,7 @@ import java.util.Map;
  *
  * @author Danilo Bonilla
  */
-public abstract class OAuth2ShimBase implements Shim, OAuth2Shim {
+public abstract class OAuth2ShimBase extends ShimBase implements OAuth2Shim {
 
     private AuthorizationRequestParametersRepo authorizationRequestParametersRepo;
 
@@ -49,9 +50,11 @@ public abstract class OAuth2ShimBase implements Shim, OAuth2Shim {
 
     protected ShimServerConfig shimServerConfig;
 
-    protected OAuth2ShimBase(AuthorizationRequestParametersRepo authorizationRequestParametersRepo,
+    protected OAuth2ShimBase(ApplicationAccessParametersRepo applicationParametersRepo,
+                             AuthorizationRequestParametersRepo authorizationRequestParametersRepo,
                              AccessParametersRepo accessParametersRepo,
                              ShimServerConfig shimServerConfig) {
+        super(applicationParametersRepo);
         this.authorizationRequestParametersRepo = authorizationRequestParametersRepo;
         this.accessParametersRepo = accessParametersRepo;
         this.shimServerConfig = shimServerConfig;

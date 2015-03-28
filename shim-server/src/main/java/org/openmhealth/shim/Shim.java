@@ -117,4 +117,12 @@ public interface Shim {
      * @return Generic object wrapper including timestamp, shim, and results
      */
     ShimDataResponse getData(final ShimDataRequest shimDataRequest) throws ShimException;
+
+
+    /**
+     * Check if this shim is properly configured.
+     *
+     * @return true if this shim is properly configured.
+     */
+    boolean isConfigured();
 }

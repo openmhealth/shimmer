@@ -34,6 +34,9 @@ import org.openmhealth.schema.pojos.build.*;
 import org.openmhealth.schema.pojos.*;
 import org.openmhealth.schema.pojos.generic.MassUnitValue;
 import org.openmhealth.shim.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -50,6 +53,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathFactory;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
@@ -65,7 +69,9 @@ import static org.openmhealth.schema.pojos.generic.LengthUnitValue.LengthUnit;
  *
  * @author Danilo Bonilla
  */
-public class HealthvaultShim implements Shim {
+@Component
+@ConfigurationProperties(prefix = "openmhealth.shim.healthvault")
+public class HealthvaultShim extends ShimBase {
 
     public static final String SHIM_KEY = "healthvault";
 
@@ -86,16 +92,15 @@ public class HealthvaultShim implements Shim {
 
     private ShimServerConfig shimServerConfig;
 
-    private HealthvaultConfig config;
-
-    public HealthvaultShim(AuthorizationRequestParametersRepo authorizationRequestParametersRepo,
-                           ShimServerConfig shimServerConfig,
-                           HealthvaultConfig healthvaultConfig) {
+    @Autowired
+    public HealthvaultShim(ApplicationAccessParametersRepo applicationParametersRepo,
+                           AuthorizationRequestParametersRepo authorizationRequestParametersRepo,
+                           ShimServerConfig shimServerConfig) {
+        super(applicationParametersRepo);
         this.authorizationRequestParametersRepo = authorizationRequestParametersRepo;
         this.shimServerConfig = shimServerConfig;
-        this.config = healthvaultConfig;
-        if(config != null && config.getClientId() != null){
-            this.connection = ConnectionFactory.getConnection(config.getClientId());
+        if(getClientId() != null){
+            this.connection = ConnectionFactory.getConnection(getClientId());
         }
     }
 
@@ -110,8 +115,8 @@ public class HealthvaultShim implements Shim {
     }
 
     @Override
-    public String getClientId() {
-        return config.getClientId();
+    public boolean isConfigured() {
+        return getClientId() != null;
     }
 
     @Override
@@ -653,7 +658,7 @@ public class HealthvaultShim implements Shim {
                 accessInfo.getAdditionalParameters().get(RECORD_ID_PARAM).toString());
             HVAccessor accessor = new HVAccessor();
             accessor.send(request,
-                ConnectionFactory.getConnection(config.getClientId()));
+                ConnectionFactory.getConnection(getClientId()));
             try {
                 InputStream istream = accessor.getResponse().getInputStream();
                 return marshaller.marshal(istream);

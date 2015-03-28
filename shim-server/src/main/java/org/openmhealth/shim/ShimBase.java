@@ -14,32 +14,28 @@
  * limitations under the License.
  */
 
-package org.openmhealth.shim.withings;
-
-import org.openmhealth.shim.ApplicationAccessParameters;
-import org.openmhealth.shim.ApplicationAccessParametersRepo;
-import org.openmhealth.shim.ShimConfig;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
+package org.openmhealth.shim;
 
 /**
- * @author Danilo Bonilla
+ * Base class for shims.
+ *
+ * @author Eric Jain
  */
-@Component
-@ConfigurationProperties(prefix = "openmhealth.shim.withings")
-public class WithingsConfig implements ShimConfig {
+public abstract class ShimBase implements Shim {
 
     private String clientId;
 
     private String clientSecret;
 
-    @Autowired
-    private ApplicationAccessParametersRepo applicationParametersRepo;
+    private final ApplicationAccessParametersRepo applicationParametersRepo;
 
+    protected ShimBase(ApplicationAccessParametersRepo applicationParametersRepo) {
+        this.applicationParametersRepo = applicationParametersRepo;
+    }
+
+    @Override
     public String getClientId() {
-        ApplicationAccessParameters parameters =
-            applicationParametersRepo.findByShimKey(WithingsShim.SHIM_KEY);
+        ApplicationAccessParameters parameters = findParameters();
         return parameters != null ? parameters.getClientId() : clientId;
     }
 
@@ -47,9 +43,9 @@ public class WithingsConfig implements ShimConfig {
         this.clientId = clientId;
     }
 
+    @Override
     public String getClientSecret() {
-        ApplicationAccessParameters parameters =
-            applicationParametersRepo.findByShimKey(WithingsShim.SHIM_KEY);
+        ApplicationAccessParameters parameters = findParameters();
         return parameters != null ? parameters.getClientSecret() : clientSecret;
     }
 
@@ -57,4 +53,12 @@ public class WithingsConfig implements ShimConfig {
         this.clientSecret = clientSecret;
     }
 
+    private ApplicationAccessParameters findParameters() {
+        return applicationParametersRepo.findByShimKey(getShimKey());
+    }
+
+    @Override
+    public boolean isConfigured() {
+        return getClientId() != null && getClientSecret() != null;
+    }
 }

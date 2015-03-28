@@ -39,9 +39,13 @@ import org.openmhealth.schema.pojos.generic.LengthUnitValue;
 import org.openmhealth.schema.pojos.generic.MassUnitValue;
 import org.openmhealth.schema.pojos.generic.TimeFrame;
 import org.openmhealth.shim.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 import javax.servlet.http.HttpServletRequest;
+
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URL;
@@ -52,6 +56,8 @@ import static org.openmhealth.schema.pojos.generic.DurationUnitValue.DurationUni
 /**
  * @author Danilo Bonilla
  */
+@Component
+@ConfigurationProperties(prefix = "openmhealth.shim.withings")
 public class WithingsShim extends OAuth1ShimBase {
 
     public static final String SHIM_KEY = "withings";
@@ -64,13 +70,11 @@ public class WithingsShim extends OAuth1ShimBase {
 
     private static final String TOKEN_URL = "https://oauth.withings.com/account/access_token";
 
-    private WithingsConfig config;
-
-    public WithingsShim(AuthorizationRequestParametersRepo authorizationRequestParametersRepo,
-                        ShimServerConfig shimServerConfig,
-                        WithingsConfig withingsConfig) {
-        super(authorizationRequestParametersRepo, shimServerConfig);
-        this.config = withingsConfig;
+    @Autowired
+    public WithingsShim(ApplicationAccessParametersRepo applicationParametersRepo,
+                        AuthorizationRequestParametersRepo authorizationRequestParametersRepo,
+                        ShimServerConfig shimServerConfig) {
+        super(applicationParametersRepo, authorizationRequestParametersRepo, shimServerConfig);
     }
 
     @Override
@@ -86,16 +90,6 @@ public class WithingsShim extends OAuth1ShimBase {
     @Override
     public String getShimKey() {
         return SHIM_KEY;
-    }
-
-    @Override
-    public String getClientSecret() {
-        return config.getClientSecret();
-    }
-
-    @Override
-    public String getClientId() {
-        return config.getClientId();
     }
 
     @Override
