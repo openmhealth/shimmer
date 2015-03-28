@@ -99,8 +99,9 @@ public class HealthvaultShim extends ShimBase {
         super(applicationParametersRepo);
         this.authorizationRequestParametersRepo = authorizationRequestParametersRepo;
         this.shimServerConfig = shimServerConfig;
-        if(getClientId() != null){
-            this.connection = ConnectionFactory.getConnection(getClientId());
+        String apiKey = findApplicationAccessParameters().getClientId();
+        if (apiKey != null){
+            this.connection = ConnectionFactory.getConnection(apiKey);
         }
     }
 
@@ -116,7 +117,8 @@ public class HealthvaultShim extends ShimBase {
 
     @Override
     public boolean isConfigured() {
-        return getClientId() != null;
+        ApplicationAccessParameters parameters = findApplicationAccessParameters();
+        return parameters.getClientId() != null;
     }
 
     @Override
@@ -551,7 +553,7 @@ public class HealthvaultShim extends ShimBase {
         final String recordId = getSelectedRecordId(accessToken);
 
         AccessParameters accessParameters = new AccessParameters();
-        accessParameters.setClientId(getClientId());
+        accessParameters.setClientId(findApplicationAccessParameters().getClientId());
         accessParameters.setStateKey(stateKey);
         accessParameters.setUsername(authParams.getUsername());
         accessParameters.setAccessToken(accessToken);
@@ -564,7 +566,7 @@ public class HealthvaultShim extends ShimBase {
 
     private String getAuthorizationUrl(String redirectUrl, String actionQs) {
         return getBaseAuthorizeUrl()
-            + "/redirect.aspx?target=AUTH&targetqs=?appid=" + getClientId()
+            + "/redirect.aspx?target=AUTH&targetqs=?appid=" + findApplicationAccessParameters().getClientId()
             + "%26redirect=" + redirectUrl
             + "%26actionqs=" + actionQs;
     }
@@ -658,7 +660,7 @@ public class HealthvaultShim extends ShimBase {
                 accessInfo.getAdditionalParameters().get(RECORD_ID_PARAM).toString());
             HVAccessor accessor = new HVAccessor();
             accessor.send(request,
-                ConnectionFactory.getConnection(getClientId()));
+                ConnectionFactory.getConnection(findApplicationAccessParameters().getClientId()));
             try {
                 InputStream istream = accessor.getResponse().getInputStream();
                 return marshaller.marshal(istream);
@@ -669,11 +671,6 @@ public class HealthvaultShim extends ShimBase {
                 throw new HVException("Could not marshal response", e);
             }
         }
-    }
-
-    @Override
-    public String getClientSecret() {
-        return null; //NOOP
     }
 
     @Override

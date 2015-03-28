@@ -103,12 +103,13 @@ public abstract class OAuth2ShimBase extends ShimBase implements OAuth2Shim {
     }
 
     public OAuth2ProtectedResourceDetails getResource() {
+        ApplicationAccessParameters parameters = findApplicationAccessParameters();
         AuthorizationCodeResourceDetails resource = new AuthorizationCodeResourceDetails();
         resource.setAccessTokenUri(getBaseTokenUrl());
         resource.setUserAuthorizationUri(getBaseAuthorizeUrl());
-        resource.setClientId(getClientId());
+        resource.setClientId(parameters.getClientId());
         resource.setScope(getScopes());
-        resource.setClientSecret(getClientSecret());
+        resource.setClientSecret(parameters.getClientSecret());
         resource.setTokenName("access_token");
         resource.setGrantType("authorization_code");
         resource.setUseCurrentUri(true);

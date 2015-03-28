@@ -150,9 +150,10 @@ public abstract class OAuth1ShimBase extends ShimBase implements OAuth1Shim {
             throw new ShimException("Access token could not be retrieved");
         }
 
+        ApplicationAccessParameters parameters = findApplicationAccessParameters();
         AccessParameters accessParameters = new AccessParameters();
-        accessParameters.setClientId(getClientId());
-        accessParameters.setClientSecret(getClientSecret());
+        accessParameters.setClientId(parameters.getClientId());
+        accessParameters.setClientSecret(parameters.getClientSecret());
         accessParameters.setStateKey(stateKey);
         accessParameters.setUsername(authParams.getUsername());
         accessParameters.setAccessToken(accessToken);
@@ -175,10 +176,11 @@ public abstract class OAuth1ShimBase extends ShimBase implements OAuth1Shim {
                                                String token,
                                                String tokenSecret,
                                                Map<String, String> oauthParams) throws ShimException {
+        ApplicationAccessParameters parameters = findApplicationAccessParameters();
         return OAuth1Utils.getSignedRequest(
             unsignedUrl,
-            getClientId(),
-            getClientSecret(),
+            parameters.getClientId(),
+            parameters.getClientSecret(),
             token, tokenSecret, oauthParams);
     }
 
@@ -187,10 +189,11 @@ public abstract class OAuth1ShimBase extends ShimBase implements OAuth1Shim {
                           String tokenSecret,
                           Map<String, String> oauthParams)
         throws ShimException {
+        ApplicationAccessParameters parameters = findApplicationAccessParameters();
         return OAuth1Utils.buildSignedUrl(
             unsignedUrl,
-            getClientId(),
-            getClientSecret(),
+            parameters.getClientId(),
+            parameters.getClientSecret(),
             token, tokenSecret, oauthParams);
     }
 

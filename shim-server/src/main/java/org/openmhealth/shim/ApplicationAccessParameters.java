@@ -33,6 +33,16 @@ public class ApplicationAccessParameters {
 
     private String clientSecret;
 
+    public ApplicationAccessParameters() {
+        
+    }
+
+    public ApplicationAccessParameters(String shimKey, String clientId, String clientSecret) {
+        this.shimKey = shimKey;
+        this.clientId = clientId;
+        this.clientSecret = clientSecret;
+    }
+
     public String getId() {
         return id;
     }

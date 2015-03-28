@@ -540,9 +540,10 @@ public class FitbitShim extends OAuth1ShimBase {
                                             FitbitDataType fitbitDataType
     ) throws ShimException {
 
+        ApplicationAccessParameters parameters = findApplicationAccessParameters();
         HttpRequestBase dataRequest =
             OAuth1Utils.getSignedRequest(HttpMethod.GET,
-                endPointUrl, getClientId(), getClientSecret(), accessToken, tokenSecret, null);
+                endPointUrl, parameters.getClientId(), parameters.getClientSecret(), accessToken, tokenSecret, null);
 
         HttpResponse response;
         try {
@@ -602,9 +603,10 @@ public class FitbitShim extends OAuth1ShimBase {
             + (fitbitDataType == FitbitDataType.STEPS ? "/1d/1min" : "") //special setting for time series
             + ".json";
 
+        ApplicationAccessParameters parameters = findApplicationAccessParameters();
         HttpRequestBase dataRequest =
             OAuth1Utils.getSignedRequest(HttpMethod.GET,
-                endPointUrl, getClientId(), getClientSecret(), accessToken, tokenSecret, null);
+                endPointUrl, parameters.getClientId(), parameters.getClientSecret(), accessToken, tokenSecret, null);
 
         HttpResponse response;
         try {

@@ -34,31 +34,25 @@ public abstract class ShimBase implements Shim {
     }
 
     @Override
-    public String getClientId() {
-        ApplicationAccessParameters parameters = findParameters();
-        return parameters != null ? parameters.getClientId() : clientId;
+    public ApplicationAccessParameters findApplicationAccessParameters() {
+        ApplicationAccessParameters parameters = applicationParametersRepo.findByShimKey(getShimKey());
+        if (parameters == null) {
+            parameters = new ApplicationAccessParameters(getShimKey(), clientId, clientSecret);
+        }
+        return parameters;
     }
 
     public void setClientId(String clientId) {
         this.clientId = clientId;
     }
 
-    @Override
-    public String getClientSecret() {
-        ApplicationAccessParameters parameters = findParameters();
-        return parameters != null ? parameters.getClientSecret() : clientSecret;
-    }
-
     public void setClientSecret(String clientSecret) {
         this.clientSecret = clientSecret;
     }
 
-    private ApplicationAccessParameters findParameters() {
-        return applicationParametersRepo.findByShimKey(getShimKey());
-    }
-
     @Override
     public boolean isConfigured() {
-        return getClientId() != null && getClientSecret() != null;
+        ApplicationAccessParameters parameters = findApplicationAccessParameters();
+        return parameters.getClientId() != null && parameters.getClientSecret() != null;
     }
 }

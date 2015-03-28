@@ -32,6 +32,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import java.io.IOException;
 import java.util.*;
 
@@ -99,11 +100,12 @@ public class Application extends WebSecurityConfigurerAdapter {
             row.put("shimKey", shim.getShimKey());
             row.put("label", shim.getLabel());
             row.put("endpoints", endpoints);
-            if (shim.getClientId() != null) {
-                row.put("clientId", shim.getClientId());
+            ApplicationAccessParameters parameters = shim.findApplicationAccessParameters();
+            if (parameters.getClientId() != null) {
+                row.put("clientId", parameters.getClientId());
             }
-            if (shim.getClientSecret() != null) {
-                row.put("clientSecret", shim.getClientSecret());
+            if (parameters.getClientSecret() != null) {
+                row.put("clientSecret", parameters.getClientSecret());
             }
             results.add(row);
         }
