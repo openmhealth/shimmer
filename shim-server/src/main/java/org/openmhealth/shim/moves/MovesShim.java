@@ -173,7 +173,7 @@ public class MovesShim extends OAuth2ShimBase{
     @Override
     public ShimDataRequest getTriggerDataRequest() {
         ShimDataRequest shimDataRequest = new ShimDataRequest();
-        shimDataRequest.setDataTypeKey(MovesDataType.STORYLINE.toString());
+        shimDataRequest.setDataTypeKey(MovesDataType.PROFILE.toString());
         shimDataRequest.setNumToReturn(1l);
         return shimDataRequest;
     }
