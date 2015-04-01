@@ -60,9 +60,6 @@ public abstract class OAuth2ShimBase extends ShimBase implements OAuth2Shim {
         this.shimServerConfig = shimServerConfig;
     }
 
-    protected abstract AuthorizationRequestParameters getAuthorizationRequestParameters(
-        final String username, final UserRedirectRequiredException exception);
-
     protected abstract ResponseEntity<ShimDataResponse> getData(
         OAuth2RestOperations restTemplate, ShimDataRequest shimDataRequest) throws ShimException;
 
@@ -91,9 +88,10 @@ public abstract class OAuth2ShimBase extends ShimBase implements OAuth2Shim {
              * Build an authorization request from the exception
              * parameters. We also serialize spring's accessTokenRequest.
              */
-            AuthorizationRequestParameters authRequestParams =
-                getAuthorizationRequestParameters(username, e);
-
+            AuthorizationRequestParameters authRequestParams = new AuthorizationRequestParameters();
+            authRequestParams.setRedirectUri(e.getRedirectUri());
+            authRequestParams.setStateKey(e.getStateKey());
+            authRequestParams.setAuthorizationUrl(getAuthorizationUrl(e));
             authRequestParams.setSerializedRequest(SerializationUtils.serialize(accessTokenRequest));
             authRequestParams.setStateKey(stateKey);
 
@@ -101,6 +99,8 @@ public abstract class OAuth2ShimBase extends ShimBase implements OAuth2Shim {
             return authRequestParams;
         }
     }
+
+    protected abstract String getAuthorizationUrl(UserRedirectRequiredException exception);
 
     public OAuth2ProtectedResourceDetails getResource() {
         ApplicationAccessParameters parameters = findApplicationAccessParameters();

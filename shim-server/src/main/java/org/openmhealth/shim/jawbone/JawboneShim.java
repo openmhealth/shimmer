@@ -398,11 +398,10 @@ public class JawboneShim extends OAuth2ShimBase {
         }
     }
 
-    protected AuthorizationRequestParameters getAuthorizationRequestParameters(
-        final String username,
-        final UserRedirectRequiredException exception) {
+    @Override
+    protected String getAuthorizationUrl(UserRedirectRequiredException exception) {
         final OAuth2ProtectedResourceDetails resource = getResource();
-        String authorizationUrl = exception.getRedirectUri()
+        return exception.getRedirectUri()
             + "?state="
             + exception.getStateKey()
             + "&client_id="
@@ -410,11 +409,6 @@ public class JawboneShim extends OAuth2ShimBase {
             + "&response_type=code"
             + "&scope=" + StringUtils.collectionToDelimitedString(resource.getScope(), " ")
             + "&redirect_uri=" + getCallbackUrl();
-        AuthorizationRequestParameters parameters = new AuthorizationRequestParameters();
-        parameters.setRedirectUri(exception.getRedirectUri());
-        parameters.setStateKey(exception.getStateKey());
-        parameters.setAuthorizationUrl(authorizationUrl);
-        return parameters;
     }
 
 
