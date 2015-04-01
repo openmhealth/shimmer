@@ -268,14 +268,6 @@ public class RunkeeperShim extends OAuth2ShimBase {
     }
 
     @Override
-    public ShimDataRequest getTriggerDataRequest() {
-        ShimDataRequest shimDataRequest = new ShimDataRequest();
-        shimDataRequest.setDataTypeKey(RunkeeperDataType.ACTIVITY.toString());
-        shimDataRequest.setNumToReturn(1l);
-        return shimDataRequest;
-    }
-
-    @Override
     public ShimDataType[] getShimDataTypes() {
         return RunkeeperDataType.values();
     }

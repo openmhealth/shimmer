@@ -113,14 +113,6 @@ public class JawboneShim extends OAuth2ShimBase {
     }
 
     @Override
-    public ShimDataRequest getTriggerDataRequest() {
-        ShimDataRequest shimDataRequest = new ShimDataRequest();
-        shimDataRequest.setDataTypeKey(JawboneDataTypes.BODY.toString());
-        shimDataRequest.setNumToReturn(1l);
-        return shimDataRequest;
-    }
-
-    @Override
     public ShimDataType[] getShimDataTypes() {
         return new JawboneDataTypes[]{
             JawboneDataTypes.BODY, JawboneDataTypes.SLEEP, JawboneDataTypes.WORKOUTS, JawboneDataTypes.MOVES};

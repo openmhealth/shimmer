@@ -116,14 +116,6 @@ public class GoogleFitShim extends OAuth2ShimBase {
     }
 
     @Override
-    public ShimDataRequest getTriggerDataRequest() {
-        ShimDataRequest shimDataRequest = new ShimDataRequest();
-        shimDataRequest.setDataTypeKey(GoogleFitDataTypes.ACTIVITY.toString());
-        shimDataRequest.setNumToReturn(1l);
-        return shimDataRequest;
-    }
-
-    @Override
     public ShimDataType[] getShimDataTypes() {
         return new GoogleFitDataTypes[]{
             GoogleFitDataTypes.ACTIVITY,
