@@ -33,6 +33,7 @@ public class AuthorizationRequestParameters {
 
     private String username;
 
+    // TODO: unused, drop
     private HttpMethod httpMethod = HttpMethod.POST;
 
     private String redirectUri;
@@ -77,14 +78,6 @@ public class AuthorizationRequestParameters {
 
     public void setAuthorizationUrl(String authorizationUrl) {
         this.authorizationUrl = authorizationUrl;
-    }
-
-    public HttpMethod getHttpMethod() {
-        return httpMethod;
-    }
-
-    public void setHttpMethod(HttpMethod httpMethod) {
-        this.httpMethod = httpMethod;
     }
 
     public String getStateKey() {

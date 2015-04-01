@@ -367,7 +367,6 @@ public class RunkeeperShim extends OAuth2ShimBase {
         AuthorizationRequestParameters parameters = new AuthorizationRequestParameters();
         parameters.setRedirectUri(exception.getRedirectUri());
         parameters.setStateKey(exception.getStateKey());
-        parameters.setHttpMethod(HttpMethod.GET);
         parameters.setAuthorizationUrl(authorizationUrl);
         return parameters;
     }

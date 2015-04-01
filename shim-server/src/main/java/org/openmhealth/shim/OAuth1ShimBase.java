@@ -84,7 +84,6 @@ public abstract class OAuth1ShimBase extends ShimBase implements OAuth1Shim {
             parameters.setUsername(username);
             parameters.setRedirectUri(callbackUrl);
             parameters.setStateKey(stateKey);
-            parameters.setHttpMethod(HttpMethod.GET);
             parameters.setAuthorizationUrl(authorizeUrl.toString());
             parameters.setRequestParams(tokenParameters);
 
