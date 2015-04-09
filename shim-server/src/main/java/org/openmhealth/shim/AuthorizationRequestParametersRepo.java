@@ -17,16 +17,14 @@
 package org.openmhealth.shim;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
-import org.springframework.stereotype.Repository;
 
 import java.util.List;
+
 
 /**
  * @author Danilo Bonilla
  */
-@Repository
-public interface AuthorizationRequestParametersRepo
-    extends MongoRepository<AuthorizationRequestParameters, String> {
+public interface AuthorizationRequestParametersRepo extends MongoRepository<AuthorizationRequestParameters, String> {
 
     List<AuthorizationRequestParameters> findByUsername(String username);
 

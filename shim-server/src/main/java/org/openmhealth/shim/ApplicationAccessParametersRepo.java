@@ -17,12 +17,11 @@
 package org.openmhealth.shim;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
-import org.springframework.stereotype.Repository;
+
 
 /**
  * @author Danilo Bonilla
  */
-@Repository
 public interface ApplicationAccessParametersRepo extends MongoRepository<ApplicationAccessParameters, String> {
 
     ApplicationAccessParameters findByShimKey(String shimKey);
