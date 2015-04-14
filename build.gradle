@@ -10,7 +10,7 @@ subprojects {
     group = 'org.openmhealth.shim'
 
     ext {
-        javaVersion = 1.7
+        javaVersion = 1.8
         shimServerVersion = '0.2.3'
     }
 
