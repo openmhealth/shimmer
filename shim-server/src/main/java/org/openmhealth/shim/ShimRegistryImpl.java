@@ -28,6 +28,8 @@ import org.openmhealth.shim.runkeeper.RunkeeperConfig;
 import org.openmhealth.shim.runkeeper.RunkeeperShim;
 import org.openmhealth.shim.withings.WithingsConfig;
 import org.openmhealth.shim.withings.WithingsShim;
+import org.openmhealth.shim.ginsberg.GinsbergConfig;
+import org.openmhealth.shim.ginsberg.GinsbergShim;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -70,6 +72,9 @@ public class ShimRegistryImpl implements ShimRegistry {
 
     @Autowired
     private WithingsConfig withingsConfig;
+    
+   @Autowired
+    private GinsbergConfig ginsbergConfig;
 
     private LinkedHashMap<String, Shim> registryMap;
 
@@ -112,6 +117,11 @@ public class ShimRegistryImpl implements ShimRegistry {
                 new HealthvaultShim(
                     authParametersRepo, shimServerConfig, healthvaultConfig));
         }
+        
+        if (ginsbergConfig.getClientId() != null && ginsbergConfig.getClientSecret() != null) {
+            registryMap.put(GinsbergShim.SHIM_KEY,
+                new GinsbergShim( authParametersRepo, accessParametersRepo, shimServerConfig, ginsbergConfig));
+        }
     }
 
     @Override
@@ -135,7 +145,8 @@ public class ShimRegistryImpl implements ShimRegistry {
             new RunkeeperShim(null, null, null, runkeeperConfig),
             new WithingsShim(null, null, withingsConfig),
             new HealthvaultShim(null, null, healthvaultConfig),
-            new FitbitShim(null, null, fitbitConfig)
+            new FitbitShim(null, null, fitbitConfig),
+            new GinsbergShim(null, null, null, ginsbergConfig)    
         );
     }
 
