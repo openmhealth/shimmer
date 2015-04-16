@@ -17,17 +17,18 @@
 package org.openmhealth.schema.pojos.generic;
 
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import java.math.BigDecimal;
+
 import org.joda.time.DateTime;
 import org.openmhealth.schema.pojos.serialize.dates.ISODateDeserializer;
 import org.openmhealth.schema.pojos.serialize.dates.ISODateSerializer;
 import org.openmhealth.schema.pojos.serialize.dates.SimpleDateDeserializer;
 import org.openmhealth.schema.pojos.serialize.dates.SimpleDateSerializer;
-
-import java.math.BigDecimal;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.google.common.base.Objects;
 
 
 /**
@@ -116,5 +117,35 @@ public class TimeInterval {
         durationUnitValue.setValue(new BigDecimal(durationValue));
         interval.setDuration(durationUnitValue);
         return interval;
+    }
+
+    @Override
+    public boolean equals(Object that) {
+    	return that instanceof TimeInterval
+    		&& equals((TimeInterval) that);
+    }
+
+    private boolean equals(TimeInterval that) {
+    	return Objects.equal(date, that.date)
+    		&& Objects.equal(startTime, that.startTime)
+    		&& Objects.equal(endTime, that.endTime)
+    		&& Objects.equal(duration, that.duration)
+    		&& Objects.equal(partOfDay, that.partOfDay);
+    }
+
+    @Override
+    public int hashCode() {
+    	return Objects.hashCode(date, startTime, endTime, duration, partOfDay);
+    }
+
+    @Override
+    public String toString() {
+    	return Objects.toStringHelper(this)
+    		.add("date", date)
+    		.add("startTime", startTime)
+    		.add("endTime", endTime)
+    		.add("duration", duration)
+    		.add("partOfDay", partOfDay)
+    		.omitNullValues().toString();
     }
 }
