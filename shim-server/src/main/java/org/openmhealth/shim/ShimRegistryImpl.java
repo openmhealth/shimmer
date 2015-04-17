@@ -16,25 +16,13 @@
 
 package org.openmhealth.shim;
 
-import org.openmhealth.shim.fatsecret.FatsecretConfig;
-import org.openmhealth.shim.fatsecret.FatsecretShim;
-import org.openmhealth.shim.fitbit.FitbitConfig;
-import org.openmhealth.shim.fitbit.FitbitShim;
-import org.openmhealth.shim.healthvault.HealthvaultConfig;
-import org.openmhealth.shim.healthvault.HealthvaultShim;
-import org.openmhealth.shim.jawbone.JawboneConfig;
-import org.openmhealth.shim.jawbone.JawboneShim;
-import org.openmhealth.shim.runkeeper.RunkeeperConfig;
-import org.openmhealth.shim.runkeeper.RunkeeperShim;
-import org.openmhealth.shim.withings.WithingsConfig;
-import org.openmhealth.shim.withings.WithingsShim;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import static java.lang.String.format;
 
@@ -54,64 +42,21 @@ public class ShimRegistryImpl implements ShimRegistry {
     private ShimServerConfig shimServerConfig;
 
     @Autowired
-    private FitbitConfig fitbitConfig;
+    private List<Shim> shims;
 
-    @Autowired
-    private FatsecretConfig fatsecretConfig;
-
-    @Autowired
-    private HealthvaultConfig healthvaultConfig;
-
-    @Autowired
-    private JawboneConfig jawboneConfig;
-
-    @Autowired
-    private RunkeeperConfig runkeeperConfig;
-
-    @Autowired
-    private WithingsConfig withingsConfig;
-
-    private LinkedHashMap<String, Shim> registryMap;
+    private Map<String, Shim> registryMap;
 
     public ShimRegistryImpl() {
     }
 
     public void init() {
-        registryMap = new LinkedHashMap<>();
-
-        if (jawboneConfig.getClientId() != null && jawboneConfig.getClientSecret() != null) {
-            registryMap.put(JawboneShim.SHIM_KEY,
-                new JawboneShim(
-                    authParametersRepo, accessParametersRepo, shimServerConfig, jawboneConfig));
+        Map<String, Shim> registryMap = new LinkedHashMap<>();
+        for (Shim shim : shims) {
+            if (shim.isConfigured()) {
+                registryMap.put(shim.getShimKey(), shim);
+            }
         }
-
-        if (runkeeperConfig.getClientId() != null && runkeeperConfig.getClientSecret() != null) {
-            registryMap.put(RunkeeperShim.SHIM_KEY,
-                new RunkeeperShim(
-                    authParametersRepo, accessParametersRepo, shimServerConfig, runkeeperConfig));
-        }
-
-        if (fatsecretConfig.getClientId() != null && fatsecretConfig.getClientSecret() != null) {
-            registryMap.put(FatsecretShim.SHIM_KEY,
-                new FatsecretShim(authParametersRepo, shimServerConfig, fatsecretConfig));
-        }
-
-        if (withingsConfig.getClientId() != null && withingsConfig.getClientSecret() != null) {
-            registryMap.put(WithingsShim.SHIM_KEY,
-                new WithingsShim(
-                    authParametersRepo, shimServerConfig, withingsConfig));
-        }
-
-        if (fitbitConfig.getClientId() != null && fitbitConfig.getClientSecret() != null) {
-            registryMap.put(FitbitShim.SHIM_KEY,
-                new FitbitShim(authParametersRepo, shimServerConfig, fitbitConfig));
-        }
-
-        if (healthvaultConfig.getClientId() != null) {
-            registryMap.put(HealthvaultShim.SHIM_KEY,
-                new HealthvaultShim(
-                    authParametersRepo, shimServerConfig, healthvaultConfig));
-        }
+        this.registryMap = registryMap;
     }
 
     @Override
@@ -129,14 +74,7 @@ public class ShimRegistryImpl implements ShimRegistry {
 
     @Override
     public List<Shim> getAvailableShims() {
-        return Arrays.asList(
-            new JawboneShim(null, null, null, jawboneConfig),
-            new FatsecretShim(null, null, fatsecretConfig),
-            new RunkeeperShim(null, null, null, runkeeperConfig),
-            new WithingsShim(null, null, withingsConfig),
-            new HealthvaultShim(null, null, healthvaultConfig),
-            new FitbitShim(null, null, fitbitConfig)
-        );
+        return shims;
     }
 
     @Override

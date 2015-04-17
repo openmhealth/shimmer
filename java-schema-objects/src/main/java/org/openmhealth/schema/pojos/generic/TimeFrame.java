@@ -16,16 +16,17 @@
 
 package org.openmhealth.schema.pojos.generic;
 
+import java.math.BigDecimal;
+
+import org.joda.time.DateTime;
+import org.openmhealth.schema.pojos.serialize.dates.ISODateDeserializer;
+import org.openmhealth.schema.pojos.serialize.dates.ISODateSerializer;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import org.joda.time.DateTime;
-import org.openmhealth.schema.pojos.serialize.dates.ISODateDeserializer;
-import org.openmhealth.schema.pojos.serialize.dates.ISODateSerializer;
-
-import java.math.BigDecimal;
+import com.google.common.base.Objects;
 
 
 /**
@@ -102,5 +103,29 @@ public class TimeFrame {
         interval.setDuration(durationUnitValue);
         timeFrame.setTimeInterval(interval);
         return timeFrame;
+    }
+
+    @Override
+    public boolean equals(Object that) {
+    	return that instanceof TimeFrame
+    		&& equals((TimeFrame) that);
+    }
+
+    private boolean equals(TimeFrame that) {
+    	return Objects.equal(dateTime, that.dateTime)
+    		&& Objects.equal(timeInterval, that.timeInterval);
+    }
+
+    @Override
+    public int hashCode() {
+    	return Objects.hashCode(dateTime, timeInterval);
+    }
+
+    @Override
+    public String toString() {
+    	return Objects.toStringHelper(this)
+    		.add("dateTime", dateTime)
+    		.add("timeInterval", timeInterval)
+    		.omitNullValues().toString();
     }
 }

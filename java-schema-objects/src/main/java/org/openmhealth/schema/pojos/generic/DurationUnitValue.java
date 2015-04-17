@@ -16,10 +16,11 @@
 
 package org.openmhealth.schema.pojos.generic;
 
+import java.math.BigDecimal;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
-import java.math.BigDecimal;
+import com.google.common.base.Objects;
 
 
 /**
@@ -53,5 +54,26 @@ public class DurationUnitValue {
 
     public void setUnit(DurationUnit unit) {
         this.unit = unit;
+    }
+
+    @Override
+    public boolean equals(Object that) {
+    	return that instanceof DurationUnitValue
+    		&& equals((DurationUnitValue) that);
+    }
+
+    private boolean equals(DurationUnitValue that) {
+    	return Objects.equal(value, that.value)
+    		&& Objects.equal(unit, that.unit);
+    }
+
+    @Override
+    public int hashCode() {
+    	return Objects.hashCode(value, unit);
+    }
+
+    @Override
+    public String toString() {
+    	return value + " " + unit;
     }
 }

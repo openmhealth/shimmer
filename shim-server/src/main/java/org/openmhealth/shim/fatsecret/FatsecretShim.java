@@ -24,6 +24,9 @@ import org.apache.http.client.methods.HttpGet;
 import org.joda.time.DateTime;
 import org.joda.time.MutableDateTime;
 import org.openmhealth.shim.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.net.URL;
@@ -36,6 +39,8 @@ import java.util.List;
  *
  * @author Danilo Bonilla
  */
+@Component
+@ConfigurationProperties(prefix = "openmhealth.shim.fatsecret")
 public class FatsecretShim extends OAuth1ShimBase {
 
     public static final String SHIM_KEY = "fatsecret";
@@ -48,13 +53,11 @@ public class FatsecretShim extends OAuth1ShimBase {
 
     private static final String TOKEN_URL = "http://www.fatsecret.com/oauth/access_token";
 
-    private FatsecretConfig config;
-
-    public FatsecretShim(AuthorizationRequestParametersRepo authorizationRequestParametersRepo,
-                         ShimServerConfig shimServerConfig,
-                         FatsecretConfig fatsecretConfig) {
-        super(authorizationRequestParametersRepo, shimServerConfig);
-        this.config = fatsecretConfig;
+    @Autowired
+    public FatsecretShim(ApplicationAccessParametersRepo applicationParametersRepo,
+                         AuthorizationRequestParametersRepo authorizationRequestParametersRepo,
+                         ShimServerConfig shimServerConfig) {
+        super(applicationParametersRepo, authorizationRequestParametersRepo, shimServerConfig);
     }
 
     @Override
@@ -70,16 +73,6 @@ public class FatsecretShim extends OAuth1ShimBase {
     @Override
     public String getShimKey() {
         return SHIM_KEY;
-    }
-
-    @Override
-    public String getClientSecret() {
-        return config.getClientSecret();
-    }
-
-    @Override
-    public String getClientId() {
-        return config.getClientId();
     }
 
     @Override
