@@ -42,3 +42,6 @@ openmhealth:
     #  clientSecret: [YOUR_CLIENT_SECRET]
     #healthvault:
     #  clientId: [YOUR_CLIENT_ID]
+    #strava:
+    #  clientId: [YOUR_CLIENT_ID]
+    #  clientSecret: [YOUR_CLIENT_SECRET]
