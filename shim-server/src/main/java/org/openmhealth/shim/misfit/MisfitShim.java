@@ -20,6 +20,7 @@ import org.openmhealth.schema.pojos.StepCount;
 import org.openmhealth.schema.pojos.build.ActivityBuilder;
 import org.openmhealth.schema.pojos.build.SleepDurationBuilder;
 import org.openmhealth.schema.pojos.build.StepCountBuilder;
+import org.openmhealth.schema.pojos.generic.DurationUnitValue;
 import org.openmhealth.schema.pojos.generic.LengthUnitValue.LengthUnit;
 import org.openmhealth.shim.AccessParametersRepo;
 import org.openmhealth.shim.ApplicationAccessParametersRepo;
@@ -182,12 +183,11 @@ public class MisfitShim extends OAuth2ShimBase {
                 List<StepCount> stepCounts = new ArrayList<>();
                 for (JsonNode node : responseNode.path("summary")) {
                     if (node.path("steps").intValue() > 0) {
-                        LocalDate begin = LocalDate.parse(node.path("date").textValue());
-                        LocalDate end = begin.plusDays(1);
+                        LocalDate date = LocalDate.parse(node.path("date").textValue());
                         stepCounts.add(new StepCountBuilder()
-                            .withStartAndEnd(
-                                begin.toDateTimeAtStartOfDay(DateTimeZone.UTC),
-                                end.toDateTimeAtStartOfDay(DateTimeZone.UTC))
+                            .withStartAndDuration(
+                                date.toDateTimeAtStartOfDay(DateTimeZone.UTC),
+                                1.0, DurationUnitValue.DurationUnit.d)
                             .setSteps(node.path("steps").asInt()).build());
                     }
                 }

@@ -21,7 +21,7 @@ public class MisfitShimTest extends ShimTestSupport {
         List<StepCount> datapoints = read("misfit-moves.json", StepCount.SCHEMA_STEP_COUNT, MisfitShim.MisfitDataTypes.MOVES.getNormalizer());
         assertEquals(3, datapoints.size());
 
-        assertTimeFrameEquals("2015-04-13T00:00:00Z", "2015-04-14T00:00:00Z", datapoints.get(0).getEffectiveTimeFrame());
+        assertTimeFrameEquals("2015-04-13T00:00:00Z", 1, DurationUnit.d, datapoints.get(0).getEffectiveTimeFrame());
         assertEquals(Integer.valueOf(26370), datapoints.get(0).getStepCount());
     }
 
