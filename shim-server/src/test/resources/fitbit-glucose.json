@@ -1,19 +1,24 @@
-{"shim": null, "timeStamp": 1407814448, "body": {
-    "glucose": [
-        {
-            "glucose": 5,
-            "tracker": "Morning",
-            "time": "12:30"
-        },
-        {
-            "glucose": 5.1,
-            "tracker": "Afternoon",
-            "time": "12:30"
-        },
-        {
-            "glucose": 5.5,
-            "tracker": "Evening",
-            "time": "12:30"
+{
+    "result": {
+        "date": "2014-07-13",
+        "content": {
+            "glucose": [
+                {
+                    "glucose": 5,
+                    "tracker": "Morning",
+                    "time": "12:30"
+                },
+                {
+                    "glucose": 5.1,
+                    "tracker": "Afternoon",
+                    "time": "12:30"
+                },
+                {
+                    "glucose": 5.5,
+                    "tracker": "Evening",
+                    "time": "12:30"
+                }
+            ]
         }
-    ]
-}}
+    }
+}

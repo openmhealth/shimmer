@@ -10,6 +10,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.joda.time.DateTime;
+import org.openmhealth.schema.pojos.BloodGlucoseUnitValue;
+import org.openmhealth.schema.pojos.BloodPressure;
+import org.openmhealth.schema.pojos.BloodPressureUnit;
 import org.openmhealth.schema.pojos.DataPoint;
 import org.openmhealth.schema.pojos.HeartRateUnitValue;
 import org.openmhealth.schema.pojos.SleepDurationUnitValue;
@@ -65,6 +68,17 @@ public abstract class ShimTestSupport {
 
     protected static void assertHeartRateUnitEquals(int expectedValue, HeartRateUnitValue.Unit expectedUnit, HeartRateUnitValue actual) {
         assertEquals(Integer.valueOf(expectedValue), actual.getValue());
+        assertEquals(expectedUnit, actual.getUnit());
+    }
+
+    protected static void assertBloodPressureEquals(int expectedSystolicValue, int expectedDiastolicValue, BloodPressure actual) {
+        assertEquals(BigDecimal.valueOf(expectedSystolicValue), actual.getSystolic().getValue());
+        assertEquals(BigDecimal.valueOf(expectedDiastolicValue), actual.getDiastolic().getValue());
+        assertEquals(BloodPressureUnit.mmHg, actual.getSystolic().getUnit());
+    }
+
+    protected static void assertBloodGlucoseUnitEquals(String expectedValue, BloodGlucoseUnitValue.Unit expectedUnit, BloodGlucoseUnitValue actual) {
+        assertEquals(new BigDecimal(expectedValue), actual.getValue());
         assertEquals(expectedUnit, actual.getUnit());
     }
 

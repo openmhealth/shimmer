@@ -115,7 +115,7 @@ public class FitbitShim extends OAuth1ShimBase {
     }
 
     private static DateTimeFormatter formatterMins =
-        DateTimeFormat.forPattern("yyyy-MM-dd HH:mm");
+        DateTimeFormat.forPattern("yyyy-MM-dd HH:mm").withZoneUTC();
 
     private static final DateTimeFormatter dayFormatter = DateTimeFormat.forPattern("yyyy-MM-dd");
 
@@ -149,9 +149,9 @@ public class FitbitShim extends OAuth1ShimBase {
                         JsonNode fbWeight = mapper.readTree(((JSONObject) fva).toJSONString());
 
                         String dateStr = fbWeight.get("date").asText();
-                        dateStr += fbWeight.get("time") != null ? "T" + fbWeight.get("time").asText() : "";
+                        dateStr += fbWeight.get("time") != null ? "T" + fbWeight.get("time").asText() + "Z" : "";
 
-                        DateTime dateTimeWhen = new DateTime(dateStr);
+                        DateTime dateTimeWhen = DateTime.parse(dateStr);
                         BodyWeight bodyWeight = new BodyWeightBuilder()
                             .setWeight(
                                 fbWeight.get("weight").asText(),
@@ -193,10 +193,10 @@ public class FitbitShim extends OAuth1ShimBase {
 
                         String heartDate = dateString;
                         if (fbHeart.get("time") != null) {
-                            heartDate += "T" + fbHeart.get("time").asText();
+                            heartDate += "T" + fbHeart.get("time").asText() + "Z";
                             heartRates.add(new HeartRateBuilder()
                                 .withRate(fbHeart.get("heartRate").asInt())
-                                .withTimeTaken(new DateTime(heartDate)).build());
+                                .withTimeTaken(DateTime.parse(heartDate)).build());
                         }
                     }
                     Map<String, Object> results = new HashMap<>();
@@ -232,11 +232,11 @@ public class FitbitShim extends OAuth1ShimBase {
 
                         String bpDate = dateString;
                         if (fbBp.get("time") != null) {
-                            bpDate += "T" + fbBp.get("time").asText();
+                            bpDate += "T" + fbBp.get("time").asText() + "Z";
                         }
 
                         bloodPressures.add(new BloodPressureBuilder()
-                            .setTimeTaken(new DateTime(bpDate))
+                            .setTimeTaken(DateTime.parse(bpDate))
                             .setValues(
                                 new BigDecimal(fbBp.get("systolic").asText()),
                                 new BigDecimal(fbBp.get("diastolic").asText())
@@ -275,11 +275,11 @@ public class FitbitShim extends OAuth1ShimBase {
 
                         String bpDate = dateString;
                         if (fbBp.get("time") != null) {
-                            bpDate += "T" + fbBp.get("time").asText();
+                            bpDate += "T" + fbBp.get("time").asText() + "Z";
                         }
 
                         bloodGlucoses.add(new BloodGlucoseBuilder()
-                            .setTimeTaken(new DateTime(bpDate))
+                            .setTimeTaken(DateTime.parse(bpDate))
                             .setMgdLValue(new BigDecimal(fbBp.get("glucose").asText())).build());
                     }
                     Map<String, Object> results = new HashMap<>();
@@ -307,7 +307,7 @@ public class FitbitShim extends OAuth1ShimBase {
                     return ShimDataResponse.empty(FitbitShim.SHIM_KEY);
                 }
 
-                DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
+                DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss").withZoneUTC();
                 ObjectMapper mapper = new ObjectMapper();
 
                 /**
@@ -400,7 +400,7 @@ public class FitbitShim extends OAuth1ShimBase {
 
                         Activity activity = new ActivityBuilder()
                             .setActivityName(fitbitActivity.get("activityParentName").asText())
-                            .setDistance(fitbitActivity.get("distance").asDouble(), m)
+                            .setDistance(fitbitActivity.get("distance").decimalValue(), km)
                             .withStartAndDuration(
                                 startTime, fitbitActivity.get("duration").asDouble(), DurationUnit.ms)
                             .build();
