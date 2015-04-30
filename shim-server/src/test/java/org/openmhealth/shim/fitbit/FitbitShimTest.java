@@ -1,70 +1,93 @@
-/*
- * Copyright 2014 Open mHealth
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * 	http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package org.openmhealth.shim.fitbit;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-import org.junit.Test;
-import org.openmhealth.schema.pojos.HeartRate;
-import org.openmhealth.schema.pojos.StepCount;
-import org.openmhealth.shim.ShimDataResponse;
-import org.openmhealth.shim.jawbone.JawboneShim;
+import static org.junit.Assert.assertEquals;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
 import java.util.List;
-import java.util.Map;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import org.junit.Test;
+import org.openmhealth.schema.pojos.Activity;
+import org.openmhealth.schema.pojos.BloodGlucose;
+import org.openmhealth.schema.pojos.BloodGlucoseUnitValue;
+import org.openmhealth.schema.pojos.BloodPressure;
+import org.openmhealth.schema.pojos.BodyWeight;
+import org.openmhealth.schema.pojos.HeartRate;
+import org.openmhealth.schema.pojos.HeartRateUnitValue;
+import org.openmhealth.schema.pojos.StepCount;
+import org.openmhealth.schema.pojos.generic.DurationUnitValue;
+import org.openmhealth.schema.pojos.generic.LengthUnitValue;
+import org.openmhealth.schema.pojos.generic.MassUnitValue;
+import org.openmhealth.shim.testing.ShimTestSupport;
 
-/**
- * @author Danilo Bonilla
- */
-public class FitbitShimTest {
+public class FitbitShimTest extends ShimTestSupport {
 
     @Test
-    @SuppressWarnings("unchecked")
-    public void testNormalize() throws IOException {
-        URL url = Thread.currentThread().getContextClassLoader().getResource("fitbit-heart.json");
-        assert url != null;
-        InputStream inputStream = url.openStream();
+    public void testWeight() {
 
-        ObjectMapper objectMapper = new ObjectMapper();
+        List<BodyWeight> datapoints = read("fitbit-weight.json", BodyWeight.SCHEMA_BODY_WEIGHT, FitbitShim.FitbitDataType.WEIGHT.getNormalizer());
+        assertEquals(3, datapoints.size());
+        
+        assertTimeFrameEquals("2014-11-12T23:59:59.000Z", datapoints.get(0).getEffectiveTimeFrame());
+        assertMassUnitEquals("49.4", MassUnitValue.MassUnit.kg, datapoints.get(0).getMassUnitValue());
+    }
 
-        FitbitShim.FitbitDataType.HEART.getNormalizer();
-        SimpleModule module = new SimpleModule();
-        module.addDeserializer(ShimDataResponse.class,
-            FitbitShim.FitbitDataType.HEART.getNormalizer());
+    @Test
+    public void testHeartRate() {
 
-        objectMapper.registerModule(module);
+        List<HeartRate> datapoints = read("fitbit-heart.json", HeartRate.SCHEMA_HEART_RATE, FitbitShim.FitbitDataType.HEART.getNormalizer());
+        assertEquals(6, datapoints.size());
+        
+        assertTimeFrameEquals("2014-07-13T03:30:00.000Z", datapoints.get(0).getEffectiveTimeFrame());
+        assertHeartRateUnitEquals(50, HeartRateUnitValue.Unit.bpm, datapoints.get(0).getHeartRate());
+    }
 
-        ShimDataResponse response =
-            objectMapper.readValue(inputStream, ShimDataResponse.class);
+    @Test
+    public void testBloodPressure() {
 
-        assertNotNull(response);
+        List<BloodPressure> datapoints = read("fitbit-bp.json", BloodPressure.SCHEMA_BLOOD_PRESSURE, FitbitShim.FitbitDataType.BLOOD_PRESSURE.getNormalizer());
+        assertEquals(3, datapoints.size());
+        
+        assertTimeFrameEquals("2014-07-13T11:30:00.000Z", datapoints.get(0).getEffectiveTimeFrame());
+        assertBloodPressureEquals(131, 82, datapoints.get(0));
+    }
 
-        assertNotNull(response.getShim());
+    @Test
+    public void testBloodGlucose() {
 
-        Map<String, Object> map = (Map<String, Object>) response.getBody();
-        assertTrue(map.containsKey(HeartRate.SCHEMA_HEART_RATE));
+        List<BloodGlucose> datapoints = read("fitbit-glucose.json", BloodGlucose.SCHEMA_BLOOD_GLUCOSE, FitbitShim.FitbitDataType.BLOOD_GLUCOSE.getNormalizer());
+        assertEquals(3, datapoints.size());
+        
+        assertTimeFrameEquals("2014-07-13T12:30:00.000Z", datapoints.get(0).getEffectiveTimeFrame());
+        assertBloodGlucoseUnitEquals("5", BloodGlucoseUnitValue.Unit.mg_dL, datapoints.get(0).getBloodGlucose());
+    }
 
-        List<HeartRate> stepCounts = (List<HeartRate>) map.get(HeartRate.SCHEMA_HEART_RATE);
-        assertTrue(stepCounts != null && stepCounts.size() == 6);
+    @Test
+    public void testStepCount() {
+
+        List<StepCount> datapoints = read("fitbit-step-count.json", StepCount.SCHEMA_STEP_COUNT, FitbitShim.FitbitDataType.STEPS.getNormalizer());
+        assertEquals(1, datapoints.size());
+        
+        assertTimeFrameEquals("2014-08-20T00:00:00.000Z", 1, DurationUnitValue.DurationUnit.d, datapoints.get(0).getEffectiveTimeFrame());
+        assertEquals(Integer.valueOf(4332), datapoints.get(0).getStepCount());
+    }
+
+    @Test
+    public void testIntradayStepCount() {
+
+        List<StepCount> datapoints = read("fitbit-step-count-1m.json", StepCount.SCHEMA_STEP_COUNT, FitbitShim.FitbitDataType.STEPS.getNormalizer());
+        assertEquals(264, datapoints.size());
+        
+        assertTimeFrameEquals("2014-08-20T00:26:00.000Z", 1, DurationUnitValue.DurationUnit.min, datapoints.get(0).getEffectiveTimeFrame());
+        assertEquals(Integer.valueOf(7), datapoints.get(0).getStepCount());
+    }
+
+    @Test
+    public void testActivity() {
+
+        List<Activity> datapoints = read("fitbit-activity.json", Activity.SCHEMA_ACTIVITY, FitbitShim.FitbitDataType.ACTIVITY.getNormalizer());
+        assertEquals(1, datapoints.size());
+        
+        assertTimeFrameEquals("2015-04-28T21:30:00.000Z", 1800000, DurationUnitValue.DurationUnit.ms, datapoints.get(0).getEffectiveTimeFrame());
+        assertEquals("Swimming", datapoints.get(0).getActivityName());
+        assertLengthUnitEquals("0.48", LengthUnitValue.LengthUnit.km, datapoints.get(0).getDistance());
     }
 }

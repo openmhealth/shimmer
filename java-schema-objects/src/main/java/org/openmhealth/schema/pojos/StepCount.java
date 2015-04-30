@@ -20,8 +20,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
-import org.joda.time.DateTime;
-import org.openmhealth.schema.pojos.generic.TimeFrame;
 
 
 /**
@@ -34,9 +32,6 @@ public class StepCount extends BaseDataPoint {
     @JsonProperty(value = "step_count", required = true)
     private Integer stepCount;
 
-    @JsonProperty(value = "effective_time_frame", required = false)
-    private TimeFrame effectiveTimeFrame;
-
     public static final String SCHEMA_STEP_COUNT = "step_count";
 
     public StepCount() {
@@ -48,25 +43,11 @@ public class StepCount extends BaseDataPoint {
         return SCHEMA_STEP_COUNT;
     }
 
-    @Override
-    @JsonIgnore
-    public DateTime getTimeStamp() {
-        return effectiveTimeFrame.getTimestamp();
-    }
-
     public Integer getStepCount() {
         return stepCount;
     }
 
     public void setStepCount(Integer stepCount) {
         this.stepCount = stepCount;
-    }
-
-    public TimeFrame getEffectiveTimeFrame() {
-        return effectiveTimeFrame;
-    }
-
-    public void setEffectiveTimeFrame(TimeFrame effectiveTimeFrame) {
-        this.effectiveTimeFrame = effectiveTimeFrame;
     }
 }

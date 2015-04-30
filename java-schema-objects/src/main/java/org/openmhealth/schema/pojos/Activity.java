@@ -21,7 +21,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
-import org.joda.time.DateTime;
 import org.openmhealth.schema.pojos.generic.LengthUnitValue;
 import org.openmhealth.schema.pojos.generic.TimeFrame;
 
@@ -44,9 +43,6 @@ public class Activity extends BaseDataPoint {
 
     public enum ActivityIntensity {light, moderate, vigorous}
 
-    @JsonProperty("effective_time_frame")
-    private TimeFrame effectiveTimeFrame;
-
     public static final String SCHEMA_ACTIVITY = "physical_activity";
 
     public Activity() {
@@ -56,12 +52,6 @@ public class Activity extends BaseDataPoint {
     @JsonIgnore
     public String getSchemaName() {
         return SCHEMA_ACTIVITY;
-    }
-
-    @Override
-    @JsonIgnore
-    public DateTime getTimeStamp() {
-        return effectiveTimeFrame.getTimestamp();
     }
 
     public LengthUnitValue getDistance() {
@@ -86,13 +76,5 @@ public class Activity extends BaseDataPoint {
 
     public void setActivityName(String activityName) {
         this.activityName = activityName;
-    }
-
-    public TimeFrame getEffectiveTimeFrame() {
-        return effectiveTimeFrame;
-    }
-
-    public void setEffectiveTimeFrame(TimeFrame effectiveTimeFrame) {
-        this.effectiveTimeFrame = effectiveTimeFrame;
     }
 }

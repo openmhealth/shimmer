@@ -62,8 +62,9 @@ public class AccessParameterClientTokenServices implements ClientTokenServices {
             username, shimKey, new Sort(Sort.Direction.DESC, "dateCreated"));
 
         if (accessParameters == null) {
-            throw new IllegalStateException("Can't save serialized spring oauth2 access token, " +
-                "no corresponding access parameters entity was found in which to put it.");
+            accessParameters = new AccessParameters();
+            accessParameters.setUsername(username);
+            accessParameters.setShimKey(shimKey);
         }
 
         accessParameters.setSerializedToken(SerializationUtils.serialize(accessToken));

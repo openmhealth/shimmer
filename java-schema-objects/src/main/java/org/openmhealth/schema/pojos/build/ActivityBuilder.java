@@ -16,13 +16,13 @@
 
 package org.openmhealth.schema.pojos.build;
 
+import java.math.BigDecimal;
+
 import org.joda.time.DateTime;
 import org.openmhealth.schema.pojos.Activity;
 import org.openmhealth.schema.pojos.generic.DurationUnitValue;
 import org.openmhealth.schema.pojos.generic.LengthUnitValue;
 import org.openmhealth.schema.pojos.generic.TimeFrame;
-
-import java.math.BigDecimal;
 
 
 /**
@@ -48,8 +48,12 @@ public class ActivityBuilder implements SchemaPojoBuilder<Activity> {
     }
 
     public ActivityBuilder setDistance(Double value, LengthUnitValue.LengthUnit unit) {
+    	return setDistance(new BigDecimal(value), unit);
+    }
+
+    public ActivityBuilder setDistance(BigDecimal value, LengthUnitValue.LengthUnit unit) {
         LengthUnitValue distance = new LengthUnitValue();
-        distance.setValue(new BigDecimal(value));
+        distance.setValue(value);
         distance.setUnit(unit);
         activity.setDistance(distance);
         return this;

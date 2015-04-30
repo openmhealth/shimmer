@@ -1,93 +1,75 @@
-/*
- * Copyright 2014 Open mHealth
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * 	http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package org.openmhealth.shim.jawbone;
 
+import static org.junit.Assert.*;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
-import org.joda.time.format.DateTimeFormat;
-import org.junit.Test;
-import org.openmhealth.schema.pojos.StepCount;
-import org.openmhealth.shim.ShimDataResponse;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.math.BigDecimal;
-import java.net.URL;
 import java.util.List;
-import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import com.fasterxml.jackson.databind.node.NullNode;
+import com.fasterxml.jackson.databind.node.TextNode;
+import org.joda.time.DateTimeZone;
+import org.junit.Test;
+import org.openmhealth.schema.pojos.Activity;
+import org.openmhealth.schema.pojos.BodyWeight;
+import org.openmhealth.schema.pojos.SleepDuration;
+import org.openmhealth.schema.pojos.SleepDurationUnitValue;
+import org.openmhealth.schema.pojos.StepCount;
+import org.openmhealth.schema.pojos.generic.DurationUnitValue.DurationUnit;
+import org.openmhealth.schema.pojos.generic.LengthUnitValue.LengthUnit;
+import org.openmhealth.schema.pojos.generic.MassUnitValue.MassUnit;
+import org.openmhealth.shim.testing.ShimTestSupport;
 
-/**
- * @author Danilo Bonilla
- */
-public class JawboneShimTest {
+public class JawboneShimTest extends ShimTestSupport {
 
     @Test
-    @SuppressWarnings("unchecked")
-    public void testParse() throws IOException {
-        URL url = Thread.currentThread().getContextClassLoader().getResource("jawbone-moves.json");
-        assert url != null;
-        InputStream inputStream = url.openStream();
+    public void testMoves() {
+        
+        List<StepCount> datapoints = read("jawbone-moves.json", StepCount.SCHEMA_STEP_COUNT, JawboneShim.JawboneDataTypes.MOVES.getNormalizer());
+        assertEquals(4, datapoints.size());
 
-        ObjectMapper objectMapper = new ObjectMapper();
+        assertTimeFrameEquals("2013-11-21T10:00:00Z", 246, DurationUnit.sec, datapoints.get(0).getEffectiveTimeFrame());
+        assertEquals(Integer.valueOf(455), datapoints.get(0).getStepCount());
 
-        JawboneShim.JawboneDataTypes.MOVES.getNormalizer();
-        SimpleModule module = new SimpleModule();
-        module.addDeserializer(ShimDataResponse.class,
-            JawboneShim.JawboneDataTypes.MOVES.getNormalizer());
+        assertTimeFrameEquals("2013-11-21T09:00:00Z", 793, DurationUnit.sec, datapoints.get(1).getEffectiveTimeFrame());
+        assertEquals(Integer.valueOf(1603), datapoints.get(1).getStepCount());
+    }
 
-        objectMapper.registerModule(module);
+    @Test
+    public void testWorkouts() {
+        
+        List<Activity> datapoints = read("jawbone-workouts.json", Activity.SCHEMA_ACTIVITY, JawboneShim.JawboneDataTypes.WORKOUTS.getNormalizer());
+        assertEquals(3, datapoints.size());
 
-        ShimDataResponse response =
-            objectMapper.readValue(inputStream, ShimDataResponse.class);
+        assertTimeFrameEquals("2014-08-18T15:39:44Z", 300, DurationUnit.sec, datapoints.get(0).getEffectiveTimeFrame());
+        assertEquals("Walk", datapoints.get(0).getActivityName());
+        assertLengthUnitEquals("2500", LengthUnit.m, datapoints.get(0).getDistance());
+    }
 
-        assertNotNull(response);
-        assertNotNull(response.getShim());
+    @Test
+    public void testBodyWeight() {
+        
+        List<BodyWeight> datapoints = read("jawbone-body-weight.json", BodyWeight.SCHEMA_BODY_WEIGHT, JawboneShim.JawboneDataTypes.BODY.getNormalizer());
+        assertEquals(2, datapoints.size());
 
-        Map<String, Object> map = (Map<String, Object>) response.getBody();
-        assertTrue(map.containsKey(StepCount.SCHEMA_STEP_COUNT));
+        assertTimeFrameEquals("2014-11-05T17:00:11Z", datapoints.get(0).getEffectiveTimeFrame());
+        assertMassUnitEquals("70.76041", MassUnit.kg, datapoints.get(0).getMassUnitValue());
+    }
 
-        List<StepCount> stepCounts = (List<StepCount>) map.get(StepCount.SCHEMA_STEP_COUNT);
-        assertTrue(stepCounts != null && stepCounts.size() == 4);
+    @Test
+    public void testSleep() {
+        
+        List<SleepDuration> datapoints = read("jawbone-sleep.json", SleepDuration.SCHEMA_SLEEP_DURATION, JawboneShim.JawboneDataTypes.SLEEP.getNormalizer());
+        assertEquals(1, datapoints.size());
 
-        final String EXPECTED_HOURLY_TOTAL_TIMESTAMP = "2013112101";
+        assertTimeFrameEquals("2014-03-05T05:00:00.000Z", "2014-03-05T13:27:25.000Z", datapoints.get(0).getEffectiveTimeFrame());
+        assertSleepDurationUnitEquals(507, SleepDurationUnitValue.Unit.min, datapoints.get(0).getSleepDurationUnitValue());
+    }
 
-        DateTime expectedTimeUTC =
-            DateTimeFormat.forPattern("yyyyMMddHH").withZone(DateTimeZone.forID("America/Los_Angeles"))
-                .parseDateTime(EXPECTED_HOURLY_TOTAL_TIMESTAMP);
-        expectedTimeUTC = expectedTimeUTC.toDateTime(DateTimeZone.UTC);
-
-        BigDecimal expectedDuration = new BigDecimal(793);
-        Integer expectedSteps = 1603;
-
-        Boolean found = false;
-        for (StepCount sc : stepCounts) {
-            if (sc.getEffectiveTimeFrame().getTimeInterval().getStartTime().equals(expectedTimeUTC)) {
-                assertEquals(sc.getStepCount(), expectedSteps);
-                assertEquals(sc.getEffectiveTimeFrame().getTimeInterval().getDuration().getValue(), expectedDuration);
-                found = true;
-            }
-        }
-        assertTrue(found);
+    @Test(expected=IllegalArgumentException.class)
+    public void testParseZone() {
+        assertEquals(DateTimeZone.UTC, JawboneShim.JawboneDataTypes.parseZone(NullNode.getInstance()));
+        assertEquals(DateTimeZone.forID("America/Los_Angeles"), JawboneShim.JawboneDataTypes.parseZone(new TextNode("America/Los Angeles")));
+        assertEquals(DateTimeZone.forOffsetHours(-7), JawboneShim.JawboneDataTypes.parseZone(new TextNode("GMT-0700")));
+        assertEquals(DateTimeZone.forOffsetHours(-7), JawboneShim.JawboneDataTypes.parseZone(new TextNode("-25200")));
+        JawboneShim.JawboneDataTypes.parseZone(new TextNode("foo"));
     }
 }

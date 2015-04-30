@@ -44,11 +44,6 @@ public class StepCountBuilder implements SchemaPojoBuilder<StepCount> {
         return this;
     }
 
-    public StepCountBuilder withStartAndEnd(DateTime start, DateTime end) {
-        stepCount.setEffectiveTimeFrame(TimeFrame.withTimeInterval(start, end));
-        return this;
-    }
-
     @Override
     public StepCount build() {
         return stepCount;
