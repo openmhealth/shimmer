@@ -140,11 +140,7 @@ public class JawboneShim extends OAuth2ShimBase {
 
                     JsonNode jbWeight = mapper.readTree(((JSONObject) rawWeight).toJSONString());
 
-                    DateTimeZone dateTimeZone = DateTimeZone.UTC;
-                    if (jbWeight.get("details") != null && jbWeight.get("details").get("tz") != null) {
-                        dateTimeZone = DateTimeZone.forID(jbWeight.get("details").get("tz")
-                            .asText().replaceAll(" ", "_"));
-                    }
+                    DateTimeZone dateTimeZone = parseZone(jbWeight.path("details").path("tz"));
 
                     DateTime timeStamp = new DateTime(
                         jbWeight.get("time_created").asLong() * 1000, dateTimeZone);
@@ -183,11 +179,7 @@ public class JawboneShim extends OAuth2ShimBase {
                 for (Object rawSleep : jbSleeps) {
                     JsonNode jbSleep = mapper.readTree(((JSONObject) rawSleep).toJSONString());
 
-                    DateTimeZone dateTimeZone = DateTimeZone.UTC;
-                    if (jbSleep.get("details") != null && jbSleep.get("details").get("tz") != null) {
-                        dateTimeZone = DateTimeZone.forID(jbSleep.get("details").get("tz")
-                            .asText().replaceAll(" ", "_"));
-                    }
+                    DateTimeZone dateTimeZone = parseZone(jbSleep.path("details").path("tz"));
 
                     DateTime timeStamp = new DateTime(
                         jbSleep.get("time_created").asLong() * 1000, dateTimeZone);
@@ -231,11 +223,7 @@ public class JawboneShim extends OAuth2ShimBase {
                 for (Object rawWorkout : jbWorkouts) {
                     JsonNode jbWorkout = mapper.readTree(((JSONObject) rawWorkout).toJSONString());
 
-                    DateTimeZone dateTimeZone = DateTimeZone.UTC;
-                    if (jbWorkout.get("details") != null && jbWorkout.get("details").get("tz") != null) {
-                        dateTimeZone = DateTimeZone.forID(jbWorkout.get("details").get("tz")
-                            .asText().replaceAll(" ", "_"));
-                    }
+                    DateTimeZone dateTimeZone = parseZone(jbWorkout.path("details").path("tz"));
 
                     DateTime timeStamp = new DateTime(
                         jbWorkout.get("time_created").asLong() * 1000, dateTimeZone);
@@ -256,7 +244,6 @@ public class JawboneShim extends OAuth2ShimBase {
             }
         }),
 
-        @SuppressWarnings("unchecked")
         MOVES("moves", new JsonDeserializer<ShimDataResponse>() {
             @Override
             public ShimDataResponse deserialize(JsonParser jsonParser,
@@ -281,11 +268,7 @@ public class JawboneShim extends OAuth2ShimBase {
                 for (Object rawStepEntry : jbStepEntries) {
                     JsonNode jbStepEntry = mapper.readTree(((JSONObject) rawStepEntry).toJSONString());
 
-                    DateTimeZone dateTimeZone = DateTimeZone.UTC;
-                    if (jbStepEntry.get("details") != null && jbStepEntry.get("details").get("tz") != null) {
-                        dateTimeZone = DateTimeZone.forID(jbStepEntry.get("details").get("tz")
-                            .asText().replaceAll(" ", "_"));
-                    }
+                    DateTimeZone dateTimeZone = parseZone(jbStepEntry.path("details").path("tz"));
 
                     JsonNode hourlyTotals = jbStepEntry.get("details").get("hourly_totals");
                     if (hourlyTotals == null) {
@@ -331,6 +314,20 @@ public class JawboneShim extends OAuth2ShimBase {
 
         public String getEndPoint() {
             return endPoint;
+        }
+        
+        static DateTimeZone parseZone(JsonNode node) {
+            DateTimeZone zone = null;
+            if (node.isNull()) {
+                zone = DateTimeZone.UTC;
+            } else if (node.asInt() != 0) { // "-25200"
+                zone = DateTimeZone.forOffsetMillis(node.asInt() * 1000);
+            } else if (node.isTextual()) { // "GMT-0700" or "America/Los Angeles"
+                zone = DateTimeZone.forID(node.textValue().replace("GMT", "").replaceAll(" ", "_"));
+            } else {
+                throw new IllegalArgumentException("Can't parse time zone: <" + node + ">");
+            }
+            return zone;
         }
     }
 

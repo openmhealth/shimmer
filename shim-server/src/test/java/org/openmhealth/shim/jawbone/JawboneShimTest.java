@@ -1,9 +1,12 @@
 package org.openmhealth.shim.jawbone;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 import java.util.List;
 
+import com.fasterxml.jackson.databind.node.NullNode;
+import com.fasterxml.jackson.databind.node.TextNode;
+import org.joda.time.DateTimeZone;
 import org.junit.Test;
 import org.openmhealth.schema.pojos.Activity;
 import org.openmhealth.schema.pojos.BodyWeight;
@@ -59,5 +62,14 @@ public class JawboneShimTest extends ShimTestSupport {
 
         assertTimeFrameEquals("2014-03-05T05:00:00.000Z", "2014-03-05T13:27:25.000Z", datapoints.get(0).getEffectiveTimeFrame());
         assertSleepDurationUnitEquals(507, SleepDurationUnitValue.Unit.min, datapoints.get(0).getSleepDurationUnitValue());
+    }
+
+    @Test(expected=IllegalArgumentException.class)
+    public void testParseZone() {
+        assertEquals(DateTimeZone.UTC, JawboneShim.JawboneDataTypes.parseZone(NullNode.getInstance()));
+        assertEquals(DateTimeZone.forID("America/Los_Angeles"), JawboneShim.JawboneDataTypes.parseZone(new TextNode("America/Los Angeles")));
+        assertEquals(DateTimeZone.forOffsetHours(-7), JawboneShim.JawboneDataTypes.parseZone(new TextNode("GMT-0700")));
+        assertEquals(DateTimeZone.forOffsetHours(-7), JawboneShim.JawboneDataTypes.parseZone(new TextNode("-25200")));
+        JawboneShim.JawboneDataTypes.parseZone(new TextNode("foo"));
     }
 }
