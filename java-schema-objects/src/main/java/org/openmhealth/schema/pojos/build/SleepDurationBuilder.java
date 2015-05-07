@@ -48,6 +48,11 @@ public class SleepDurationBuilder implements SchemaPojoBuilder<SleepDuration> {
         return this;
     }
 
+    public SleepDurationBuilder withStartAndEnd(DateTime start, DateTime end) {
+        sleepDuration.setEffectiveTimeFrame(TimeFrame.withTimeInterval(start,end));
+        return this;
+    }
+
     public SleepDurationBuilder withStartAndDuration(DateTime start, Double value, SleepDurationUnitValue.Unit unit) {
         sleepDuration.setEffectiveTimeFrame(TimeFrame.withDateTime(start));
         sleepDuration.setSleepDurationUnitValue(new SleepDurationUnitValue(new BigDecimal(value), unit));

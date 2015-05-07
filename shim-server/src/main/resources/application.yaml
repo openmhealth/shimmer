@@ -31,6 +31,9 @@ openmhealth:
     #fatsecret:
     #  clientId: [YOUR_CLIENT_ID]
     #  clientSecret: [YOUR_CLIENT_SECRET]
+    #ihealth:
+    #  clientId: [YOUR_CLIENT_ID]
+    #  clientSecret: [YOUR_CLIENT_SECRET]
     #jawbone:
     #  clientId: [YOUR_CLIENT_ID]
     #  clientSecret: [YOUR_CLIENT_SECRET]
