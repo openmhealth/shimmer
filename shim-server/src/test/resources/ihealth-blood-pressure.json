@@ -1,0 +1,25 @@
+{
+    "BPDataList": [
+        {
+            "BPL": 6,
+            "DataID": "88bad68878044d079294470c9ffff8aa",
+            "DataSource": "Manual",
+            "HP": 100,
+            "HR": 60,
+            "IsArr": -1,
+            "LP": 50,
+            "LastChangeTime": 1418316989,
+            "Lat": -1,
+            "Lon": -1,
+            "MDate": 1418288156,
+            "Note": "testing"
+        }
+    ],
+    "BPUnit": 0,
+    "CurrentRecordCount": 1,
+    "NextPageUrl": "",
+    "PageLength": 50,
+    "PageNumber": 1,
+    "PrevPageUrl": "",
+    "RecordCount": 1
+}

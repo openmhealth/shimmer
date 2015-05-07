@@ -1,0 +1,28 @@
+{
+	"summary": [
+		{
+			"date": "2015-04-13",
+			"points": 2745.6,
+			"steps": 26370,
+			"calories": 961,
+			"activityCalories": 961,
+			"distance": 10.9969
+		},
+		{
+			"date": "2015-04-14",
+			"points": 413.6,
+			"steps": 3782,
+			"calories": 144.8,
+			"activityCalories": 144.8,
+			"distance": 1.654
+		},
+		{
+			"date": "2015-04-15",
+			"points": 1050.8,
+			"steps": 9180,
+			"calories": 222.2095,
+			"activityCalories": 367.8,
+			"distance": 4.0358
+		}
+	]
+}

@@ -36,18 +36,11 @@ public interface Shim {
     String getShimKey();
 
     /**
-     * Secret code provided by the external data provider.
+     * Parameters (such as client ID and secret) provided by the external data provider.
      *
-     * @return - String value
+     * @return - the parameters for this shim
      */
-    String getClientSecret();
-
-    /**
-     * Client id provided by the external data provider.
-     *
-     * @return - String value
-     */
-    String getClientId();
+    ApplicationAccessParameters findApplicationAccessParameters();
 
     /**
      * Base of the URL to which the user will
@@ -117,4 +110,12 @@ public interface Shim {
      * @return Generic object wrapper including timestamp, shim, and results
      */
     ShimDataResponse getData(final ShimDataRequest shimDataRequest) throws ShimException;
+
+
+    /**
+     * Check if this shim is properly configured.
+     *
+     * @return true if this shim is properly configured.
+     */
+    boolean isConfigured();
 }

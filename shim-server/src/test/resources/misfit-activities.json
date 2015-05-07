@@ -1,0 +1,34 @@
+{
+	"sessions": [
+		{
+			"id": "552eab896c59ae1f7300003e",
+			"activityType": "Walking",
+			"startTime": "2015-04-13T11:46:00-07:00",
+			"duration": 1140,
+			"points": 228.8,
+			"steps": 2026,
+			"calories": 96.8,
+			"distance": 0.9371
+		},
+		{
+			"id": "552edc21472c922550000027",
+			"activityType": "Walking",
+			"startTime": "2015-04-15T13:27:00-07:00",
+			"duration": 420,
+			"points": 0.8,
+			"steps": 8,
+			"calories": 0.3,
+			"distance": 0.003
+		},
+		{
+			"id": "552edc21472c922550000028",
+			"activityType": "Walking",
+			"startTime": "2015-04-15T14:08:00-07:00",
+			"duration": 2340,
+			"points": 25.6,
+			"steps": 256,
+			"calories": 10.8,
+			"distance": 0.0969
+		}
+	]
+}

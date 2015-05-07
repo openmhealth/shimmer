@@ -16,12 +16,12 @@
 
 package org.openmhealth.schema.pojos.build;
 
+import java.math.BigDecimal;
+
 import org.joda.time.DateTime;
 import org.openmhealth.schema.pojos.SleepDuration;
 import org.openmhealth.schema.pojos.SleepDurationUnitValue;
 import org.openmhealth.schema.pojos.generic.TimeFrame;
-
-import java.math.BigDecimal;
 
 
 /**
@@ -45,6 +45,17 @@ public class SleepDurationBuilder implements SchemaPojoBuilder<SleepDuration> {
         );
         sleepDuration.setSleepDurationUnitValue(
             new SleepDurationUnitValue(new BigDecimal(value), unit));
+        return this;
+    }
+
+    public SleepDurationBuilder withStartAndEnd(DateTime start, DateTime end) {
+        sleepDuration.setEffectiveTimeFrame(TimeFrame.withTimeInterval(start,end));
+        return this;
+    }
+
+    public SleepDurationBuilder withStartAndDuration(DateTime start, Double value, SleepDurationUnitValue.Unit unit) {
+        sleepDuration.setEffectiveTimeFrame(TimeFrame.withDateTime(start));
+        sleepDuration.setSleepDurationUnitValue(new SleepDurationUnitValue(new BigDecimal(value), unit));
         return this;
     }
 

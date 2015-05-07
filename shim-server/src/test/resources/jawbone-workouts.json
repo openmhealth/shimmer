@@ -1,4 +1,4 @@
-{"shim": null, "timeStamp": 1408407796, "body": {
+{
     "meta": {
         "user_xid": "gG0aWvo9bXwLSMyOos3njA",
         "message": "OK",
@@ -25,7 +25,7 @@
                     "bg_calories": 0,
                     "meters": 2500,
                     "km": 2.5,
-                    "time": 0,
+                    "time": 300,
                     "bg_active_time": 0,
                     "steps": 0,
                     "bmr_calories": 0.0
@@ -91,4 +91,4 @@
         ],
         "size": 3
     }
-}}
+}

@@ -1,0 +1,22 @@
+{
+    "ARDataList": [
+        {
+            "Calories": 1000.1,
+            "DataID": "90ab964ced9d46b789d9ab84d51beb4d",
+            "DistanceTraveled": 5.5,
+            "SleepEfficiency": 80,
+            "Lat": -1,
+            "Lon": -1,
+            "Steps": 9000,
+            "MDate": 1418281200,
+            "Note": ""
+        }
+    ],
+    "DistanceUnit": 1,
+    "CurrentRecordCount": 1,
+    "NextPageUrl": "",
+    "PageLength": 50,
+    "PageNumber": 1,
+    "PrevPageUrl": "",
+    "RecordCount": 1
+}
