@@ -8,6 +8,7 @@ ext {
 }
 
 dependencies {
+    compile "com.google.guava:guava:17.0"
     compile "com.fasterxml.jackson.core:jackson-annotations:${jacksonVersion}"
     compile "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}"
     compile "joda-time:joda-time:2.4"
