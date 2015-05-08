@@ -29,6 +29,7 @@ bootRepackage {
 
 ext {
     healthVaultSdkVersion = '1.6'
+    omhSchemaSdkVersion = '1.0.0'
     signpostVersion = '1.2.1.2'
     springSecurityOAuthVersion = '2.0.7.RELEASE'
 }
@@ -44,7 +45,6 @@ dependencyManagement {
 }
 
 dependencies {
-    compile project(':java-schema-objects')
     compile project(':java-shim-sdk')
     compile "commons-io:commons-io:2.4"
     compile "org.apache.httpcomponents:httpclient"
@@ -56,6 +56,7 @@ dependencies {
     compile "joda-time:joda-time"
     compile "com.jayway.jsonpath:json-path"
     compile "com.github.fge:json-schema-validator:2.2.6"
+    compile "org.openmhealth.schema:omh-schema-sdk:${omhSchemaSdkVersion}"
     compile "oauth.signpost:signpost-commonshttp4:${signpostVersion}"
     compile "oauth.signpost:signpost-core:${signpostVersion}"
     compile "org.springframework.boot:spring-boot-autoconfigure"

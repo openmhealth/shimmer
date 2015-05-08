@@ -3,6 +3,6 @@ apply plugin: 'maven'
 version = shimServerVersion
 
 dependencies {
-    compile project(':java-schema-objects')
+    compile "org.openmhealth.schema:omh-schema-sdk:${omhSchemaSdkVersion}"
     compile "joda-time:joda-time:2.4"
 }

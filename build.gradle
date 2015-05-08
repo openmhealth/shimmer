@@ -12,6 +12,7 @@ subprojects {
     ext {
         javaVersion = 1.7
         shimServerVersion = '0.2.3'
+        omhSchemaSdkVersion = '1.0.0'
     }
 
     sourceCompatibility = javaVersion
