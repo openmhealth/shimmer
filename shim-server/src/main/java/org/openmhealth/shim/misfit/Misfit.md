@@ -40,20 +40,20 @@ supports retrieval based on modification date: no
 # endpoints
 
 profile
-https://build.misfit.com/docs/references#APIReferences-Profile
+- https://build.misfit.com/docs/references#APIReferences-Profile
 
 device
-https://api.misfitwearables.com/move/resource/v1/user/:userId/device
-https://build.misfit.com/docs/references#APIReferences-Device
-product:
-    shine
+- https://api.misfitwearables.com/move/resource/v1/user/:userId/device
+- https://build.misfit.com/docs/references#APIReferences-Device
+- product:
+  -  shine
 
 summary
-GET https://api.misfitwearables.com/move/resource/v1/user/:userId/activity/summary?start_date=X&end_date=Y&detail=true
-https://build.misfit.com/docs/references#APIReferences-Summary
-limited to 31 days, error if longer
-description: daily summary
-supports time zone: no
+- description: daily summary
+- https://api.misfitwearables.com/move/resource/v1/user/:userId/activity/summary?start_date=X&end_date=Y&detail=true
+- https://build.misfit.com/docs/references#APIReferences-Summary
+- limited to 31 days, error if longer
+- supports time zone: no
 measures:
     steps
     calories
@@ -61,28 +61,27 @@ measures:
     distance
 
 sessions
-https://build.misfit.com/docs/references#APIReferences-Session
-https://api.misfitwearables.com/move/resource/v1/user/:userId/activity/sessions
-limited to 31 days, error if longer
-description: workouts
-supports time zone: offset
-measures:
-    activity
-    duration
-    steps
-    calories Burned
-    distance
+- description: workouts
+- https://build.misfit.com/docs/references#APIReferences-Session
+- https://api.misfitwearables.com/move/resource/v1/user/:userId/activity/sessions
+- limited to 31 days, error if longer
+- supports time zone: offset
+- measures:
+  -  activity
+  -  duration
+  -  steps
+  -  calories Burned
+  -  distance
     
 sleep
-https://api.misfitwearables.com/move/resource/v1/user/:userId/activity/sleeps
-https://build.misfit.com/docs/references#APIReferences-Sleep
-limited to 31 days, error if longer
-description: sleep information
-measures:
-    duration
-    sleep details (awake, deep sleep, sleep)
+- description: sleep information
+- https://api.misfitwearables.com/move/resource/v1/user/:userId/activity/sleeps
+- https://build.misfit.com/docs/references#APIReferences-Sleep
+- limited to 31 days, error if longer
+- measures:
+  -  duration
+  -  sleep details (awake, deep sleep, sleep)
 
 ## issues
 
-how do we decouple summary from sessions?
-summaries *contain* sessions. 
+how do we decouple summary from sessions, if summaries *contain* sessions?
