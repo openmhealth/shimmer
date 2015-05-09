@@ -1,4 +1,6 @@
+### still a scratch pad for now...
 
+# general
 main page: https://build.misfit.com/docs/
 
 # getting started on Misfit
@@ -8,34 +10,34 @@ main page: https://build.misfit.com/docs/
   1. set the Application Domain to wherever you will redirect your users 
   1. take note of the "App Key" and "App Secret" 
  
-# general
-url: https://api.misfitwearables.com
+# api
+api url: https://api.misfitwearables.com
+supports retrieval based on modification date: no 
 
-# authentication
+## authentication
 
 - protocol: OAuth 2.0
 - https://build.misfit.com/docs/references#APIReferences-Authorize3rd-partyapptoaccessShinedata
 - authorization URL: https://api.misfitwearables.com/auth/dialog/authorize
-- flows: 
-    - authorization code
-       - https://build.misfit.com/docs/references#APIReferences-Getaccesstokenfromauthorizedcode
-       - exchange URL: https://api.misfitwearables.com/auth/tokens/exchange
-    - implicit
-       
-access token: access_token=USER_ACCESS_TOKEN or Authorization: Bearer USER_ACCESS_TOKEN
-scope: public,birthday,email (full list not yet supported)
+- flows 
+  - authorization code
+    - https://build.misfit.com/docs/references#APIReferences-Getaccesstokenfromauthorizedcode
+    - exchange URL: https://api.misfitwearables.com/auth/tokens/exchange
+  - implicit
+- scope: public,birthday,email (full list not yet supported)
+- supports refresh tokens: yes/no
+- access token: access_token=USER_ACCESS_TOKEN or Authorization: Bearer USER_ACCESS_TOKEN
 
-# refresh tokens
 
 # rate limit
 
-total: n/a
-per user: 150/hr
-limit header: X-RateLimit-Limit:150
-remaining header: X-RateLimit-Remaining:148
-next reset time header: X-RateLimit-Reset:1404298869
+- total: n/a
+- per user: 150/hr
+- limit header: X-RateLimit-Limit:150
+- remaining header: X-RateLimit-Remaining:148
+- next reset time header: X-RateLimit-Reset:1404298869
 
-# endpoint
+# endpoints
 
 profile
 https://build.misfit.com/docs/references#APIReferences-Profile
