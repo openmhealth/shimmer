@@ -54,7 +54,7 @@ dependencies {
     compile "com.fasterxml.jackson.core:jackson-annotations"
     compile "com.fasterxml.jackson.dataformat:jackson-dataformat-xml"
     compile "joda-time:joda-time"
-    compile "com.jayway.jsonpath:json-path"
+    compile "com.jayway.jsonpath:json-path"   // TODO delete this
     compile "com.github.fge:json-schema-validator:2.2.6"
     compile "org.openmhealth.schema:omh-schema-sdk:${omhSchemaSdkVersion}"
     compile "oauth.signpost:signpost-commonshttp4:${signpostVersion}"
