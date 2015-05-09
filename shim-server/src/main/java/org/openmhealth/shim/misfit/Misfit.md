@@ -24,8 +24,12 @@ url: https://api.misfitwearables.com
        
 access token: access_token=USER_ACCESS_TOKEN or Authorization: Bearer USER_ACCESS_TOKEN
 scope: public,birthday,email (full list not yet supported)
+supports refresh tokens: yes/no
 
-# refresh tokens
+
+# API
+
+supports retrieval based on modification date: no 
 
 # rate limit
 
@@ -35,7 +39,7 @@ limit header: X-RateLimit-Limit:150
 remaining header: X-RateLimit-Remaining:148
 next reset time header: X-RateLimit-Reset:1404298869
 
-# endpoint
+# endpoints
 
 profile
 https://build.misfit.com/docs/references#APIReferences-Profile
