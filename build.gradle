@@ -10,7 +10,7 @@ subprojects {
     group = 'org.openmhealth.shim'
 
     ext {
-        javaVersion = 1.7
+        javaVersion = 1.8
         shimServerVersion = '0.2.3'
         omhSchemaSdkVersion = '1.0.0'
     }
@@ -20,5 +20,5 @@ subprojects {
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '2.2.1'
+    gradleVersion = '2.3'
 }
