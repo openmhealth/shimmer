@@ -7,7 +7,7 @@ spring:
       enabled: false
   data:
     mongodb:
-      uri: mongodb://mongo:27017/omh_dsu
+      uri: mongodb://localhost:27017/omh_dsu
   jackson:
     serialization:
       INDENT_OUTPUT: true
@@ -22,7 +22,7 @@ logging:
 openmhealth:
   shim:
     server:
-      callbackUrlBase: http://localhost:8083
+      callbackUrlBase: https://lifestreams.smalldata.io/shims
 
     #NOTE: Un-comment and fill in with your credentials if you're not using the UI
     #fitbit:
@@ -43,5 +43,6 @@ openmhealth:
     #healthvault:
     #  clientId: [YOUR_CLIENT_ID]
     #moves:
-    # clientId:  [YOUR_CLIENT_ID]
-    # clientSecret: [YOUR_CLIENT_SECRET]
+    #  clientId: [YOUR_CLIENT_ID]
+    #  clientSecret: [YOUR_CLIENT_SECRET]
+
