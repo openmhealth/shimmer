@@ -8,7 +8,7 @@ import java.util.List;
 
 
 /**
- * A mapper that takes a generic input and creates data points.
+ * A mapper that takes one or more inputs and creates data points.
  *
  * @param <DP> the body type of the data points to create
  * @param <I> the input type
