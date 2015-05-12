@@ -47,22 +47,22 @@ task sourcesJar(type: Jar, dependsOn: classes) {
 
 task javadocJar(type: Jar, dependsOn: Javadoc) {
     classifier = 'javadoc'
-    from Javadoc.destinationDir
+    from javadoc.destinationDir
 }
 
 publishing {
     publications {
-        Jar(MavenPublication) {
+        jar(MavenPublication) {
             artifactId 'omh-shim-sdk'
             from components.java
         }
         sources(MavenPublication) {
             artifactId 'omh-shim-sdk'
-            Artifact sourcesJar
+            artifact sourcesJar
         }
-        Javadoc(MavenPublication) {
+        javadoc(MavenPublication) {
             artifactId 'omh-shim-sdk'
-            Artifact javadocJar
+            artifact javadocJar
         }
     }
 }

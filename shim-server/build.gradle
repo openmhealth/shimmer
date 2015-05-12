@@ -29,7 +29,6 @@ bootRepackage {
 
 ext {
     healthVaultSdkVersion = '1.6'
-    omhSchemaSdkVersion = '1.0.0'
     signpostVersion = '1.2.1.2'
     springSecurityOAuthVersion = '2.0.7.RELEASE'
 }
