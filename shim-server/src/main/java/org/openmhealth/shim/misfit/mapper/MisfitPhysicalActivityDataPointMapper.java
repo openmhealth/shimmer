@@ -22,6 +22,7 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.*;
  * A mapper from Misfit Resource API /activity/sessions responses to {@link PhysicalActivity} objects.
  *
  * @author Emerson Farrugia
+ * @author Eric Jain
  * @see <a href="https://build.misfit.com/docs/references#APIReferences-Session">API documentation</a>
  */
 public class MisfitPhysicalActivityDataPointMapper extends MisfitDataPointMapper<PhysicalActivity> {
