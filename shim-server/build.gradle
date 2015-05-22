@@ -52,8 +52,10 @@ dependencies {
     compile "com.microsoft.hsg:hv-sdk:${healthVaultSdkVersion}"
     compile "com.fasterxml.jackson.core:jackson-annotations"
     compile "com.fasterxml.jackson.dataformat:jackson-dataformat-xml"
-    compile "joda-time:joda-time"
-    compile "com.jayway.jsonpath:json-path"   // TODO delete this
+    compile "com.fasterxml.jackson.datatype:jackson-datatype-jsr310"
+    compile "com.fasterxml.jackson.datatype:jackson-datatype-jdk8"
+    compile "joda-time:joda-time"             // TODO delete this when unused
+    compile "com.jayway.jsonpath:json-path"   // TODO delete this when unused
     compile "com.github.fge:json-schema-validator:2.2.6"
     compile "org.openmhealth.schema:omh-schema-sdk:${omhSchemaSdkVersion}"
     compile "oauth.signpost:signpost-commonshttp4:${signpostVersion}"
@@ -66,6 +68,7 @@ dependencies {
     compile "org.springframework.security.oauth:spring-security-oauth2:${springSecurityOAuthVersion}"
     compile "org.codehaus.woodstox:woodstox-core-asl:4.2.1"
 
+    testCompile 'org.testng:testng:6.8.21' // slowly migrate to testng
     testCompile "junit:junit"
     testCompile "org.mockito:mockito-core"
     testCompile "org.springframework.boot:spring-boot-starter-test"
