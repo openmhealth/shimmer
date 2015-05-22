@@ -29,8 +29,8 @@ public class JsonNodeMappingSupport {
      */
     public static JsonNode asRequiredNode(JsonNode parentNode, String path) {
 
-        if (parentNode.hasNonNull(path)) {
-            throw new JsonNodeMappingException(format("An '%s' field wasn't found in node '%s'.", path, parentNode));
+        if (!parentNode.hasNonNull(path)) {
+            throw new JsonNodeMappingException(format("A '%s' field wasn't found in node '%s'.", path, parentNode));
         }
 
         return parentNode.path(path);
@@ -86,7 +86,7 @@ public class JsonNodeMappingSupport {
      * @return the value of the child node as a date time, or an empty optional if the child doesn't exist or if the
      * value of the child node isn't a date time
      */
-    public static Optional<OffsetDateTime> asOptionalDateTime(JsonNode parentNode, String path) {
+    public static Optional<OffsetDateTime> asOptionalOffsetDateTime(JsonNode parentNode, String path) {
 
         JsonNode childNode = parentNode.path(path);
 
