@@ -6,8 +6,9 @@ import org.openmhealth.schema.domain.omh.DataPointHeader;
 import org.openmhealth.schema.domain.omh.Measure;
 import org.openmhealth.shim.common.mapper.JsonNodeDataPointMapper;
 
-import java.util.Optional;
 import java.util.UUID;
+
+import static org.openmhealth.schema.domain.omh.DataPointModality.SENSED;
 
 
 /**
@@ -18,14 +19,21 @@ public abstract class MisfitDataPointMapper<T> implements JsonNodeDataPointMappe
     public static final String RESOURCE_API_SOURCE_NAME = "Misfit Resource API";
 
 
-    protected <T extends Measure> DataPoint<T> newDataPoint(T measure, String sourceName, Optional<String> externalId) {
+    protected <T extends Measure> DataPoint<T> newDataPoint(T measure, String sourceName, String externalId,
+            Boolean sensed) {
 
-        DataPointAcquisitionProvenance acquisitionProvenance =
-                new DataPointAcquisitionProvenance.Builder(sourceName).build();
+        DataPointAcquisitionProvenance.Builder provenanceBuilder =
+                new DataPointAcquisitionProvenance.Builder(sourceName);
+
+        if (sensed != null && sensed) {
+            provenanceBuilder.setModality(SENSED);
+        }
+
+        DataPointAcquisitionProvenance acquisitionProvenance = provenanceBuilder.build();
 
         // TODO discuss the name of the external identifier, to make it clear it's the ID used by the source
-        if (externalId.isPresent()) {
-            acquisitionProvenance.setAdditionalProperty("external_id", externalId.get());
+        if (externalId != null) {
+            acquisitionProvenance.setAdditionalProperty("external_id", externalId);
         }
 
         DataPointHeader header = new DataPointHeader.Builder(UUID.randomUUID().toString(), measure.getSchemaId())

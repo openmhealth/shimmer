@@ -71,6 +71,6 @@ public class MisfitPhysicalActivityDataPointMapper extends MisfitDataPointMapper
 
         Optional<String> externalId = asOptionalString(sessionNode, "id");
 
-        return newDataPoint(measure, RESOURCE_API_SOURCE_NAME, externalId);
+        return newDataPoint(measure, RESOURCE_API_SOURCE_NAME, externalId.orElse(null), null);
     }
 }
