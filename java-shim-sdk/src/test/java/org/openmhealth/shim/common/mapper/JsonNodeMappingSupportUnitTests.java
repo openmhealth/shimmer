@@ -29,6 +29,7 @@ public class JsonNodeMappingSupportUnitTests {
 
         testNode = objectMapper.readTree("{\n" +
                 "    \"number\": 2.3,\n" +
+                "    \"integer\": 2,\n" +
                 "    \"string\": \"hi\",\n" +
                 "    \"empty\": null,\n" +
                 "    \"date_time\": \"2014-01-01T12:15:04+02:00\"\n" +
@@ -81,6 +82,34 @@ public class JsonNodeMappingSupportUnitTests {
 
         assertThat(string, notNullValue());
         assertThat(string, equalTo("hi"));
+    }
+
+    @Test(expectedExceptions = JsonNodeMappingException.class)
+    public void asRequiredLongShouldThrowExceptionOnMissingNode() {
+
+        asRequiredLong(testNode, "foo");
+    }
+
+    @Test(expectedExceptions = JsonNodeMappingException.class)
+    public void asRequiredLongShouldThrowExceptionOnNullNode() {
+
+        asRequiredLong(testNode, "empty");
+    }
+
+    @Test(expectedExceptions = JsonNodeMappingException.class)
+    public void asRequiredLongShouldThrowExceptionOnMismatchedNode() {
+
+        // since this is floating point
+        asRequiredLong(testNode, "number");
+    }
+
+    @Test
+    public void asRequiredLongShouldReturnLongWhenPresent() {
+
+        Long number = asRequiredLong(testNode, "integer");
+
+        assertThat(number, notNullValue());
+        assertThat(number, equalTo(2l));
     }
 
     @Test
@@ -201,5 +230,42 @@ public class JsonNodeMappingSupportUnitTests {
         assertThat(number, notNullValue());
         assertThat(number.isPresent(), equalTo(true));
         assertThat(number.get(), equalTo(2.3));
+    }
+
+    @Test
+    public void asOptionalLongShouldReturnEmptyOnMissingNode() {
+
+        Optional<Long> number = asOptionalLong(testNode, "foo");
+
+        assertThat(number, notNullValue());
+        assertThat(number.isPresent(), equalTo(false));
+    }
+
+    @Test
+    public void asOptionalLongShouldReturnEmptyOnNullNode() {
+
+        Optional<Long> number = asOptionalLong(testNode, "empty");
+
+        assertThat(number, notNullValue());
+        assertThat(number.isPresent(), equalTo(false));
+    }
+
+    @Test
+    public void asOptionalLongShouldReturnEmptyOnMismatchedNode() {
+
+        Optional<Long> number = asOptionalLong(testNode, "number");
+
+        assertThat(number, notNullValue());
+        assertThat(number.isPresent(), equalTo(false));
+    }
+
+    @Test
+    public void asOptionalLongShouldReturnLongWhenPresent() {
+
+        Optional<Long> number = asOptionalLong(testNode, "integer");
+
+        assertThat(number, notNullValue());
+        assertThat(number.isPresent(), equalTo(true));
+        assertThat(number.get(), equalTo(2L));
     }
 }

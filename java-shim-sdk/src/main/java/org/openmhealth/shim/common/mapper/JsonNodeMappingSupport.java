@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeParseException;
 import java.util.Optional;
+import java.util.function.Function;
 
 import static java.lang.String.format;
 
@@ -39,18 +40,76 @@ public class JsonNodeMappingSupport {
     /**
      * @param parentNode a parent node
      * @param path the path to a child node
+     * @param typeChecker the function to check if the type is compatible
+     * @param converter the function to convert the node to a value
+     * @param <T> the type of the value to convert to
+     * @return the value of the child node
+     * @throws JsonNodeMappingException if the child doesn't exist or if the value of the child node isn't compatible
+     */
+    public static <T> T asRequiredValue(JsonNode parentNode, String path, Function<JsonNode, Boolean> typeChecker,
+            Function<JsonNode, T> converter) {
+
+        JsonNode childNode = asRequiredNode(parentNode, path);
+
+        if (!typeChecker.apply(childNode)) {
+            throw new JsonNodeMappingException(
+                    format("The '%s' field in node '%s' isn't compatible.", path, parentNode));
+        }
+
+        return converter.apply(childNode);
+    }
+
+    /**
+     * @param parentNode a parent node
+     * @param path the path to a child node
      * @return the value of the child node as a string
      * @throws JsonNodeMappingException if the child doesn't exist or if the value of the child node isn't textual
      */
     public static String asRequiredString(JsonNode parentNode, String path) {
 
-        JsonNode childNode = asRequiredNode(parentNode, path);
+        return asRequiredValue(parentNode, path, JsonNode::isTextual, JsonNode::textValue);
+    }
 
-        if (!childNode.isTextual()) {
-            throw new JsonNodeMappingException(format("The '%s' field in node '%s' isn't textual.", path, parentNode));
+    /**
+     * @param parentNode a parent node
+     * @param path the path to a child node
+     * @return the value of the child node as a long
+     * @throws JsonNodeMappingException if the child doesn't exist or if the value of the child node isn't an integer
+     */
+    public static Long asRequiredLong(JsonNode parentNode, String path) {
+
+        return asRequiredValue(parentNode, path, JsonNode::isIntegralNumber, JsonNode::longValue);
+    }
+
+    /**
+     * @param parentNode a parent node
+     * @param path the path to a child node
+     * @param typeChecker the function to check if the type is compatible
+     * @param converter the function to convert the node to a value
+     * @param <T> the type of the value to convert to
+     * @return the value of the child node, or an empty optional if the child doesn't exist or if the
+     * value of the child node isn't compatible
+     */
+    public static <T> Optional<T> asOptionalValue(JsonNode parentNode, String path,
+            Function<JsonNode, Boolean> typeChecker, Function<JsonNode, T> converter) {
+
+        JsonNode childNode = parentNode.path(path);
+
+        if (childNode.isMissingNode()) {
+            logger.warn("A '{}' field wasn't found in node '{}'.", path, parentNode);
+            return Optional.empty();
         }
 
-        return childNode.textValue();
+        if (childNode.isNull()) {
+            return Optional.empty();
+        }
+
+        if (!typeChecker.apply(childNode)) {
+            logger.warn("The '{}' field in node '{}' isn't compatible.", path, parentNode);
+            return Optional.empty();
+        }
+
+        return Optional.of(converter.apply(childNode));
     }
 
     /**
@@ -61,23 +120,7 @@ public class JsonNodeMappingSupport {
      */
     public static Optional<String> asOptionalString(JsonNode parentNode, String path) {
 
-        JsonNode childNode = parentNode.path(path);
-
-        if (childNode.isMissingNode()) {
-            logger.warn("A '{}' field wasn't found in node '{}'.", path, parentNode);
-            return Optional.empty();
-        }
-
-        if (childNode.isNull()) {
-            return Optional.empty();
-        }
-
-        if (!childNode.isTextual()) {
-            logger.warn("The '{}' field in node '{}' isn't textual.", path, parentNode);
-            return Optional.empty();
-        }
-
-        return Optional.of(childNode.textValue());
+        return asOptionalValue(parentNode, path, JsonNode::isTextual, JsonNode::textValue);
     }
 
     /**
@@ -88,30 +131,20 @@ public class JsonNodeMappingSupport {
      */
     public static Optional<OffsetDateTime> asOptionalOffsetDateTime(JsonNode parentNode, String path) {
 
-        JsonNode childNode = parentNode.path(path);
+        Optional<String> string = asOptionalString(parentNode, path);
 
-        if (childNode.isMissingNode()) {
-            logger.warn("A '{}' field wasn't found in node '{}'.", path, parentNode);
-            return Optional.empty();
-        }
-
-        if (childNode.isNull()) {
-            return Optional.empty();
-        }
-
-        if (!childNode.isTextual()) {
-            logger.warn("The '{}' field in node '{}' isn't textual.", path, parentNode);
+        if (!string.isPresent()) {
             return Optional.empty();
         }
 
         OffsetDateTime dateTime = null;
 
         try {
-            dateTime = OffsetDateTime.parse(childNode.textValue());
+            dateTime = OffsetDateTime.parse(string.get());
         }
         catch (DateTimeParseException e) {
-            logger.warn("The '{}' field in node '{}' with value '{}' isn't a valid timestamp.", parentNode, childNode,
-                    e);
+            logger.warn("The '{}' field in node '{}' with value '{}' isn't a valid timestamp.",
+                    path, parentNode, string.get(), e);
         }
 
         return Optional.ofNullable(dateTime);
@@ -125,22 +158,17 @@ public class JsonNodeMappingSupport {
      */
     public static Optional<Double> asOptionalDouble(JsonNode parentNode, String path) {
 
-        JsonNode childNode = parentNode.path(path);
+        return asOptionalValue(parentNode, path, JsonNode::isFloatingPointNumber, JsonNode::doubleValue);
+    }
 
-        if (childNode.isMissingNode()) {
-            logger.warn("A '{}' field wasn't found in node '{}'.", path, parentNode);
-            return Optional.empty();
-        }
+    /**
+     * @param parentNode a parent node
+     * @param path the path to a child node
+     * @return the value of the child node as a long, or an empty optional if the child doesn't exist or if the
+     * value of the child node isn't an integer
+     */
+    public static Optional<Long> asOptionalLong(JsonNode parentNode, String path) {
 
-        if (childNode.isNull()) {
-            return Optional.empty();
-        }
-
-        if (!childNode.isNumber()) {
-            logger.warn("The '{}' field in node '{}' isn't numeric.", path, parentNode);
-            return Optional.empty();
-        }
-
-        return Optional.of(childNode.doubleValue());
+        return asOptionalValue(parentNode, path, JsonNode::isIntegralNumber, JsonNode::longValue);
     }
 }
