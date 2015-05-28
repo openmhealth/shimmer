@@ -64,11 +64,11 @@ public class MisfitPhysicalActivityDataPointMapperUnitTests extends DataPointMap
                 .setEffectiveTimeFrame(effectiveTimeInterval)
                 .build();
 
-        DataPoint<PhysicalActivity> dataPoint = dataPoints.get(0);
+        DataPoint<PhysicalActivity> firstDataPoint = dataPoints.get(0);
 
-        assertThat(dataPoint.getBody(), equalTo(physicalActivity));
+        assertThat(firstDataPoint.getBody(), equalTo(physicalActivity));
 
-        DataPointAcquisitionProvenance acquisitionProvenance = dataPoint.getHeader().getAcquisitionProvenance();
+        DataPointAcquisitionProvenance acquisitionProvenance = firstDataPoint.getHeader().getAcquisitionProvenance();
 
         assertThat(acquisitionProvenance, notNullValue());
         assertThat(acquisitionProvenance.getSourceName(), equalTo(RESOURCE_API_SOURCE_NAME));
