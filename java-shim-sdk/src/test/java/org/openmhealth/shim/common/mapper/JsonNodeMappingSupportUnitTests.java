@@ -32,6 +32,7 @@ public class JsonNodeMappingSupportUnitTests {
                 "    \"number\": 2.3,\n" +
                 "    \"integer\": 2,\n" +
                 "    \"string\": \"hi\",\n" +
+                "    \"boolean\": true,\n" +
                 "    \"empty\": null,\n" +
                 "    \"date_time\": \"2014-01-01T12:15:04+02:00\",\n" +
                 "    \"date\": \"2014-01-01\"\n" +
@@ -80,10 +81,10 @@ public class JsonNodeMappingSupportUnitTests {
     @Test
     public void asRequiredStringShouldReturnStringWhenPresent() {
 
-        String string = asRequiredString(testNode, "string");
+        String value = asRequiredString(testNode, "string");
 
-        assertThat(string, notNullValue());
-        assertThat(string, equalTo("hi"));
+        assertThat(value, notNullValue());
+        assertThat(value, equalTo("hi"));
     }
 
     @Test(expectedExceptions = JsonNodeMappingException.class)
@@ -108,10 +109,10 @@ public class JsonNodeMappingSupportUnitTests {
     @Test
     public void asRequiredLongShouldReturnLongWhenPresent() {
 
-        Long number = asRequiredLong(testNode, "integer");
+        Long value = asRequiredLong(testNode, "integer");
 
-        assertThat(number, notNullValue());
-        assertThat(number, equalTo(2l));
+        assertThat(value, notNullValue());
+        assertThat(value, equalTo(2l));
     }
 
     @Test(expectedExceptions = JsonNodeMappingException.class)
@@ -135,176 +136,240 @@ public class JsonNodeMappingSupportUnitTests {
     @Test
     public void asRequiredLocalDateShouldReturnLocalDateWhenPresent() {
 
-        LocalDate number = asRequiredLocalDate(testNode, "date");
+        LocalDate value = asRequiredLocalDate(testNode, "date");
 
-        assertThat(number, notNullValue());
-        assertThat(number, equalTo(LocalDate.of(2014, 1, 1)));
+        assertThat(value, notNullValue());
+        assertThat(value, equalTo(LocalDate.of(2014, 1, 1)));
+    }
+
+    @Test(expectedExceptions = JsonNodeMappingException.class)
+    public void asRequiredOffsetDateTimeShouldThrowExceptionOnMissingNode() {
+
+        asRequiredLocalDate(testNode, "foo");
+    }
+
+    @Test(expectedExceptions = JsonNodeMappingException.class)
+    public void asRequiredOffsetDateTimeShouldThrowExceptionOnNullNode() {
+
+        asRequiredLocalDate(testNode, "empty");
+    }
+
+    @Test(expectedExceptions = JsonNodeMappingException.class)
+    public void asRequiredOffsetDateTimeShouldThrowExceptionOnMismatchedNode() {
+
+        asRequiredLocalDate(testNode, "number");
+    }
+
+    @Test
+    public void asRequiredOffsetDateTimeShouldReturnDateTimeWhenPresent() {
+
+        OffsetDateTime value = asRequiredOffsetDateTime(testNode, "date_time");
+
+        assertThat(value, notNullValue());
+        assertThat(value, equalTo(OffsetDateTime.of(2014, 1, 1, 12, 15, 4, 0, ZoneOffset.ofHours(2))));
     }
 
     @Test
     public void asOptionalStringShouldReturnEmptyOnMissingNode() {
 
-        Optional<String> string = asOptionalString(testNode, "foo");
+        Optional<String> value = asOptionalString(testNode, "foo");
 
-        assertThat(string, notNullValue());
-        assertThat(string.isPresent(), equalTo(false));
+        assertThat(value, notNullValue());
+        assertThat(value.isPresent(), equalTo(false));
     }
 
     @Test
     public void asOptionalStringShouldReturnEmptyOnNullNode() {
 
-        Optional<String> string = asOptionalString(testNode, "empty");
+        Optional<String> value = asOptionalString(testNode, "empty");
 
-        assertThat(string, notNullValue());
-        assertThat(string.isPresent(), equalTo(false));
+        assertThat(value, notNullValue());
+        assertThat(value.isPresent(), equalTo(false));
     }
 
     @Test
     public void asOptionalStringShouldReturnEmptyOnMismatchedNode() {
 
-        Optional<String> string = asOptionalString(testNode, "number");
+        Optional<String> value = asOptionalString(testNode, "number");
 
-        assertThat(string, notNullValue());
-        assertThat(string.isPresent(), equalTo(false));
+        assertThat(value, notNullValue());
+        assertThat(value.isPresent(), equalTo(false));
     }
 
     @Test
     public void asOptionalStringShouldReturnStringWhenPresent() {
 
-        Optional<String> string = asOptionalString(testNode, "string");
+        Optional<String> value = asOptionalString(testNode, "string");
 
-        assertThat(string, notNullValue());
-        assertThat(string.isPresent(), equalTo(true));
-        assertThat(string.get(), equalTo("hi"));
+        assertThat(value, notNullValue());
+        assertThat(value.isPresent(), equalTo(true));
+        assertThat(value.get(), equalTo("hi"));
+    }
+
+    @Test
+    public void asOptionalBooleanShouldReturnEmptyOnMissingNode() {
+
+        Optional<Boolean> value = asOptionalBoolean(testNode, "foo");
+
+        assertThat(value, notNullValue());
+        assertThat(value.isPresent(), equalTo(false));
+    }
+
+    @Test
+    public void asOptionalBooleanShouldReturnEmptyOnNullNode() {
+
+        Optional<Boolean> value = asOptionalBoolean(testNode, "empty");
+
+        assertThat(value, notNullValue());
+        assertThat(value.isPresent(), equalTo(false));
+    }
+
+    @Test
+    public void asOptionalBooleanShouldReturnEmptyOnMismatchedNode() {
+
+        Optional<Boolean> value = asOptionalBoolean(testNode, "number");
+
+        assertThat(value, notNullValue());
+        assertThat(value.isPresent(), equalTo(false));
+    }
+
+    @Test
+    public void asOptionalBooleanShouldReturnBooleanWhenPresent() {
+
+        Optional<Boolean> value = asOptionalBoolean(testNode, "boolean");
+
+        assertThat(value, notNullValue());
+        assertThat(value.isPresent(), equalTo(true));
+        assertThat(value.get(), equalTo(true));
     }
 
     @Test
     public void asOptionalOffsetDateTimeShouldReturnEmptyOnMissingNode() {
 
-        Optional<OffsetDateTime> dateTime = asOptionalOffsetDateTime(testNode, "foo");
+        Optional<OffsetDateTime> value = asOptionalOffsetDateTime(testNode, "foo");
 
-        assertThat(dateTime, notNullValue());
-        assertThat(dateTime.isPresent(), equalTo(false));
+        assertThat(value, notNullValue());
+        assertThat(value.isPresent(), equalTo(false));
     }
 
     @Test
     public void asOptionalOffsetDateTimeShouldReturnEmptyOnNullNode() {
 
-        Optional<OffsetDateTime> dateTime = asOptionalOffsetDateTime(testNode, "empty");
+        Optional<OffsetDateTime> value = asOptionalOffsetDateTime(testNode, "empty");
 
-        assertThat(dateTime, notNullValue());
-        assertThat(dateTime.isPresent(), equalTo(false));
+        assertThat(value, notNullValue());
+        assertThat(value.isPresent(), equalTo(false));
     }
 
     @Test
     public void asOptionalOffsetDateTimeShouldReturnEmptyOnMismatchedNode() {
 
-        Optional<OffsetDateTime> dateTime = asOptionalOffsetDateTime(testNode, "number");
+        Optional<OffsetDateTime> value = asOptionalOffsetDateTime(testNode, "number");
 
-        assertThat(dateTime, notNullValue());
-        assertThat(dateTime.isPresent(), equalTo(false));
+        assertThat(value, notNullValue());
+        assertThat(value.isPresent(), equalTo(false));
     }
 
     @Test
     public void asOptionalOffsetDateTimeShouldReturnEmptyOnMalformedNode() {
 
-        Optional<OffsetDateTime> dateTime = asOptionalOffsetDateTime(testNode, "string");
+        Optional<OffsetDateTime> value = asOptionalOffsetDateTime(testNode, "string");
 
-        assertThat(dateTime, notNullValue());
-        assertThat(dateTime.isPresent(), equalTo(false));
+        assertThat(value, notNullValue());
+        assertThat(value.isPresent(), equalTo(false));
     }
 
     @Test
     public void asOptionalOffsetDateTimeShouldReturnDateTimeWhenPresent() {
 
-        Optional<OffsetDateTime> dateTime = asOptionalOffsetDateTime(testNode, "date_time");
+        Optional<OffsetDateTime> value = asOptionalOffsetDateTime(testNode, "date_time");
 
-        assertThat(dateTime, notNullValue());
-        assertThat(dateTime.isPresent(), equalTo(true));
-        assertThat(dateTime.get(), equalTo(OffsetDateTime.of(2014, 1, 1, 12, 15, 4, 0, ZoneOffset.ofHours(2))));
+        assertThat(value, notNullValue());
+        assertThat(value.isPresent(), equalTo(true));
+        assertThat(value.get(), equalTo(OffsetDateTime.of(2014, 1, 1, 12, 15, 4, 0, ZoneOffset.ofHours(2))));
     }
 
     @Test
     public void asOptionalDoubleShouldReturnEmptyOnMissingNode() {
 
-        Optional<Double> number = asOptionalDouble(testNode, "foo");
+        Optional<Double> value = asOptionalDouble(testNode, "foo");
 
-        assertThat(number, notNullValue());
-        assertThat(number.isPresent(), equalTo(false));
+        assertThat(value, notNullValue());
+        assertThat(value.isPresent(), equalTo(false));
     }
 
     @Test
     public void asOptionalDoubleShouldReturnEmptyOnNullNode() {
 
-        Optional<Double> number = asOptionalDouble(testNode, "empty");
+        Optional<Double> value = asOptionalDouble(testNode, "empty");
 
-        assertThat(number, notNullValue());
-        assertThat(number.isPresent(), equalTo(false));
+        assertThat(value, notNullValue());
+        assertThat(value.isPresent(), equalTo(false));
     }
 
     @Test
     public void asOptionalDoubleShouldReturnEmptyOnMismatchedNode() {
 
-        Optional<Double> number = asOptionalDouble(testNode, "string");
+        Optional<Double> value = asOptionalDouble(testNode, "string");
 
-        assertThat(number, notNullValue());
-        assertThat(number.isPresent(), equalTo(false));
+        assertThat(value, notNullValue());
+        assertThat(value.isPresent(), equalTo(false));
     }
 
     @Test
     public void asOptionalDoubleShouldReturnDoubleWhenPresent() {
 
-        Optional<Double> number = asOptionalDouble(testNode, "number");
+        Optional<Double> value = asOptionalDouble(testNode, "number");
 
-        assertThat(number, notNullValue());
-        assertThat(number.isPresent(), equalTo(true));
-        assertThat(number.get(), equalTo(2.3));
+        assertThat(value, notNullValue());
+        assertThat(value.isPresent(), equalTo(true));
+        assertThat(value.get(), equalTo(2.3));
     }
 
     @Test
     public void asOptionalDoubleShouldReturnDoubleWhenIntegerIsPresent() {
 
-        Optional<Double> number = asOptionalDouble(testNode, "integer");
+        Optional<Double> value = asOptionalDouble(testNode, "integer");
 
-        assertThat(number, notNullValue());
-        assertThat(number.isPresent(), equalTo(true));
-        assertThat(number.get(), equalTo(2d));
+        assertThat(value, notNullValue());
+        assertThat(value.isPresent(), equalTo(true));
+        assertThat(value.get(), equalTo(2d));
     }
 
     @Test
     public void asOptionalLongShouldReturnEmptyOnMissingNode() {
 
-        Optional<Long> number = asOptionalLong(testNode, "foo");
+        Optional<Long> value = asOptionalLong(testNode, "foo");
 
-        assertThat(number, notNullValue());
-        assertThat(number.isPresent(), equalTo(false));
+        assertThat(value, notNullValue());
+        assertThat(value.isPresent(), equalTo(false));
     }
 
     @Test
     public void asOptionalLongShouldReturnEmptyOnNullNode() {
 
-        Optional<Long> number = asOptionalLong(testNode, "empty");
+        Optional<Long> value = asOptionalLong(testNode, "empty");
 
-        assertThat(number, notNullValue());
-        assertThat(number.isPresent(), equalTo(false));
+        assertThat(value, notNullValue());
+        assertThat(value.isPresent(), equalTo(false));
     }
 
     @Test
     public void asOptionalLongShouldReturnEmptyOnMismatchedNode() {
 
-        Optional<Long> number = asOptionalLong(testNode, "number");
+        Optional<Long> value = asOptionalLong(testNode, "number");
 
-        assertThat(number, notNullValue());
-        assertThat(number.isPresent(), equalTo(false));
+        assertThat(value, notNullValue());
+        assertThat(value.isPresent(), equalTo(false));
     }
 
     @Test
     public void asOptionalLongShouldReturnLongWhenPresent() {
 
-        Optional<Long> number = asOptionalLong(testNode, "integer");
+        Optional<Long> value = asOptionalLong(testNode, "integer");
 
-        assertThat(number, notNullValue());
-        assertThat(number.isPresent(), equalTo(true));
-        assertThat(number.get(), equalTo(2L));
+        assertThat(value, notNullValue());
+        assertThat(value.isPresent(), equalTo(true));
+        assertThat(value.get(), equalTo(2L));
     }
 }

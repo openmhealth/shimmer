@@ -105,6 +105,26 @@ public class JsonNodeMappingSupport {
     /**
      * @param parentNode a parent node
      * @param path the path to a child node
+     * @return the value of the child node as an {@link OffsetDateTime}
+     * @throws JsonNodeMappingException if the child doesn't exist or if the value of the child node isn't a date time
+     */
+    public static OffsetDateTime asRequiredOffsetDateTime(JsonNode parentNode, String path) {
+
+        String string = asRequiredString(parentNode, path);
+
+        try {
+            return OffsetDateTime.parse(string);
+        }
+        catch (DateTimeParseException e) {
+            throw new JsonNodeMappingException(format(
+                    "The '%s' field in node '%s' with value '%s' isn't a valid date time.", path, parentNode, string),
+                    e);
+        }
+    }
+
+    /**
+     * @param parentNode a parent node
+     * @param path the path to a child node
      * @param typeChecker the function to check if the type is compatible
      * @param converter the function to convert the node to a value
      * @param <T> the type of the value to convert to
@@ -142,6 +162,17 @@ public class JsonNodeMappingSupport {
     public static Optional<String> asOptionalString(JsonNode parentNode, String path) {
 
         return asOptionalValue(parentNode, path, JsonNode::isTextual, JsonNode::textValue);
+    }
+
+    /**
+     * @param parentNode a parent node
+     * @param path the path to a child node
+     * @return the value of the child node as a boolean, or an empty optional if the child doesn't exist or if the
+     * value of the child node isn't boolean
+     */
+    public static Optional<Boolean> asOptionalBoolean(JsonNode parentNode, String path) {
+
+        return asOptionalValue(parentNode, path, JsonNode::isBoolean, JsonNode::booleanValue);
     }
 
     /**
