@@ -13,4 +13,8 @@ public class JsonNodeMappingException extends RuntimeException {
     public JsonNodeMappingException(String message) {
         super(message);
     }
+
+    public JsonNodeMappingException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

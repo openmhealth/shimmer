@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeParseException;
 import java.util.Optional;
@@ -79,6 +80,26 @@ public class JsonNodeMappingSupport {
     public static Long asRequiredLong(JsonNode parentNode, String path) {
 
         return asRequiredValue(parentNode, path, JsonNode::isIntegralNumber, JsonNode::longValue);
+    }
+
+    /**
+     * @param parentNode a parent node
+     * @param path the path to a child node
+     * @return the value of the child node as a {@link LocalDate}
+     * @throws JsonNodeMappingException if the child doesn't exist or if the value of the child node isn't a date
+     */
+    // TODO overload with a DateTimeFormatter parameter
+    public static LocalDate asRequiredLocalDate(JsonNode parentNode, String path) {
+
+        String string = asRequiredString(parentNode, path);
+
+        try {
+            return LocalDate.parse(string);
+        }
+        catch (DateTimeParseException e) {
+            throw new JsonNodeMappingException(format(
+                    "The '%s' field in node '%s' with value '%s' isn't a valid date.", path, parentNode, string), e);
+        }
     }
 
     /**

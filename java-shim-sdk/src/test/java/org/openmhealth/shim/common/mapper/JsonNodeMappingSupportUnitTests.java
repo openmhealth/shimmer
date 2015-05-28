@@ -6,6 +6,7 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.Optional;
@@ -32,7 +33,8 @@ public class JsonNodeMappingSupportUnitTests {
                 "    \"integer\": 2,\n" +
                 "    \"string\": \"hi\",\n" +
                 "    \"empty\": null,\n" +
-                "    \"date_time\": \"2014-01-01T12:15:04+02:00\"\n" +
+                "    \"date_time\": \"2014-01-01T12:15:04+02:00\",\n" +
+                "    \"date\": \"2014-01-01\"\n" +
                 "}");
     }
 
@@ -110,6 +112,33 @@ public class JsonNodeMappingSupportUnitTests {
 
         assertThat(number, notNullValue());
         assertThat(number, equalTo(2l));
+    }
+
+    @Test(expectedExceptions = JsonNodeMappingException.class)
+    public void asRequiredLocalDateShouldThrowExceptionOnMissingNode() {
+
+        asRequiredLocalDate(testNode, "foo");
+    }
+
+    @Test(expectedExceptions = JsonNodeMappingException.class)
+    public void asRequiredLocalDateShouldThrowExceptionOnNullNode() {
+
+        asRequiredLocalDate(testNode, "empty");
+    }
+
+    @Test(expectedExceptions = JsonNodeMappingException.class)
+    public void asRequiredLocalDateShouldThrowExceptionOnMismatchedNode() {
+
+        asRequiredLocalDate(testNode, "number");
+    }
+
+    @Test
+    public void asRequiredLocalDateShouldReturnLocalDateWhenPresent() {
+
+        LocalDate number = asRequiredLocalDate(testNode, "date");
+
+        assertThat(number, notNullValue());
+        assertThat(number, equalTo(LocalDate.of(2014, 1, 1)));
     }
 
     @Test
