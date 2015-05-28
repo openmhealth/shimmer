@@ -16,11 +16,13 @@
 
 package org.openmhealth.shim;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.Sort;
@@ -39,6 +41,7 @@ import java.io.IOException;
 import java.util.*;
 
 import static java.util.Collections.singletonList;
+import static org.openmhealth.schema.configuration.JacksonConfiguration.newObjectMapper;
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 
@@ -186,9 +189,8 @@ public class Application extends WebSecurityConfigurerAdapter {
             @PathVariable("shim") String shim) throws ShimException {
 
         setPassThroughAuthentication(username, shim);
-        AuthorizationRequestParameters authParams =
-                shimRegistry.getShim(shim).getAuthorizationRequestParameters(
-                        username, Collections.<String, String>emptyMap());
+        AuthorizationRequestParameters authParams = shimRegistry.getShim(shim)
+                .getAuthorizationRequestParameters(username, Collections.<String, String>emptyMap());
         /**
          * Save authorization parameters to local repo. They will be
          * re-fetched via stateKey upon approval.
@@ -235,13 +237,11 @@ public class Application extends WebSecurityConfigurerAdapter {
         String stateKey = servletRequest.getParameter("state");
         AuthorizationRequestParameters authParams = authParametersRepo.findByStateKey(stateKey);
         if (authParams == null) {
-            throw new ShimException("Invalid state key, original access " +
-                    "request not found. Cannot authorize.");
+            throw new ShimException("Invalid state key, original access request not found. Cannot authorize.");
         }
         else {
             setPassThroughAuthentication(authParams.getUsername(), shim);
-            AuthorizationResponse response =
-                    shimRegistry.getShim(shim).handleAuthorizationResponse(servletRequest);
+            AuthorizationResponse response = shimRegistry.getShim(shim).handleAuthorizationResponse(servletRequest);
             /**
              * Save the access parameters to local repo.
              * They will be re-fetched via username and path parameters
@@ -263,8 +263,7 @@ public class Application extends WebSecurityConfigurerAdapter {
                 }
                 catch (IOException e) {
                     e.printStackTrace();
-                    throw new ShimException("Error occurred redirecting to :"
-                            + authParams.getRedirectUri());
+                    throw new ShimException("Error occurred redirecting to :" + authParams.getRedirectUri());
                 }
                 return null;
             }
@@ -304,13 +303,11 @@ public class Application extends WebSecurityConfigurerAdapter {
         }
         shimDataRequest.setNumToReturn(numToReturn);
 
-        AccessParameters accessParameters =
-                accessParametersRepo.findByUsernameAndShimKey(
-                        username, shim, new Sort(Sort.Direction.DESC, "dateCreated"));
+        AccessParameters accessParameters = accessParametersRepo.findByUsernameAndShimKey(
+                username, shim, new Sort(Sort.Direction.DESC, "dateCreated"));
 
         if (accessParameters == null) {
-            throw new ShimException("User '"
-                    + username + "' has not authorized shim: '" + shim + "'");
+            throw new ShimException("User '" + username + "' has not authorized shim: '" + shim + "'");
         }
         shimDataRequest.setAccessParameters(accessParameters);
         return shimRegistry.getShim(shim).getData(shimDataRequest);
@@ -320,7 +317,11 @@ public class Application extends WebSecurityConfigurerAdapter {
      * Sets pass through authentication required by spring.
      */
     private void setPassThroughAuthentication(String username, String shim) {
-        SecurityContextHolder.getContext()
-                .setAuthentication(new ShimAuthentication(username, shim));
+        SecurityContextHolder.getContext().setAuthentication(new ShimAuthentication(username, shim));
+    }
+
+    @Bean
+    public ObjectMapper objectMapper() {
+        return newObjectMapper();
     }
 }
