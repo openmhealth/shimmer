@@ -7,15 +7,14 @@ import org.openmhealth.schema.domain.omh.StepCount;
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static java.time.ZoneOffset.UTC;
 import static org.openmhealth.schema.domain.omh.DurationUnit.DAY;
 import static org.openmhealth.schema.domain.omh.TimeInterval.ofStartDateTimeAndDuration;
-import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.*;
+import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asRequiredLocalDate;
+import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asRequiredLong;
 
 
 /**
@@ -28,22 +27,11 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.*;
 public class MisfitStepCountDataPointMapper extends MisfitDataPointMapper<StepCount> {
 
     @Override
-    public List<DataPoint<StepCount>> asDataPoints(List<JsonNode> responseNodes) {
-
-        checkNotNull(responseNodes);
-        checkNotNull(responseNodes.size() == 1, "A single response node is allowed per call.");
-
-        JsonNode summaryNodes = asRequiredNode(responseNodes.get(0), "summary");
-
-        List<DataPoint<StepCount>> dataPoints = new ArrayList<>();
-
-        for (JsonNode summaryNode : summaryNodes) {
-            asDataPoint(summaryNode).ifPresent(dataPoints::add);
-        }
-
-        return dataPoints;
+    protected String getListNodeName() {
+        return "summary";
     }
 
+    @Override
     public Optional<DataPoint<StepCount>> asDataPoint(JsonNode summaryNode) {
 
         checkNotNull(summaryNode);

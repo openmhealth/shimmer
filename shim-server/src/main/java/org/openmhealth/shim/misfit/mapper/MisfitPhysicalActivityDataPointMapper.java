@@ -7,8 +7,6 @@ import org.openmhealth.schema.domain.omh.LengthUnitValue;
 import org.openmhealth.schema.domain.omh.PhysicalActivity;
 
 import java.time.OffsetDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -28,24 +26,12 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.*;
 public class MisfitPhysicalActivityDataPointMapper extends MisfitDataPointMapper<PhysicalActivity> {
 
     @Override
-    public List<DataPoint<PhysicalActivity>> asDataPoints(List<JsonNode> responseNodes) {
-
-        checkNotNull(responseNodes);
-        checkNotNull(responseNodes.size() == 1, "A single response node is allowed per call.");
-
-        JsonNode sessionsNode = asRequiredNode(responseNodes.get(0), "sessions");
-
-        List<DataPoint<PhysicalActivity>> dataPoints = new ArrayList<>();
-
-        for (JsonNode sessionNode : sessionsNode) {
-            dataPoints.add(asDataPoint(sessionNode));
-        }
-
-        return dataPoints;
+    protected String getListNodeName() {
+        return "sessions";
     }
 
-
-    public DataPoint<PhysicalActivity> asDataPoint(JsonNode sessionNode) {
+    @Override
+    public Optional<DataPoint<PhysicalActivity>> asDataPoint(JsonNode sessionNode) {
 
         checkNotNull(sessionNode);
 
@@ -71,6 +57,6 @@ public class MisfitPhysicalActivityDataPointMapper extends MisfitDataPointMapper
 
         Optional<String> externalId = asOptionalString(sessionNode, "id");
 
-        return newDataPoint(measure, RESOURCE_API_SOURCE_NAME, externalId.orElse(null), null);
+        return Optional.of(newDataPoint(measure, RESOURCE_API_SOURCE_NAME, externalId.orElse(null), null));
     }
 }
