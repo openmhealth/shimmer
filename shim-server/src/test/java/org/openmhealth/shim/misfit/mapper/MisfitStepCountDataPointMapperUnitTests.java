@@ -9,39 +9,39 @@ import org.testng.annotations.Test;
 
 import java.io.IOException;
 import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
-import java.util.Collections;
 import java.util.List;
 
+import static java.time.ZoneOffset.UTC;
+import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThan;
-import static org.openmhealth.schema.domain.omh.DurationUnit.SECOND;
-import static org.openmhealth.schema.domain.omh.LengthUnit.MILE;
+import static org.openmhealth.schema.domain.omh.DurationUnit.DAY;
 import static org.openmhealth.shim.misfit.mapper.MisfitDataPointMapper.RESOURCE_API_SOURCE_NAME;
 
 
 /**
  * @author Emerson Farrugia
  */
-public class MisfitPhysicalActivityDataPointMapperUnitTests extends DataPointMapperUnitTests {
+public class MisfitStepCountDataPointMapperUnitTests extends DataPointMapperUnitTests {
 
-    private final MisfitPhysicalActivityDataPointMapper mapper = new MisfitPhysicalActivityDataPointMapper();
+    private final MisfitStepCountDataPointMapper mapper = new MisfitStepCountDataPointMapper();
 
     private JsonNode responseNode;
 
     @BeforeTest
     public void initializeResponseNode() throws IOException {
 
-        ClassPathResource resource = new ClassPathResource("org/openmhealth/shim/misfit/mapper/misfit-sessions.json");
+        ClassPathResource resource =
+                new ClassPathResource("org/openmhealth/shim/misfit/mapper/misfit-detailed-summaries.json");
         responseNode = objectMapper.readTree(resource.getInputStream());
     }
 
     @Test
     public void asDataPointsShouldReturnCorrectNumberOfDataPoints() {
 
-        List<DataPoint<PhysicalActivity>> dataPoints = mapper.asDataPoints(Collections.singletonList(responseNode));
+        List<DataPoint<StepCount>> dataPoints = mapper.asDataPoints(singletonList(responseNode));
 
         assertThat(dataPoints, notNullValue());
         assertThat(dataPoints.size(), equalTo(3));
@@ -50,30 +50,27 @@ public class MisfitPhysicalActivityDataPointMapperUnitTests extends DataPointMap
     @Test
     public void asDataPointsShouldReturnCorrectDataPoints() {
 
-        List<DataPoint<PhysicalActivity>> dataPoints = mapper.asDataPoints(Collections.singletonList(responseNode));
+        List<DataPoint<StepCount>> dataPoints = mapper.asDataPoints(singletonList(responseNode));
 
         assertThat(dataPoints, notNullValue());
         assertThat(dataPoints.size(), greaterThan(0));
 
+        // FIXME fix the time zone offset once Misfit add it to the API
         TimeInterval effectiveTimeInterval = TimeInterval.ofStartDateTimeAndDuration(
-                OffsetDateTime.of(2015, 4, 13, 11, 46, 0, 0, ZoneOffset.ofHours(-7)),
-                new DurationUnitValue(SECOND, 1140.0));
+                OffsetDateTime.of(2015, 4, 13, 0, 0, 0, 0, UTC),
+                new DurationUnitValue(DAY, 1));
 
-        PhysicalActivity physicalActivity = new PhysicalActivity.Builder("Walking")
-                .setDistance(new LengthUnitValue(MILE, 0.9371))
+        StepCount stepCount = new StepCount.Builder(26370)
                 .setEffectiveTimeFrame(effectiveTimeInterval)
                 .build();
 
-        DataPoint<PhysicalActivity> firstDataPoint = dataPoints.get(0);
+        DataPoint<StepCount> firstDataPoint = dataPoints.get(0);
 
-        assertThat(firstDataPoint.getBody(), equalTo(physicalActivity));
+        assertThat(firstDataPoint.getBody(), equalTo(stepCount));
 
         DataPointAcquisitionProvenance acquisitionProvenance = firstDataPoint.getHeader().getAcquisitionProvenance();
 
         assertThat(acquisitionProvenance, notNullValue());
         assertThat(acquisitionProvenance.getSourceName(), equalTo(RESOURCE_API_SOURCE_NAME));
-        assertThat(acquisitionProvenance.getAdditionalProperty("external_id").isPresent(), equalTo(true));
-        assertThat(acquisitionProvenance.getAdditionalProperty("external_id").get(),
-                equalTo("552eab896c59ae1f7300003e"));
     }
 }
