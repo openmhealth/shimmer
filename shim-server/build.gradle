@@ -33,6 +33,8 @@ ext {
     springSecurityOAuthVersion = '2.0.7.RELEASE'
 }
 
+ext['jackson.version'] = '2.5.3'
+
 configurations {
     compile.exclude module: "spring-boot-starter-tomcat"
 }
