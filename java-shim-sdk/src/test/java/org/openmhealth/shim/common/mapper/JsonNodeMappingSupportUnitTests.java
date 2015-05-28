@@ -233,6 +233,16 @@ public class JsonNodeMappingSupportUnitTests {
     }
 
     @Test
+    public void asOptionalDoubleShouldReturnDoubleWhenIntegerIsPresent() {
+
+        Optional<Double> number = asOptionalDouble(testNode, "integer");
+
+        assertThat(number, notNullValue());
+        assertThat(number.isPresent(), equalTo(true));
+        assertThat(number.get(), equalTo(2d));
+    }
+
+    @Test
     public void asOptionalLongShouldReturnEmptyOnMissingNode() {
 
         Optional<Long> number = asOptionalLong(testNode, "foo");

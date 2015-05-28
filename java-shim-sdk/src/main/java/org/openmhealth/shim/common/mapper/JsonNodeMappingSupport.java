@@ -158,7 +158,7 @@ public class JsonNodeMappingSupport {
      */
     public static Optional<Double> asOptionalDouble(JsonNode parentNode, String path) {
 
-        return asOptionalValue(parentNode, path, JsonNode::isFloatingPointNumber, JsonNode::doubleValue);
+        return asOptionalValue(parentNode, path, JsonNode::isNumber, JsonNode::doubleValue);
     }
 
     /**
