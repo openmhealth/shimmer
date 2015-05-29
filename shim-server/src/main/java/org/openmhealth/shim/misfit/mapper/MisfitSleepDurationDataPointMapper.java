@@ -17,7 +17,11 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.*;
 
 
 /**
- * A mapper from Misfit Resource API /activity/sleeps responses to {@link SleepDuration} objects.
+ * A mapper from Misfit Resource API /activity/sleeps responses to {@link SleepDuration} objects. This mapper
+ * currently creates a single data point per sleep node in the response, subtracting the duration of awake segments
+ * from the sleep duration. It's also possible to create a single data point per sleep segment, which would help
+ * preserve the granularity of the original data. This mapper may be updated to return a data point per segment in the
+ * future.
  *
  * @author Emerson Farrugia
  * @see <a href="https://build.misfit.com/docs/references#APIReferences-Sleep">API documentation</a>
