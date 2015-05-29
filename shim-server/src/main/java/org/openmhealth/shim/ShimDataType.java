@@ -23,7 +23,9 @@ import com.fasterxml.jackson.databind.JsonDeserializer;
  */
 public interface ShimDataType {
 
-    JsonDeserializer<ShimDataResponse> getNormalizer();
+    default JsonDeserializer<ShimDataResponse> getNormalizer() {
+        return null;
+    }
 
     String name();
 }

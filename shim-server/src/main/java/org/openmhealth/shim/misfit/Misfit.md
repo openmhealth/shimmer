@@ -28,6 +28,8 @@ supports retrieval based on modification date: no
 - supports refresh tokens: yes/no
 - access token: access_token=USER_ACCESS_TOKEN or Authorization: Bearer USER_ACCESS_TOKEN
 
+# pagination
+- supported: no
 
 # rate limit
 
@@ -48,40 +50,43 @@ device
 - product:
   -  shine
 
+
 summary
 - description: daily summary
 - https://api.misfitwearables.com/move/resource/v1/user/:userId/activity/summary?start_date=X&end_date=Y&detail=true
 - https://build.misfit.com/docs/references#APIReferences-Summary
-- limited to 31 days, error if longer
-- supports time zone: no
+- limited to 31 days, 400 if longer
+- supports time zone: not yet, waiting for API change
 measures:
-    steps
-    calories
-    activityCalories
-    distance
+    steps: mapped, but time zones are currently broken until API changes are made
+    calories: not mapped, pending refactor
+    activityCalories: not mapped, compare to sessions
+    distance: not mapped
 
 sessions
 - description: workouts
 - https://build.misfit.com/docs/references#APIReferences-Session
 - https://api.misfitwearables.com/move/resource/v1/user/:userId/activity/sessions
-- limited to 31 days, error if longer
+- limited to 31 days, 400 if longer
 - supports time zone: offset
-- measures:
-  -  activity
-  -  duration
-  -  steps
-  -  calories Burned
-  -  distance
+- measures and status:
+  -  activity: mapped
+  -  duration: mapped
+  -  steps:  not mapped, pending refactor
+  -  calories burned: not mapped, pending refactor
+  -  distance: mapped
+  
+  
     
 sleep
 - description: sleep information
 - https://api.misfitwearables.com/move/resource/v1/user/:userId/activity/sleeps
 - https://build.misfit.com/docs/references#APIReferences-Sleep
-- limited to 31 days, error if longer
+- limited to 31 days, 400 if longer
 - measures:
-  -  duration
-  -  sleep details (awake, deep sleep, sleep)
+  -  sleep details (awake, deep sleep, sleep): mapped, may increase granularity
 
 ## issues
 
 how do we decouple summary from sessions, if summaries *contain* sessions?
+still need to fix time zones in step count 

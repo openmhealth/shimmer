@@ -1,40 +1,18 @@
 package org.openmhealth.shim.misfit;
 
-import static org.openmhealth.schema.pojos.generic.DurationUnitValue.DurationUnit.sec;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import com.fasterxml.jackson.databind.JsonNode;
+import com.google.common.base.Joiner;
 import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
 import org.joda.time.Duration;
-import org.joda.time.LocalDate;
-import org.openmhealth.schema.pojos.Activity;
-import org.openmhealth.schema.pojos.SleepDuration;
-import org.openmhealth.schema.pojos.SleepDurationUnitValue;
-import org.openmhealth.schema.pojos.StepCount;
-import org.openmhealth.schema.pojos.build.ActivityBuilder;
-import org.openmhealth.schema.pojos.build.SleepDurationBuilder;
-import org.openmhealth.schema.pojos.build.StepCountBuilder;
-import org.openmhealth.schema.pojos.generic.DurationUnitValue;
-import org.openmhealth.schema.pojos.generic.LengthUnitValue.LengthUnit;
-import org.openmhealth.shim.AccessParametersRepo;
-import org.openmhealth.shim.ApplicationAccessParametersRepo;
-import org.openmhealth.shim.AuthorizationRequestParametersRepo;
-import org.openmhealth.shim.OAuth2ShimBase;
-import org.openmhealth.shim.ShimDataRequest;
-import org.openmhealth.shim.ShimDataResponse;
-import org.openmhealth.shim.ShimDataType;
-import org.openmhealth.shim.ShimException;
-import org.openmhealth.shim.ShimServerConfig;
+import org.openmhealth.shim.*;
+import org.openmhealth.shim.misfit.mapper.MisfitDataPointMapper;
+import org.openmhealth.shim.misfit.mapper.MisfitPhysicalActivityDataPointMapper;
+import org.openmhealth.shim.misfit.mapper.MisfitSleepDurationDataPointMapper;
+import org.openmhealth.shim.misfit.mapper.MisfitStepCountDataPointMapper;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.client.OAuth2RestOperations;
 import org.springframework.security.oauth2.client.resource.OAuth2ProtectedResourceDetails;
@@ -44,22 +22,29 @@ import org.springframework.security.oauth2.client.token.RequestEnhancer;
 import org.springframework.security.oauth2.client.token.grant.code.AuthorizationCodeAccessTokenProvider;
 import org.springframework.stereotype.Component;
 import org.springframework.util.MultiValueMap;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonDeserializer;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.google.common.base.Joiner;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
+import org.springframework.web.util.UriComponentsBuilder;
+
+import java.util.Arrays;
+import java.util.List;
+
+import static java.util.Collections.singletonList;
+import static org.slf4j.LoggerFactory.getLogger;
+import static org.springframework.http.ResponseEntity.ok;
+
 
 /**
  * Encapsulates parameters specific to the Misfit API.
  *
  * @author Eric Jain
+ * @author Emerson Farrugia
  */
 @Component
 @ConfigurationProperties(prefix = "openmhealth.shim.misfit")
 public class MisfitShim extends OAuth2ShimBase {
+
+    private static final Logger logger = getLogger(MisfitShim.class);
 
     public static final String SHIM_KEY = "misfit";
 
@@ -75,11 +60,15 @@ public class MisfitShim extends OAuth2ShimBase {
 
     @Autowired
     public MisfitShim(ApplicationAccessParametersRepo applicationParametersRepo,
-                       AuthorizationRequestParametersRepo authorizationRequestParametersRepo,
-                       AccessParametersRepo accessParametersRepo,
-                       ShimServerConfig shimServerConfig) {
+            AuthorizationRequestParametersRepo authorizationRequestParametersRepo,
+            AccessParametersRepo accessParametersRepo,
+            ShimServerConfig shimServerConfig) {
         super(applicationParametersRepo, authorizationRequestParametersRepo, accessParametersRepo, shimServerConfig);
     }
+
+    private MisfitPhysicalActivityDataPointMapper physicalActivityMapper = new MisfitPhysicalActivityDataPointMapper();
+    private MisfitSleepDurationDataPointMapper sleepDurationMapper = new MisfitSleepDurationDataPointMapper();
+    private MisfitStepCountDataPointMapper stepCountMapper = new MisfitStepCountDataPointMapper();
 
     @Override
     public String getLabel() {
@@ -113,102 +102,22 @@ public class MisfitShim extends OAuth2ShimBase {
 
     @Override
     public ShimDataType[] getShimDataTypes() {
-        return new MisfitDataTypes[] {
-            MisfitDataTypes.SLEEP, MisfitDataTypes.ACTIVITIES, MisfitDataTypes.MOVES
+        return new MisfitDataTypes[]{
+                MisfitDataTypes.SLEEP, MisfitDataTypes.ACTIVITIES, MisfitDataTypes.MOVES
         };
     }
 
+    // TODO remove this structure once endpoints are figured out
     public enum MisfitDataTypes implements ShimDataType {
 
-        SLEEP("/activity/sleeps", new JsonDeserializer<ShimDataResponse>() {
-            @Override
-            public ShimDataResponse deserialize(JsonParser jsonParser, DeserializationContext deserializationContext)
-                throws IOException {
-
-                JsonNode responseNode = jsonParser.getCodec().readTree(jsonParser);
-                if (responseNode.path("sleeps").size() == 0) {
-                    return ShimDataResponse.empty(MisfitShim.SHIM_KEY);
-                }
-                List<SleepDuration> sleepDurations = new ArrayList<>();
-                for (JsonNode node : responseNode.path("sleeps")) {
-                    DateTime start = DateTime.parse(node.path("startTime").textValue());
-                    SleepDuration sleepDuration = new SleepDurationBuilder()
-                        .withStartAndDuration(start,
-                            node.path("duration").doubleValue() / 60.0, 
-                            SleepDurationUnitValue.Unit.min)
-                        .build();
-
-                    sleepDurations.add(sleepDuration);
-                }
-                Map<String, Object> results = new HashMap<>();
-                results.put(SleepDuration.SCHEMA_SLEEP_DURATION, sleepDurations);
-                return ShimDataResponse.result(MisfitShim.SHIM_KEY, results);
-            }
-        }),
-
-        ACTIVITIES("/activity/sessions", new JsonDeserializer<ShimDataResponse>() {
-            @Override
-            public ShimDataResponse deserialize(JsonParser jsonParser, DeserializationContext deserializationContext)
-                throws IOException {
-
-                JsonNode responseNode = jsonParser.getCodec().readTree(jsonParser);
-                if (responseNode.path("sessions").size() == 0) {
-                    return ShimDataResponse.empty(MisfitShim.SHIM_KEY);
-                }
-                List<Activity> activities = new ArrayList<>();
-                for (JsonNode node : responseNode.path("sessions")) {
-                    DateTime start = DateTime.parse(node.path("startTime").textValue());
-                    Activity activity = new ActivityBuilder()
-                        .setActivityName(node.path("activityType").textValue())
-                        .setDistance(node.path("distance").decimalValue(), LengthUnit.km)
-                        .withStartAndDuration(start, node.path("duration").doubleValue(), sec)
-                        .build();
-                    activities.add(activity);
-                }
-                Map<String, Object> results = new HashMap<>();
-                results.put(Activity.SCHEMA_ACTIVITY, activities);
-                return ShimDataResponse.result(MisfitShim.SHIM_KEY, results);
-            }
-        }),
-
-        MOVES("/activity/summary", new JsonDeserializer<ShimDataResponse>() {
-            @Override
-            public ShimDataResponse deserialize(JsonParser jsonParser, DeserializationContext deserializationContext)
-                throws IOException {
-
-                JsonNode responseNode = jsonParser.getCodec().readTree(jsonParser);
-                if (responseNode.path("summary").size() == 0) {
-                    return ShimDataResponse.empty(MisfitShim.SHIM_KEY);
-                }
-                List<StepCount> stepCounts = new ArrayList<>();
-                for (JsonNode node : responseNode.path("summary")) {
-                    if (node.path("steps").intValue() > 0) {
-                        LocalDate date = LocalDate.parse(node.path("date").textValue());
-                        stepCounts.add(new StepCountBuilder()
-                            .withStartAndDuration(
-                                date.toDateTimeAtStartOfDay(DateTimeZone.UTC),
-                                1.0, DurationUnitValue.DurationUnit.d)
-                            .setSteps(node.path("steps").asInt()).build());
-                    }
-                }
-                Map<String, Object> results = new HashMap<>();
-                results.put(StepCount.SCHEMA_STEP_COUNT, stepCounts);
-                return ShimDataResponse.result(MisfitShim.SHIM_KEY, results);
-            }
-        });
+        SLEEP("activity/sleeps"),
+        ACTIVITIES("activity/sessions"),
+        MOVES("activity/summary");
 
         private String endPoint;
 
-        private JsonDeserializer<ShimDataResponse> normalizer;
-
-        MisfitDataTypes(String endPoint, JsonDeserializer<ShimDataResponse> normalizer) {
+        MisfitDataTypes(String endPoint) {
             this.endPoint = endPoint;
-            this.normalizer = normalizer;
-        }
-
-        @Override
-        public JsonDeserializer<ShimDataResponse> getNormalizer() {
-            return normalizer;
         }
 
         public String getEndPoint() {
@@ -218,83 +127,106 @@ public class MisfitShim extends OAuth2ShimBase {
 
     @Override
     protected ResponseEntity<ShimDataResponse> getData(OAuth2RestOperations restTemplate,
-                                                       ShimDataRequest shimDataRequest) throws ShimException {
+            ShimDataRequest shimDataRequest) throws ShimException {
         String urlRequest = DATA_URL;
 
         final MisfitDataTypes misfitDataType;
         try {
-            misfitDataType = MisfitDataTypes.valueOf(
-                shimDataRequest.getDataTypeKey().trim().toUpperCase());
-        } catch (NullPointerException | IllegalArgumentException e) {
-            throw new ShimException("Null or Invalid data type parameter: "
-                + shimDataRequest.getDataTypeKey()
-                + " in shimDataRequest, cannot retrieve data.");
+            misfitDataType = MisfitDataTypes.valueOf(shimDataRequest.getDataTypeKey().trim().toUpperCase());
         }
-
-        urlRequest += misfitDataType.getEndPoint() + "?";
+        catch (NullPointerException | IllegalArgumentException e) {
+            throw new ShimException("Null or Invalid data type parameter: " + shimDataRequest.getDataTypeKey()
+                    + " in shimDataRequest, cannot retrieve data.");
+        }
 
         DateTime today = new DateTime();
         DateTime startDate = shimDataRequest.getStartDate() == null ?
-            today.minusDays(1) : shimDataRequest.getStartDate();
+                today.minusDays(1) : shimDataRequest.getStartDate();
         DateTime endDate = shimDataRequest.getEndDate() == null ?
-            today.plusDays(1) : shimDataRequest.getEndDate();
+                today.plusDays(1) : shimDataRequest.getEndDate();
         if (new Duration(startDate, endDate).isLongerThan(MAX_DURATION)) {
-            endDate = startDate.plus(MAX_DURATION).minusDays(1);
+            endDate = startDate.plus(MAX_DURATION).minusDays(1);  // TODO when refactoring, break apart queries
         }
-        urlRequest += "&start_date=" + startDate.toLocalDate();
-        urlRequest += "&end_date=" + endDate.toLocalDate();
-        urlRequest += "&detail=true";
 
-        ObjectMapper objectMapper = new ObjectMapper();
+        UriComponentsBuilder uriBuilder = UriComponentsBuilder
+                .fromUriString(DATA_URL)
+                .pathSegment(misfitDataType.getEndPoint())
+                .queryParam("start_date", startDate.toLocalDate())
+                .queryParam("end_date", endDate.toLocalDate())
+                .queryParam("detail", true); // added to all endpoints to support summaries
 
-        ResponseEntity<byte[]> responseEntity = restTemplate.getForEntity(urlRequest, byte[].class);
+        ResponseEntity<JsonNode> responseEntity;
         try {
-            if (shimDataRequest.getNormalize()) {
-                SimpleModule module = new SimpleModule();
-                module.addDeserializer(ShimDataResponse.class, misfitDataType.getNormalizer());
-                objectMapper.registerModule(module);
-                return new ResponseEntity<>(
-                    objectMapper.readValue(responseEntity.getBody(), ShimDataResponse.class), HttpStatus.OK);
-            } else {
-                return new ResponseEntity<>(
-                    ShimDataResponse.result(MisfitShim.SHIM_KEY, objectMapper.readTree(responseEntity.getBody())), HttpStatus.OK);
+            responseEntity = restTemplate.getForEntity(uriBuilder.build().toUri(), JsonNode.class);
+        }
+        catch (HttpClientErrorException | HttpServerErrorException e) {
+            // FIXME figure out how to handle this
+            logger.error("A request for Misfit data failed.", e);
+            throw e;
+        }
+
+        if (shimDataRequest.getNormalize()) {
+
+            MisfitDataPointMapper<?> dataPointMapper;
+
+            switch (misfitDataType) {
+                case ACTIVITIES:
+                    dataPointMapper = physicalActivityMapper;
+                    break;
+                case SLEEP:
+                    dataPointMapper = sleepDurationMapper;
+                    break;
+                case MOVES:
+                    dataPointMapper = stepCountMapper;
+                    break;
+                default:
+                    throw new UnsupportedOperationException();
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-            throw new ShimException("Could not read response data.");
+
+            return ok().body(ShimDataResponse.result(SHIM_KEY,
+                    dataPointMapper.asDataPoints(singletonList(responseEntity.getBody()))));
+        }
+        else {
+            return ok().body(ShimDataResponse.result(SHIM_KEY, responseEntity.getBody()));
         }
     }
 
     @Override
     protected String getAuthorizationUrl(UserRedirectRequiredException exception) {
+
         final OAuth2ProtectedResourceDetails resource = getResource();
-        return exception.getRedirectUri()
-            + "?state="
-            + exception.getStateKey()
-            + "&client_id="
-            + resource.getClientId()
-            + "&response_type=code"
-            + "&scope=" + Joiner.on(',').join(resource.getScope())
-            + "&redirect_uri=" + getCallbackUrl();
+
+        UriComponentsBuilder uriBuilder = UriComponentsBuilder
+                .fromUriString(exception.getRedirectUri())
+                .queryParam("state", exception.getStateKey())
+                .queryParam("client_id", resource.getClientId())
+                .queryParam("response_type", "code")
+                .queryParam("scope", Joiner.on(',').join(resource.getScope()))
+                .queryParam("redirect_url", getCallbackUrl());
+
+        return uriBuilder.build().toUriString();
     }
 
     /**
      * Simple overrides to base spring class from oauth.
      */
     public class MisfitAuthorizationCodeAccessTokenProvider extends AuthorizationCodeAccessTokenProvider {
+
         public MisfitAuthorizationCodeAccessTokenProvider() {
             this.setTokenRequestEnhancer(new MisfitTokenRequestEnhancer());
         }
     }
 
+
     /**
      * Adds jawbone required parameters to authorization token requests.
      */
     private class MisfitTokenRequestEnhancer implements RequestEnhancer {
+
         @Override
-        public void enhance(AccessTokenRequest request,
-                            OAuth2ProtectedResourceDetails resource,
-                            MultiValueMap<String, String> form, HttpHeaders headers) {
+        public void enhance(AccessTokenRequest request, OAuth2ProtectedResourceDetails resource,
+                MultiValueMap<String, String> form, HttpHeaders headers) {
+
             form.set("client_id", resource.getClientId());
             form.set("client_secret", resource.getClientSecret());
             form.set("redirect_uri", getCallbackUrl());
