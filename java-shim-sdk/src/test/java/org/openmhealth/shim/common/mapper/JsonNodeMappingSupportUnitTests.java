@@ -7,8 +7,10 @@ import org.testng.annotations.Test;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -35,7 +37,9 @@ public class JsonNodeMappingSupportUnitTests {
                 "    \"boolean\": true,\n" +
                 "    \"empty\": null,\n" +
                 "    \"date_time\": \"2014-01-01T12:15:04+02:00\",\n" +
-                "    \"date\": \"2014-01-01\"\n" +
+                "    \"date\": \"2014-01-01\",\n" +
+                "    \"local_date_time\": \"2014-01-01T12:15:04\",\n" +
+                "    \"custom_local_date_time\": \"Fri, 1 Aug 2014 06:53:05\"\n" +
                 "}");
     }
 
@@ -113,6 +117,43 @@ public class JsonNodeMappingSupportUnitTests {
 
         assertThat(value, notNullValue());
         assertThat(value, equalTo(2l));
+    }
+
+    @Test(expectedExceptions = JsonNodeMappingException.class)
+    public void asRequiredDoubleShouldThrowExceptionOnMissingNode() {
+
+        asRequiredDouble(testNode, "foo");
+    }
+
+    @Test(expectedExceptions = JsonNodeMappingException.class)
+    public void asRequiredDoubleShouldThrowExceptionOnNullNode() {
+
+        asRequiredDouble(testNode, "empty");
+    }
+
+
+    @Test(expectedExceptions = JsonNodeMappingException.class)
+    public void asRequiredDoubleShouldThrowExceptionOnMismatchedNode() {
+
+        asRequiredDouble(testNode, "string");
+    }
+
+    @Test
+    public void asRequiredDoubleShouldReturnDoubleWhenPresent() {
+
+        Double value = asRequiredDouble(testNode, "number");
+
+        assertThat(value, notNullValue());
+        assertThat(value, equalTo(2.3));
+    }
+
+    @Test
+    public void asRequiredDoubleShouldReturnDoubleWhenIntegerIsPresent() {
+
+        Double value = asRequiredDouble(testNode, "integer");
+
+        assertThat(value, notNullValue());
+        assertThat(value, equalTo(2d));
     }
 
     @Test(expectedExceptions = JsonNodeMappingException.class)
@@ -287,6 +328,64 @@ public class JsonNodeMappingSupportUnitTests {
         assertThat(value, notNullValue());
         assertThat(value.isPresent(), equalTo(true));
         assertThat(value.get(), equalTo(OffsetDateTime.of(2014, 1, 1, 12, 15, 4, 0, ZoneOffset.ofHours(2))));
+    }
+
+    @Test
+    public void asOptionalLocalDateTimeShouldReturnEmptyOnMissingNode() {
+
+        Optional<LocalDateTime> value = asOptionalLocalDateTime(testNode, "foo");
+
+        assertThat(value, notNullValue());
+        assertThat(value.isPresent(), equalTo(false));
+    }
+
+    @Test
+    public void asOptionalLocalDateTimeShouldReturnEmptyOnNullNode() {
+
+        Optional<LocalDateTime> value = asOptionalLocalDateTime(testNode, "empty");
+
+        assertThat(value, notNullValue());
+        assertThat(value.isPresent(), equalTo(false));
+    }
+
+    @Test
+    public void asOptionalLocalDateTimeShouldReturnEmptyOnMismatchedNode() {
+
+        Optional<LocalDateTime> value = asOptionalLocalDateTime(testNode, "number");
+
+        assertThat(value, notNullValue());
+        assertThat(value.isPresent(), equalTo(false));
+    }
+
+    @Test
+    public void asOptionalLocalDateTimeShouldReturnEmptyOnMalformedNode() {
+
+        Optional<LocalDateTime> value = asOptionalLocalDateTime(testNode, "string");
+
+        assertThat(value, notNullValue());
+        assertThat(value.isPresent(), equalTo(false));
+    }
+
+    @Test
+    public void asOptionalLocalDateTimeShouldReturnDateTimeWhenPresent() {
+
+        Optional<LocalDateTime> value = asOptionalLocalDateTime(testNode, "local_date_time");
+
+        assertThat(value, notNullValue());
+        assertThat(value.isPresent(), equalTo(true));
+        assertThat(value.get(), equalTo(LocalDateTime.of(2014, 1, 1, 12, 15, 4, 0)));
+    }
+
+    @Test
+    public void asOptionalLocalDateTimeShouldReturnCustomDateTimeWhenPresent() {
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE, d MMM yyyy HH:mm:ss");
+
+        Optional<LocalDateTime> value = asOptionalLocalDateTime(testNode, "custom_local_date_time", formatter);
+
+        assertThat(value, notNullValue());
+        assertThat(value.isPresent(), equalTo(true));
+        assertThat(value.get(), equalTo(LocalDateTime.of(2014, 8, 1, 6, 53, 5, 0)));
     }
 
     @Test

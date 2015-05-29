@@ -5,12 +5,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.Optional;
 import java.util.function.Function;
 
 import static java.lang.String.format;
+import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME;
 
 
 /**
@@ -80,6 +83,17 @@ public class JsonNodeMappingSupport {
     public static Long asRequiredLong(JsonNode parentNode, String path) {
 
         return asRequiredValue(parentNode, path, JsonNode::isIntegralNumber, JsonNode::longValue);
+    }
+
+    /**
+     * @param parentNode a parent node
+     * @param path the path to a child node
+     * @return the value of the child node as a double
+     * @throws JsonNodeMappingException if the child doesn't exist or if the value of the child node isn't numeric
+     */
+    public static Double asRequiredDouble(JsonNode parentNode, String path) {
+
+        return asRequiredValue(parentNode, path, JsonNode::isNumber, JsonNode::doubleValue);
     }
 
     /**
@@ -200,6 +214,46 @@ public class JsonNodeMappingSupport {
         }
 
         return Optional.ofNullable(dateTime);
+    }
+
+    /**
+     * @param parentNode a parent node
+     * @param path the path to a child node
+     * @param formatter the formatter to use to parse the value of the child node
+     * @return the value of the child node as a date time, or an empty optional if the child doesn't exist or if the
+     * value of the child node isn't a date time
+     */
+    public static Optional<LocalDateTime> asOptionalLocalDateTime(JsonNode parentNode, String path,
+            DateTimeFormatter formatter) {
+
+        Optional<String> string = asOptionalString(parentNode, path);
+
+        if (!string.isPresent()) {
+            return Optional.empty();
+        }
+
+        LocalDateTime dateTime = null;
+
+        try {
+            dateTime = LocalDateTime.parse(string.get(), formatter);
+        }
+        catch (DateTimeParseException e) {
+            logger.warn("The '{}' field in node '{}' with value '{}' isn't a valid timestamp.",
+                    path, parentNode, string.get(), e);
+        }
+
+        return Optional.ofNullable(dateTime);
+    }
+
+    /**
+     * @param parentNode a parent node
+     * @param path the path to a child node
+     * @return the value of the child node as a date time, or an empty optional if the child doesn't exist or if the
+     * value of the child node isn't a date time matching {@link DateTimeFormatter#ISO_LOCAL_DATE_TIME}
+     */
+    public static Optional<LocalDateTime> asOptionalLocalDateTime(JsonNode parentNode, String path) {
+
+        return asOptionalLocalDateTime(parentNode, path, ISO_LOCAL_DATE_TIME);
     }
 
     /**
