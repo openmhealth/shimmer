@@ -16,7 +16,7 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.*;
 
 
 /**
- * A mapper from RunKeeper HealthGraph API application/vnd.com.runkeeper.FitnessActivity+json responses to {@link
+ * A mapper from RunKeeper HealthGraph API application/vnd.com.runkeeper.FitnessActivityFeed+json responses to {@link
  * PhysicalActivity} objects.
  *
  * @author Emerson Farrugia
