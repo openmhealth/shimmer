@@ -471,4 +471,41 @@ public class JsonNodeMappingSupportUnitTests {
         assertThat(value.isPresent(), equalTo(true));
         assertThat(value.get(), equalTo(2L));
     }
+
+    @Test
+    public void asOptionalIntegerShouldReturnEmptyOnMissingNode() {
+
+        Optional<Integer> value = asOptionalInteger(testNode, "foo");
+
+        assertThat(value, notNullValue());
+        assertThat(value.isPresent(), equalTo(false));
+    }
+
+    @Test
+    public void asOptionalIntegerShouldReturnEmptyOnNullNode() {
+
+        Optional<Integer> value = asOptionalInteger(testNode, "empty");
+
+        assertThat(value, notNullValue());
+        assertThat(value.isPresent(), equalTo(false));
+    }
+
+    @Test
+    public void asOptionalIntegerShouldReturnEmptyOnMismatchedNode() {
+
+        Optional<Integer> value = asOptionalInteger(testNode, "number");
+
+        assertThat(value, notNullValue());
+        assertThat(value.isPresent(), equalTo(false));
+    }
+
+    @Test
+    public void asOptionalIntegerShouldReturnIntegerWhenPresent() {
+
+        Optional<Integer> value = asOptionalInteger(testNode, "integer");
+
+        assertThat(value, notNullValue());
+        assertThat(value.isPresent(), equalTo(true));
+        assertThat(value.get(), equalTo(2));
+    }
 }

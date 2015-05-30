@@ -277,4 +277,15 @@ public class JsonNodeMappingSupport {
 
         return asOptionalValue(parentNode, path, JsonNode::isIntegralNumber, JsonNode::longValue);
     }
+
+    /**
+     * @param parentNode a parent node
+     * @param path the path to a child node
+     * @return the value of the child node as an integer, or an empty optional if the child doesn't exist or if the
+     * value of the child node isn't an integer
+     */
+    public static Optional<Integer> asOptionalInteger(JsonNode parentNode, String path) {
+
+        return asOptionalValue(parentNode, path, JsonNode::isIntegralNumber, JsonNode::intValue);
+    }
 }
