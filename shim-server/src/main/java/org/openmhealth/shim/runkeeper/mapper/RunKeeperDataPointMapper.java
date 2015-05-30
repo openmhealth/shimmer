@@ -2,18 +2,14 @@ package org.openmhealth.shim.runkeeper.mapper;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.openmhealth.schema.domain.omh.DataPoint;
-import org.openmhealth.schema.domain.omh.DataPointAcquisitionProvenance;
-import org.openmhealth.schema.domain.omh.DataPointHeader;
-import org.openmhealth.schema.domain.omh.Measure;
 import org.openmhealth.shim.common.mapper.JsonNodeDataPointMapper;
 
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.openmhealth.schema.domain.omh.DataPointModality.SENSED;
 import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asRequiredNode;
 
 
@@ -25,6 +21,8 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asRequir
 public abstract class RunKeeperDataPointMapper<T> implements JsonNodeDataPointMapper<T> {
 
     public static final String RESOURCE_API_SOURCE_NAME = "RunKeeper HealthGraph API";
+    public static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("EEE, d MMM yyyy HH:mm:ss");
+
 
     @Override
     public List<DataPoint<T>> asDataPoints(List<JsonNode> responseNodes) {

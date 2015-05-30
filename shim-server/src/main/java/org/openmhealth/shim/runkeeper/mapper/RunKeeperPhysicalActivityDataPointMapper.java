@@ -6,7 +6,6 @@ import org.openmhealth.schema.domain.omh.*;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
-import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
 import static java.util.UUID.randomUUID;
@@ -26,13 +25,10 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.*;
  */
 public class RunKeeperPhysicalActivityDataPointMapper extends RunKeeperDataPointMapper<PhysicalActivity> {
 
-    private static final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("EEE, d MMM yyyy HH:mm:ss");
-
     @Override
     protected String getListNodeName() {
         return "items";
     }
-
 
     @Override
     protected Optional<DataPoint<PhysicalActivity>> asDataPoint(JsonNode itemNode) {
@@ -49,7 +45,8 @@ public class RunKeeperPhysicalActivityDataPointMapper extends RunKeeperDataPoint
 
         PhysicalActivity.Builder builder = new PhysicalActivity.Builder(activityName);
 
-        Optional<LocalDateTime> localStartDateTime = asOptionalLocalDateTime(itemNode, "startTime");
+        Optional<LocalDateTime> localStartDateTime =
+                asOptionalLocalDateTime(itemNode, "start_time", DATE_TIME_FORMATTER);
 
         // RunKeeper doesn't support fractional time zones
         Optional<Integer> utcOffset = asOptionalInteger(itemNode, "utc_offset");
@@ -70,7 +67,6 @@ public class RunKeeperPhysicalActivityDataPointMapper extends RunKeeperDataPoint
 
         return builder.build();
     }
-
 
     private DataPointHeader getDataPointHeader(JsonNode itemNode, PhysicalActivity measure) {
 

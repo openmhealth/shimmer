@@ -17,6 +17,10 @@ subprojects {
 
     sourceCompatibility = javaVersion
     targetCompatibility = javaVersion
+
+    test {
+        useTestNG();
+    }
 }
 
 task wrapper(type: Wrapper) {

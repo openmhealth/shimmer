@@ -151,7 +151,7 @@ public class JsonNodeMappingSupport {
         JsonNode childNode = parentNode.path(path);
 
         if (childNode.isMissingNode()) {
-            logger.warn("A '{}' field wasn't found in node '{}'.", path, parentNode);
+            logger.debug("A '{}' field wasn't found in node '{}'.", path, parentNode);
             return Optional.empty();
         }
 
