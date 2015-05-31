@@ -156,7 +156,7 @@ public class MisfitShim extends OAuth2ShimBase {
 
         ResponseEntity<JsonNode> responseEntity;
         try {
-            responseEntity = restTemplate.getForEntity(uriBuilder.build().toUri(), JsonNode.class);
+            responseEntity = restTemplate.getForEntity(uriBuilder.build().encode().toUri(), JsonNode.class);
         }
         catch (HttpClientErrorException | HttpServerErrorException e) {
             // FIXME figure out how to handle this
@@ -203,7 +203,7 @@ public class MisfitShim extends OAuth2ShimBase {
                 .queryParam("scope", Joiner.on(',').join(resource.getScope()))
                 .queryParam("redirect_uri", getCallbackUrl());
 
-        return uriBuilder.build().toUriString();
+        return uriBuilder.build().encode().toUriString();
     }
 
     /**

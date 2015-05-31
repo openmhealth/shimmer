@@ -181,8 +181,8 @@ public class RunkeeperShim extends OAuth2ShimBase {
 
         ResponseEntity<JsonNode> responseEntity;
         try {
-            responseEntity = restTemplate.exchange(uriBuilder.build().toUri(), GET, new HttpEntity<JsonNode>(headers),
-                    JsonNode.class);
+            responseEntity = restTemplate.exchange(uriBuilder.build().encode().toUri(), GET,
+                    new HttpEntity<JsonNode>(headers), JsonNode.class);
         }
         catch (HttpClientErrorException | HttpServerErrorException e) {
             // FIXME figure out how to handle this
@@ -214,7 +214,7 @@ public class RunkeeperShim extends OAuth2ShimBase {
                 .queryParam("response_type", "code")
                 .queryParam("redirect_uri", getCallbackUrl());
 
-        return uriBuilder.build().toUriString();
+        return uriBuilder.build().encode().toUriString();
     }
 
     private class RunkeeperTokenRequestEnhancer implements RequestEnhancer {
