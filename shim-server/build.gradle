@@ -34,6 +34,7 @@ ext {
 }
 
 ext['jackson.version'] = '2.5.3'
+ext["spring-data-releasetrain.version"] = "Fowler-RELEASE"
 
 configurations {
     compile.exclude module: "spring-boot-starter-tomcat"

@@ -2,8 +2,6 @@ package org.openmhealth.shim.misfit;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.base.Joiner;
-import org.joda.time.DateTime;
-import org.joda.time.Duration;
 import org.openmhealth.shim.*;
 import org.openmhealth.shim.misfit.mapper.MisfitDataPointMapper;
 import org.openmhealth.shim.misfit.mapper.MisfitPhysicalActivityDataPointMapper;
@@ -26,6 +24,8 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.time.Duration;
+import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.List;
 
@@ -35,8 +35,6 @@ import static org.springframework.http.ResponseEntity.ok;
 
 
 /**
- * Encapsulates parameters specific to the Misfit API.
- *
  * @author Eric Jain
  * @author Emerson Farrugia
  */
@@ -56,7 +54,7 @@ public class MisfitShim extends OAuth2ShimBase {
 
     public static final List<String> MISFIT_SCOPES = Arrays.asList("public", "birthday", "email");
 
-    private static final Duration MAX_DURATION = Duration.standardDays(31);
+    private static final long MAX_DURATION_IN_DAYS = 31;
 
     @Autowired
     public MisfitShim(ApplicationAccessParametersRepo applicationParametersRepo,
@@ -102,10 +100,8 @@ public class MisfitShim extends OAuth2ShimBase {
 
     @Override
     public ShimDataType[] getShimDataTypes() {
-        return new MisfitDataTypes[]{
-                MisfitDataTypes.SLEEP, MisfitDataTypes.ACTIVITIES, MisfitDataTypes.MOVES
+        return MisfitDataTypes.values();
         };
-    }
 
     // TODO remove this structure once endpoints are figured out
     public enum MisfitDataTypes implements ShimDataType {
@@ -128,7 +124,6 @@ public class MisfitShim extends OAuth2ShimBase {
     @Override
     protected ResponseEntity<ShimDataResponse> getData(OAuth2RestOperations restTemplate,
             ShimDataRequest shimDataRequest) throws ShimException {
-        String urlRequest = DATA_URL;
 
         final MisfitDataTypes misfitDataType;
         try {
@@ -139,20 +134,24 @@ public class MisfitShim extends OAuth2ShimBase {
                     + " in shimDataRequest, cannot retrieve data.");
         }
 
-        DateTime today = new DateTime();
-        DateTime startDate = shimDataRequest.getStartDate() == null ?
-                today.minusDays(1) : shimDataRequest.getStartDate();
-        DateTime endDate = shimDataRequest.getEndDate() == null ?
-                today.plusDays(1) : shimDataRequest.getEndDate();
-        if (new Duration(startDate, endDate).isLongerThan(MAX_DURATION)) {
-            endDate = startDate.plus(MAX_DURATION).minusDays(1);  // TODO when refactoring, break apart queries
+        // TODO don't truncate dates
+        OffsetDateTime now = OffsetDateTime.now();
+
+        OffsetDateTime startDateTime = shimDataRequest.getStartDateTime() == null ?
+                now.minusDays(1) : shimDataRequest.getStartDateTime();
+
+        OffsetDateTime endDateTime = shimDataRequest.getEndDateTime() == null ?
+                now.plusDays(1) : shimDataRequest.getEndDateTime();
+
+        if (Duration.between(startDateTime, endDateTime).toDays() > MAX_DURATION_IN_DAYS) {
+            endDateTime = startDateTime.plusDays(MAX_DURATION_IN_DAYS - 1);  // TODO when refactoring, break apart queries
         }
 
         UriComponentsBuilder uriBuilder = UriComponentsBuilder
                 .fromUriString(DATA_URL)
                 .pathSegment(misfitDataType.getEndPoint())
-                .queryParam("start_date", startDate.toLocalDate())
-                .queryParam("end_date", endDate.toLocalDate())
+                .queryParam("start_date", startDateTime.toLocalDate()) // TODO convert ODT to LocalDate properly
+                .queryParam("end_date", endDateTime.toLocalDate())
                 .queryParam("detail", true); // added to all endpoints to support summaries
 
         ResponseEntity<JsonNode> responseEntity;
@@ -202,7 +201,7 @@ public class MisfitShim extends OAuth2ShimBase {
                 .queryParam("client_id", resource.getClientId())
                 .queryParam("response_type", "code")
                 .queryParam("scope", Joiner.on(',').join(resource.getScope()))
-                .queryParam("redirect_url", getCallbackUrl());
+                .queryParam("redirect_uri", getCallbackUrl());
 
         return uriBuilder.build().toUriString();
     }

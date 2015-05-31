@@ -17,8 +17,6 @@
 package org.openmhealth.shim;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -38,8 +36,10 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.*;
 
+import static java.time.ZoneOffset.UTC;
 import static java.util.Collections.singletonList;
 import static org.openmhealth.schema.configuration.JacksonConfiguration.newObjectMapper;
 import static org.springframework.web.bind.annotation.RequestMethod.*;
@@ -66,8 +66,6 @@ public class Application extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private ShimRegistry shimRegistry;
-
-    private static DateTimeFormatter formatterDate = DateTimeFormat.forPattern("yyyy-MM-dd");
 
     // TODO clarify what this is for
     private static final String REDIRECT_OOB = "oob";
@@ -296,10 +294,10 @@ public class Application extends WebSecurityConfigurerAdapter {
         shimDataRequest.setDataTypeKey(dataTypeKey);
         shimDataRequest.setNormalize(!"".equals(normalize));
         if (!"".equals(dateStart)) {
-            shimDataRequest.setStartDate(formatterDate.parseDateTime(dateStart));
+            shimDataRequest.setStartDateTime(LocalDate.parse(dateStart).atStartOfDay().atOffset(UTC));
         }
         if (!"".equals(dateEnd)) {
-            shimDataRequest.setEndDate(formatterDate.parseDateTime(dateEnd));
+            shimDataRequest.setEndDateTime(LocalDate.parse(dateEnd).atStartOfDay().atOffset(UTC));
         }
         shimDataRequest.setNumToReturn(numToReturn);
 

@@ -16,8 +16,7 @@
 
 package org.openmhealth.shim;
 
-import org.joda.time.DateTime;
-
+import java.time.OffsetDateTime;
 import java.util.List;
 
 /**
@@ -40,15 +39,15 @@ public class ShimDataRequest {
     private AccessParameters accessParameters;
 
     /**
+     * // TODO replace this with filters on effective time, using the Data Point API
      * The start date for the data being retrieved
      */
-
-    private DateTime startDate;
+    private OffsetDateTime startDateTime;
 
     /**
      * The end date for the data being retrieved
      */
-    private DateTime endDate;
+    private OffsetDateTime endDateTime;
 
     /**
      * List of columns required
@@ -77,16 +76,16 @@ public class ShimDataRequest {
 
     public ShimDataRequest(String dataTypeKey,
                            AccessParameters accessParameters,
-                           DateTime startDate,
-                           DateTime endDate,
+                           OffsetDateTime startDateTime,
+                           OffsetDateTime endDateTime,
                            List<String> columnList,
                            Long numToSkip,
                            Long numToReturn,
                            boolean normalize) {
         this.dataTypeKey = dataTypeKey;
         this.accessParameters = accessParameters;
-        this.startDate = startDate;
-        this.endDate = endDate;
+        this.startDateTime = startDateTime;
+        this.endDateTime = endDateTime;
         this.columnList = columnList;
         this.numToSkip = numToSkip;
         this.numToReturn = numToReturn;
@@ -101,12 +100,20 @@ public class ShimDataRequest {
         this.accessParameters = accessParameters;
     }
 
-    public void setStartDate(DateTime startDate) {
-        this.startDate = startDate;
+    public OffsetDateTime getStartDateTime() {
+        return startDateTime;
     }
 
-    public void setEndDate(DateTime endDate) {
-        this.endDate = endDate;
+    public void setStartDateTime(OffsetDateTime startDateTime) {
+        this.startDateTime = startDateTime;
+    }
+
+    public OffsetDateTime getEndDateTime() {
+        return endDateTime;
+    }
+
+    public void setEndDateTime(OffsetDateTime endDateTime) {
+        this.endDateTime = endDateTime;
     }
 
     public void setColumnList(List<String> columnList) {
@@ -127,14 +134,6 @@ public class ShimDataRequest {
 
     public AccessParameters getAccessParameters() {
         return accessParameters;
-    }
-
-    public DateTime getStartDate() {
-        return startDate;
-    }
-
-    public DateTime getEndDate() {
-        return endDate;
     }
 
     public List<String> getColumnList() {
