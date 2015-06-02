@@ -46,10 +46,10 @@ public class MisfitPhysicalActivityDataPointMapper extends MisfitDataPointMapper
         }
 
         Optional<OffsetDateTime> startDateTime = asOptionalOffsetDateTime(sessionNode, "startTime");
-        Optional<Double> duration = asOptionalDouble(sessionNode, "duration");
+        Optional<Double> durationInSec = asOptionalDouble(sessionNode, "duration");
 
-        if (startDateTime.isPresent() && duration.isPresent()) {
-            DurationUnitValue durationUnitValue = new DurationUnitValue(SECOND, duration.get());
+        if (startDateTime.isPresent() && durationInSec.isPresent()) {
+            DurationUnitValue durationUnitValue = new DurationUnitValue(SECOND, durationInSec.get());
             builder.setEffectiveTimeFrame(ofStartDateTimeAndDuration(startDateTime.get(), durationUnitValue));
         }
 

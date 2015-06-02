@@ -1,7 +1,10 @@
-package org.openmhealth.shim.misfit.mapper;
+package org.openmhealth.shim.jawbone.mapper;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import org.openmhealth.schema.domain.omh.*;
+import org.openmhealth.schema.domain.omh.DataPoint;
+import org.openmhealth.schema.domain.omh.DataPointAcquisitionProvenance;
+import org.openmhealth.schema.domain.omh.DataPointHeader;
+import org.openmhealth.schema.domain.omh.Measure;
 import org.openmhealth.shim.common.mapper.JsonNodeDataPointMapper;
 
 import java.util.ArrayList;
@@ -17,18 +20,19 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asRequir
 /**
  * @author Emerson Farrugia
  */
-public abstract class MisfitDataPointMapper<T> implements JsonNodeDataPointMapper<T> {
+public abstract class JawboneDataPointMapper<T> implements JsonNodeDataPointMapper<T> {
 
-    public static final String RESOURCE_API_SOURCE_NAME = "Misfit Resource API";
+    public static final String RESOURCE_API_SOURCE_NAME = "Jawbone UP API";
+
 
     @Override
     public List<DataPoint<T>> asDataPoints(List<JsonNode> responseNodes) {
 
-        // all mapped Misfit responses only require a single endpoint response
+        // all mapped Jawbone responses only require a single endpoint response
         checkNotNull(responseNodes);
         checkNotNull(responseNodes.size() == 1, "A single response node is allowed per call.");
 
-        // all mapped Misfit responses contain a single list
+        // all mapped Jawbone responses contain a single list
         JsonNode listNode = asRequiredNode(responseNodes.get(0), getListNodeName());
 
         List<DataPoint<T>> dataPoints = new ArrayList<>();
@@ -51,7 +55,6 @@ public abstract class MisfitDataPointMapper<T> implements JsonNodeDataPointMappe
      */
     protected abstract Optional<DataPoint<T>> asDataPoint(JsonNode listEntryNode);
 
-
     /**
      * @param measure the body of the data point
      * @param sourceName the name of the source of the measure
@@ -60,6 +63,7 @@ public abstract class MisfitDataPointMapper<T> implements JsonNodeDataPointMappe
      * @param <T> the measure type
      * @return a data point
      */
+    // TODO extract this since it's identical to Misfit's
     protected <T extends Measure> DataPoint<T> newDataPoint(T measure, String sourceName, String externalId,
             Boolean sensed) {
 
