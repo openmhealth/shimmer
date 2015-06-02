@@ -4,9 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.Optional;
@@ -288,5 +286,32 @@ public class JsonNodeMappingSupport {
     public static Optional<Integer> asOptionalInteger(JsonNode parentNode, String path) {
 
         return asOptionalValue(parentNode, path, JsonNode::isIntegralNumber, JsonNode::intValue);
+    }
+
+    /**
+     * @param parentNode a parent node
+     * @param path the path to a child node
+     * @return the value of the child node as a {@link ZoneId}, or an empty optional if the child doesn't exist or if
+     * the value of the child node isn't a valid time zone
+     */
+    public static Optional<ZoneId> asOptionalZoneId(JsonNode parentNode, String path) {
+
+        Optional<String> string = asOptionalString(parentNode, path);
+
+        if (!string.isPresent()) {
+            return Optional.empty();
+        }
+
+        ZoneId zoneId = null;
+
+        try {
+            zoneId = ZoneId.of(string.get());
+        }
+        catch (DateTimeException e) {
+            logger.warn("The '{}' field in node '{}' with value '{}' isn't a valid time zone.",
+                    path, parentNode, string.get(), e);
+        }
+
+        return Optional.ofNullable(zoneId);
     }
 }
