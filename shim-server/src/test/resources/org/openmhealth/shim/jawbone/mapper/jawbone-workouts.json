@@ -1,67 +1,43 @@
 {
     "meta": {
-        "user_xid": "gG0aWvo9bXwLSMyOos3njA",
+        "user_xid": "6xl39CsoVp2KirfHwVq_Fx",
         "message": "OK",
         "code": 200,
-        "time": 1408407796
+        "time": 1386122022
     },
     "data": {
         "items": [
             {
-                "reaction": null,
-                "time_completed": 1408376384,
-                "xid": "UDZ763h_uKw-OTw34D0Chw",
-                "title": "Walk",
-                "image": "",
-                "time_created": 1408376384,
-                "time_updated": 1408376463,
+                "xid": "40F7_htRRnT8Vo7nRBZO1X",
+                "title": "Run",
+                "type": "workout",
+                "sub_type": 2,
+                "time_created": 1384963500,
+                "time_updated": 1385049599,
+                "time_completed": 1385099220,
+                "date": 20131121,
+                "place_lat": "37.451572",
+                "place_lon": "-122.184435",
+                "place_acc": 10,
+                "place_name": "Gym",
+                "route": "/nudge/image/d/3c1b0970533811e39d7f12313d00449a_image.png",
+                "image": "/nudge/image/d/3c1b0970533811e39d7f12313d00449a_image.png" ,
+                "snapshot_image": "/nudge/image/e/1385107735/40F7_htRRnT8VJ5BRfj-_A/grEGutn_3mE.png",
                 "details": {
-                    "tz": "America/Los_Angeles",
-                    "goal": 0,
-                    "calories": 1500.0,
-                    "place_acc": 0,
-                    "bmr": 0,
-                    "intensity": 1,
-                    "bg_calories": 0,
-                    "meters": 2500,
-                    "km": 2.5,
-                    "time": 300,
-                    "bg_active_time": 0,
-                    "steps": 0,
-                    "bmr_calories": 0.0
-                },
-                "date": 20140818,
-                "snapshot_image": "",
-                "sub_type": 1
-            },
-            {
-                "reaction": null,
-                "time_completed": 1408376477,
-                "xid": "UDZ763h_uKzz-MZA44Fzng",
-                "title": "Swim",
-                "image": "",
-                "time_created": 1408372477,
-                "time_updated": 1408376587,
-                "details": {
-                    "tz": "America/Los_Angeles",
-                    "goal": 0,
-                    "calories": 3000.0,
-                    "place_acc": 0,
-                    "bmr": 0,
+                    "steps": 5128,
+                    "time": 2460,
+                    "bg_active_time": 2163,
+                    "meters": 5116,
+                    "km": 5.116,
                     "intensity": 3,
-                    "bg_calories": 0,
-                    "meters": 25,
-                    "km": 0.025,
-                    "time": 4000,
-                    "bg_active_time": 0,
-                    "steps": 0,
-                    "bmr_calories": 0.0
-                },
-                "date": 20140818,
-                "snapshot_image": "",
-                "sub_type": 13
+                    "calories": 691,
+                    "bmr": 56.071321076,
+                    "bg_calories": 448.95380111,
+                    "bmr_calories": 56.071321076,
+                    "tz": "America/Los_Angeles"
+                }
             }
         ],
-        "size": 3
+        "size": 1
     }
 }

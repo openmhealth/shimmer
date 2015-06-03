@@ -19,9 +19,10 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThan;
+import static org.openmhealth.schema.domain.omh.DataPointModality.SENSED;
 import static org.openmhealth.schema.domain.omh.DurationUnit.SECOND;
 import static org.openmhealth.schema.domain.omh.LengthUnit.METER;
-import static org.openmhealth.schema.domain.omh.PhysicalActivity.SelfReportedIntensity.LIGHT;
+import static org.openmhealth.schema.domain.omh.PhysicalActivity.SelfReportedIntensity.MODERATE;
 import static org.openmhealth.shim.jawbone.mapper.JawboneDataPointMapper.RESOURCE_API_SOURCE_NAME;
 
 
@@ -47,26 +48,26 @@ public class JawbonePhysicalActivityDataPointMapperUnitTests extends DataPointMa
         List<DataPoint<PhysicalActivity>> dataPoints = mapper.asDataPoints(Collections.singletonList(responseNode));
 
         assertThat(dataPoints, notNullValue());
-        assertThat(dataPoints.size(), equalTo(2));
+        assertThat(dataPoints.size(), equalTo(1));
     }
 
     @Test
-    public void asDataPointsShouldReturnCorrectSelfReportedDataPoints() {
+    public void asDataPointsShouldReturnCorrectSensedDataPoints() {
 
         List<DataPoint<PhysicalActivity>> dataPoints = mapper.asDataPoints(Collections.singletonList(responseNode));
 
         assertThat(dataPoints, notNullValue());
         assertThat(dataPoints.size(), greaterThan(0));
 
-        OffsetDateTime endDateTime = ZonedDateTime.of(2014, 8, 18, 15, 39, 44, 0, UTC)
+        OffsetDateTime endDateTime = ZonedDateTime.of(2013, 11, 22, 5, 47, 0, 0, UTC)
                 .withZoneSameInstant(ZoneId.of("America/Los_Angeles")).toOffsetDateTime();
         TimeInterval effectiveTimeInterval =
-                TimeInterval.ofEndDateTimeAndDuration(endDateTime, new DurationUnitValue(SECOND, 300));
+                TimeInterval.ofEndDateTimeAndDuration(endDateTime, new DurationUnitValue(SECOND, 2_460));
 
-        PhysicalActivity physicalActivity = new PhysicalActivity.Builder("Walk")
-                .setDistance(new LengthUnitValue(METER, 2_500))
+        PhysicalActivity physicalActivity = new PhysicalActivity.Builder("Run")
+                .setDistance(new LengthUnitValue(METER, 5_116))
                 .setEffectiveTimeFrame(effectiveTimeInterval)
-                .setReportedActivityIntensity(LIGHT)
+                .setReportedActivityIntensity(MODERATE)
                 .build();
 
         DataPoint<PhysicalActivity> firstDataPoint = dataPoints.get(0);
@@ -78,10 +79,12 @@ public class JawbonePhysicalActivityDataPointMapperUnitTests extends DataPointMa
         assertThat(acquisitionProvenance, notNullValue());
         assertThat(acquisitionProvenance.getSourceName(), equalTo(RESOURCE_API_SOURCE_NAME));
         assertThat(acquisitionProvenance.getAdditionalProperty("external_id").isPresent(), equalTo(true));
-        assertThat(acquisitionProvenance.getAdditionalProperty("external_id").get(), equalTo("UDZ763h_uKw-OTw34D0Chw"));
+        assertThat(acquisitionProvenance.getAdditionalProperty("external_id").get(), equalTo("40F7_htRRnT8Vo7nRBZO1X"));
+        assertThat(acquisitionProvenance.getModality(), notNullValue());
+        assertThat(acquisitionProvenance.getModality(), equalTo(SENSED));
     }
 
-    // TODO add tests for sensed data
+    // TODO add tests for self reported data
     // TODO add tests for workout type mappings
     // TODO add tests for different time zone formats
 }
