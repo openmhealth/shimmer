@@ -32,22 +32,18 @@ public abstract class JawboneDataPointMapper<T> implements JsonNodeDataPointMapp
         checkNotNull(responseNodes);
         checkNotNull(responseNodes.size() == 1, "A single response node is allowed per call.");
 
-        // all mapped Jawbone responses contain a single list
-        JsonNode listNode = asRequiredNode(responseNodes.get(0), getListNodeName());
+        // all mapped Jawbone responses contain a $.data.items list
+        JsonNode dataNode = asRequiredNode(responseNodes.get(0), "data");
+        JsonNode itemsNode = asRequiredNode(dataNode, "items");
 
         List<DataPoint<T>> dataPoints = new ArrayList<>();
 
-        for (JsonNode listEntryNode : listNode) {
-            asDataPoint(listEntryNode).ifPresent(dataPoints::add);
+        for (JsonNode itemNode : itemsNode) {
+            asDataPoint(itemNode).ifPresent(dataPoints::add);
         }
 
         return dataPoints;
     }
-
-    /**
-     * @return the name of the list node used by this mapper
-     */
-    protected abstract String getListNodeName();
 
     /**
      * @param listEntryNode the list entry node

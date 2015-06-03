@@ -1,6 +1,7 @@
 package org.openmhealth.shim.common.mapper;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.google.common.base.Splitter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,6 +12,7 @@ import java.util.Optional;
 import java.util.function.Function;
 
 import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME;
+import static java.util.Optional.empty;
 
 
 /**
@@ -137,6 +139,35 @@ public class JsonNodeMappingSupport {
 
     /**
      * @param parentNode a parent node
+     * @param path a path to a child node, where dots denote nested nodes
+     * @return the child node reached by traversing the path, or an empty optional if the child doesn't exist
+     */
+    public static Optional<JsonNode> asOptionalNode(final JsonNode parentNode, final String path) {
+
+        Iterable<String> pathSegments = Splitter.on(".").split(path);
+        JsonNode node = parentNode;
+
+        for (String pathSegment : pathSegments) {
+            JsonNode childNode = node.path(pathSegment);
+
+            if (childNode.isMissingNode()) {
+                logger.debug("A '{}' field wasn't found in node '{}'.", pathSegment, node);
+                return empty();
+            }
+
+            if (childNode.isNull()) {
+                logger.debug("The '{}' field is null in node '{}'.", pathSegment, node);
+                return empty();
+            }
+
+            node = childNode;
+        }
+
+        return Optional.of(node);
+    }
+
+    /**
+     * @param parentNode a parent node
      * @param path the path to a child node
      * @param typeChecker the function to check if the type is compatible
      * @param converter the function to convert the node to a value
@@ -147,20 +178,15 @@ public class JsonNodeMappingSupport {
     public static <T> Optional<T> asOptionalValue(JsonNode parentNode, String path,
             Function<JsonNode, Boolean> typeChecker, Function<JsonNode, T> converter) {
 
-        JsonNode childNode = parentNode.path(path);
+        JsonNode childNode = asOptionalNode(parentNode, path).orElse(null);
 
-        if (childNode.isMissingNode()) {
-            logger.debug("A '{}' field wasn't found in node '{}'.", path, parentNode);
-            return Optional.empty();
-        }
-
-        if (childNode.isNull()) {
-            return Optional.empty();
+        if (childNode == null) {
+            return empty();
         }
 
         if (!typeChecker.apply(childNode)) {
             logger.warn("The '{}' field in node '{}' isn't compatible.", path, parentNode);
-            return Optional.empty();
+            return empty();
         }
 
         return Optional.of(converter.apply(childNode));
@@ -199,7 +225,7 @@ public class JsonNodeMappingSupport {
         Optional<String> string = asOptionalString(parentNode, path);
 
         if (!string.isPresent()) {
-            return Optional.empty();
+            return empty();
         }
 
         OffsetDateTime dateTime = null;
@@ -228,7 +254,7 @@ public class JsonNodeMappingSupport {
         Optional<String> string = asOptionalString(parentNode, path);
 
         if (!string.isPresent()) {
-            return Optional.empty();
+            return empty();
         }
 
         LocalDateTime dateTime = null;
@@ -299,7 +325,7 @@ public class JsonNodeMappingSupport {
         Optional<String> string = asOptionalString(parentNode, path);
 
         if (!string.isPresent()) {
-            return Optional.empty();
+            return empty();
         }
 
         ZoneId zoneId = null;

@@ -17,6 +17,7 @@ import java.util.Optional;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static java.lang.String.format;
 import static java.time.Instant.ofEpochSecond;
+import static java.time.OffsetDateTime.ofInstant;
 import static org.openmhealth.schema.domain.omh.DurationUnit.SECOND;
 import static org.openmhealth.schema.domain.omh.LengthUnit.METER;
 import static org.openmhealth.schema.domain.omh.PhysicalActivity.SelfReportedIntensity.*;
@@ -71,11 +72,6 @@ public class JawbonePhysicalActivityDataPointMapper extends JawboneDataPointMapp
     }
 
     @Override
-    protected String getListNodeName() {
-        return "data.items";
-    }
-
-    @Override
     public Optional<DataPoint<PhysicalActivity>> asDataPoint(JsonNode workoutNode) {
 
         checkNotNull(workoutNode);
@@ -88,30 +84,32 @@ public class JawbonePhysicalActivityDataPointMapper extends JawboneDataPointMapp
 
         PhysicalActivity.Builder builder = new PhysicalActivity.Builder(activityName);
 
-        asOptionalInteger(workoutNode, "meters")
+        asOptionalInteger(workoutNode, "details.meters")
                 .ifPresent(distance -> builder.setDistance(new LengthUnitValue(METER, distance)));
 
         Optional<Long> endTimestamp = asOptionalLong(workoutNode, "time_completed");
-        Optional<Long> durationInSec = asOptionalLong(workoutNode, "time");
-        Optional<ZoneId> timeZoneId = asOptionalZoneId(workoutNode, "tz");
+        Optional<Long> durationInSec = asOptionalLong(workoutNode, "details.time");
+        Optional<ZoneId> timeZoneId = asOptionalZoneId(workoutNode, "details.tz");
 
         if (endTimestamp.isPresent() && durationInSec.isPresent() && timeZoneId.isPresent()) {
             DurationUnitValue durationUnitValue = new DurationUnitValue(SECOND, durationInSec.get());
-            OffsetDateTime endDateTime = OffsetDateTime.ofInstant(ofEpochSecond(endTimestamp.get()), timeZoneId.get());
+            OffsetDateTime endDateTime = ofInstant(ofEpochSecond(endTimestamp.get()), timeZoneId.get());
 
             builder.setEffectiveTimeFrame(ofEndDateTimeAndDuration(endDateTime, durationUnitValue));
         }
 
-        asOptionalInteger(workoutNode, "intensity")
+        asOptionalInteger(workoutNode, "details.intensity")
                 .ifPresent(intensity -> builder.setReportedActivityIntensity(asSelfReportedIntensity(intensity)));
 
         PhysicalActivity measure = builder.build();
 
         Optional<String> externalId = asOptionalString(workoutNode, "xid");
-        Optional<Integer> steps = asOptionalInteger(workoutNode, "steps");
+
+        // steps are only returned if the user was wearing the UP band, i.e. that the data was sensed
+        Optional<Integer> steps = asOptionalInteger(workoutNode, "details.steps");
 
         Boolean sensed = null;
-        if (steps.isPresent()) {
+        if (steps.isPresent() && steps.get() > 0) {
             sensed = true;
         }
 
@@ -119,24 +117,25 @@ public class JawbonePhysicalActivityDataPointMapper extends JawboneDataPointMapp
     }
 
     /**
+     * TODO confirm that we want to make titles trump types
      * @param title the title of the workout, if any
      * @param workoutType the type of the workout, if specified
      * @return the name of the activity
      */
     public String getActivityName(@Nullable String title, @Nullable Integer workoutType) {
 
-        if (title == null && workoutType == null) {
-            return "workout";
+        if (title != null) {
+            return title;
         }
 
         if (workoutType == null) {
-            return title;
+            return "workout";
         }
 
         String description = activityNameByWorkoutType.get(workoutType);
 
         if (description.equals("other")) {
-            return title != null ? title : "workout";
+            return "workout";
         }
 
         return description;

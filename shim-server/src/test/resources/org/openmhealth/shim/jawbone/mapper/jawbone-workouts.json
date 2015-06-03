@@ -60,33 +60,6 @@
                 "date": 20140818,
                 "snapshot_image": "",
                 "sub_type": 13
-            },
-            {
-                "reaction": null,
-                "time_completed": 1408407698,
-                "xid": "UDZ763h_uKw7hqpx_ZoBhA",
-                "title": "Walk",
-                "image": "",
-                "time_created": 1408407698,
-                "time_updated": 1408407779,
-                "details": {
-                    "tz": "America/Los_Angeles",
-                    "goal": 0,
-                    "calories": 600.0,
-                    "place_acc": 0,
-                    "bmr": 0,
-                    "intensity": 1,
-                    "bg_calories": 0,
-                    "meters": 1000,
-                    "km": 1.0,
-                    "time": 0,
-                    "bg_active_time": 0,
-                    "steps": 0,
-                    "bmr_calories": 0.0
-                },
-                "date": 20140818,
-                "snapshot_image": "",
-                "sub_type": 1
             }
         ],
         "size": 3
