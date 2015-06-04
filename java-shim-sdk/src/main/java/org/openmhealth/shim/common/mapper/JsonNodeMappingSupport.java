@@ -28,16 +28,24 @@ public class JsonNodeMappingSupport {
     /**
      * @param parentNode a parent node
      * @param path a path to a child node
-     * @return the child node reached by traversing the path
+     * @return the child node reached by traversing the path, where dots denote nested nodes
      * @throws MissingJsonNodeMappingException if the child node doesn't exist
      */
     public static JsonNode asRequiredNode(JsonNode parentNode, String path) {
 
-        if (!parentNode.hasNonNull(path)) {
-            throw new MissingJsonNodeMappingException(parentNode, path);
+        Iterable<String> pathSegments = Splitter.on(".").split(path);
+        JsonNode node = parentNode;
+
+        for (String pathSegment : pathSegments) {
+
+            if (!node.hasNonNull(pathSegment)) {
+                throw new MissingJsonNodeMappingException(node, pathSegment);
+            }
+
+            node = node.path(pathSegment);
         }
 
-        return parentNode.path(path);
+        return node;
     }
 
     /**

@@ -39,7 +39,11 @@ public class JsonNodeMappingSupportUnitTests {
                 "    \"date_time\": \"2014-01-01T12:15:04+02:00\",\n" +
                 "    \"date\": \"2014-01-01\",\n" +
                 "    \"local_date_time\": \"2014-01-01T12:15:04\",\n" +
-                "    \"custom_local_date_time\": \"Fri, 1 Aug 2014 06:53:05\"\n" +
+                "    \"custom_local_date_time\": \"Fri, 1 Aug 2014 06:53:05\",\n" +
+                "    \"nested\": {\n" +
+                "        \"empty\": null,\n" +
+                "        \"string\": \"hi\"\n" +
+                "    }\n" +
                 "}");
     }
 
@@ -62,6 +66,35 @@ public class JsonNodeMappingSupportUnitTests {
 
         assertThat(node, notNullValue());
         assertThat(node.isMissingNode(), equalTo(false));
+        assertThat(node.asText(), equalTo("hi"));
+    }
+
+    @Test(expectedExceptions = JsonNodeMappingException.class)
+    public void asRequiredNodeShouldThrowExceptionOnMissingParentNode() {
+
+        asRequiredNode(testNode, "foo.integer");
+    }
+
+    @Test(expectedExceptions = JsonNodeMappingException.class)
+    public void asRequiredNodeShouldThrowExceptionOnMissingChildNode() {
+
+        asRequiredNode(testNode, "nested.foo");
+    }
+
+    @Test(expectedExceptions = JsonNodeMappingException.class)
+    public void asRequiredNodeShouldThrowExceptionOnNestedNullNode() {
+
+        asRequiredNode(testNode, "nested.empty");
+    }
+
+    @Test
+    public void asRequiredNodeShouldReturnNestedNodeWhenPresent() {
+
+        JsonNode node = asRequiredNode(testNode, "nested.string");
+
+        assertThat(node, notNullValue());
+        assertThat(node.isMissingNode(), equalTo(false));
+        assertThat(node.asText(), equalTo("hi"));
     }
 
     @Test(expectedExceptions = JsonNodeMappingException.class)
@@ -208,6 +241,73 @@ public class JsonNodeMappingSupportUnitTests {
 
         assertThat(value, notNullValue());
         assertThat(value, equalTo(OffsetDateTime.of(2014, 1, 1, 12, 15, 4, 0, ZoneOffset.ofHours(2))));
+    }
+
+    @Test
+    public void asOptionalNodeShouldReturnEmptyOnMissingNode() {
+
+        Optional<JsonNode> node = asOptionalNode(testNode, "foo");
+
+        assertThat(node, notNullValue());
+        assertThat(node.isPresent(), equalTo(false));
+    }
+
+    @Test
+    public void asOptionalNodeShouldReturnEmptyOnOnNullNode() {
+
+        Optional<JsonNode> node = asOptionalNode(testNode, "empty");
+
+        assertThat(node, notNullValue());
+        assertThat(node.isPresent(), equalTo(false));
+    }
+
+    @Test
+    public void asOptionalNodeShouldReturnNodeWhenPresent() {
+
+        Optional<JsonNode> node = asOptionalNode(testNode, "string");
+
+        assertThat(node, notNullValue());
+        assertThat(node.isPresent(), equalTo(true));
+        assertThat(node.get().isMissingNode(), equalTo(false));
+        assertThat(node.get().asText(), equalTo("hi"));
+    }
+
+    @Test
+    public void asOptionalNodeShouldReturnEmptyOnOnMissingParentNode() {
+
+        Optional<JsonNode> node = asOptionalNode(testNode, "foo.integer");
+
+        assertThat(node, notNullValue());
+        assertThat(node.isPresent(), equalTo(false));
+    }
+
+    @Test
+    public void asOptionalNodeShouldReturnEmptyOnOnMissingChildNode() {
+
+        Optional<JsonNode> node = asOptionalNode(testNode, "nested.foo");
+
+        assertThat(node, notNullValue());
+        assertThat(node.isPresent(), equalTo(false));
+    }
+
+    @Test
+    public void asOptionalNodeShouldReturnEmptyOnOnNestedNullNode() {
+
+        Optional<JsonNode> node = asOptionalNode(testNode, "nested.empty");
+
+        assertThat(node, notNullValue());
+        assertThat(node.isPresent(), equalTo(false));
+    }
+
+    @Test
+    public void asOptionalNodeShouldReturnNestedNodeWhenPresent() {
+
+        Optional<JsonNode> node = asOptionalNode(testNode, "nested.string");
+
+        assertThat(node, notNullValue());
+        assertThat(node.isPresent(), equalTo(true));
+        assertThat(node.get().isMissingNode(), equalTo(false));
+        assertThat(node.get().asText(), equalTo("hi"));
     }
 
     @Test
