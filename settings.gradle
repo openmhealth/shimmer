@@ -1,4 +1,5 @@
 rootProject.name = 'omh-shims'
+include 'legacy-java-schema-sdk'
 include 'java-shim-sdk'
 include 'shim-server'
 

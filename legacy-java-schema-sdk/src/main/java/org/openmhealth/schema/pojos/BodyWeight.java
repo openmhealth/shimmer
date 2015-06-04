@@ -16,12 +16,12 @@
 
 package org.openmhealth.schema.pojos;
 
-import org.openmhealth.schema.pojos.generic.DescriptiveStatistic;
-import org.openmhealth.schema.pojos.generic.MassUnitValue;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
+import org.openmhealth.schema.pojos.generic.DescriptiveStatistic;
+import org.openmhealth.schema.pojos.generic.MassUnitValue;
 
 
 /**

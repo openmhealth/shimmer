@@ -16,6 +16,8 @@
 
 package org.openmhealth.shim;
 
+import org.joda.time.DateTime;
+
 import java.time.OffsetDateTime;
 import java.util.List;
 
@@ -104,12 +106,20 @@ public class ShimDataRequest {
         return startDateTime;
     }
 
+    public DateTime getStartDate() {
+        return getStartDateTime() == null ? null : new DateTime(getStartDateTime().toInstant());
+    }
+
     public void setStartDateTime(OffsetDateTime startDateTime) {
         this.startDateTime = startDateTime;
     }
 
     public OffsetDateTime getEndDateTime() {
         return endDateTime;
+    }
+
+    public DateTime getEndDate() {
+        return getStartDateTime() == null ? null : new DateTime(getStartDateTime().toInstant());
     }
 
     public void setEndDateTime(OffsetDateTime endDateTime) {

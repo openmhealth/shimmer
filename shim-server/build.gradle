@@ -56,6 +56,7 @@ dependencyManagement {
 }
 
 dependencies {
+    compile project(':legacy-java-schema-sdk') // TODO delete this when shims have been migrated
     compile project(':java-shim-sdk')
     compile "commons-io:commons-io:2.4"
     compile "org.apache.httpcomponents:httpclient"
@@ -66,8 +67,8 @@ dependencies {
     compile "com.fasterxml.jackson.dataformat:jackson-dataformat-xml"
     compile "com.fasterxml.jackson.datatype:jackson-datatype-jsr310"
     compile "com.fasterxml.jackson.datatype:jackson-datatype-jdk8"
-    compile "joda-time:joda-time"             // TODO delete this when unused
-    compile "com.jayway.jsonpath:json-path"   // TODO delete this when unused
+    compile "joda-time:joda-time"             // TODO delete this when shims have been migrated
+    compile "com.jayway.jsonpath:json-path"   // TODO delete this when shims have been migrated
     compile "com.github.fge:json-schema-validator:2.2.6"
     compile "org.mongodb:mongo-java-driver"
     compile "org.openmhealth.schema:omh-schema-sdk:${omhSchemaSdkVersion}"

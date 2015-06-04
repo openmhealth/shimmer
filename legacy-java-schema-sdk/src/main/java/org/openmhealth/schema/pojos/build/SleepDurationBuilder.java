@@ -16,12 +16,12 @@
 
 package org.openmhealth.schema.pojos.build;
 
-import java.math.BigDecimal;
-
 import org.joda.time.DateTime;
 import org.openmhealth.schema.pojos.SleepDuration;
 import org.openmhealth.schema.pojos.SleepDurationUnitValue;
 import org.openmhealth.schema.pojos.generic.TimeFrame;
+
+import java.math.BigDecimal;
 
 
 /**

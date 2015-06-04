@@ -16,17 +16,17 @@
 
 package org.openmhealth.schema.pojos.generic;
 
-import java.math.BigDecimal;
-
-import org.joda.time.DateTime;
-import org.openmhealth.schema.pojos.serialize.dates.ISODateDeserializer;
-import org.openmhealth.schema.pojos.serialize.dates.ISODateSerializer;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.google.common.base.Objects;
+import org.joda.time.DateTime;
+import org.openmhealth.schema.pojos.serialize.dates.ISODateDeserializer;
+import org.openmhealth.schema.pojos.serialize.dates.ISODateSerializer;
+
+import java.math.BigDecimal;
 
 
 /**

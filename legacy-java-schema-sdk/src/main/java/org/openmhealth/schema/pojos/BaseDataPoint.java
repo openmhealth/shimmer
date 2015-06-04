@@ -16,10 +16,10 @@
 
 package org.openmhealth.schema.pojos;
 
-import org.joda.time.DateTime;
-import org.openmhealth.schema.pojos.generic.TimeFrame;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.joda.time.DateTime;
+import org.openmhealth.schema.pojos.generic.TimeFrame;
 
 
 /**

@@ -16,13 +16,13 @@
 
 package org.openmhealth.schema.pojos.build;
 
-import java.math.BigDecimal;
-
 import org.joda.time.DateTime;
 import org.openmhealth.schema.pojos.Activity;
 import org.openmhealth.schema.pojos.generic.DurationUnitValue;
 import org.openmhealth.schema.pojos.generic.LengthUnitValue;
 import org.openmhealth.schema.pojos.generic.TimeFrame;
+
+import java.math.BigDecimal;
 
 
 /**
