@@ -94,6 +94,10 @@ public class JsonNodeMappingSupport {
         return asRequiredValue(parentNode, path, JsonNode::isIntegralNumber, JsonNode::longValue, Long.class);
     }
 
+    public static Integer asRequiredInteger(JsonNode parentNode, String path){
+        return asRequiredValue(parentNode, path, JsonNode::isIntegralNumber, JsonNode::intValue, Integer.class);
+    }
+
     /**
      * @param parentNode a parent node
      * @param path the path to a child node
@@ -123,6 +127,25 @@ public class JsonNodeMappingSupport {
         }
         catch (DateTimeParseException e) {
             throw new IncompatibleJsonNodeMappingException(parentNode, path, LocalDate.class, e);
+        }
+    }
+
+    /**
+     * Retrieves a LocalTime object for the json string at the given path within the provided parent node
+     * @param parentNode a parent json node
+     * @param path the path to the child node with the target time value
+     * @return the value of the child node as a {@link LocalTime}
+     * @throws IncompatibleJsonNodeMappingException if the value of the child node isn't a time value
+     */
+    public static LocalTime asRequiredLocalTime(JsonNode parentNode, String path){
+        String string = asRequiredString(parentNode, path);
+
+
+        try{
+            return LocalTime.parse(string);
+        }
+        catch(DateTimeParseException e){
+            throw new IncompatibleJsonNodeMappingException(parentNode, path, LocalTime.class, e);
         }
     }
 
@@ -287,6 +310,23 @@ public class JsonNodeMappingSupport {
     public static Optional<LocalDateTime> asOptionalLocalDateTime(JsonNode parentNode, String path) {
 
         return asOptionalLocalDateTime(parentNode, path, ISO_LOCAL_DATE_TIME);
+    }
+
+    public static Optional<LocalDateTime> asOptionalLocalDateTime(JsonNode parentNode, String pathToDate, String pathToTime){
+        Optional<String> time = asOptionalString(parentNode, pathToTime);
+        Optional<String> date = asOptionalString(parentNode,pathToDate);
+        if(!time.isPresent()||!date.isPresent()){
+            return empty();
+        }
+        LocalDateTime dateTime = null;
+        try{
+            dateTime = LocalDateTime.parse(date.get()+"T"+time.get(),ISO_LOCAL_DATE_TIME);
+        }
+        catch(DateTimeParseException e){
+            logger.warn("The '{}' and '{}' fields in node '{}' with values '{}' and '{}' do not make-up a valid timestamp.",
+                    pathToDate, pathToTime,parentNode, date.get(),time.get(), e);
+        }
+        return Optional.ofNullable(dateTime);
     }
 
     /**
