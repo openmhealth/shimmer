@@ -17,14 +17,14 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.*;
 public class FitbitBodyWeightDataPointMapper extends FitbitDataPointMapper<BodyWeight>{
 
     @Override
-    protected Optional<DataPoint<BodyWeight>> asDataPoint(JsonNode node, int offsetInMilliseconds) {
+    protected Optional<DataPoint<BodyWeight>> asDataPoint(JsonNode node, int UTCOffsetInMilliseconds) {
         MassUnitValue bodyWeight = new MassUnitValue(MassUnit.KILOGRAM,asRequiredDouble(node,"weight"));
         BodyWeight.Builder builder = new BodyWeight.Builder(bodyWeight);
 
         Optional<LocalDateTime> dateTime = asOptionalLocalDateTime(node,"date","time");
 
         if(dateTime.isPresent()){
-            OffsetDateTime offsetDateTime = OffsetDateTime.of(dateTime.get(), ZoneOffset.ofTotalSeconds(offsetInMilliseconds / 1000));
+            OffsetDateTime offsetDateTime = OffsetDateTime.of(dateTime.get(), ZoneOffset.ofTotalSeconds(UTCOffsetInMilliseconds / 1000));
             builder.setEffectiveTimeFrame(offsetDateTime);
         }
 
