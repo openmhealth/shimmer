@@ -32,14 +32,17 @@ public abstract class FitbitDataPointMapper<T> implements JsonNodeDataPointMappe
     public List<DataPoint<T>> asDataPoints(List<JsonNode> responseNodes) {
         checkNotNull(responseNodes);
         checkArgument(responseNodes.size() == 2, "FitbitDataPointMapper requires two response nodes - a response node from get-user-info and from the target datatype endpoint.");
+        JsonNode firstNode = responseNodes.get(0);
+        checkNotNull(firstNode.get("user"),"F");
+
         //TODO: Need to check that the nodes are in the appropriate order, or have a more robust approach to parsing the user-info and target-type nodes
         JsonNode userInfoNode = responseNodes.get(0);
         int utcOffsetMillis = asRequiredInteger(userInfoNode, "user.offsetFromUTCMillis");
 
-        JsonNode bodyWeightNodes = asRequiredNode(responseNodes.get(1), getListNodeName());
+        JsonNode targetTypeNodeList = asRequiredNode(responseNodes.get(1), getListNodeName());
         List<DataPoint<T>> dataPoints = Lists.newArrayList();
-        for(JsonNode bodyWeightNode:bodyWeightNodes){
-            asDataPoint(bodyWeightNode,utcOffsetMillis).ifPresent(dataPoints::add);
+        for(JsonNode targetTypeNode:targetTypeNodeList){
+            asDataPoint(targetTypeNode,utcOffsetMillis).ifPresent(dataPoints::add);
         }
 
         return dataPoints;
