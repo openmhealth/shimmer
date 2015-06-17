@@ -11,9 +11,7 @@ import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.Optional;
 
-import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asOptionalLocalDateTime;
-import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asOptionalLong;
-import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asRequiredDouble;
+import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.*;
 
 /**
  * Created by Chris Schaefbauer on 6/15/15.

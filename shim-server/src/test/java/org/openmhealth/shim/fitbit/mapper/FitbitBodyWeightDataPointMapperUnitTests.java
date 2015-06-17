@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.util.List;
 
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 
@@ -57,6 +58,32 @@ public class FitbitBodyWeightDataPointMapperUnitTests extends DataPointMapperUni
                 "}");
         List<DataPoint<BodyWeight>> emptyDataPoints = mapper.asDataPoints(Lists.newArrayList(responseNodeUserInfo,emptyWeightNode));
         assertThat(emptyDataPoints.isEmpty(),equalTo(true));
+    }
+
+    @Test
+    public void asDataPointsShouldFailWhenFirstElementIsNotUserInfo() throws IOException {
+        JsonNode emptyWeightNode = objectMapper.readTree("{\n" +
+                "    \"incorrect_property\": []\n" +
+                "}");
+        try{
+            List<DataPoint<BodyWeight>> emptyDataPoints = mapper.asDataPoints(Lists.newArrayList(emptyWeightNode,responseNodeWeight));
+        }
+        catch(NullPointerException e){
+            assertThat(e.getMessage(), containsString("get-user-info"));
+        }
+    }
+
+    @Test
+    public void asDataPointsShouldFailWhenSecondElementIsNotWeight() throws IOException {
+        JsonNode emptyWeightNode = objectMapper.readTree("{\n" +
+                "    \"incorrect_property\": []\n" +
+                "}");
+        try{
+            List<DataPoint<BodyWeight>> emptyDataPoints = mapper.asDataPoints(Lists.newArrayList(responseNodeUserInfo,emptyWeightNode));
+        }
+        catch(NullPointerException e){
+            assertThat(e.getMessage(), containsString("second response node"));
+        }
     }
 
     public void testFitbitBodyWeightDataPoint(DataPoint<BodyWeight> dataPoint,double massValue,String timeString,long logId){
