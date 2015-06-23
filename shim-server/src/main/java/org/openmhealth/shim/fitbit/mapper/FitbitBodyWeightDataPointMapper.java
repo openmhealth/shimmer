@@ -17,6 +17,12 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.*;
  */
 public class FitbitBodyWeightDataPointMapper extends FitbitDataPointMapper<BodyWeight>{
 
+    /**
+     * Maps a JSON response node from the Fitbit API into a {@link BodyWeight} measure
+     * @param node a JSON node for an individual object in the "weight" array retrieved from the body/log/weight Fitbit API call
+     * @param UTCOffsetInMilliseconds the "offsetFromUTCMillis" property from a JSON response node from the user/<user-id>/profile Fitbit API call
+     * @return a {@link DataPoint} object containing a {@link BodyWeight} measure with the appropriate values from the JSON node parameter, wrapped as an {@link Optional}
+     */
     @Override
     protected Optional<DataPoint<BodyWeight>> asDataPoint(JsonNode node, int UTCOffsetInMilliseconds) {
         MassUnitValue bodyWeight = new MassUnitValue(MassUnit.KILOGRAM,asRequiredDouble(node,"weight"));
@@ -36,6 +42,9 @@ public class FitbitBodyWeightDataPointMapper extends FitbitDataPointMapper<BodyW
 
     }
 
+    /**
+     * @return the name of the list node returned from Fitbit Resource API body/log/weight response
+     */
     @Override
     protected String getListNodeName() {
         return "weight";

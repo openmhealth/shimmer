@@ -18,24 +18,30 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asRequir
  */
 public class FitbitBodyMassIndexDataPointMapper extends FitbitDataPointMapper<BodyMassIndex>{
 
+    /**
+     * Maps a JSON response node from the Fitbit API into a {@link BodyMassIndex} measure
+     * @param node a JSON node for an individual object in the "weight" array retrieved from the body/log/weight Fitbit API call
+     * @param UTCOffsetInMilliseconds the "offsetFromUTCMillis" property from a JSON response node from the user/<user-id>/profile Fitbit API call
+     * @return a {@link DataPoint} object containing a {@link BodyMassIndex} measure with the appropriate values from the JSON node parameter, wrapped as an {@link Optional}
+     */
     @Override
     protected Optional<DataPoint<BodyMassIndex>> asDataPoint(JsonNode node, int UTCOffsetInMilliseconds) {
         TypedUnitValue<BodyMassIndexUnit> bmiValue = new TypedUnitValue<BodyMassIndexUnit>(BodyMassIndexUnit.KILOGRAMS_PER_SQUARE_METER,asRequiredDouble(node,"bmi"));
         BodyMassIndex.Builder builder = new BodyMassIndex.Builder( bmiValue);
 
         Optional<OffsetDateTime> dateTime = combineDateTimeAndTimezone(node,UTCOffsetInMilliseconds);
-        //asOptionalLocalDateTime(node,"date","time");
 
         if(dateTime.isPresent()){
-//            OffsetDateTime offsetDateTime = OffsetDateTime.of(dateTime.get(), ZoneOffset.ofTotalSeconds(UTCOffsetInMilliseconds / 1000));
             builder.setEffectiveTimeFrame(dateTime.get());
         }
-
 
         Optional<Long> externalId = asOptionalLong(node,"logId");
         return Optional.of(newDataPoint(builder.build(), externalId.orElse(null)));
     }
 
+    /**
+     * @return the name of the list node returned from Fitbit Resource API body/log/weight response
+     */
     @Override
     protected String getListNodeName() {
         return "weight";

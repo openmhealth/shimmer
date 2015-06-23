@@ -31,7 +31,7 @@ public abstract class FitbitDataPointMapper<T> implements JsonNodeDataPointMappe
 
     /**
      * Maps JSON response nodes from the Fitbit API into a list of {@link DataPoint} objects with the appropriate type
-     * @param responseNodes the list of two json nodes - the first being the get-user-info response and the second being the specific data point of interest for the mapper
+     * @param responseNodes the list of two json nodes - the first being the get-user-info response (from user/<user-id>/profile) and the second being the specific data point of interest for the mapper
      * @return a list of DataPoint objects of type T with the appropriate values mapped from the input JSON; if JSON objects are contained within an array in the input response, each item in that array will map into an item in the lit
      */
     @Override
