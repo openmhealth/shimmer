@@ -329,6 +329,26 @@ public class JsonNodeMappingSupport {
         return Optional.ofNullable(dateTime);
     }
 
+    public static Optional<LocalDate> asOptionalLocalDate(JsonNode parentNode,String path){
+        return asOptionalLocalDate(parentNode, path,DateTimeFormatter.ISO_LOCAL_DATE);
+    }
+
+    public static Optional<LocalDate> asOptionalLocalDate(JsonNode parentNode,String path,DateTimeFormatter dateFormat){
+        Optional<String> dateString = asOptionalString(parentNode,path);
+        if(!dateString.isPresent()){
+            return empty();
+        }
+        LocalDate localDate = null;
+        try{
+            localDate = LocalDate.parse(dateString.get(),dateFormat);
+        }
+        catch(DateTimeParseException e){
+            logger.warn("The '{}' field in node '{}' with value '{}' does not make-up a valid date.",
+                    path, parentNode, dateString.get(), e);
+        }
+        return Optional.ofNullable(localDate);
+    }
+
     /**
      * @param parentNode a parent node
      * @param path the path to a child node

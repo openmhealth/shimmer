@@ -8,6 +8,9 @@ import org.openmhealth.schema.domain.omh.DataPointHeader;
 import org.openmhealth.schema.domain.omh.Measure;
 import org.openmhealth.shim.common.mapper.JsonNodeDataPointMapper;
 
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -18,7 +21,10 @@ import static org.openmhealth.schema.domain.omh.DataPointHeader.*;
 import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.*;
 
 /**
- * Created by Chris Schaefbauer on 6/11/15.
+ * The base class for mappers that translate Fitbit API responses to {@link Measure} objects
+ * @author Chris Schaefbauer
+ * @author Emerson Farrugia
+ *
  */
 public abstract class FitbitDataPointMapper<T> implements JsonNodeDataPointMapper<T> {
     public static final String RESOURCE_API_SOURCE_NAME = "Fitbit Resource API";
@@ -58,6 +64,20 @@ public abstract class FitbitDataPointMapper<T> implements JsonNodeDataPointMappe
         }
         DataPointHeader header = new Builder(UUID.randomUUID().toString(), measure.getSchemaId()).setAcquisitionProvenance(acquisitionProvenance).build();
         return new DataPoint<>(header,measure);
+    }
+
+    protected Optional<OffsetDateTime> combineDateTimeAndTimezone(JsonNode node, int UTCOffsetInMilliseconds){
+        Optional<LocalDateTime> dateTime = asOptionalLocalDateTime(node,"date","time");
+        Optional<OffsetDateTime> offsetDateTime = null;
+        if(dateTime.isPresent()){
+            offsetDateTime = Optional.ofNullable(OffsetDateTime.of(dateTime.get(), ZoneOffset.ofTotalSeconds(UTCOffsetInMilliseconds / 1000)));
+
+        }
+        return offsetDateTime;
+    }
+
+    protected OffsetDateTime combineDateTimeAndTimezone(LocalDateTime dateTime, int UTCOffsetInMilliseconds){
+        return OffsetDateTime.of(dateTime, ZoneOffset.ofTotalSeconds(UTCOffsetInMilliseconds / 1000));
     }
 
     protected abstract Optional<DataPoint<T>> asDataPoint(JsonNode node, int offsetInMilliseconds);

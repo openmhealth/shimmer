@@ -12,7 +12,8 @@ import java.util.Optional;
 import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.*;
 
 /**
- * Created by Chris Schaefbauer on 6/10/15.
+ * A mapper from Fitbit Resource API body/log/weight responses to {@link BodyWeight} objects
+ * @author Chris Schaefbauer
  */
 public class FitbitBodyWeightDataPointMapper extends FitbitDataPointMapper<BodyWeight>{
 
@@ -21,12 +22,12 @@ public class FitbitBodyWeightDataPointMapper extends FitbitDataPointMapper<BodyW
         MassUnitValue bodyWeight = new MassUnitValue(MassUnit.KILOGRAM,asRequiredDouble(node,"weight"));
         BodyWeight.Builder builder = new BodyWeight.Builder(bodyWeight);
 
-        Optional<LocalDateTime> dateTime = asOptionalLocalDateTime(node,"date","time");
+        Optional<OffsetDateTime> dateTime = combineDateTimeAndTimezone(node,UTCOffsetInMilliseconds);
 
         if(dateTime.isPresent()){
-            OffsetDateTime offsetDateTime = OffsetDateTime.of(dateTime.get(), ZoneOffset.ofTotalSeconds(UTCOffsetInMilliseconds / 1000));
-            builder.setEffectiveTimeFrame(offsetDateTime);
+            builder.setEffectiveTimeFrame(dateTime.get());
         }
+
 
         Optional<Long> externalId = asOptionalLong(node, "logId");
         BodyWeight measure = builder.build();
