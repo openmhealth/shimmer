@@ -30,9 +30,9 @@ public abstract class FitbitDataPointMapper<T> implements JsonNodeDataPointMappe
     public static final String RESOURCE_API_SOURCE_NAME = "Fitbit Resource API";
 
     /**
-     *
+     * Maps JSON response nodes from the Fitbit API into a list of {@link DataPoint} objects with the appropriate type
      * @param responseNodes the list of two json nodes - the first being the get-user-info response and the second being the specific data point of interest for the mapper
-     * @return
+     * @return a list of DataPoint objects of type T with the appropriate values mapped from the input JSON; if JSON objects are contained within an array in the input response, each item in that array will map into an item in the lit
      */
     @Override
     public List<DataPoint<T>> asDataPoints(List<JsonNode> responseNodes) {
@@ -55,9 +55,14 @@ public abstract class FitbitDataPointMapper<T> implements JsonNodeDataPointMappe
 
     }
 
+    /**
+     * Adds a {@link DataPointHeader} to a {@link Measure} object and wraps it as a {@link DataPoint}
+     * @param measure the body of the data point
+     * @param externalId the identifier of the measure as recorded by the data provider in the JSON data-point (optional)
+     * @param <T> the measure type (e.g., StepCount, BodyMassIndex)
+     * @return a {@link DataPoint} object containing the body and header that map values from Fitbit API response nodes to schema objects
+     */
     protected <T extends Measure> DataPoint<T> newDataPoint(T measure, Long externalId) {
-
-
         DataPointAcquisitionProvenance acquisitionProvenance = new DataPointAcquisitionProvenance.Builder(RESOURCE_API_SOURCE_NAME).build();
         if (externalId != null) {
             acquisitionProvenance.setAdditionalProperty("external_id", externalId);
@@ -66,6 +71,12 @@ public abstract class FitbitDataPointMapper<T> implements JsonNodeDataPointMappe
         return new DataPoint<>(header,measure);
     }
 
+    /**
+     * Takes a Fitbit response JSON node, which contains a date and time property, and then maps them into an {@link OffsetDateTime} object with an offset given by the second parameter
+     * @param node
+     * @param UTCOffsetInMilliseconds
+     * @return the date and time based on the "date" and "time" properties of the JsonNode parameter with the appropriate UTC offset, wrapped as an {@link Optional}
+     */
     protected Optional<OffsetDateTime> combineDateTimeAndTimezone(JsonNode node, int UTCOffsetInMilliseconds){
         Optional<LocalDateTime> dateTime = asOptionalLocalDateTime(node,"date","time");
         Optional<OffsetDateTime> offsetDateTime = null;
@@ -76,10 +87,22 @@ public abstract class FitbitDataPointMapper<T> implements JsonNodeDataPointMappe
         return offsetDateTime;
     }
 
+    /**
+     * Transforms a {@link LocalDateTime} object into an {@link OffsetDateTime} object with a zone offset given by the UTCOffsetInMilliseconds parameter
+     * @param dateTime local date and time for the Fitbit response JSON node
+     * @param UTCOffsetInMilliseconds the offset from UTC in milliseconds
+     * @return the date and time based on the input dateTime parameter with the appropriate UTC offset
+     */
     protected OffsetDateTime combineDateTimeAndTimezone(LocalDateTime dateTime, int UTCOffsetInMilliseconds){
         return OffsetDateTime.of(dateTime, ZoneOffset.ofTotalSeconds(UTCOffsetInMilliseconds / 1000));
     }
 
+    /**
+     * Implemented by subclasses to map a JSON response node from the Fitbit API into a {@link Measure} object of the appropriate type
+     * @param node
+     * @param offsetInMilliseconds
+     * @return a {@link DataPoint} object containing the target measure with the appropriate values from the JSON node parameter, wrapped as an {@link Optional}
+     */
     protected abstract Optional<DataPoint<T>> asDataPoint(JsonNode node, int offsetInMilliseconds);
 
     /**
