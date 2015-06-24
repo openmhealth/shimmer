@@ -82,6 +82,10 @@ public class JsonNodeMappingSupport {
         return asRequiredValue(parentNode, path, JsonNode::isTextual, JsonNode::textValue, String.class);
     }
 
+    public static Boolean asRequiredBoolean(JsonNode parentNode, String path){
+        return asRequiredValue(parentNode,path,JsonNode::isBoolean,JsonNode::booleanValue, Boolean.class);
+    }
+
     /**
      * @param parentNode a parent node
      * @param path the path to a child node
