@@ -35,6 +35,7 @@ ext {
 }
 
 dependencies {
+    compile project(':legacy-java-schema-sdk')
     compile "com.google.guava:guava:18.0"
     compile "com.fasterxml.jackson.core:jackson-annotations:${jacksonVersion}"
     compile "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}"
