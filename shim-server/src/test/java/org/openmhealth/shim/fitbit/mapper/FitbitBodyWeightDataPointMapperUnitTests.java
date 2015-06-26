@@ -17,7 +17,7 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
- * Created by Chris Schaefbauer on 6/9/15.
+ * @author Chris Schaefbauer
  */
 public class FitbitBodyWeightDataPointMapperUnitTests extends DataPointMapperUnitTests {
 
@@ -88,8 +88,8 @@ public class FitbitBodyWeightDataPointMapperUnitTests extends DataPointMapperUni
 
     public void testFitbitBodyWeightDataPoint(DataPoint<BodyWeight> dataPoint,double massValue,String timeString,long logId){
 
-        BodyWeight dataPointForTest = new BodyWeight.Builder(new MassUnitValue(MassUnit.KILOGRAM,massValue)).setEffectiveTimeFrame(OffsetDateTime.parse(timeString)).build();
-        assertThat(dataPoint.getBody(),equalTo(dataPointForTest));
+        BodyWeight expectedBodyWeight = new BodyWeight.Builder(new MassUnitValue(MassUnit.KILOGRAM,massValue)).setEffectiveTimeFrame(OffsetDateTime.parse(timeString)).build();
+        assertThat(dataPoint.getBody(),equalTo(expectedBodyWeight));
         assertThat(dataPoint.getHeader().getBodySchemaId(),equalTo(BodyWeight.SCHEMA_ID));
         assertThat(dataPoint.getHeader().getAcquisitionProvenance().getAdditionalProperties().get("external_id"),equalTo(logId));
         assertThat(dataPoint.getHeader().getAcquisitionProvenance().getSourceName(),equalTo(FitbitDataPointMapper.RESOURCE_API_SOURCE_NAME));

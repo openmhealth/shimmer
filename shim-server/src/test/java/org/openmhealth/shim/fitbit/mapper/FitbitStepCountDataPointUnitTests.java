@@ -52,17 +52,18 @@ public class FitbitStepCountDataPointUnitTests extends DataPointMapperUnitTests 
 
     public void testFitbitStepCountDataPoint(DataPoint<StepCount> dataPoint,long stepCount,String dateString){
 
-        StepCount.Builder dataPointBuilderForTest = new StepCount.Builder(stepCount);
+        StepCount.Builder dataPointBuilderForExpected = new StepCount.Builder(stepCount);
 
         OffsetDateTime startDateTime = OffsetDateTime.parse(dateString + "T" + "00:00:00-04:00", DateTimeFormatter.ISO_OFFSET_DATE_TIME);
         startDateTime = startDateTime.withNano(000000000);
         OffsetDateTime endDateTime = OffsetDateTime.parse(dateString + "T" + "23:59:59-04:00", DateTimeFormatter.ISO_OFFSET_DATE_TIME);
         endDateTime = endDateTime.withNano(999999999);
 
-        dataPointBuilderForTest.setEffectiveTimeFrame(TimeInterval.ofStartDateTimeAndEndDateTime(startDateTime,endDateTime));
-        StepCount dataPointForTest = dataPointBuilderForTest.build();
+        dataPointBuilderForExpected.setEffectiveTimeFrame(
+                TimeInterval.ofStartDateTimeAndEndDateTime(startDateTime, endDateTime));
+        StepCount expectedStepCount = dataPointBuilderForExpected.build();
 
-        assertThat(dataPoint.getBody(), CoreMatchers.equalTo(dataPointForTest));
+        assertThat(dataPoint.getBody(), CoreMatchers.equalTo(expectedStepCount));
         assertThat(dataPoint.getHeader().getBodySchemaId(), CoreMatchers.equalTo(StepCount.SCHEMA_ID));
         assertThat(dataPoint.getHeader().getAcquisitionProvenance().getAdditionalProperties().get("external_id"), CoreMatchers.nullValue());
         assertThat(dataPoint.getHeader().getAcquisitionProvenance().getSourceName(), CoreMatchers.equalTo(FitbitDataPointMapper.RESOURCE_API_SOURCE_NAME));

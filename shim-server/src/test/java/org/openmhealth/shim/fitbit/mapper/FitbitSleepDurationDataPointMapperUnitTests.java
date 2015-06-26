@@ -16,7 +16,7 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
- * Created by Chris Schaefbauer on 6/24/15.
+ * @author Chris Schaefbauer
  */
 public class FitbitSleepDurationDataPointMapperUnitTests extends DataPointMapperUnitTests {
 

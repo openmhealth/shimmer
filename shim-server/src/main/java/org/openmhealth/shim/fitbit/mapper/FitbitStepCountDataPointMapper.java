@@ -12,11 +12,23 @@ import java.util.Optional;
 import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.*;
 
 /**
+ * A mapper from Fitbit Resource API activities/date responses to {@link StepCount} objects
  * @author Chris Schaefbauer
  */
 public class FitbitStepCountDataPointMapper extends FitbitDataPointMapper<StepCount> {
+
+    /**
+     * Maps a JSON response node from the Fitbit API into a {@link StepCount} measure
+     * @param node a JSON node for an individual object in the "activities-steps" array retrieved from the activities/steps
+     * Fitbit API endpoint
+     * @param offsetFromUTCInMilliseconds the "offsetFromUTCMillis" property from a JSON response from the
+     * user/<user-id>/profile Fitbit API endpoint, may be incorrect if the user has changed time zone since the data point
+     * was created
+     * @return a {@link DataPoint} object containing a {@link StepCount} measure with the appropriate values from
+     * the node parameter, wrapped as an {@link Optional}
+     */
     @Override
-    protected Optional<DataPoint<StepCount>> asDataPoint(JsonNode node, int offsetInMilliseconds) {
+    protected Optional<DataPoint<StepCount>> asDataPoint(JsonNode node, int offsetFromUTCInMilliseconds) {
 
         StepCount.Builder builder = new StepCount.Builder(Integer.parseInt(asRequiredString(node,"value")));
 
@@ -25,8 +37,10 @@ public class FitbitStepCountDataPointMapper extends FitbitDataPointMapper<StepCo
             LocalDateTime startDateTime = stepDate.get().atTime(0,0,0,0);
             LocalDateTime endDateTime = stepDate.get().atTime(23,59,59,999999999);
 
-            builder.setEffectiveTimeFrame(TimeInterval.ofStartDateTimeAndEndDateTime(combineDateTimeAndTimezone(startDateTime, offsetInMilliseconds),
-                    combineDateTimeAndTimezone(endDateTime, offsetInMilliseconds)));
+            builder.setEffectiveTimeFrame(TimeInterval.ofStartDateTimeAndEndDateTime(combineDateTimeAndTimezone(startDateTime,
+
+                    offsetFromUTCInMilliseconds),
+                    combineDateTimeAndTimezone(endDateTime, offsetFromUTCInMilliseconds)));
 
         }
 
@@ -35,6 +49,9 @@ public class FitbitStepCountDataPointMapper extends FitbitDataPointMapper<StepCo
         return Optional.of(newDataPoint(measure, externalId.orElse(null)));
     }
 
+    /**
+     * @return the name of the list node returned from the activities/steps Fitbit endpoint
+     */
     @Override
     protected String getListNodeName() {
         return "activities-steps";

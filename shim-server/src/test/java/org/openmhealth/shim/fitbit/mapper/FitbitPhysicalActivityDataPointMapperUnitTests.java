@@ -84,9 +84,9 @@ public class FitbitPhysicalActivityDataPointMapperUnitTests extends DataPointMap
         if(distance!=null){
             dataPointBuilderForExpected.setDistance(new LengthUnitValue(LengthUnit.KILOMETER,distance));
         }
-        PhysicalActivity expectedDataPoint = dataPointBuilderForExpected.build();
+        PhysicalActivity expectedPhysicalActivity = dataPointBuilderForExpected.build();
 
-        assertThat(dataPoint.getBody(), CoreMatchers.equalTo(expectedDataPoint));
+        assertThat(dataPoint.getBody(), CoreMatchers.equalTo(expectedPhysicalActivity));
         assertThat(dataPoint.getHeader().getBodySchemaId(), CoreMatchers.equalTo(PhysicalActivity.SCHEMA_ID));
         assertThat(dataPoint.getHeader().getAcquisitionProvenance().getAdditionalProperties().get("external_id"), equalTo(logId));
         assertThat(dataPoint.getHeader().getAcquisitionProvenance().getSourceName(), CoreMatchers.equalTo(FitbitDataPointMapper.RESOURCE_API_SOURCE_NAME));

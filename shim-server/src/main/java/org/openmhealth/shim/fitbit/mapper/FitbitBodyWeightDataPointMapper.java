@@ -11,26 +11,33 @@ import java.util.Optional;
 
 import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.*;
 
+
 /**
  * A mapper from Fitbit Resource API body/log/weight responses to {@link BodyWeight} objects
+ *
  * @author Chris Schaefbauer
  */
-public class FitbitBodyWeightDataPointMapper extends FitbitDataPointMapper<BodyWeight>{
+public class FitbitBodyWeightDataPointMapper extends FitbitDataPointMapper<BodyWeight> {
 
     /**
      * Maps a JSON response node from the Fitbit API into a {@link BodyWeight} measure
-     * @param node a JSON node for an individual object in the "weight" array retrieved from the body/log/weight Fitbit API call
-     * @param UTCOffsetInMilliseconds the "offsetFromUTCMillis" property from a JSON response node from the user/<user-id>/profile Fitbit API call
-     * @return a {@link DataPoint} object containing a {@link BodyWeight} measure with the appropriate values from the JSON node parameter, wrapped as an {@link Optional}
+     *
+     * @param node a JSON node for an individual object in the "weight" array retrieved from the body/log/weight Fitbit
+     * API call
+     * @param offsetFromUTCInMilliseconds the "offsetFromUTCMillis" property from a JSON response node from the
+     * user/<user-id>/profile Fitbit API call, may be incorrect if the user has changed time zone since the data point
+     * was created
+     * @return a {@link DataPoint} object containing a {@link BodyWeight} measure with the appropriate values from the
+     * JSON node parameter, wrapped as an {@link Optional}
      */
     @Override
-    protected Optional<DataPoint<BodyWeight>> asDataPoint(JsonNode node, int UTCOffsetInMilliseconds) {
-        MassUnitValue bodyWeight = new MassUnitValue(MassUnit.KILOGRAM,asRequiredDouble(node,"weight"));
+    protected Optional<DataPoint<BodyWeight>> asDataPoint(JsonNode node, int offsetFromUTCInMilliseconds) {
+        MassUnitValue bodyWeight = new MassUnitValue(MassUnit.KILOGRAM, asRequiredDouble(node, "weight"));
         BodyWeight.Builder builder = new BodyWeight.Builder(bodyWeight);
 
-        Optional<OffsetDateTime> dateTime = combineDateTimeAndTimezone(node,UTCOffsetInMilliseconds);
+        Optional<OffsetDateTime> dateTime = combineDateTimeAndTimezone(node, offsetFromUTCInMilliseconds);
 
-        if(dateTime.isPresent()){
+        if (dateTime.isPresent()) {
             builder.setEffectiveTimeFrame(dateTime.get());
         }
 
