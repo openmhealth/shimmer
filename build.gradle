@@ -4,7 +4,7 @@ subprojects {
 
     repositories {
         mavenLocal()
-        mavenCentral()
+        jcenter()
     }
 
     group = 'org.openmhealth.shim'
@@ -19,7 +19,7 @@ subprojects {
     targetCompatibility = javaVersion
 
     test {
-        useTestNG();
+        useTestNG()
     }
 }
 
