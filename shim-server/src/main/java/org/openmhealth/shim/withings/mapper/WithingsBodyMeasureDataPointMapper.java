@@ -7,6 +7,7 @@ import org.openmhealth.schema.domain.omh.DataPoint;
 import java.util.List;
 import java.util.Optional;
 
+import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asOptionalLong;
 import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asOptionalString;
 import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asRequiredNode;
 
@@ -63,5 +64,19 @@ public abstract class WithingsBodyMeasureDataPointMapper<T> extends WithingsList
     @Override
     String getListNodeName() {
         return "measuregrps";
+    }
+
+    protected Optional<Boolean> isSensed(JsonNode node){
+        Optional<Long> measurementProcess = asOptionalLong(node, "attrib");
+        Boolean sensed=null;
+        if(measurementProcess.isPresent()){
+            if (measurementProcess.get()==0 || measurementProcess.get()==1){ //TODO: Need to check the semantics of 1
+                sensed = true;
+            }
+            else{
+                sensed = false;
+            }
+        }
+        return Optional.ofNullable(sensed);
     }
 }

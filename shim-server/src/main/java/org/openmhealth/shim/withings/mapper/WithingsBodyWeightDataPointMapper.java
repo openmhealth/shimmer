@@ -47,23 +47,29 @@ public class WithingsBodyWeightDataPointMapper extends WithingsBodyMeasureDataPo
             bodyWeightBuilder.setEffectiveTimeFrame(offsetDateTime);
         }
 
+        Optional<String> userComment = asOptionalString(node, "comment");
+
+        if(userComment.isPresent()){
+            bodyWeightBuilder.setUserNotes(userComment.get());
+        }
+
         Optional<Long> externalId = asOptionalLong(node, "grpid");
 
-        Optional<Long> measurementProcess = asOptionalLong(node, "attrib");
+       // Optional<Long> measurementProcess = asOptionalLong(node, "attrib");
 
-        Boolean sensed=null;
-        if(measurementProcess.isPresent()){
-            if (measurementProcess.get()==0 || measurementProcess.get()==1){ //TODO: Need to check the semantics of 1
-                sensed = true;
-            }
-            else{
-                sensed = false;
-            }
-        }
+//        Boolean sensed=null;
+//        if(measurementProcess.isPresent()){
+//            if (measurementProcess.get()==0 || measurementProcess.get()==1){ //TODO: Need to check the semantics of 1
+//                sensed = true;
+//            }
+//            else{
+//                sensed = false;
+//            }
+//        }
 
         BodyWeight bodyWeight = bodyWeightBuilder.build();
 
-        return Optional.of(newDataPoint(bodyWeight,RESOURCE_API_SOURCE_NAME,externalId.orElse(null),sensed));
+        return Optional.of(newDataPoint(bodyWeight,RESOURCE_API_SOURCE_NAME,externalId.orElse(null),isSensed(node).orElse(null)));
     }
 
 

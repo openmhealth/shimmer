@@ -14,13 +14,14 @@ import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.openmhealth.schema.domain.omh.DataPointModality.*;
 import static org.openmhealth.shim.withings.mapper.WithingsDataPointMapper.*;
 
 
 /**
  * Created by Chris Schaefbauer on 6/29/15.
  */
-public class WithingsBodyMeasureDataPointMapperUnitTests extends DataPointMapperUnitTests {
+public class WithingsBodyWeightDataPointMapperUnitTests extends DataPointMapperUnitTests {
 
     WithingsBodyWeightDataPointMapper mapper = new WithingsBodyWeightDataPointMapper();
     JsonNode responseNode;
@@ -57,9 +58,10 @@ public class WithingsBodyMeasureDataPointMapperUnitTests extends DataPointMapper
 
         DataPointAcquisitionProvenance testProvenance = testDataPoint.getHeader().getAcquisitionProvenance();
         assertThat(testProvenance.getSourceName(),equalTo(RESOURCE_API_SOURCE_NAME));
-        assertThat(testProvenance.getModality(),equalTo(DataPointModality.SENSED));
+        assertThat(testProvenance.getModality(),equalTo(SENSED));
         Long expectedExternalId = (Long)testDataPoint.getHeader().getAcquisitionProvenance().getAdditionalProperties()
                 .get("external_id");
         assertThat(expectedExternalId,equalTo(externalId));
+        assertThat(testDataPoint.getHeader().getBodySchemaId(),equalTo(BodyWeight.SCHEMA_ID));
     }
 }
