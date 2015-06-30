@@ -53,7 +53,7 @@ RUN grunt build
 # build the backend
 WORKDIR /root/omh-shims/shim-server
 RUN ln -s dist ../shim-server/src/main/resources/public && mvn compile
-EXPOSE 8083
+EXPOSE 8084
 
 # CMD ["/usr/bin/supervisord"]
 
