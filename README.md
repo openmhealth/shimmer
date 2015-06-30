@@ -1,8 +1,8 @@
-## Open mHealth shims and shim server
+## Shimmer and shims 
 
 ### Overview
 
-A *shim* is an adapter that reads raw data from a third-party API (e.g. Jawbone, Fitbit) and converts that data into an [Open mHealth compliant data format](http://www.openmhealth.org/developers/schemas/). It's called a shim
+A *shim* is an adapter that reads raw data from a third-party API (e.g. Jawbone, Fitbit) and converts that data into an [Open mHealth compliant data format](http://dev.openmhealth.org/documentation/#/schema-docs/overview). It's called a shim
 because it lets you treat third-party data like Open mHealth compliant data when writing your application. 
 To learn more about shims, please visit the [shim section](http://www.openmhealth.org/developers/apis/) on our site.
  
