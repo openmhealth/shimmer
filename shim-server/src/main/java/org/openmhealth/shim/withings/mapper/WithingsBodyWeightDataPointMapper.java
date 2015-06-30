@@ -11,9 +11,8 @@ import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.util.Optional;
 
-import static java.lang.Math.pow;
 import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.*;
-import static org.openmhealth.shim.withings.mapper.WithingsBodyMeasureDataPointMapper.BodyMeasureTypes.*;
+import static org.openmhealth.shim.withings.mapper.WithingsBodyMeasureDataPointMapper.BodyMeasureTypes.WEIGHT;
 
 
 /**
@@ -37,7 +36,7 @@ public class WithingsBodyWeightDataPointMapper extends WithingsBodyMeasureDataPo
             return Optional.empty(); // there was no body weight measure in this node
         }
 
-        BodyWeight.Builder bodyWeightBuilder = new BodyWeight.Builder(new MassUnitValue(MassUnit.KILOGRAM,(value*pow(10, unit))));
+        BodyWeight.Builder bodyWeightBuilder = new BodyWeight.Builder(new MassUnitValue(MassUnit.KILOGRAM,trueValueOf(value,unit)));
         
         Optional<Long> dateTimeInUtcSec = asOptionalLong(node, "date");
         if(dateTimeInUtcSec.isPresent()){
@@ -54,18 +53,6 @@ public class WithingsBodyWeightDataPointMapper extends WithingsBodyMeasureDataPo
         }
 
         Optional<Long> externalId = asOptionalLong(node, "grpid");
-
-       // Optional<Long> measurementProcess = asOptionalLong(node, "attrib");
-
-//        Boolean sensed=null;
-//        if(measurementProcess.isPresent()){
-//            if (measurementProcess.get()==0 || measurementProcess.get()==1){ //TODO: Need to check the semantics of 1
-//                sensed = true;
-//            }
-//            else{
-//                sensed = false;
-//            }
-//        }
 
         BodyWeight bodyWeight = bodyWeightBuilder.build();
 

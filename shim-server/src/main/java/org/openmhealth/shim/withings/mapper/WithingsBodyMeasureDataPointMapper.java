@@ -7,6 +7,7 @@ import org.openmhealth.schema.domain.omh.DataPoint;
 import java.util.List;
 import java.util.Optional;
 
+import static java.lang.Math.pow;
 import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asOptionalLong;
 import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asOptionalString;
 import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asRequiredNode;
@@ -78,5 +79,15 @@ public abstract class WithingsBodyMeasureDataPointMapper<T> extends WithingsList
             }
         }
         return Optional.ofNullable(sensed);
+    }
+
+    /**
+     * Calculates the true value from the value and unit parameters returned by the Withings API for body measurements
+     * @param value
+     * @param unit
+     * @return The value parameter multiplied by 10 to the unit power, in essence shifting the decimal by 'unit' positions
+     */
+    protected double trueValueOf(double value, long unit){
+        return value * pow(10,unit);
     }
 }

@@ -11,9 +11,8 @@ import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.util.Optional;
 
-import static java.lang.Math.pow;
 import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.*;
-import static org.openmhealth.shim.withings.mapper.WithingsBodyMeasureDataPointMapper.BodyMeasureTypes.*;
+import static org.openmhealth.shim.withings.mapper.WithingsBodyMeasureDataPointMapper.BodyMeasureTypes.HEIGHT;
 
 
 /**
@@ -27,6 +26,7 @@ public class WithingsBodyHeightDataPointMapper extends WithingsBodyMeasureDataPo
         Double value = null;
         Long unit = null;
         for(JsonNode measureNode : measuresNode){
+            //within each measure group, we look through all the measures to find the height value in that group
             Long type = asRequiredLong(measureNode, "type");
             if(type== HEIGHT.getIntVal()){
                 value = asRequiredDouble(measureNode,"value");
@@ -35,10 +35,11 @@ public class WithingsBodyHeightDataPointMapper extends WithingsBodyMeasureDataPo
         }
 
         if(value == null || unit == null){
+            //There is no height data point in this measure group, so we return an empty optional value
             return Optional.empty();
         }
 
-        BodyHeight.Builder builder = new BodyHeight.Builder(new LengthUnitValue(LengthUnit.METER,value*pow(10,unit)));
+        BodyHeight.Builder builder = new BodyHeight.Builder(new LengthUnitValue(LengthUnit.METER,trueValueOf(value,unit)));
 
         Optional<Long> dateInEpochSec = asOptionalLong(node, "date");
         if(dateInEpochSec.isPresent()){
@@ -47,8 +48,8 @@ public class WithingsBodyHeightDataPointMapper extends WithingsBodyMeasureDataPo
                     ZoneId.of(timeZoneFullName));
             builder.setEffectiveTimeFrame(offsetDateTime);
         }
-        Optional<String> userComment = asOptionalString(node, "comment");
 
+        Optional<String> userComment = asOptionalString(node, "comment");
         if(userComment.isPresent()){
             builder.setUserNotes(userComment.get());
         }
@@ -57,11 +58,12 @@ public class WithingsBodyHeightDataPointMapper extends WithingsBodyMeasureDataPo
         Optional<Long> groupId = asOptionalLong(node,"grpid");
         DataPoint<BodyHeight> bodyHeightDataPoint =
                 newDataPoint(measure, RESOURCE_API_SOURCE_NAME, groupId.orElse(null), isSensed(node).orElse(null));
+
         return Optional.of(bodyHeightDataPoint);
     }
 
     /**
-     * DO NOT USE FOR THIS METHOD
+     * DO NOT USE THIS METHOD
      *
      */
     @Override
