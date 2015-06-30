@@ -1,0 +1,105 @@
+{
+    "body": {
+        "measuregrps": [
+            {
+                "attrib": 0,
+                "category": 1,
+                "date": 1433052383,
+                "grpid": 366956482,
+                "measures": [
+                    {
+                        "type": 9,
+                        "unit": 0,
+                        "value": 68
+                    },
+                    {
+                        "type": 10,
+                        "unit": 0,
+                        "value": 104
+                    },
+                    {
+                        "type": 11,
+                        "unit": 0,
+                        "value": 41
+                    },
+                    {
+                        "type": 18,
+                        "unit": -3,
+                        "value": -1000
+                    },
+                    {
+                        "type": 1,
+                        "unit": -3,
+                        "value": 74126
+                    }
+                ]
+            },
+            {
+                "attrib": 0,
+                "category": 1,
+                "date": 1429550036,
+                "grpid": 347186704,
+                "measures": [
+                    {
+                        "type": 1,
+                        "unit": -3,
+                        "value": 74128
+                    }
+                ]
+            },
+            {
+                "attrib": 2,
+                "category": 1,
+                "date": 1425313735,
+                "grpid": 323560022,
+                "measures": [
+                    {
+                        "type": 11,
+                        "unit": 0,
+                        "value": 51
+                    },
+                    {
+                        "type": 18,
+                        "unit": -3,
+                        "value": -1000
+                    }
+                ]
+            },
+            {
+                "attrib": 2,
+                "category": 1,
+                "comment": "a few minutes after a walk",
+                "date": 1424987837,
+                "grpid": 321858727,
+                "measures": [
+                    {
+                        "type": 11,
+                        "unit": 0,
+                        "value": 47
+                    },
+                    {
+                        "type": 18,
+                        "unit": -3,
+                        "value": -1000
+                    }
+                ]
+            },
+            {
+                "attrib": 2,
+                "category": 1,
+                "date": 1424719489,
+                "grpid": 320419189,
+                "measures": [
+                    {
+                        "type": 4,
+                        "unit": -3,
+                        "value": 1930
+                    }
+                ]
+            }
+        ],
+        "timezone": "America/Los_Angeles",
+        "updatetime": 1435524025
+    },
+    "status": 0
+}
