@@ -7,12 +7,13 @@ spring:
       enabled: false
   data:
     mongodb:
-      uri: mongodb://localhost:27017/omh_dsu
+      host: omh-mongo
+      database: omh
   jackson:
     serialization:
       INDENT_OUTPUT: true
 server:
-  port: 8083
+  port: 8084
 security:
   basic:
     enabled: false
