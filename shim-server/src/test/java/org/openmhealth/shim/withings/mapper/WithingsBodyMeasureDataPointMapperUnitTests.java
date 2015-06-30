@@ -14,6 +14,7 @@ import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.openmhealth.shim.withings.mapper.WithingsDataPointMapper.*;
 
 
 /**
@@ -42,19 +43,23 @@ public class WithingsBodyMeasureDataPointMapperUnitTests extends DataPointMapper
     public void asDataPointsShouldReturnCorrectDataPoints(){
         List<DataPoint<BodyWeight>> dataPointList = mapper.asDataPoints(Collections.singletonList(responseNode));
 
-        BodyWeight.Builder bodyWeightExpectedMeasureBuilder = new BodyWeight.Builder(new MassUnitValue(MassUnit.KILOGRAM, 74.126));
-        bodyWeightExpectedMeasureBuilder.setEffectiveTimeFrame(OffsetDateTime.parse("2015-05-30T23:06:23-07:00"));
+        testDataPoint(dataPointList.get(0),74.126,"2015-05-30T23:06:23-07:00",366956482L);
+        testDataPoint(dataPointList.get(1),74.128,"2015-04-20T10:13:56-07:00",347186704L);
+
+    }
+
+    public void testDataPoint(DataPoint<BodyWeight> testDataPoint, double massValue, String offsetTimeString, long externalId){
+        BodyWeight.Builder bodyWeightExpectedMeasureBuilder = new BodyWeight.Builder(new MassUnitValue(MassUnit.KILOGRAM, massValue));
+        bodyWeightExpectedMeasureBuilder.setEffectiveTimeFrame(OffsetDateTime.parse(offsetTimeString));
         BodyWeight bodyWeightExpected = bodyWeightExpectedMeasureBuilder.build();
 
-        BodyWeight bodyWeightTestMeasure = dataPointList.get(0).getBody();
-        assertThat(bodyWeightTestMeasure,equalTo(bodyWeightExpected));
+        assertThat(testDataPoint.getBody(),equalTo(bodyWeightExpected));
 
-        bodyWeightExpectedMeasureBuilder = new BodyWeight.Builder(new MassUnitValue(MassUnit.KILOGRAM, 74.128));
-        bodyWeightExpectedMeasureBuilder.setEffectiveTimeFrame(OffsetDateTime.parse("2015-04-20T10:13:56-07:00"));
-        bodyWeightExpected = bodyWeightExpectedMeasureBuilder.build();
-
-        bodyWeightTestMeasure = dataPointList.get(1).getBody();
-        assertThat(bodyWeightTestMeasure,equalTo(bodyWeightExpected));
-
+        DataPointAcquisitionProvenance testProvenance = testDataPoint.getHeader().getAcquisitionProvenance();
+        assertThat(testProvenance.getSourceName(),equalTo(RESOURCE_API_SOURCE_NAME));
+        assertThat(testProvenance.getModality(),equalTo(DataPointModality.SENSED));
+        Long expectedExternalId = (Long)testDataPoint.getHeader().getAcquisitionProvenance().getAdditionalProperties()
+                .get("external_id");
+        assertThat(expectedExternalId,equalTo(externalId));
     }
 }

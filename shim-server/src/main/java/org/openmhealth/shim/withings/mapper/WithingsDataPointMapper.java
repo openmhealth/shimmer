@@ -15,8 +15,8 @@ import static org.openmhealth.schema.domain.omh.DataPointModality.SENSED;
  * Created by Chris Schaefbauer on 6/29/15.
  */
 public abstract class WithingsDataPointMapper<T> implements JsonNodeDataPointMapper<T> {
-    protected String TIME_ZONE_PROPERTY = "timezone";
-    protected String RESOURCE_API_SOURCE_NAME = "Withings Resource API";
+    protected final static String TIME_ZONE_PROPERTY = "timezone";
+    public final static String RESOURCE_API_SOURCE_NAME = "Withings Resource API";
     public abstract List<DataPoint<T>> asDataPoints(List<JsonNode> responseNodes);
 
     protected <T extends Measure> DataPoint<T> newDataPoint(T measure, String sourceName, Long externalId,
