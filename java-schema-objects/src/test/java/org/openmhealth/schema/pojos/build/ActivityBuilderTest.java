@@ -40,7 +40,7 @@ public class ActivityBuilderTest {
     @SuppressWarnings("unchecked")
     public void testParse() throws IOException, ProcessingException {
 
-        final String PHYSICAL_ACTIVITY_SCHEMA = "http://www.openmhealth.org/schema/omh/clinical/physical-activity-1.0.json";
+        final String PHYSICAL_ACTIVITY_SCHEMA = "http://www.openmhealth.org/schema/omh/physical-activity-1.0.json";
 
         ObjectMapper mapper = new ObjectMapper();
 

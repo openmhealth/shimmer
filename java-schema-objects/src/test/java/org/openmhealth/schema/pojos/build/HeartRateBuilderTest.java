@@ -38,7 +38,7 @@ public class HeartRateBuilderTest {
     @Test
     public void test() throws IOException, ProcessingException {
 
-        final String HEART_RATE_SCHEMA = "http://www.openmhealth.org/schema/omh/clinical/heart-rate-1.0.json";
+        final String HEART_RATE_SCHEMA = "http://www.openmhealth.org/schema/omh/heart-rate-1.0.json";
 
         ObjectMapper mapper = new ObjectMapper();
 

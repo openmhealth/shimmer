@@ -40,8 +40,8 @@ public class BloodGlucoseBuilderTest {
     @Test
     @SuppressWarnings("unchecked")
     public void testParse() throws IOException, ProcessingException {
-        //final String BLOOD_GLUCOSE_SCHEMA = "schemas/blood-glucose-1.0.json";
-        final String BLOOD_GLUCOSE_SCHEMA = "http://www.openmhealth.org/schema/omh/clinical/blood-glucose-1.0.json";
+
+        final String BLOOD_GLUCOSE_SCHEMA = "http://www.openmhealth.org/schema/omh/blood-glucose-1.0.json";
 
         //URL url = Thread.currentThread().getContextClassLoader().getResource(BLOOD_GLUCOSE_SCHEMA);
         //assertNotNull(url);
