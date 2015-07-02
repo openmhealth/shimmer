@@ -27,7 +27,7 @@ public class WithingsBodyWeightDataPointMapper extends WithingsBodyMeasureDataPo
         Long unit = null;
         for(JsonNode measureNode : measuresNode){
             if(asRequiredLong(measureNode,"type")== WEIGHT.getIntVal()){
-                value = asRequiredDouble(measureNode,"value");
+                value = asRequiredDouble(measureNode, "value");
                 unit = asRequiredLong(measureNode,"unit");
             }
         }
@@ -36,7 +36,8 @@ public class WithingsBodyWeightDataPointMapper extends WithingsBodyMeasureDataPo
             return Optional.empty(); // there was no body weight measure in this node
         }
 
-        BodyWeight.Builder bodyWeightBuilder = new BodyWeight.Builder(new MassUnitValue(MassUnit.KILOGRAM,trueValueOf(value,unit)));
+        BodyWeight.Builder bodyWeightBuilder = new BodyWeight.Builder(new MassUnitValue(MassUnit.KILOGRAM,
+                actualValueOf(value, unit)));
         
         Optional<Long> dateTimeInUtcSec = asOptionalLong(node, "date");
         if(dateTimeInUtcSec.isPresent()){

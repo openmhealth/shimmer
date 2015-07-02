@@ -39,7 +39,8 @@ public class WithingsBodyHeightDataPointMapper extends WithingsBodyMeasureDataPo
             return Optional.empty();
         }
 
-        BodyHeight.Builder builder = new BodyHeight.Builder(new LengthUnitValue(LengthUnit.METER,trueValueOf(value,unit)));
+        BodyHeight.Builder builder = new BodyHeight.Builder(new LengthUnitValue(LengthUnit.METER,
+                actualValueOf(value, unit)));
 
         Optional<Long> dateInEpochSec = asOptionalLong(node, "date");
         if(dateInEpochSec.isPresent()){

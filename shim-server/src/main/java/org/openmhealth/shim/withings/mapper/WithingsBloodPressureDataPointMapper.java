@@ -51,8 +51,10 @@ public class WithingsBloodPressureDataPointMapper extends WithingsBodyMeasureDat
             return Optional.empty();
         }
 
-        SystolicBloodPressure systolicBloodPressure = new SystolicBloodPressure(BloodPressureUnit.MM_OF_MERCURY,trueValueOf(systolicValue,systolicUnit));
-        DiastolicBloodPressure diastolicBloodPressure = new DiastolicBloodPressure(BloodPressureUnit.MM_OF_MERCURY,trueValueOf(diastolicValue,diastolicUnit));
+        SystolicBloodPressure systolicBloodPressure = new SystolicBloodPressure(BloodPressureUnit.MM_OF_MERCURY,
+                actualValueOf(systolicValue, systolicUnit));
+        DiastolicBloodPressure diastolicBloodPressure = new DiastolicBloodPressure(BloodPressureUnit.MM_OF_MERCURY,
+                actualValueOf(diastolicValue, diastolicUnit));
         BloodPressure.Builder bloodPressureBuilder = new BloodPressure.Builder(systolicBloodPressure,diastolicBloodPressure);
 
         Optional<Long> dateInEpochSeconds = asOptionalLong(node, "date");

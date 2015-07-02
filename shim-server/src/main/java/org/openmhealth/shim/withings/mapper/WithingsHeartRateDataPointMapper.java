@@ -38,7 +38,7 @@ public class WithingsHeartRateDataPointMapper extends WithingsBodyMeasureDataPoi
             return Optional.empty();
         }
 
-        HeartRate.Builder heartRateBuilder = new HeartRate.Builder(trueValueOf(value, unit));
+        HeartRate.Builder heartRateBuilder = new HeartRate.Builder(actualValueOf(value, unit));
 
         Optional<Long> dateInEpochSecs = asOptionalLong(node, "date");
         if (dateInEpochSecs.isPresent()) {

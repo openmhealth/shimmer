@@ -81,12 +81,12 @@ public abstract class WithingsBodyMeasureDataPointMapper<T> extends WithingsData
     }
 
     /**
-     * Calculates the true value from the value and unit parameters returned by the Withings API for body measurements
+     * Calculates the actual value from the value and unit parameters returned by the Withings API for body measurements
      * @param value
      * @param unit
      * @return The value parameter multiplied by 10 to the unit power, in essence shifting the decimal by 'unit' positions
      */
-    protected double trueValueOf(double value, long unit){
+    protected double actualValueOf(double value, long unit){
         return value * pow(10,unit);
     }
 }
