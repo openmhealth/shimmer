@@ -62,12 +62,5 @@ public class WithingsBodyHeightDataPointMapper extends WithingsBodyMeasureDataPo
         return Optional.of(bodyHeightDataPoint);
     }
 
-    /**
-     * DO NOT USE THIS METHOD
-     *
-     */
-    @Override
-    Optional<DataPoint<BodyHeight>> asDataPoint(JsonNode node) {
-        return null;
-    }
+
 }

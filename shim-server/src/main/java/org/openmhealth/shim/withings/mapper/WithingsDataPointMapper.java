@@ -1,14 +1,16 @@
 package org.openmhealth.shim.withings.mapper;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import org.openmhealth.schema.domain.omh.*;
+import org.openmhealth.schema.domain.omh.DataPoint;
+import org.openmhealth.schema.domain.omh.DataPointAcquisitionProvenance;
+import org.openmhealth.schema.domain.omh.DataPointHeader;
+import org.openmhealth.schema.domain.omh.Measure;
 import org.openmhealth.shim.common.mapper.JsonNodeDataPointMapper;
 
-import java.util.List;
 import java.util.UUID;
 
-import static org.openmhealth.schema.domain.omh.DataPointModality.*;
+import static org.openmhealth.schema.domain.omh.DataPointModality.SELF_REPORTED;
 import static org.openmhealth.schema.domain.omh.DataPointModality.SENSED;
+
 
 
 /**
@@ -17,7 +19,8 @@ import static org.openmhealth.schema.domain.omh.DataPointModality.SENSED;
 public abstract class WithingsDataPointMapper<T> implements JsonNodeDataPointMapper<T> {
     protected final static String TIME_ZONE_PROPERTY = "timezone";
     public final static String RESOURCE_API_SOURCE_NAME = "Withings Resource API";
-    public abstract List<DataPoint<T>> asDataPoints(List<JsonNode> responseNodes);
+    protected static final String BODY_NODE_PROPERTY = "body";
+    //public abstract List<DataPoint<T>> asDataPoints(List<JsonNode> responseNodes);
 
     protected <T extends Measure> DataPoint<T> newDataPoint(T measure, String sourceName, Long externalId,
             Boolean sensed) {

@@ -55,7 +55,6 @@ public class WithingsBloodPressureDataPointMapper extends WithingsBodyMeasureDat
         DiastolicBloodPressure diastolicBloodPressure = new DiastolicBloodPressure(BloodPressureUnit.MM_OF_MERCURY,trueValueOf(diastolicValue,diastolicUnit));
         BloodPressure.Builder bloodPressureBuilder = new BloodPressure.Builder(systolicBloodPressure,diastolicBloodPressure);
 
-
         Optional<Long> dateInEpochSeconds = asOptionalLong(node, "date");
         if(dateInEpochSeconds.isPresent()){
             OffsetDateTime offsetDateTime = OffsetDateTime.ofInstant(Instant.ofEpochSecond(dateInEpochSeconds.get()),
@@ -75,13 +74,5 @@ public class WithingsBloodPressureDataPointMapper extends WithingsBodyMeasureDat
         return Optional.of(bloodPressureDataPoint);
     }
 
-    /**
-     * DO NOT USE THIS METHOD
-     * @param node
-     * @return
-     */
-    @Override
-    Optional<DataPoint<BloodPressure>> asDataPoint(JsonNode node) {
-        return null;
-    }
+
 }

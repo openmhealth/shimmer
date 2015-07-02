@@ -49,6 +49,7 @@ public class WithingsBodyWeightDataPointMapperUnitTests extends DataPointMapperU
 
     }
 
+    //TODO: Refactor this out with an "expectedProperties" dictionary for all the inputs and then one for all Withings points
     public void testDataPoint(DataPoint<BodyWeight> testDataPoint, double massValue, String offsetTimeString, long externalId){
         BodyWeight.Builder bodyWeightExpectedMeasureBuilder = new BodyWeight.Builder(new MassUnitValue(MassUnit.KILOGRAM, massValue));
         bodyWeightExpectedMeasureBuilder.setEffectiveTimeFrame(OffsetDateTime.parse(offsetTimeString));

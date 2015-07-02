@@ -21,7 +21,7 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asRequir
 
 public abstract class WithingsListDataPointMapper<T> extends WithingsDataPointMapper<T> {
 
-    protected static final String BODY_NODE_PROPERTY = "body";
+
 
     @Override
     public List<DataPoint<T>> asDataPoints(List<JsonNode> responseNodes) {

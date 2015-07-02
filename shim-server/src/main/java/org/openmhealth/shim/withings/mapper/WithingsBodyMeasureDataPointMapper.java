@@ -16,7 +16,7 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asRequir
 /**
  * Created by Chris Schaefbauer on 6/29/15.
  */
-public abstract class WithingsBodyMeasureDataPointMapper<T> extends WithingsListDataPointMapper<T> {
+public abstract class WithingsBodyMeasureDataPointMapper<T> extends WithingsDataPointMapper<T> {
 
     public enum BodyMeasureTypes{
         WEIGHT(1),
@@ -62,7 +62,6 @@ public abstract class WithingsBodyMeasureDataPointMapper<T> extends WithingsList
 
     abstract Optional<DataPoint<T>> asDataPoint(JsonNode node,String timeZoneFullName);
 
-    @Override
     String getListNodeName() {
         return "measuregrps";
     }

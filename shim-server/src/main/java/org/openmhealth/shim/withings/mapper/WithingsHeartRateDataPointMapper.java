@@ -59,11 +59,5 @@ public class WithingsHeartRateDataPointMapper extends WithingsBodyMeasureDataPoi
         return Optional.of(heartRateDataPoint);
     }
 
-    /**
-     * DO NOT USE
-     */
-    @Override
-    Optional<DataPoint<HeartRate>> asDataPoint(JsonNode node) {
-        return null;
-    }
+
 }

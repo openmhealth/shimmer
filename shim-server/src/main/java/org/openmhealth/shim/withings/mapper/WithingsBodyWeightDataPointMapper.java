@@ -60,11 +60,5 @@ public class WithingsBodyWeightDataPointMapper extends WithingsBodyMeasureDataPo
     }
 
 
-    /**
-     * Not to be used, required to be implemented from WithingsDataPointMapper superclass
-     */
-    @Override
-    Optional<DataPoint<BodyWeight>> asDataPoint(JsonNode node) {
-        return null;
-    }
+
 }
