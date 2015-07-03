@@ -10,6 +10,7 @@ import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.util.*;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.*;
 
 
@@ -21,6 +22,8 @@ public class WithingsIntradayStepCountDataPointMapper extends WithingsDataPointM
     @Override
     public List<DataPoint<StepCount>> asDataPoints(List<JsonNode> responseNode) {
 
+        checkNotNull(responseNode);
+        checkNotNull(responseNode.size() == 1, "A single response node is allowed per call.");
 
         JsonNode bodyNode = asRequiredNode(responseNode.get(0), "body");
         JsonNode seriesNode = asRequiredNode(bodyNode, "series");

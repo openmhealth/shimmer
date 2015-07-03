@@ -8,6 +8,7 @@ import org.openmhealth.schema.domain.omh.Measure;
 import java.util.List;
 import java.util.Optional;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asRequiredNode;
 
 
@@ -26,6 +27,8 @@ public abstract class WithingsListDataPointMapper<T> extends WithingsDataPointMa
     @Override
     public List<DataPoint<T>> asDataPoints(List<JsonNode> responseNodes) {
 
+        checkNotNull(responseNodes);
+        checkNotNull(responseNodes.size() == 1, "A single response node is allowed per call.");
         JsonNode responseNodeBody = asRequiredNode(responseNodes.get(0), BODY_NODE_PROPERTY);
         List<DataPoint<T>> dataPoints = Lists.newArrayList();
         JsonNode listNode = asRequiredNode(responseNodeBody, getListNodeName());
