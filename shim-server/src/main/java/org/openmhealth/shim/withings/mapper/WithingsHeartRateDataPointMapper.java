@@ -14,10 +14,23 @@ import static org.openmhealth.shim.withings.mapper.WithingsBodyMeasureDataPointM
 
 
 /**
- * Created by Chris Schaefbauer on 6/30/15.
+ * A mapper from Withings Body Measure endpoint responses (/measure?action=getmeas) to {@link HeartRate} objects when a
+ * heart rate value is present in the body measure group
+ *
+ * @author Chris Schaefbauer
+ * @see <a href="http://oauth.withings.com/api/doc#api-Measure-get_measure">Body Measures API documentation</a>
  */
 public class WithingsHeartRateDataPointMapper extends WithingsBodyMeasureDataPointMapper<HeartRate> {
 
+    /**
+     * Maps a JSON response node from the Withings body measure endpoint into a {@link HeartRate} measure
+     *
+     * @param node list node from the array "measuregrp" contained in the "body" of the endpoint response
+     * @param timeZoneFullName a string containing the full name of the time zone (e.g., America/Los_Angeles) from the
+     * "timezone" property of the "body" of the body measure endpoint response
+     * @return a {@link DataPoint} object containing a {@link HeartRate} measure with the appropriate values from
+     * the JSON node parameter, wrapped as an {@link Optional}
+     */
     @Override
     Optional<DataPoint<HeartRate>> asDataPoint(JsonNode node, String timeZoneFullName) {
         JsonNode measuresNode = asRequiredNode(node, "measures");
@@ -58,6 +71,5 @@ public class WithingsHeartRateDataPointMapper extends WithingsBodyMeasureDataPoi
                 newDataPoint(heartRate, RESOURCE_API_SOURCE_NAME, externalId.orElse(null), isSensed(node).orElse(null));
         return Optional.of(heartRateDataPoint);
     }
-
 
 }

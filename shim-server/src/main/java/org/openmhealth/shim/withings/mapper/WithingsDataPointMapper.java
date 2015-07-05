@@ -12,15 +12,14 @@ import static org.openmhealth.schema.domain.omh.DataPointModality.SELF_REPORTED;
 import static org.openmhealth.schema.domain.omh.DataPointModality.SENSED;
 
 
-
 /**
  * Created by Chris Schaefbauer on 6/29/15.
  */
 public abstract class WithingsDataPointMapper<T> implements JsonNodeDataPointMapper<T> {
+
     protected final static String TIME_ZONE_PROPERTY = "timezone";
     public final static String RESOURCE_API_SOURCE_NAME = "Withings Resource API";
     protected static final String BODY_NODE_PROPERTY = "body";
-    //public abstract List<DataPoint<T>> asDataPoints(List<JsonNode> responseNodes);
 
     protected <T extends Measure> DataPoint<T> newDataPoint(T measure, String sourceName, Long externalId,
             Boolean sensed) {
@@ -28,11 +27,11 @@ public abstract class WithingsDataPointMapper<T> implements JsonNodeDataPointMap
         DataPointAcquisitionProvenance.Builder provenanceBuilder =
                 new DataPointAcquisitionProvenance.Builder(sourceName);
 
-        if (sensed != null ) {
-            if(sensed){
+        if (sensed != null) {
+            if (sensed) {
                 provenanceBuilder.setModality(SENSED);
             }
-            else{
+            else {
                 provenanceBuilder.setModality(SELF_REPORTED);
             }
 
