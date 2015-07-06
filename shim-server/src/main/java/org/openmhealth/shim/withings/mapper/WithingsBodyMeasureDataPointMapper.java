@@ -10,9 +10,7 @@ import java.util.Optional;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static java.lang.Math.pow;
-import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asOptionalLong;
-import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asOptionalString;
-import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asRequiredNode;
+import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.*;
 
 
 /**
@@ -126,5 +124,21 @@ public abstract class WithingsBodyMeasureDataPointMapper<T> extends WithingsData
      */
     protected double actualValueOf(double value, long unit) {
         return value * pow(10, unit);
+    }
+
+    /**
+     * Determines whether a body measure group item is a goal instead of an actual measurement
+     * @param node a list node from the "measuregrps" list in the body measures API response
+     * @return whether or not the datapoint is a goal or real measure
+     */
+    protected Boolean isGoal(JsonNode node){
+        Optional<Long> category = asOptionalLong(node, "category");
+        if(category.isPresent()){
+            if(category.get()==2){
+                return true;
+            }
+        }
+
+        return false;
     }
 }

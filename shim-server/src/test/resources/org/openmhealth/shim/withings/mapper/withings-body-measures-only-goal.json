@@ -1,0 +1,22 @@
+{
+    "body": {
+        "measuregrps": [
+            {
+                "attrib": 0,
+                "category": 2,
+                "date": 1429550036,
+                "grpid": 347186704,
+                "measures": [
+                    {
+                        "type": 1,
+                        "unit": -3,
+                        "value": 74128
+                    }
+                ]
+            }
+        ],
+        "timezone": "America/Los_Angeles",
+        "updatetime": 1435524025
+    },
+    "status": 0
+}

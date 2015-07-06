@@ -36,6 +36,9 @@ public class WithingsBodyWeightDataPointMapper extends WithingsBodyMeasureDataPo
     @Override
     Optional<DataPoint<BodyWeight>> asDataPoint(JsonNode node, String timeZoneFullName) {
         JsonNode measuresNode = asRequiredNode(node, "measures");
+        if(isGoal(node)){
+            return Optional.empty();
+        }
         Double value = null;
         Long unit = null;
         for (JsonNode measureNode : measuresNode) {

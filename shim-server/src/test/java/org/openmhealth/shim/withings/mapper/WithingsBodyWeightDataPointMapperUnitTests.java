@@ -9,13 +9,13 @@ import org.testng.annotations.Test;
 
 import java.io.IOException;
 import java.time.OffsetDateTime;
-import java.util.Collections;
 import java.util.List;
 
+import static java.util.Collections.singletonList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
-import static org.openmhealth.schema.domain.omh.DataPointModality.*;
-import static org.openmhealth.shim.withings.mapper.WithingsDataPointMapper.*;
+import static org.openmhealth.schema.domain.omh.DataPointModality.SENSED;
+import static org.openmhealth.shim.withings.mapper.WithingsDataPointMapper.RESOURCE_API_SOURCE_NAME;
 
 
 /**
@@ -24,7 +24,7 @@ import static org.openmhealth.shim.withings.mapper.WithingsDataPointMapper.*;
 public class WithingsBodyWeightDataPointMapperUnitTests extends DataPointMapperUnitTests {
 
     WithingsBodyWeightDataPointMapper mapper = new WithingsBodyWeightDataPointMapper();
-    JsonNode responseNode;
+    JsonNode responseNode,responseNodeWithGoal;
 
     @BeforeTest
     public void initializeResponseNode() throws IOException {
@@ -32,21 +32,29 @@ public class WithingsBodyWeightDataPointMapperUnitTests extends DataPointMapperU
         ClassPathResource resource =
                 new ClassPathResource("org/openmhealth/shim/withings/mapper/withings-body-measures.json");
         responseNode = objectMapper.readTree(resource.getInputStream());
+        resource = new ClassPathResource("org/openmhealth/shim/withings/mapper/withings-body-measures-only-goal.json");
+        responseNodeWithGoal = objectMapper.readTree(resource.getInputStream());
     }
 
     @Test
     public void asDataPointsShouldReturnCorrectNumberOfDataPoints(){
-        List<DataPoint<BodyWeight>> dataPointList = mapper.asDataPoints(Collections.singletonList(responseNode));
+        List<DataPoint<BodyWeight>> dataPointList = mapper.asDataPoints(singletonList(responseNode));
         assertThat(dataPointList.size(),equalTo(2));
     }
 
     @Test
     public void asDataPointsShouldReturnCorrectDataPoints(){
-        List<DataPoint<BodyWeight>> dataPointList = mapper.asDataPoints(Collections.singletonList(responseNode));
+        List<DataPoint<BodyWeight>> dataPointList = mapper.asDataPoints(singletonList(responseNode));
 
         testDataPoint(dataPointList.get(0),74.126,"2015-05-30T23:06:23-07:00",366956482L);
         testDataPoint(dataPointList.get(1),74.128,"2015-04-20T10:13:56-07:00",347186704L);
 
+    }
+
+    @Test
+    public void asDataPointsShouldIgnoreGoalsForBodyMeasures(){
+        List<DataPoint<BodyWeight>> dataPoints = mapper.asDataPoints(singletonList(responseNodeWithGoal));
+        assertThat(dataPoints.size(),equalTo(0));
     }
 
     //TODO: Refactor this out with an "expectedProperties" dictionary for all the inputs and then one for all Withings points
