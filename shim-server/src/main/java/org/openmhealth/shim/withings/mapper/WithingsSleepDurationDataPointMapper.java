@@ -12,12 +12,23 @@ import java.util.Optional;
 import static java.time.ZoneId.of;
 import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.*;
 
-
 /**
- * Created by Chris Schaefbauer on 7/6/15.
+ * A mapper from Withings Sleep Summary endpoint responses (/sleep?action=getsummary) to {@link SleepDuration}
+ * objects
+ *
+ * @author Chris Schaefbauer
+ * @see <a href="http://oauth.withings.com/api/doc#api-Measure-get_sleep_summary">Sleep Summary API documentation</a>
  */
 public class WithingsSleepDurationDataPointMapper extends WithingsListDataPointMapper<SleepDuration>{
 
+    /**
+     * Maps an individual list node from the array in the Withings sleep summary endpoint response into a {@link
+     * SleepDuration} data point
+     *
+     * @param node activity node from the array "series" contained in the "body" of the endpoint response
+     * @return a {@link DataPoint} object containing a {@link SleepDuration} measure with the appropriate values from
+     * the JSON node parameter, wrapped as an {@link Optional}
+     */
     @Override
     Optional<DataPoint<SleepDuration>> asDataPoint(JsonNode node) {
 
@@ -57,11 +68,19 @@ public class WithingsSleepDurationDataPointMapper extends WithingsListDataPointM
         return Optional.of(newDataPoint(sleepDuration,RESOURCE_API_SOURCE_NAME,externalId.orElse(null),true, modelName));
     }
 
+    /**
+     * The list name for splitting out individual sleep summary items that can then be mapped.
+     *
+     * @return the name of the array containing the individual sleep summary nodes
+     */
     @Override
     String getListNodeName() {
         return "series";
     }
 
+    /**
+     * Enum mapping the different sleep tracking device names to the integer value used by Withings to identify them in datapoints
+     */
     public enum SleepDeviceTypes{
         Pulse(16), Aura(32);
 
@@ -77,6 +96,11 @@ public class WithingsSleepDurationDataPointMapper extends WithingsListDataPointM
 
         private SleepDeviceTypes(final long deviceId) { this.deviceId = deviceId; }
 
+        /**
+         * Returns the string device name for a device ID
+         * @param deviceId the id number for the device contained within the Withings API response datapoint
+         * @return common name of the device (e.g., Pulse, Aura)
+         */
         public static String valueOf(long deviceId) {
             return map.get(deviceId);
         }
