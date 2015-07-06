@@ -48,10 +48,13 @@ public class WithingsSleepDurationDataPointMapperUnitTests extends DataPointMapp
         SleepDuration expectedSleepDuration = sleepDurationBuilder.build();
         expectedSleepDuration.setAdditionalProperty("wakeup_count",3);
         assertThat(dataPoints.get(0).getBody(), equalTo(expectedSleepDuration));
-        assertThat(dataPoints.get(0).getHeader().getAcquisitionProvenance().getSourceName(),equalTo(WithingsDataPointMapper.RESOURCE_API_SOURCE_NAME));
-        assertThat(dataPoints.get(0).getHeader().getAcquisitionProvenance().getModality(),equalTo(DataPointModality.SENSED));
-        assertThat(dataPoints.get(0).getHeader().getAcquisitionProvenance().getAdditionalProperties().get("external_id"),equalTo(16616514L));
+        DataPointAcquisitionProvenance acquisitionProvenance = dataPoints.get(0).getHeader().getAcquisitionProvenance();
+        assertThat(acquisitionProvenance.getSourceName(),equalTo(WithingsDataPointMapper.RESOURCE_API_SOURCE_NAME));
+        assertThat(acquisitionProvenance.getModality(),equalTo(DataPointModality.SENSED));
+        assertThat(acquisitionProvenance.getAdditionalProperties().get("external_id"),equalTo(16616514L));
+        assertThat(acquisitionProvenance.getAdditionalProperties().get("device_name"),equalTo("Aura"));
         assertThat(dataPoints.get(0).getHeader().getBodySchemaId(), equalTo(SleepDuration.SCHEMA_ID));
+
     }
 
 
