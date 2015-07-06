@@ -90,7 +90,7 @@ public class WithingsBloodPressureDataPointMapper extends WithingsBodyMeasureDat
         Optional<Long> externalId = asOptionalLong(node, "grpid");
         DataPoint<BloodPressure> bloodPressureDataPoint =
                 newDataPoint(bloodPressureMeasure, RESOURCE_API_SOURCE_NAME, externalId.orElse(null),
-                        isSensed(node).orElse(null));
+                        isSensed(node).orElse(null), null);
         return Optional.of(bloodPressureDataPoint);
     }
 

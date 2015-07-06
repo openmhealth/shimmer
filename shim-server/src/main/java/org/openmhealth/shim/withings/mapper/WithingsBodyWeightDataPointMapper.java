@@ -71,7 +71,7 @@ public class WithingsBodyWeightDataPointMapper extends WithingsBodyMeasureDataPo
         BodyWeight bodyWeight = bodyWeightBuilder.build();
 
         return Optional.of(newDataPoint(bodyWeight, RESOURCE_API_SOURCE_NAME, externalId.orElse(null),
-                isSensed(node).orElse(null)));
+                isSensed(node).orElse(null), null));
     }
 
 

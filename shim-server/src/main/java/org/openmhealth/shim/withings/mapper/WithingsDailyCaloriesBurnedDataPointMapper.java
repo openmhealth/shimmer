@@ -45,7 +45,7 @@ public class WithingsDailyCaloriesBurnedDataPointMapper extends WithingsListData
 
         CaloriesBurned caloriesBurned = caloriesBurnedBuilder.build();
         DataPoint<CaloriesBurned> caloriesBurnedDataPoint =
-                newDataPoint(caloriesBurned, RESOURCE_API_SOURCE_NAME, null, true);
+                newDataPoint(caloriesBurned, RESOURCE_API_SOURCE_NAME, null, true, null);
         return Optional.of(caloriesBurnedDataPoint);
     }
 

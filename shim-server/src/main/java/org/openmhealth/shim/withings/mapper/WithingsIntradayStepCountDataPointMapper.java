@@ -89,7 +89,7 @@ public class WithingsIntradayStepCountDataPointMapper extends WithingsDataPointM
         }
 
         StepCount stepCount = stepCountBuilder.build();
-        return Optional.of(newDataPoint(stepCount, WithingsDataPointMapper.RESOURCE_API_SOURCE_NAME, null, true));
+        return Optional.of(newDataPoint(stepCount, WithingsDataPointMapper.RESOURCE_API_SOURCE_NAME, null, true, null));
     }
 
     /**

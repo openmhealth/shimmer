@@ -68,7 +68,7 @@ public class WithingsBodyHeightDataPointMapper extends WithingsBodyMeasureDataPo
         BodyHeight measure = builder.build();
         Optional<Long> groupId = asOptionalLong(node, "grpid");
         DataPoint<BodyHeight> bodyHeightDataPoint =
-                newDataPoint(measure, RESOURCE_API_SOURCE_NAME, groupId.orElse(null), isSensed(node).orElse(null));
+                newDataPoint(measure, RESOURCE_API_SOURCE_NAME, groupId.orElse(null), isSensed(node).orElse(null), null);
 
         return Optional.of(bodyHeightDataPoint);
     }

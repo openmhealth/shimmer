@@ -51,7 +51,7 @@ public class WithingsDailyStepCountDataPointMapper extends WithingsListDataPoint
         }
 
         StepCount stepCount = stepCountBuilder.build();
-        DataPoint<StepCount> stepCountDataPoint = newDataPoint(stepCount, RESOURCE_API_SOURCE_NAME, null, true);
+        DataPoint<StepCount> stepCountDataPoint = newDataPoint(stepCount, RESOURCE_API_SOURCE_NAME, null, true, null);
         return Optional.of(stepCountDataPoint);
     }
 

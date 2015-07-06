@@ -63,7 +63,8 @@ public class WithingsIntradayCaloriesBurnedDataPointMapper extends WithingsDataP
         }
 
         CaloriesBurned calorieBurned = caloriesBurnedBuilder.build();
-        return Optional.of(newDataPoint(calorieBurned, WithingsDataPointMapper.RESOURCE_API_SOURCE_NAME, null, true));
+        return Optional.of(newDataPoint(calorieBurned, WithingsDataPointMapper.RESOURCE_API_SOURCE_NAME, null, true,
+                null));
     }
 
     private HashMap<Long, JsonNode> nodesWithCalories(Iterator<Map.Entry<String, JsonNode>> fieldsIterator) {

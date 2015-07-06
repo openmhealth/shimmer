@@ -68,7 +68,8 @@ public class WithingsHeartRateDataPointMapper extends WithingsBodyMeasureDataPoi
         HeartRate heartRate = heartRateBuilder.build();
         Optional<Long> externalId = asOptionalLong(node, "grpid");
         DataPoint<HeartRate> heartRateDataPoint =
-                newDataPoint(heartRate, RESOURCE_API_SOURCE_NAME, externalId.orElse(null), isSensed(node).orElse(null));
+                newDataPoint(heartRate, RESOURCE_API_SOURCE_NAME, externalId.orElse(null), isSensed(node).orElse(null),
+                        null);
         return Optional.of(heartRateDataPoint);
     }
 

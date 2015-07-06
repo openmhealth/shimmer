@@ -22,7 +22,7 @@ public abstract class WithingsDataPointMapper<T> implements JsonNodeDataPointMap
     protected static final String BODY_NODE_PROPERTY = "body";
 
     protected <T extends Measure> DataPoint<T> newDataPoint(T measure, String sourceName, Long externalId,
-            Boolean sensed) {
+            Boolean sensed, String deviceName) {
 
         DataPointAcquisitionProvenance.Builder provenanceBuilder =
                 new DataPointAcquisitionProvenance.Builder(sourceName);
@@ -38,6 +38,11 @@ public abstract class WithingsDataPointMapper<T> implements JsonNodeDataPointMap
         }
 
         DataPointAcquisitionProvenance acquisitionProvenance = provenanceBuilder.build();
+
+        if(deviceName !=null){
+            acquisitionProvenance.setAdditionalProperty("device_name",deviceName);
+        }
+
 
         // TODO discuss the name of the external identifier, to make it clear it's the ID used by the source
         if (externalId != null) {
