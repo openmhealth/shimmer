@@ -11,12 +11,26 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asRequir
 
 
 /**
- * This only captures calories that are burned from activity that is captured by a Withings device or application, and
- * may not be an accurate representation of all the calories burned from metabolic resting or activities not captured.
- * Created by Chris Schaefbauer on 7/5/15.
+ * A mapper from Withings Activity Measures endpoint responses (/measure?action=getactivity) to {@link CaloriesBurned}
+ * objects
+ *
+ * <p>NOTE: This only captures calories that are burned from activity that is captured by a Withings device or application, and
+ * may not be an accurate representation of all the calories burned from metabolic resting or activities not captured.</p>
+ *
+ * @author Chris Schaefbauer
+ * @see <a href="http://oauth.withings.com/api/doc#api-Measure-get_activity">Activity Measures API documentation</a>
  */
+
 public class WithingsDailyCaloriesBurnedDataPointMapper extends WithingsListDataPointMapper<CaloriesBurned> {
 
+    /**
+     * Maps an individual list node from the array in the Withings activity measure endpoint response into a {@link
+     * CaloriesBurned} data point
+     *
+     * @param node activity node from the array "activites" contained in the "body" of the endpoint response
+     * @return a {@link DataPoint} object containing a {@link CaloriesBurned} measure with the appropriate values from
+     * the JSON node parameter, wrapped as an {@link Optional}
+     */
     @Override
     Optional<DataPoint<CaloriesBurned>> asDataPoint(JsonNode node) {
         long caloriesBurnedValue = asRequiredLong(node, "calories");
