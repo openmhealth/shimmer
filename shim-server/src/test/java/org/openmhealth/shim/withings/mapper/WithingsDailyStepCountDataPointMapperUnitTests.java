@@ -35,32 +35,36 @@ public class WithingsDailyStepCountDataPointMapperUnitTests extends DataPointMap
     }
 
     @Test
-    public void asDataPointsReturnsCorrectNumberOfDataPoints(){
+    public void asDataPointsReturnsCorrectNumberOfDataPoints() {
         List<DataPoint<StepCount>> dataPoints = mapper.asDataPoints(singletonList(responseNode));
-        assertThat(dataPoints.size(),equalTo(4));
+        assertThat(dataPoints.size(), equalTo(4));
 
     }
 
     @Test
-    public void asDataPointsReturnsCorrectDataPoints(){
+    public void asDataPointsReturnsCorrectDataPoints() {
         List<DataPoint<StepCount>> dataPoints = mapper.asDataPoints(singletonList(responseNode));
-        testDailyStepCountDataPoint(dataPoints.get(0),2934,"2015-06-18T00:00:00-07:00");
-        testDailyStepCountDataPoint(dataPoints.get(1),2600,"2015-06-19T00:00:00-07:00");
-        testDailyStepCountDataPoint(dataPoints.get(2),5458,"2015-06-20T00:00:00-07:00");
-        testDailyStepCountDataPoint(dataPoints.get(3),1798,"2015-02-21T00:00:00-08:00");
+        testDailyStepCountDataPoint(dataPoints.get(0), 2934, "2015-06-18T00:00:00-07:00", "2015-06-18T23:59:59-07:00");
+        testDailyStepCountDataPoint(dataPoints.get(1), 2600, "2015-06-19T00:00:00-07:00", "2015-06-19T23:59:59-07:00");
+        testDailyStepCountDataPoint(dataPoints.get(2), 5458, "2015-06-20T00:00:00-07:00", "2015-06-20T23:59:59-07:00");
+        testDailyStepCountDataPoint(dataPoints.get(3), 1798, "2015-02-21T00:00:00-08:00", "2015-02-21T23:59:59-08:00");
     }
 
-    public void testDailyStepCountDataPoint(DataPoint<StepCount> stepCountDataPoint, long expectedStepCountValue, String expectedDateString){
+    public void testDailyStepCountDataPoint(DataPoint<StepCount> stepCountDataPoint, long expectedStepCountValue,
+            String expectedDateString, String expectedEndDateString) {
         StepCount.Builder expectedStepCountBuilder = new StepCount.Builder(expectedStepCountValue);
-        expectedStepCountBuilder.setEffectiveTimeFrame(TimeInterval.ofStartDateTimeAndDuration(OffsetDateTime.parse(expectedDateString),new DurationUnitValue(
-                DurationUnit.DAY, 1)));
+        expectedStepCountBuilder.setEffectiveTimeFrame(TimeInterval
+                .ofStartDateTimeAndEndDateTime(OffsetDateTime.parse(expectedDateString),
+                        OffsetDateTime.parse(expectedEndDateString)));
+        //ofStartDateTimeAndDuration(OffsetDateTime.parse(expectedDateString),new DurationUnitValue(
+        //DurationUnit.DAY, 1)));
         StepCount testStepCount = stepCountDataPoint.getBody();
         StepCount expectedStepCount = expectedStepCountBuilder.build();
-        assertThat(testStepCount,equalTo(expectedStepCount));
-        assertThat(stepCountDataPoint.getHeader().getAcquisitionProvenance().getModality(),equalTo(SENSED));
-        assertThat(stepCountDataPoint.getHeader().getAcquisitionProvenance().getSourceName(),equalTo(
+        assertThat(testStepCount, equalTo(expectedStepCount));
+        assertThat(stepCountDataPoint.getHeader().getAcquisitionProvenance().getModality(), equalTo(SENSED));
+        assertThat(stepCountDataPoint.getHeader().getAcquisitionProvenance().getSourceName(), equalTo(
                 RESOURCE_API_SOURCE_NAME));
-        assertThat(stepCountDataPoint.getHeader().getBodySchemaId(),equalTo(StepCount.SCHEMA_ID));
+        assertThat(stepCountDataPoint.getHeader().getBodySchemaId(), equalTo(StepCount.SCHEMA_ID));
 
     }
 }

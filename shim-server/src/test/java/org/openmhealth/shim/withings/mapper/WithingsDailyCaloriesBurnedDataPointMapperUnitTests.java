@@ -34,37 +34,41 @@ public class WithingsDailyCaloriesBurnedDataPointMapperUnitTests extends DataPoi
     }
 
     @Test
-    public void asDataPointsShouldReturnCorrectNumberOfDataPoints(){
+    public void asDataPointsShouldReturnCorrectNumberOfDataPoints() {
         List<DataPoint<CaloriesBurned>> dataPoints = mapper.asDataPoints(singletonList(responseNode));
-        assertThat(dataPoints.size(),equalTo(4));
+        assertThat(dataPoints.size(), equalTo(4));
     }
 
     @Test
-    public void asDataPointsShouldReturnCorrectDataPoints(){
+    public void asDataPointsShouldReturnCorrectDataPoints() {
         List<DataPoint<CaloriesBurned>> dataPoints = mapper.asDataPoints(singletonList(responseNode));
-        testDailyCaloriesBurnedDataPoint(dataPoints.get(0), 139, "2015-06-18T00:00:00-07:00","2015-06-18T23:59:59-07:00");
-        testDailyCaloriesBurnedDataPoint(dataPoints.get(1), 130, "2015-06-19T00:00:00-07:00", "2015-06-19T23:59:59-07:00");
-        testDailyCaloriesBurnedDataPoint(dataPoints.get(2), 241, "2015-06-20T00:00:00-07:00", "2015-06-20T23:59:59-07:00");
-        testDailyCaloriesBurnedDataPoint(dataPoints.get(3), 99, "2015-02-21T00:00:00-08:00", "2015-02-21T23:59:59-08:00");
+        testDailyCaloriesBurnedDataPoint(dataPoints.get(0), 139, "2015-06-18T00:00:00-07:00",
+                "2015-06-18T23:59:59-07:00");
+        testDailyCaloriesBurnedDataPoint(dataPoints.get(1), 130, "2015-06-19T00:00:00-07:00",
+                "2015-06-19T23:59:59-07:00");
+        testDailyCaloriesBurnedDataPoint(dataPoints.get(2), 241, "2015-06-20T00:00:00-07:00",
+                "2015-06-20T23:59:59-07:00");
+        testDailyCaloriesBurnedDataPoint(dataPoints.get(3), 99, "2015-02-21T00:00:00-08:00",
+                "2015-02-21T23:59:59-08:00");
 
     }
 
-    public void testDailyCaloriesBurnedDataPoint(DataPoint<CaloriesBurned> caloriesBurnedDataPoint, long expectedCaloriesBurnedValue, String expectedDateString, String expectedEndDateString){
-        CaloriesBurned.Builder expectedCaloriesBurnedBuilder = new CaloriesBurned.Builder(new KcalUnitValue(KcalUnit.KILOCALORIE,expectedCaloriesBurnedValue));
+    public void testDailyCaloriesBurnedDataPoint(DataPoint<CaloriesBurned> caloriesBurnedDataPoint,
+            long expectedCaloriesBurnedValue, String expectedDateString, String expectedEndDateString) {
+        CaloriesBurned.Builder expectedCaloriesBurnedBuilder =
+                new CaloriesBurned.Builder(new KcalUnitValue(KcalUnit.KILOCALORIE, expectedCaloriesBurnedValue));
         expectedCaloriesBurnedBuilder.setEffectiveTimeFrame(
-                TimeInterval.ofStartDateTimeAndEndDateTime(OffsetDateTime.parse(expectedDateString), OffsetDateTime.parse(expectedEndDateString)));
-
-                        //                new DurationUnitValue(                        DurationUnit.DAY, 1)));
-                        CaloriesBurned testCaloriesBurned = caloriesBurnedDataPoint.getBody();
+                TimeInterval.ofStartDateTimeAndEndDateTime(OffsetDateTime.parse(expectedDateString),
+                        OffsetDateTime.parse(expectedEndDateString)));
+        CaloriesBurned testCaloriesBurned = caloriesBurnedDataPoint.getBody();
         CaloriesBurned expectedCaloriesBurned = expectedCaloriesBurnedBuilder.build();
-        assertThat(testCaloriesBurned,equalTo(expectedCaloriesBurned));
-        assertThat(caloriesBurnedDataPoint.getHeader().getAcquisitionProvenance().getModality(),equalTo(SENSED));
-        assertThat(caloriesBurnedDataPoint.getHeader().getAcquisitionProvenance().getSourceName(),equalTo(
+        assertThat(testCaloriesBurned, equalTo(expectedCaloriesBurned));
+        assertThat(caloriesBurnedDataPoint.getHeader().getAcquisitionProvenance().getModality(), equalTo(SENSED));
+        assertThat(caloriesBurnedDataPoint.getHeader().getAcquisitionProvenance().getSourceName(), equalTo(
                 RESOURCE_API_SOURCE_NAME));
-        assertThat(caloriesBurnedDataPoint.getHeader().getBodySchemaId(),equalTo(CaloriesBurned.SCHEMA_ID));
+        assertThat(caloriesBurnedDataPoint.getHeader().getBodySchemaId(), equalTo(CaloriesBurned.SCHEMA_ID));
 
     }
-
 
 
 }
