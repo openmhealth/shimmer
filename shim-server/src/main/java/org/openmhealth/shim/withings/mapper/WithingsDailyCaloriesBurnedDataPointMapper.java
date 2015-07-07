@@ -41,15 +41,16 @@ public class WithingsDailyCaloriesBurnedDataPointMapper extends WithingsListData
         Optional<String> timeZoneFullName = asOptionalString(node, "timezone");
 
         if (dateString.isPresent() && timeZoneFullName.isPresent()) {
-            LocalDateTime localDateTime = LocalDate.parse(dateString.get()).atStartOfDay();
+            LocalDateTime localStartDateTime = LocalDate.parse(dateString.get()).atStartOfDay();
             ZoneId zoneId = ZoneId.of(timeZoneFullName.get());
-            ZonedDateTime zonedDateTime = ZonedDateTime.of(localDateTime, zoneId);
+            ZonedDateTime zonedDateTime = ZonedDateTime.of(localStartDateTime, zoneId);
             ZoneOffset offset = zonedDateTime.getOffset();
-            OffsetDateTime offsetDateTime = OffsetDateTime.of(localDateTime, offset);
+            OffsetDateTime offsetStartDateTime = OffsetDateTime.of(localStartDateTime, offset);
+            LocalDateTime localEndDateTime = LocalDate.parse(dateString.get()).atTime(23,59,59);
+
+            OffsetDateTime offsetEndDateTime = OffsetDateTime.of(localEndDateTime,offset);
             caloriesBurnedBuilder.setEffectiveTimeFrame(
-                    TimeInterval.ofStartDateTimeAndDuration(offsetDateTime, new DurationUnitValue(
-                            DurationUnit.DAY,
-                            1))); //Duration is for one day as the datapoint refers to an entire day of calories burned
+                    TimeInterval.ofStartDateTimeAndEndDateTime(offsetStartDateTime, offsetEndDateTime)); //Duration is for one day as the datapoint refers to an entire day of calories burned
         }
 
         Optional<String> userComment = asOptionalString(node, "comment");
