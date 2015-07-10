@@ -16,7 +16,8 @@ import static org.openmhealth.shim.withings.mapper.WithingsBodyMeasureDataPointM
 
 
 /**
- * A mapper from Withings Body Measure endpoint responses (/measure?action=getmeas) to {@link BodyWeight} objects when a
+ * A mapper from Withings Body Measure endpoint responses (/measure?action=getmeas) to {@link BodyWeight} objects when
+ * a
  * body weight value is present in the body measure group
  *
  * @author Chris Schaefbauer
@@ -36,7 +37,7 @@ public class WithingsBodyWeightDataPointMapper extends WithingsBodyMeasureDataPo
     @Override
     Optional<DataPoint<BodyWeight>> asDataPoint(JsonNode node, String timeZoneFullName) {
         JsonNode measuresNode = asRequiredNode(node, "measures");
-        if(isGoal(node)){
+        if (isGoal(node)) {
             return Optional.empty();
         }
         Double value = null;
@@ -50,6 +51,14 @@ public class WithingsBodyWeightDataPointMapper extends WithingsBodyMeasureDataPo
 
         if (value == null || unit == null) {
             return Optional.empty(); // there was no body weight measure in this node
+        }
+
+        if (isUnattributedSensed(node)) {
+            //This is a corner case captured by the Withings API where the data point value captured by the scale is
+            // similar to multiple users and they were not prompted to specify the data point owner because the new
+            // user was created and not synced to the scale before taking a measurement
+            //TODO: Log that datapoint was not captured and to be revisited since user can assign in the web interface
+            return Optional.empty();
         }
 
         BodyWeight.Builder bodyWeightBuilder = new BodyWeight.Builder(new MassUnitValue(MassUnit.KILOGRAM,
@@ -76,6 +85,8 @@ public class WithingsBodyWeightDataPointMapper extends WithingsBodyMeasureDataPo
         return Optional.of(newDataPoint(bodyWeight, RESOURCE_API_SOURCE_NAME, externalId.orElse(null),
                 isSensed(node).orElse(null), null));
     }
+
+
 
 
 }

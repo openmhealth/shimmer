@@ -128,17 +128,36 @@ public abstract class WithingsBodyMeasureDataPointMapper<T> extends WithingsData
 
     /**
      * Determines whether a body measure group item is a goal instead of an actual measurement
+     *
      * @param node a list node from the "measuregrps" list in the body measures API response
      * @return whether or not the datapoint is a goal or real measure
      */
-    protected Boolean isGoal(JsonNode node){
+    protected Boolean isGoal(JsonNode node) {
         Optional<Long> category = asOptionalLong(node, "category");
-        if(category.isPresent()){
-            if(category.get()==2){
+        if (category.isPresent()) {
+            if (category.get() == 2) {
                 return true;
             }
         }
 
+        return false;
+    }
+
+    /**
+     * Determines whether a body measure group item that was sensed is currently unattributed to a user because the
+     * measurement was taken before a new user was synced to the device. Based on Withings feedback, this is only a case
+     * with weight measurements
+     *
+     * @param node a list node from the "measuregrps" list in the body measures API response
+     * @return whether or not a sensed datapoint has been attributed correctly to a user
+     */
+    protected boolean isUnattributedSensed(JsonNode node) {
+        Optional<Long> attrib = asOptionalLong(node, "attrib");
+        if (attrib.isPresent()) {
+            if (attrib.get() == 1) {
+                return true;
+            }
+        }
         return false;
     }
 }
