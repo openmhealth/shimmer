@@ -26,6 +26,11 @@ public class WithingsDailyCaloriesBurnedDataPointMapper extends WithingsListData
     /**
      * Maps an individual list node from the array in the Withings activity measure endpoint response into a {@link
      * CaloriesBurned} data point
+     * <p>
+     * <p>Note: the start datetime and end datetime values for the mapped {@link CaloriesBurned} {@link DataPoint} assume that
+     * the start timezone and end time zone are the same, both equal to the "timezone" property in the Withings response
+     * datapoints. However, according to Withings, the property value they provide is specifically the end datetime
+     * timezone.</p>
      *
      * @param node activity node from the array "activites" contained in the "body" of the endpoint response
      * @return a {@link DataPoint} object containing a {@link CaloriesBurned} measure with the appropriate values from
@@ -39,7 +44,9 @@ public class WithingsDailyCaloriesBurnedDataPointMapper extends WithingsListData
 
         Optional<String> dateString = asOptionalString(node, "date");
         Optional<String> timeZoneFullName = asOptionalString(node, "timezone");
-
+        // We assume that timezone is the same for both the startdate and enddate timestamps, even though Withings only
+        // provides the enddate timezone as the "timezone" property.
+        // TODO: Revisit once Withings can provide start_timezone and end_timezone
         if (dateString.isPresent() && timeZoneFullName.isPresent()) {
             LocalDateTime localStartDateTime = LocalDate.parse(dateString.get()).atStartOfDay();
             ZoneId zoneId = ZoneId.of(timeZoneFullName.get());
