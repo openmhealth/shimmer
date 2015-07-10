@@ -40,7 +40,7 @@ public class WithingsDailyStepCountDataPointMapper extends WithingsListDataPoint
             ZonedDateTime zonedDateTime = ZonedDateTime.of(localStartDateTime, zoneId);
             ZoneOffset offset = zonedDateTime.getOffset();
             OffsetDateTime offsetStartDateTime = OffsetDateTime.of(localStartDateTime, offset);
-            LocalDateTime localEndDateTime = LocalDate.parse(dateString.get()).atTime(23,59,59);
+            LocalDateTime localEndDateTime = LocalDate.parse(dateString.get()).atStartOfDay().plusDays(1);
             OffsetDateTime offsetEndDateTime = OffsetDateTime.of(localEndDateTime,offset);
             stepCountBuilder.setEffectiveTimeFrame(
                     TimeInterval.ofStartDateTimeAndEndDateTime(offsetStartDateTime, offsetEndDateTime));

@@ -44,10 +44,10 @@ public class WithingsDailyStepCountDataPointMapperUnitTests extends DataPointMap
     @Test
     public void asDataPointsReturnsCorrectDataPoints() {
         List<DataPoint<StepCount>> dataPoints = mapper.asDataPoints(singletonList(responseNode));
-        testDailyStepCountDataPoint(dataPoints.get(0), 2934, "2015-06-18T00:00:00-07:00", "2015-06-18T23:59:59-07:00");
-        testDailyStepCountDataPoint(dataPoints.get(1), 2600, "2015-06-19T00:00:00-07:00", "2015-06-19T23:59:59-07:00");
-        testDailyStepCountDataPoint(dataPoints.get(2), 5458, "2015-06-20T00:00:00-07:00", "2015-06-20T23:59:59-07:00");
-        testDailyStepCountDataPoint(dataPoints.get(3), 1798, "2015-02-21T00:00:00-08:00", "2015-02-21T23:59:59-08:00");
+        testDailyStepCountDataPoint(dataPoints.get(0), 2934, "2015-06-18T00:00:00-07:00", "2015-06-19T00:00:00-07:00");
+        testDailyStepCountDataPoint(dataPoints.get(1), 2600, "2015-06-19T00:00:00-07:00", "2015-06-20T00:00:00-07:00");
+        testDailyStepCountDataPoint(dataPoints.get(2), 5458, "2015-06-20T00:00:00-07:00", "2015-06-21T00:00:00-07:00");
+        testDailyStepCountDataPoint(dataPoints.get(3), 1798, "2015-02-21T00:00:00-08:00", "2015-02-22T00:00:00-08:00");
     }
 
     public void testDailyStepCountDataPoint(DataPoint<StepCount> stepCountDataPoint, long expectedStepCountValue,
