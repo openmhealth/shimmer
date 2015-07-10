@@ -41,8 +41,8 @@ public class WithingsSleepDurationDataPointMapperUnitTests extends DataPointMapp
         List<DataPoint<SleepDuration>> dataPoints = mapper.asDataPoints(singletonList(responseNode));
         SleepDuration.Builder sleepDurationBuilder = new SleepDuration.Builder(new DurationUnitValue(DurationUnit.SECOND,37460));
 
-        OffsetDateTime offsetStartDateTime = OffsetDateTime.parse("2014-09-12T13:34:19+02:00");
-        OffsetDateTime offsetEndDateTime = OffsetDateTime.parse("2014-09-12T19:22:57+02:00");
+        OffsetDateTime offsetStartDateTime = OffsetDateTime.parse("2014-09-12T11:34:19Z");
+        OffsetDateTime offsetEndDateTime = OffsetDateTime.parse("2014-09-12T17:22:57Z");
         sleepDurationBuilder.setEffectiveTimeFrame(TimeInterval.ofStartDateTimeAndEndDateTime(offsetStartDateTime,offsetEndDateTime));
 
         SleepDuration expectedSleepDuration = sleepDurationBuilder.build();

@@ -43,11 +43,11 @@ public class WithingsSleepDurationDataPointMapper extends WithingsListDataPointM
 
         Optional<Long> startDateInEpochSeconds = asOptionalLong(node, "startdate");
         Optional<Long> endDateInEpochSeconds = asOptionalLong(node, "enddate");
-        Optional<String> timezone = asOptionalString(node, "timezone");
-        if(startDateInEpochSeconds.isPresent()&&endDateInEpochSeconds.isPresent()&&timezone.isPresent()){
+
+        if(startDateInEpochSeconds.isPresent()&&endDateInEpochSeconds.isPresent()){
             OffsetDateTime offsetStartDateTime = OffsetDateTime.ofInstant(Instant.ofEpochSecond(startDateInEpochSeconds.get()),of(
-                    timezone.get()));
-            OffsetDateTime offsetEndDateTime = OffsetDateTime.ofInstant(Instant.ofEpochSecond(endDateInEpochSeconds.get()),of(timezone.get()));
+                    "Z"));
+            OffsetDateTime offsetEndDateTime = OffsetDateTime.ofInstant(Instant.ofEpochSecond(endDateInEpochSeconds.get()),of("Z"));
             sleepDurationBuilder.setEffectiveTimeFrame(TimeInterval.ofStartDateTimeAndEndDateTime(offsetStartDateTime,offsetEndDateTime));
         }
 
