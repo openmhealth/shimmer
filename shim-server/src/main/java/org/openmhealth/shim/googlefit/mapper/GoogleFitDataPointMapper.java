@@ -41,12 +41,19 @@ public abstract class GoogleFitDataPointMapper<T extends Measure> implements Jso
     protected abstract Optional<DataPoint<T>> asDataPoint(JsonNode listNode);
 
 
-    public DataPoint<T> newDataPoint(T measure,String fitDataSourceId){
-
+    public DataPoint<T> newDataPoint(T measure, String fitDataSourceId){
 
         DataPointAcquisitionProvenance.Builder acquisitionProvenanceBuilder =
                 new DataPointAcquisitionProvenance.Builder(RESOURCE_API_SOURCE_NAME);
+        if(fitDataSourceId!=null&&fitDataSourceId.endsWith("user_input")){
+            acquisitionProvenanceBuilder.setModality(DataPointModality.SELF_REPORTED);
+        }
+
         DataPointAcquisitionProvenance acquisitionProvenance = acquisitionProvenanceBuilder.build();
+        if(fitDataSourceId!=null){
+            acquisitionProvenance.setAdditionalProperty("source_origin_id",fitDataSourceId);
+        }
+
         DataPointHeader header = new DataPointHeader.Builder(UUID.randomUUID().toString(), measure.getSchemaId()).
                 setAcquisitionProvenance(acquisitionProvenance).build();
 

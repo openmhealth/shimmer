@@ -23,13 +23,6 @@ public class GoogleFitBodyWeightDataPointMapperUnitTests extends GoogleFitDataPo
 
     private GoogleFitBodyWeightDataPointMapper mapper = new GoogleFitBodyWeightDataPointMapper();
 
-//    @BeforeTest
-//    @Override
-//    public void initializeResponseNode() throws IOException {
-//        ClassPathResource resource = new ClassPathResource("org/openmhealth/shim/googlefit/mapper/googlefit-body-weight.json");
-//        responseNode = objectMapper.readTree(resource.getInputStream());
-//    }
-
     @BeforeTest
     public void initializeResponseNode() throws IOException {
         ClassPathResource resource = new ClassPathResource(getDataPointResourcePath());
@@ -48,9 +41,12 @@ public class GoogleFitBodyWeightDataPointMapperUnitTests extends GoogleFitDataPo
     @Override
     public void asDataPointsShouldReturnCorrectDataPoints() {
         List<DataPoint<BodyWeight>> dataPoints = mapper.asDataPoints(singletonList(responseNode));
-        testGoogleFitDataPoint(dataPoints.get(0), createFloatingPointTestProperties(72.0999984741211,"2015-02-13T00:00:00Z",null));
-        testGoogleFitDataPoint(dataPoints.get(1), createFloatingPointTestProperties(72,"2015-02-17T16:57:13.313Z",null));
-        testGoogleFitDataPoint(dataPoints.get(2), createFloatingPointTestProperties(75.75070190429688,"2015-07-08T03:17:00Z","2015-07-08T03:17:10.020Z"));
+        testGoogleFitDataPoint(dataPoints.get(0), createFloatingPointTestProperties(72.0999984741211,"2015-02-13T00:00:00Z",null,
+                "raw:com.google.weight:com.fatsecret.android:"));
+        testGoogleFitDataPoint(dataPoints.get(1), createFloatingPointTestProperties(72,"2015-02-17T16:57:13.313Z",null,
+                "raw:com.google.weight:com.wsl.noom:"));
+        testGoogleFitDataPoint(dataPoints.get(2), createFloatingPointTestProperties(75.75070190429688,"2015-07-08T03:17:00Z","2015-07-08T03:17:10.020Z",
+                "raw:com.google.weight:com.google.android.apps.fitness:user_input"));
 
     }
 

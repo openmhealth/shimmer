@@ -29,8 +29,6 @@ public class GoogleFitBodyHeightDataPointMapperUnitTests extends GoogleFitDataPo
         responseNode = objectMapper.readTree(resource.getInputStream());
     }
 
-
-
     @Test
     @Override
     public void asDataPointsShouldReturnCorrectNumberOfDataPoints() {
@@ -42,8 +40,10 @@ public class GoogleFitBodyHeightDataPointMapperUnitTests extends GoogleFitDataPo
     @Override
     public void asDataPointsShouldReturnCorrectDataPoints() {
         List<DataPoint<BodyHeight>> dataPoints = mapper.asDataPoints(singletonList(responseNode));
-        testGoogleFitDataPoint(dataPoints.get(0),createFloatingPointTestProperties(1.8287990093231201,"2015-07-08T03:17:06.030Z",null));
-        testGoogleFitDataPoint(dataPoints.get(1),createFloatingPointTestProperties(1.828800082206726,"2015-07-08T14:43:57.544Z","2015-07-08T14:43:58.545Z"));
+        testGoogleFitDataPoint(dataPoints.get(0),createFloatingPointTestProperties(1.8287990093231201,"2015-07-08T03:17:06.030Z",null,
+                "raw:com.google.height:com.google.android.apps.fitness:user_input"));
+        testGoogleFitDataPoint(dataPoints.get(1),createFloatingPointTestProperties(1.828800082206726,"2015-07-08T14:43:57.544Z","2015-07-08T14:43:58.545Z",
+                "raw:com.google.height:com.google.android.apps.fitness:user_input"));
     }
 
     @Override

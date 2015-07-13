@@ -14,11 +14,11 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.*;
 public class GoogleFitBodyWeightDataPointMapper extends GoogleFitDataPointMapper<BodyWeight> {
 
     @Override
-    public Optional<DataPoint<BodyWeight>> asDataPoint(JsonNode node) {
-        JsonNode valueList = asRequiredNode(node, getValueListNodeName());
+    public Optional<DataPoint<BodyWeight>> asDataPoint(JsonNode listNode) {
+        JsonNode valueList = asRequiredNode(listNode, getValueListNodeName());
         Double bodyWeightValue = asRequiredDouble(valueList.get(0), "fpVal");
         BodyWeight.Builder bodyWeightBuilder = new BodyWeight.Builder(new MassUnitValue(MassUnit.KILOGRAM,bodyWeightValue));
-        setEffectiveTimeFrameIfPresent(bodyWeightBuilder, node);
+        setEffectiveTimeFrameIfPresent(bodyWeightBuilder, listNode);
 //        Optional<String> startTimeNanosString = asOptionalString(node, "startTimeNanos");
 //        Optional<String> endTimeNanosString = asOptionalString(node, "endTimeNanos");
 //        if(startTimeNanosString.isPresent()&&endTimeNanosString.isPresent()){
@@ -33,8 +33,9 @@ public class GoogleFitBodyWeightDataPointMapper extends GoogleFitDataPointMapper
 //            }
 //
 //        }
+        Optional<String> originDataSourceId = asOptionalString(listNode, "originDataSourceId");
 
         BodyWeight bodyWeight = bodyWeightBuilder.build();
-        return Optional.of(newDataPoint(bodyWeight,null));
+        return Optional.of(newDataPoint(bodyWeight,originDataSourceId.orElse(null)));
     }
 }

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.Maps;
 import org.openmhealth.schema.domain.omh.DataPoint;
 import org.openmhealth.schema.domain.omh.DataPointHeader;
+import org.openmhealth.schema.domain.omh.DataPointModality;
 import org.openmhealth.schema.domain.omh.Measure;
 import org.openmhealth.shim.common.mapper.DataPointMapperUnitTests;
 import org.testng.annotations.Test;
@@ -37,21 +38,28 @@ public abstract class GoogleFitDataPointMapperUnitTests<T extends Measure> exten
         testGoogleFitMeasureFromDataPoint(dataPoint.getBody(),properties);
         DataPointHeader dataPointHeader = dataPoint.getHeader();
         assertThat(dataPointHeader.getAcquisitionProvenance().getSourceName(),equalTo(RESOURCE_API_SOURCE_NAME));
+        assertThat(dataPointHeader.getAcquisitionProvenance().getAdditionalProperties().get(
+                "source_origin_id"),equalTo(properties.get("sourceOriginId")));
+        if(properties.containsKey("modality")){
+            assertThat(dataPointHeader.getAcquisitionProvenance().getModality(),equalTo(properties.get("modality")));
+        }
+
     }
 
-    public Map<String,Object> createFloatingPointTestProperties(double fpValue,String startDateTime,String endDateTime){
-        Map<String,Object> properties = createTestProperties(startDateTime,endDateTime);
+    public Map<String,Object> createFloatingPointTestProperties(double fpValue, String startDateTime,
+            String endDateTime, String sourceOriginId){
+        Map<String,Object> properties = createTestProperties(startDateTime,endDateTime,sourceOriginId);
         properties.put("fpValue",fpValue);
         return properties;
     }
 
-    public Map<String,Object> createIntegerTestProperties(long intValue,String startDateTime,String endDateTime){
-        Map<String, Object> properties = createTestProperties(startDateTime, endDateTime);
+    public Map<String,Object> createIntegerTestProperties(long intValue,String startDateTime,String endDateTime,String sourceOriginId){
+        Map<String, Object> properties = createTestProperties(startDateTime, endDateTime,sourceOriginId);
         properties.put("intValue",intValue);
         return properties;
     }
 
-    private Map<String, Object> createTestProperties(String startDateTimeString, String endDateTimeString) {
+    private Map<String, Object> createTestProperties(String startDateTimeString, String endDateTimeString, String sourceOriginId) {
         HashMap<String, Object> properties = Maps.newHashMap();
         if(startDateTimeString!=null){
             properties.put("startDateTimeString",startDateTimeString);
@@ -59,7 +67,12 @@ public abstract class GoogleFitDataPointMapperUnitTests<T extends Measure> exten
         if(endDateTimeString!=null){
             properties.put("endDateTimeString",endDateTimeString);
         }
-
+        if(sourceOriginId!=null){
+            properties.put("sourceOriginId",sourceOriginId);
+            if(sourceOriginId.endsWith("user_input")){
+                properties.put("modality", DataPointModality.SELF_REPORTED);
+            }
+        }
 
         return properties;
     }

@@ -8,6 +8,7 @@ import org.openmhealth.schema.domain.omh.LengthUnitValue;
 
 import java.util.Optional;
 
+import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asOptionalString;
 import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asRequiredDouble;
 import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asRequiredNode;
 
@@ -27,7 +28,8 @@ public class GoogleFitBodyHeightDataPointMapper extends GoogleFitDataPointMapper
         setEffectiveTimeFrameIfPresent(bodyHeightBuilder, listNode);
 
         BodyHeight bodyHeight = bodyHeightBuilder.build();
-        return Optional.of(newDataPoint(bodyHeight, null));
+        Optional<String> originDataSourceId = asOptionalString(listNode, "originDataSourceId");
+        return Optional.of(newDataPoint(bodyHeight, originDataSourceId.orElse(null)));
     }
 
 
