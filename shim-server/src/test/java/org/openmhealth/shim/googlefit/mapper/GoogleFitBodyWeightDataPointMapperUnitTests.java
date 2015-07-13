@@ -23,10 +23,16 @@ public class GoogleFitBodyWeightDataPointMapperUnitTests extends GoogleFitDataPo
 
     private GoogleFitBodyWeightDataPointMapper mapper = new GoogleFitBodyWeightDataPointMapper();
 
+//    @BeforeTest
+//    @Override
+//    public void initializeResponseNode() throws IOException {
+//        ClassPathResource resource = new ClassPathResource("org/openmhealth/shim/googlefit/mapper/googlefit-body-weight.json");
+//        responseNode = objectMapper.readTree(resource.getInputStream());
+//    }
+
     @BeforeTest
-    @Override
     public void initializeResponseNode() throws IOException {
-        ClassPathResource resource = new ClassPathResource("org/openmhealth/shim/googlefit/mapper/googlefit-body-weight.json");
+        ClassPathResource resource = new ClassPathResource(getDataPointResourcePath());
         responseNode = objectMapper.readTree(resource.getInputStream());
     }
 
@@ -63,5 +69,10 @@ public class GoogleFitBodyWeightDataPointMapperUnitTests extends GoogleFitDataPo
 
         BodyWeight expectedBodyWeight = expectedBodyWeightBuilder.build();
         assertThat(testMeasure,equalTo(expectedBodyWeight));
+    }
+
+    @Override
+    protected String getDataPointResourcePath() {
+        return "org/openmhealth/shim/googlefit/mapper/googlefit-body-weight.json";
     }
 }

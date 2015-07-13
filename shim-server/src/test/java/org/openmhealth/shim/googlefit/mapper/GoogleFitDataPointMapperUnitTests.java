@@ -6,16 +6,14 @@ import org.openmhealth.schema.domain.omh.DataPoint;
 import org.openmhealth.schema.domain.omh.DataPointHeader;
 import org.openmhealth.schema.domain.omh.Measure;
 import org.openmhealth.shim.common.mapper.DataPointMapperUnitTests;
-import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
-import static org.openmhealth.shim.googlefit.mapper.GoogleFitDataPointMapper.*;
+import static org.openmhealth.shim.googlefit.mapper.GoogleFitDataPointMapper.RESOURCE_API_SOURCE_NAME;
 
 
 /**
@@ -25,8 +23,7 @@ public abstract class GoogleFitDataPointMapperUnitTests<T extends Measure> exten
 
     protected JsonNode responseNode;
 
-    @BeforeTest
-    public abstract void initializeResponseNode() throws IOException;
+    protected abstract String getDataPointResourcePath();
 
     @Test
     public abstract void asDataPointsShouldReturnCorrectNumberOfDataPoints();
@@ -37,11 +34,9 @@ public abstract class GoogleFitDataPointMapperUnitTests<T extends Measure> exten
     public abstract void testGoogleFitMeasureFromDataPoint(T testMeasure, Map<String,Object> properties);
 
     public void testGoogleFitDataPoint(DataPoint<T> dataPoint,Map<String,Object> properties){
-
         testGoogleFitMeasureFromDataPoint(dataPoint.getBody(),properties);
         DataPointHeader dataPointHeader = dataPoint.getHeader();
         assertThat(dataPointHeader.getAcquisitionProvenance().getSourceName(),equalTo(RESOURCE_API_SOURCE_NAME));
-
     }
 
     public Map<String,Object> createFloatingPointTestProperties(double fpValue,String startDateTime,String endDateTime){
