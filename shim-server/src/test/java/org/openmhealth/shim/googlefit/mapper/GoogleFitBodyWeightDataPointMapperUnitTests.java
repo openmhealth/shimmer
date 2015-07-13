@@ -1,12 +1,14 @@
 package org.openmhealth.shim.googlefit.mapper;
 
-import org.openmhealth.schema.domain.omh.*;
+import org.openmhealth.schema.domain.omh.BodyWeight;
+import org.openmhealth.schema.domain.omh.DataPoint;
+import org.openmhealth.schema.domain.omh.MassUnit;
+import org.openmhealth.schema.domain.omh.MassUnitValue;
 import org.springframework.core.io.ClassPathResource;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
-import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -24,8 +26,9 @@ public class GoogleFitBodyWeightDataPointMapperUnitTests extends GoogleFitDataPo
     private GoogleFitBodyWeightDataPointMapper mapper = new GoogleFitBodyWeightDataPointMapper();
 
     @BeforeTest
+    @Override
     public void initializeResponseNode() throws IOException {
-        ClassPathResource resource = new ClassPathResource(getDataPointResourcePath());
+        ClassPathResource resource = new ClassPathResource("org/openmhealth/shim/googlefit/mapper/googlefit-body-weight.json");
         responseNode = objectMapper.readTree(resource.getInputStream());
     }
 
@@ -54,21 +57,17 @@ public class GoogleFitBodyWeightDataPointMapperUnitTests extends GoogleFitDataPo
     public void testGoogleFitMeasureFromDataPoint(BodyWeight testMeasure, Map<String, Object> properties) {
         BodyWeight.Builder expectedBodyWeightBuilder =
                 new BodyWeight.Builder(new MassUnitValue(MassUnit.KILOGRAM,(Double)properties.get("fpValue")));
-        if(properties.containsKey("endDateTimeString")){
-            expectedBodyWeightBuilder.setEffectiveTimeFrame(TimeInterval.ofStartDateTimeAndEndDateTime(
-                    OffsetDateTime.parse((String) properties.get("startDateTimeString")),
-                    OffsetDateTime.parse((String) properties.get("endDateTimeString"))));
-        }
-        else{
-            expectedBodyWeightBuilder.setEffectiveTimeFrame(OffsetDateTime.parse((String)properties.get("startDateTimeString")));
-        }
-
+//        if(properties.containsKey("endDateTimeString")){
+//            expectedBodyWeightBuilder.setEffectiveTimeFrame(TimeInterval.ofStartDateTimeAndEndDateTime(
+//                    OffsetDateTime.parse((String) properties.get("startDateTimeString")),
+//                    OffsetDateTime.parse((String) properties.get("endDateTimeString"))));
+//        }
+//        else{
+//            expectedBodyWeightBuilder.setEffectiveTimeFrame(OffsetDateTime.parse((String)properties.get("startDateTimeString")));
+//        }
+        setExpectedEffectiveTimeFrame(expectedBodyWeightBuilder,properties);
         BodyWeight expectedBodyWeight = expectedBodyWeightBuilder.build();
         assertThat(testMeasure,equalTo(expectedBodyWeight));
     }
 
-    @Override
-    protected String getDataPointResourcePath() {
-        return "org/openmhealth/shim/googlefit/mapper/googlefit-body-weight.json";
-    }
 }

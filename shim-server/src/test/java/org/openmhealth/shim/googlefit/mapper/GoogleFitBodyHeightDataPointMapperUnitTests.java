@@ -24,8 +24,9 @@ public class GoogleFitBodyHeightDataPointMapperUnitTests extends GoogleFitDataPo
     private GoogleFitBodyHeightDataPointMapper mapper = new GoogleFitBodyHeightDataPointMapper();
 
     @BeforeTest
+    @Override
     public void initializeResponseNode() throws IOException {
-        ClassPathResource resource = new ClassPathResource(getDataPointResourcePath());
+        ClassPathResource resource = new ClassPathResource("org/openmhealth/shim/googlefit/mapper/googlefit-body-height.json");
         responseNode = objectMapper.readTree(resource.getInputStream());
     }
 
@@ -59,10 +60,5 @@ public class GoogleFitBodyHeightDataPointMapperUnitTests extends GoogleFitDataPo
         }
         BodyHeight expectedBodyHeight = bodyHeightBuilder.build();
         assertThat(testMeasure,equalTo(expectedBodyHeight));
-    }
-
-    @Override
-    protected String getDataPointResourcePath() {
-        return "org/openmhealth/shim/googlefit/mapper/googlefit-body-height.json";
     }
 }

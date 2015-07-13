@@ -2,13 +2,12 @@ package org.openmhealth.shim.googlefit.mapper;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.Maps;
-import org.openmhealth.schema.domain.omh.DataPoint;
-import org.openmhealth.schema.domain.omh.DataPointHeader;
-import org.openmhealth.schema.domain.omh.DataPointModality;
-import org.openmhealth.schema.domain.omh.Measure;
+import org.openmhealth.schema.domain.omh.*;
 import org.openmhealth.shim.common.mapper.DataPointMapperUnitTests;
 import org.testng.annotations.Test;
 
+import java.io.IOException;
+import java.time.OffsetDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,7 +23,7 @@ public abstract class GoogleFitDataPointMapperUnitTests<T extends Measure> exten
 
     protected JsonNode responseNode;
 
-    protected abstract String getDataPointResourcePath();
+    public abstract void initializeResponseNode() throws IOException;
 
     @Test
     public abstract void asDataPointsShouldReturnCorrectNumberOfDataPoints();
@@ -75,5 +74,16 @@ public abstract class GoogleFitDataPointMapperUnitTests<T extends Measure> exten
         }
 
         return properties;
+    }
+
+    public void setExpectedEffectiveTimeFrame(T.Builder builder,Map<String,Object> properties){
+        if(properties.containsKey("endDateTimeString")){
+            builder.setEffectiveTimeFrame(TimeInterval.ofStartDateTimeAndEndDateTime(
+                    OffsetDateTime.parse((String) properties.get("startDateTimeString")),
+                    OffsetDateTime.parse((String) properties.get("endDateTimeString"))));
+        }
+        else{
+            builder.setEffectiveTimeFrame(OffsetDateTime.parse((String)properties.get("startDateTimeString")));
+        }
     }
 }
