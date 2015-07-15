@@ -14,8 +14,8 @@ import java.util.UUID;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asOptionalNode;
 import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asOptionalString;
-import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asRequiredNode;
 
 
 /**
@@ -28,12 +28,15 @@ public abstract class GoogleFitDataPointMapper<T extends Measure> implements Jso
     public List<DataPoint<T>> asDataPoints(List<JsonNode> responseNodes){
         checkNotNull(responseNodes);
         checkArgument(responseNodes.size()==1,"Only one response should be input to the mapper");
-        List<DataPoint<T>> dataPoints = Lists.newArrayList();
-        JsonNode listNodes = asRequiredNode(responseNodes.get(0), getListNodeName());
-        for(JsonNode listNode:listNodes){
-            asDataPoint(listNode).ifPresent(dataPoints::add);
-        }
 
+        List<DataPoint<T>> dataPoints = Lists.newArrayList();
+        Optional<JsonNode> listNodes = asOptionalNode(responseNodes.get(0), getListNodeName());
+        if(listNodes.isPresent()){
+            for(JsonNode listNode:listNodes.get()){
+                asDataPoint(listNode).ifPresent(dataPoints::add);
+            }
+        }
+        
         return  dataPoints;
 
     }

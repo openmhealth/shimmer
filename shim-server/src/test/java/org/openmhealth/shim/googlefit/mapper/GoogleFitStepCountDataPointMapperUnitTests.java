@@ -1,5 +1,6 @@
 package org.openmhealth.shim.googlefit.mapper;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import org.openmhealth.schema.domain.omh.DataPoint;
 import org.openmhealth.schema.domain.omh.StepCount;
 import org.springframework.core.io.ClassPathResource;
@@ -21,12 +22,16 @@ import static org.hamcrest.Matchers.equalTo;
 public class GoogleFitStepCountDataPointMapperUnitTests extends GoogleFitDataPointMapperUnitTests<StepCount> {
 
     private GoogleFitStepCountDataPointMapper mapper = new GoogleFitStepCountDataPointMapper();
+    JsonNode emptyNode;
 
     @BeforeTest
     @Override
     public void initializeResponseNode() throws IOException {
         ClassPathResource resource = new ClassPathResource("org/openmhealth/shim/googlefit/mapper/googlefit-step-count.json");
         responseNode = objectMapper.readTree(resource.getInputStream());
+        resource = new ClassPathResource("org/openmhealth/shim/googlefit/mapper/googlefit-empty.json");
+        emptyNode = objectMapper.readTree(resource.getInputStream());
+
     }
 
     @Test
@@ -43,6 +48,12 @@ public class GoogleFitStepCountDataPointMapperUnitTests extends GoogleFitDataPoi
         testGoogleFitDataPoint(dataPoints.get(0),createIntegerTestProperties(4146,"2015-02-02T22:49:39.811Z","2015-02-02T23:25:20.811Z","derived:com.google.step_count.delta:com.nike.plusgps:"));
         testGoogleFitDataPoint(dataPoints.get(1),createIntegerTestProperties(17,"2015-07-10T21:58:17.687316406Z","2015-07-10T21:59:17.687316406Z","derived:com.google.step_count.cumulative:com.google.android.gms:samsung:Galaxy Nexus:32b1bd9e:soft_step_counter"));
         testGoogleFitDataPoint(dataPoints.get(2),createIntegerTestProperties(184,"2015-07-10T22:05:21.162Z","2015-07-10T22:07:18.006058105Z","raw:com.google.step_count.delta:com.google.android.apps.fitness:user_input"));
+    }
+
+    @Test
+    public void asDataPointsShouldReturnZeroDataPointsWithEmptyData(){
+        List<DataPoint<StepCount>> dataPoints = mapper.asDataPoints(singletonList(emptyNode));
+        assertThat(dataPoints.size(),equalTo(0));
     }
 
     @Override
