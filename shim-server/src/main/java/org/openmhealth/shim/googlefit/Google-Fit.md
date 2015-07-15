@@ -46,6 +46,24 @@ datapoints have a “modifiedTimeMillis” property that lists the time they wer
 # endpoints
 In addition to the parameters listed within each specific endpoint, all endpoints accept, and in some cases require, the following request parameters: https://developers.google.com/fit/rest/v1/reference/parameters.
 
+## endpoint responses
+The response from every endpoint is very similar and aligns with the Google RESTful API. 
+
+Each response contains a list of data points contained in the array property named “point.” Each item in the list is a datapoint representing a measurement for the requested datatype that was reported by a device, application, or recorded directly by the user. Each data point contains the following properties: 
+- startTimeNanos: the start date/time timestamp in unix epoch nanos
+- endTimeNanos: the end date/time timestamp in unix epoch nanos
+- dataTypeName: indicates the type of data that is contained within the data point, it can be something like “com.google.height,” indicating it is a height value stored in the google fit platform or "com.google.step_count.delta” indicating it is a step count value stored in the google fit platform. The delta refers to the fact that it is the number of step counts during the specified period, since the last data point was created.
+- originDataSourceId: the data source for the datapoint, representing as a namespace for the application along with some additional information. It could be a user input value, represented by the string “raw:com.google.[data-type]:com.google.android.apps.fitness:user_input” or from a third party device or third party application, such as “derived:com.google.step_count.cumulative:com.google.android.gms:samsung:Galaxy Nexus:32b1bd9e:soft_step_counter”
+- value: an array that contains a single data point representing the value, can either by an intVal or fpVal property. The units for the value property are defined based on the data type in the request and documented on the Fit API website
+  - intVal: the value, represented as an integer point value without any decimal, for the specified data type; this property is contained within the object in the “value” array.
+  - fpVal: the value, represented as a floating point value with a decimal, for the specified data type; this property is contained within the object in the “value” array.
+- modifiedTimeMillis: Indicates the last time this data point was modified.
+
+In addition to the datapoints array, there are three other properties in the response:
+- minStartTimeNs: the start datetime of the request that generated the response
+- maxEndTimeNs: the end datetime of the request that generated the response
+- dataSourceId: the id of the data source that responded to the request
+
 ## get body weight
 - Endpoint: /users/me/dataSources/derived:com.google.weight:com.google.android.gms:merge_weight/datasets/<time-frame-start-in-nanos>-<time-frame-end-in-nanos> this endpoint in theory provides all of the datapoints that have been measured by a device related to body weight. Google is not clear and does not provide documentation on their merge process. 
 
@@ -62,21 +80,6 @@ This description relates to the primary endpoint above, for merged data points. 
 
 “pageToken” which is the continuation token, which is used to page through large datasets. To get the next page of a dataset, set this parameter to the value of nextPageToken from the previous response.
 
-### Response
-A list of data points contained in the array property named “point.” Each item in the list is a datapoint representing a body weight measurement reported by a device or recorded directly by the user. Each data point contains the following properties: 
-- startTimeNanos: the start date/time timestamp in unix epoch nanos
-- endTimeNanos: the end date/time timestamp in unix epoch nanos
-- dataTypeName: indicates the type of data that is contained within the data point, in this case the value is “com.google.weight” indicating it is a weight value stored in the google fit platform
-- originDataSourceId: the data source for the datapoint, representing as a namespace for the application along with some additional information. It could be a user input value, represented by the strting “raw:com.google.weight:com.google.android.apps.fitness:user_input” or from a third party device or third party application, such as “raw:com.google.weight:com.fatsecret.android:”
-- value: an array that contains a single data point representing the value
-  - fpVal: the weight value in kg, this property is contained within the object in the “value” array
-- modifiedTimeMillis: Indicates the last time this data point was modified.
-
-In addition to the datapoints array, there are three other properties in the response:
-- minStartTimeNs: the start datetime of the request that generated the response
-- maxEndTimeNs: the end datetime of the request that generated the response
-- dataSourceId: the id of the data source that responded to the request
-
 ## get body height
 - Endpoint: https://www.googleapis.com/fitness/v1/users/me/dataSources/derived:com.google.height:com.google.android.gms:merge_height/datasets/<time-frame-start-in-nanos>-<time-frame-end-in-nanos>
 
@@ -92,21 +95,6 @@ This description relates to the primary endpoint above, for merged data points. 
 
 - Optional parameters: “limit”, which is the maximum number of datapoints to be returned in the response and if the there are more data points in the dataset, nextPageToken will be set in the dataset response for pagination; “pageToken” which is the continuation token, which is used to page through large datasets. To get the next page of a dataset, set this parameter to the value of nextPageToken from the previous response.
 
-### Response
-A list of data points contained in the array property named “point.” Each item in the list is a datapoint representing a body height measurement reported by a device or recorded directly by the user. Each data point contains the following properties: 
-- startTimeNanos: the start date/time timestamp in unix epoch nanos
-- endTimeNanos: the end date/time timestamp in unix epoch nanos
-- dataTypeName: indicates the type of data that is contained within the data point, in this case the value is “com.google.height” indicating it is a height value stored in the google fit platform
-- originDataSourceId: the data source for the datapoint, representing as a namespace for the application along with some additional information. It could be a user input value, represented by the string “raw:com.google.height:com.google.android.apps.fitness:user_input” or from a third party device or third party application.
-- value: an array that contains a single data point representing the value
-  - fpVal: the height value in meters, this property is contained within the object in the “value” array
-- modifiedTimeMillis: Indicates the last time this data point was modified.
-
-In addition to the datapoints array, there are three other properties in the response:
-- minStartTimeNs: the start datetime of the request that generated the response
-- maxEndTimeNs: the end datetime of the request that generated the response
-- dataSourceId: the id of the data source that responded to the request
-
 ## get step count
 - Endpoint: derived:com.google.step_count.delta:com.google.android.gms:merge_step_deltas
 
@@ -119,22 +107,6 @@ Retrieves all of the step count data points that have been recorded to the Googl
 - Required parameters: time-frame-start-in-nanos, time-frame-end-in-nanos are required to specify the range of dates/times for which the data should be retrieved. Userid is required and is set to “me” in all cases to refer to the user whose authentication token is being used. 
 
 - Optional parameters: “limit”, which is the maximum number of datapoints to be returned in the response and if the there are more data points in the dataset, nextPageToken will be set in the dataset response for pagination; “pageToken” which is the continuation token, which is used to page through large datasets. To get the next page of a dataset, set this parameter to the value of nextPageToken from the previous response.
-
-
-### Response
-Returns a list of data points contained in the array property named “point.” Each item in the list is a datapoint representing a step count measurement reported by a device or recorded directly by the user. Each data point contains the following properties: 
-- startTimeNanos: the start date/time timestamp in unix epoch nanos
-- endTimeNanos: the end date/time timestamp in unix epoch nanos
-- dataTypeName: indicates the type of data that is contained within the data point, in this case the value is “com.google.step_count.delta” indicating it is a step count value stored in the google fit platform. The delta refers to the fact that it is the number of step counts during the specified period, since the last data point was created. 
-- originDataSourceId: the data source for the datapoint, representing as a namespace for the application along with some additional information. It could be a user input value, represented by the string “raw:com.google.step_count.delta:com.google.android.apps.fitness:user_input” or from a third party device or third party application, “derived:com.google.step_count.cumulative:com.google.android.gms:samsung:Galaxy Nexus:32b1bd9e:soft_step_counter”. This means it is possible to ask for step counts provided from specific devices or applications. 
-- value: an array that contains a single data point representing the value
-  - intVal: the number of steps taken during the time period as a raw count, this property is contained within the object in the “value” array
-- modifiedTimeMillis: Indicates the last time this data point was modified.
-
-In addition to the datapoints array, there are three other properties in the response:
-- minStartTimeNs: the start datetime of the request that generated the response
-- maxEndTimeNs: the end datetime of the request that generated the response
-- dataSourceId: the id of the data source that responded to the request
 
 ## get calories
 - Endpoint: derived:com.google.calories.expended:com.google.android.gms:merge_calories_expended
@@ -151,22 +123,6 @@ Retrieves a set of ‘calories expended’ data points that is merged from all s
 
 - Optional parameters: “limit”, which is the maximum number of datapoints to be returned in the response and if the there are more data points in the dataset, nextPageToken will be set in the dataset response for pagination; “pageToken” which is the continuation token, which is used to page through large datasets. To get the next page of a dataset, set this parameter to the value of nextPageToken from the previous response.
 
-
-### Response
-Returns a list of data points contained in the array property named “point.” Each item in the list is a datapoint representing a period of calories being expended by activity or body activity. Each data point contains the following properties: 
-- startTimeNanos: the start date/time timestamp in unix epoch nanos
-- endTimeNanos: the end date/time timestamp in unix epoch nanos
-- dataTypeName: indicates the type of data that is contained within the data point, in this case the value is “com.google.calories.expended” indicating it represents a number of calories expended that is stored on the google fit platform
-- originDataSourceId: the data source for the datapoint, representing as a namespace for the application along with some additional information. It could be a user input value, represented by the string “raw:com.google.calories.expended:com.google.android.apps.fitness:user_input” or from inference based on activity or other measures (derived:com.google.calories.expended:com.google.android.gms:from_activities)
-- value: an array that contains a single data point representing the value
-  - fpVal: the measured calories expended value associated with the datapoint in kcal represented as a float number
-- modifiedTimeMillis: Indicates the last time this data point was modified.
-
-In addition to the datapoints array, there are three other properties in the response:
-- minStartTimeNs: the start datetime of the request that generated the response
-- maxEndTimeNs: the end datetime of the request that generated the response
-- dataSourceId: the id of the data source that responded to the request
-
 ## get heart rate
 - Endpoint: derived:com.google.heart_rate.bpm:com.google.android.gms:merge_heart_rate_bpm
 
@@ -180,21 +136,6 @@ Retrieves heart rate measurements that have been stored on the Google Fit platfo
 
 - Optional parameters: “limit”, which is the maximum number of datapoints to be returned in the response and if the there are more data points in the dataset, nextPageToken will be set in the dataset response for pagination; “pageToken” which is the continuation token, which is used to page through large datasets. To get the next page of a dataset, set this parameter to the value of nextPageToken from the previous response.
 
-### Response
-Returns a list of data points contained in the array property named “point.” Each item in the list is a datapoint representing a heart rate measurement reported by a device. Each data point contains the following properties: 
-- startTimeNanos: the start date/time timestamp in unix epoch nanos
-- endTimeNanos: the end date/time timestamp in unix epoch nanos
-- dataTypeName: indicates the type of data that is contained within the data point, in this case the value is “com.google.heart_rate.bpm” indicating it is a heart rate measurement stored on the google fit platform
-- originDataSourceId: the data source for the datapoint, represented as a namespace for the application along with some additional information. It identifies the third party device or third party application that created the datapoint, such as  “raw:com.google.heart_rate.bpm:si.modula.android.instantheartrate:”
-- value: an array that contains a single data point representing the value
-  - fpVal: the measured heart rate value associated with the datapoint in beats per minute and using a float type
-- modifiedTimeMillis: Indicates the last time this data point was modified.
-
-In addition to the datapoints array, there are three other properties in the response:
-- minStartTimeNs: the start datetime of the request that generated the response
-- maxEndTimeNs: the end datetime of the request that generated the response
-- dataSourceId: the id of the data source that responded to the request
-
 ## get activities
 - Endpoint: derived:com.google.activity.segment:com.google.android.gms:merge_activity_segments
 
@@ -207,18 +148,3 @@ Retrieves information about continuous activities that were performed by the use
 - Required parameters: time-frame-start-in-nanos, time-frame-end-in-nanos are required to specify the range of dates/times for which the data should be retrieved. Userid is required and is set to “me” in all cases to refer to the user whose authentication token is being used. 
 
 - Optional parameters: “limit”, which is the maximum number of datapoints to be returned in the response and if the there are more data points in the dataset, nextPageToken will be set in the dataset response for pagination; “pageToken” which is the continuation token, which is used to page through large datasets. To get the next page of a dataset, set this parameter to the value of nextPageToken from the previous response.
-
-### Response
-Returns a list of data points contained in the array property named “point.” Each item in the list is a datapoint representing the performance of a physical activity reported by a device or recorded directly by the user. Each data point contains the following properties: 
-- startTimeNanos: the start date/time timestamp in unix epoch nanos
-- endTimeNanos: the end date/time timestamp in unix epoch nanos
-- dataTypeName: indicates the type of data that is contained within the data point, in this case the value is “com.google.activity.segment” indicating it is an activity segment value stored in the google fit platform. 
-- originDataSourceId: the data source for the datapoint, represented as a namespace for the application along with some additional information. It could be a user input value, represented by the string “raw:com.google.activity.segment:com.google.android.apps.fitness:user_input” or from a third party device or third party application, “derived:com.google.activity.sample:com.google.android.gms:samsung:Galaxy Nexus:32b1bd9e:detailed”. This means it is possible to ask for physical activity sessions recorded from specific devices or applications. 
-- value: an array that contains a single data point representing the value
-  - intVal: the identifier of the activity which maps into the list maintained by google (https://developers.google.com/fit/rest/v1/reference/activity-types)
-- modifiedTimeMillis: Indicates the last time this data point was modified.
-
-In addition to the datapoints array, there are three other properties in the response:
-- minStartTimeNs: the start datetime of the request that generated the response
-- maxEndTimeNs: the end datetime of the request that generated the response
-- dataSourceId: the id of the data source that responded to the request
