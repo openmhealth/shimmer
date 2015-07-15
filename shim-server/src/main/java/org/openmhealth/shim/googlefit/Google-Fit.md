@@ -1,5 +1,6 @@
 # api
 api url: https://www.googleapis.com/fitness/v1/
+
 api reference: https://developers.google.com/fit/rest/v1/reference/
 
 ## authentication
