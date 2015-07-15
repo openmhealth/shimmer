@@ -1,3 +1,5 @@
+This document is a work in progress
+
 # api
 api url: https://www.googleapis.com/fitness/v1/
 
@@ -64,6 +66,16 @@ In addition to the datapoints array, there are three other properties in the res
 - maxEndTimeNs: the end datetime of the request that generated the response
 - dataSourceId: the id of the data source that responded to the request
 
+### request parameters
+The request parameters that are required and optional are the same across all data points and are:
+
+- Required parameters: time-frame-start-in-nanos, time-frame-end-in-nanos are required to specify the range of dates/times for which the data should be retrieved. Userid is required, but is set to “me” in all cases to refer to the user whose authentication token is being used.
+
+- Optional parameters: “limit”, which is the maximum number of datapoints to be returned in the response and if the there are more data points in the dataset, nextPageToken will be set in the dataset response for pagination. 
+
+“pageToken” which is the continuation token, which is used to page through large datasets. To get the next page of a dataset, set this parameter to the value of nextPageToken from the previous response.
+
+
 ## get body weight
 - Endpoint: /users/me/dataSources/derived:com.google.weight:com.google.android.gms:merge_weight/datasets/<time-frame-start-in-nanos>-<time-frame-end-in-nanos> this endpoint in theory provides all of the datapoints that have been measured by a device related to body weight. Google is not clear and does not provide documentation on their merge process. 
 
@@ -73,12 +85,6 @@ In addition to the datapoints array, there are three other properties in the res
 
 ### Description
 This description relates to the primary endpoint above, for merged data points. This endpoint returns all of the body weight data points that were synced to the Google Fit platform from devices that are connected to Google Fit. The Body weight values are returned as floats in kilogram units. Each datapoint has a start datetime (startTimeNanos) and end datetime (endTimeNanos) and although they are likely the same, we will need to check that before creating the data point. The nanos values are unix epoch nanoseconds that are aligned to UTC. 
-### Parameters
-- Required parameters: time-frame-start-in-nanos, time-frame-end-in-nanos are required to specify the range of dates/times for which the data should be retrieved. Userid is required, but is set to “me” in all cases to refer to the user whose authentication token is being used.
-
-- Optional parameters: “limit”, which is the maximum number of datapoints to be returned in the response and if the there are more data points in the dataset, nextPageToken will be set in the dataset response for pagination. 
-
-“pageToken” which is the continuation token, which is used to page through large datasets. To get the next page of a dataset, set this parameter to the value of nextPageToken from the previous response.
 
 ## get body height
 - Endpoint: https://www.googleapis.com/fitness/v1/users/me/dataSources/derived:com.google.height:com.google.android.gms:merge_height/datasets/<time-frame-start-in-nanos>-<time-frame-end-in-nanos>
@@ -90,11 +96,6 @@ This description relates to the primary endpoint above, for merged data points. 
 ### Description
 This description relates to the primary endpoint above, for merged data points. This endpoint returns all of the body height data points that were synced to the Google Fit platform from devices connected to Google Fit. The body height values are returned as floating point numbers with a unit of meters. Each datapoint has a start datetime (startTimeNanos) and end datetime (endTimeNanos) and although they are likely the same, we will need to check that before creating the data point. The nanos values are unix epoch nanoseconds that are aligned to UTC. 
 
-### Parameters
-- Required parameters: time-frame-start-in-nanos, time-frame-end-in-nanos are required to specify the range of dates/times for which the data should be retrieved. Userid is required, but is set to “me” in all cases to refer to the user whose authentication token is being used. 
-
-- Optional parameters: “limit”, which is the maximum number of datapoints to be returned in the response and if the there are more data points in the dataset, nextPageToken will be set in the dataset response for pagination; “pageToken” which is the continuation token, which is used to page through large datasets. To get the next page of a dataset, set this parameter to the value of nextPageToken from the previous response.
-
 ## get step count
 - Endpoint: derived:com.google.step_count.delta:com.google.android.gms:merge_step_deltas
 
@@ -102,11 +103,6 @@ Merge appears to combine some of the step count periods into single datapoints a
 
 ### Description
 Retrieves all of the step count data points that have been recorded to the Google Fit platform, across all devices and applications that are connected to Google Play. Step counts are merged using machine learning and other approaches so that there are not duplicate step counts during the same time period. 
-
-### Parameters
-- Required parameters: time-frame-start-in-nanos, time-frame-end-in-nanos are required to specify the range of dates/times for which the data should be retrieved. Userid is required and is set to “me” in all cases to refer to the user whose authentication token is being used. 
-
-- Optional parameters: “limit”, which is the maximum number of datapoints to be returned in the response and if the there are more data points in the dataset, nextPageToken will be set in the dataset response for pagination; “pageToken” which is the continuation token, which is used to page through large datasets. To get the next page of a dataset, set this parameter to the value of nextPageToken from the previous response.
 
 ## get calories
 - Endpoint: derived:com.google.calories.expended:com.google.android.gms:merge_calories_expended
@@ -118,11 +114,6 @@ Seems that the best approach would be to use merge_calories_expended and filter 
 ### Description
 Retrieves a set of ‘calories expended’ data points that is merged from all sources accessible on the Google Fit platform. The merging process is based on a set of heuristics, machine learning, and other algorithms and does not contain duplicate calories expended datapoints during any time period. The response also contains datapoints that contain ‘calories expended’ data based on basal metabolic resting rate in addition to user input data, inferred calories expended from activities, and sensed or measured data from devices. 
 
-### Parameters
-- Required parameters: time-frame-start-in-nanos, time-frame-end-in-nanos are required to specify the range of dates/times for which the data should be retrieved. Userid is required and is set to “me” in all cases to refer to the user whose authentication token is being used. 
-
-- Optional parameters: “limit”, which is the maximum number of datapoints to be returned in the response and if the there are more data points in the dataset, nextPageToken will be set in the dataset response for pagination; “pageToken” which is the continuation token, which is used to page through large datasets. To get the next page of a dataset, set this parameter to the value of nextPageToken from the previous response.
-
 ## get heart rate
 - Endpoint: derived:com.google.heart_rate.bpm:com.google.android.gms:merge_heart_rate_bpm
 
@@ -131,11 +122,6 @@ Retrieves a set of ‘calories expended’ data points that is merged from all s
 ### Description
 Retrieves heart rate measurements that have been stored on the Google Fit platform through a third-party device or application. Currently there is no way to add heart rate measurements as a user. 
 
-### Parameters
-- Required parameters: time-frame-start-in-nanos, time-frame-end-in-nanos are required to specify the range of dates/times for which the data should be retrieved. Userid is required and is set to “me” in all cases to refer to the user whose authentication token is being used. 
-
-- Optional parameters: “limit”, which is the maximum number of datapoints to be returned in the response and if the there are more data points in the dataset, nextPageToken will be set in the dataset response for pagination; “pageToken” which is the continuation token, which is used to page through large datasets. To get the next page of a dataset, set this parameter to the value of nextPageToken from the previous response.
-
 ## get activities
 - Endpoint: derived:com.google.activity.segment:com.google.android.gms:merge_activity_segments
 
@@ -143,8 +129,3 @@ Retrieves heart rate measurements that have been stored on the Google Fit platfo
 
 ### Description
 Retrieves information about continuous activities that were performed by the user during different time period, but not information about the outcomes of those sessions (calories burned, distance traveled, etc). These activity segments can be created through user input, application data, or inferred through sensors and other data. 
-
-### Parameters
-- Required parameters: time-frame-start-in-nanos, time-frame-end-in-nanos are required to specify the range of dates/times for which the data should be retrieved. Userid is required and is set to “me” in all cases to refer to the user whose authentication token is being used. 
-
-- Optional parameters: “limit”, which is the maximum number of datapoints to be returned in the response and if the there are more data points in the dataset, nextPageToken will be set in the dataset response for pagination; “pageToken” which is the continuation token, which is used to page through large datasets. To get the next page of a dataset, set this parameter to the value of nextPageToken from the previous response.
