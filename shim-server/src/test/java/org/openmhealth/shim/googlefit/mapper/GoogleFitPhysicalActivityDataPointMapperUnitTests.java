@@ -21,8 +21,6 @@ import static org.hamcrest.Matchers.equalTo;
  */
 public class GoogleFitPhysicalActivityDataPointMapperUnitTests extends GoogleFitDataPointMapperUnitTests<PhysicalActivity> {
 
-
-
     private GoogleFitPhysicalActivityDataPointMapper mapper=new GoogleFitPhysicalActivityDataPointMapper();
     protected JsonNode sleepActivityNode;
 
