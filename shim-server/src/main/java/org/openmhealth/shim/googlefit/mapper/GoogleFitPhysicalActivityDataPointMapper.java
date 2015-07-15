@@ -1,6 +1,7 @@
 package org.openmhealth.shim.googlefit.mapper;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import org.openmhealth.schema.domain.omh.DataPoint;
 import org.openmhealth.schema.domain.omh.PhysicalActivity;
@@ -15,7 +16,8 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.*;
  */
 public class GoogleFitPhysicalActivityDataPointMapper extends GoogleFitDataPointMapper<PhysicalActivity> {
 
-    protected ImmutableMap<Integer, String> GoogleFitDataTypes;
+    protected ImmutableMap<Integer, String> googleFitDataTypes;
+    protected ImmutableList<Integer> sleepActivityTypes;
 
     public GoogleFitPhysicalActivityDataPointMapper(){
         ImmutableMap.Builder<Integer, String> activityDataTypeBuilder = ImmutableMap.builder();
@@ -125,22 +127,33 @@ public class GoogleFitPhysicalActivityDataPointMapper extends GoogleFitDataPoint
                 .put(99, "Windsurfing")
                 .put(100, "Yoga")
                 .put(101, "Zumba")
-                .put(108, "Other");
-        GoogleFitDataTypes = activityDataTypeBuilder.build();
+                .put(108, "Other")
+                .put(109, "Light sleep")
+                .put(110, "Deep sleep")
+                .put(111, "REM sleep")
+                .put(112, "Awake (during sleep cycle)");
+        googleFitDataTypes = activityDataTypeBuilder.build();
+        sleepActivityTypes = ImmutableList.of(72, 109, 110, 111, 112);
     }
 
     @Override
     protected Optional<DataPoint<PhysicalActivity>> asDataPoint(JsonNode listNode) {
-
         JsonNode listValueNode = asRequiredNode(listNode,"value");
         long activityTypeId = asRequiredLong(listValueNode.get(0),"intVal");
-        String activityName = GoogleFitDataTypes.get((int)activityTypeId);
+
+        //This means that the activity was actually sleep which should be captured using sleep duration
+        if(sleepActivityTypes.contains((int)activityTypeId)){
+            return Optional.empty();
+        }
+
+        String activityName = googleFitDataTypes.get((int)activityTypeId);
         PhysicalActivity.Builder physicalActivityBuilder = new PhysicalActivity.Builder(
                 activityName);
         setEffectiveTimeFrameIfPresent(physicalActivityBuilder,listNode);
         PhysicalActivity physicalActivity = physicalActivityBuilder.build();
         Optional<String> originSourceId = asOptionalString(listNode, "originDataSourceId");
         return Optional.of(newDataPoint(physicalActivity,originSourceId.orElse(null)));
+
     }
 
 }

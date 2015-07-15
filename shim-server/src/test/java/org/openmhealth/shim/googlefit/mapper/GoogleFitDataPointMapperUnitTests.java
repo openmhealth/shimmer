@@ -62,6 +62,12 @@ public abstract class GoogleFitDataPointMapperUnitTests<T extends Measure> exten
         return properties;
     }
 
+    public Map<String,Object> createStringTestProperties(String stringValue,String startDateTime,String endDateTime,String sourceOriginId){
+        Map<String, Object> properties = createTestProperties(startDateTime, endDateTime,sourceOriginId);
+        properties.put("stringValue",stringValue);
+        return properties;
+    }
+
     private Map<String, Object> createTestProperties(String startDateTimeString, String endDateTimeString, String sourceOriginId) {
         HashMap<String, Object> properties = Maps.newHashMap();
         if(startDateTimeString!=null){
