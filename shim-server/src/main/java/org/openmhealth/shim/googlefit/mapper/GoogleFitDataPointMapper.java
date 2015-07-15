@@ -36,7 +36,7 @@ public abstract class GoogleFitDataPointMapper<T extends Measure> implements Jso
                 asDataPoint(listNode).ifPresent(dataPoints::add);
             }
         }
-        
+
         return  dataPoints;
 
     }
