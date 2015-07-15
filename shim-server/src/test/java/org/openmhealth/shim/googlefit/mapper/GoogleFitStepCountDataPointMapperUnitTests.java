@@ -36,11 +36,13 @@ public class GoogleFitStepCountDataPointMapperUnitTests extends GoogleFitDataPoi
         assertThat(dataPoints.size(),equalTo(3));
     }
 
+    @Test
     @Override
     public void asDataPointsShouldReturnCorrectDataPoints() {
         List<DataPoint<StepCount>> dataPoints = mapper.asDataPoints(singletonList(responseNode));
         testGoogleFitDataPoint(dataPoints.get(0),createIntegerTestProperties(4146,"2015-02-02T22:49:39.811Z","2015-02-02T23:25:20.811Z","derived:com.google.step_count.delta:com.nike.plusgps:"));
         testGoogleFitDataPoint(dataPoints.get(1),createIntegerTestProperties(17,"2015-07-10T21:58:17.687316406Z","2015-07-10T21:59:17.687316406Z","derived:com.google.step_count.cumulative:com.google.android.gms:samsung:Galaxy Nexus:32b1bd9e:soft_step_counter"));
+        testGoogleFitDataPoint(dataPoints.get(2),createIntegerTestProperties(184,"2015-07-10T22:05:21.162Z","2015-07-10T22:07:18.006058105Z","raw:com.google.step_count.delta:com.google.android.apps.fitness:user_input"));
     }
 
     @Override

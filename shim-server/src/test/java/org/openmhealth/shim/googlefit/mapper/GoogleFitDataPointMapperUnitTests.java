@@ -13,6 +13,7 @@ import java.util.Map;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.nullValue;
 import static org.openmhealth.shim.googlefit.mapper.GoogleFitDataPointMapper.RESOURCE_API_SOURCE_NAME;
 
 
@@ -41,6 +42,9 @@ public abstract class GoogleFitDataPointMapperUnitTests<T extends Measure> exten
                 "source_origin_id"),equalTo(properties.get("sourceOriginId")));
         if(properties.containsKey("modality")){
             assertThat(dataPointHeader.getAcquisitionProvenance().getModality(),equalTo(properties.get("modality")));
+        }
+        if(!properties.containsKey("modality")){
+            assertThat(dataPointHeader.getAcquisitionProvenance().getModality(),nullValue());
         }
 
     }
