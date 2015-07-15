@@ -20,6 +20,9 @@ public class GoogleFitHeartRateDataPointMapper extends GoogleFitDataPointMapper<
     protected Optional<DataPoint<HeartRate>> asDataPoint(JsonNode listNode) {
         JsonNode valueListNode = asRequiredNode(listNode,"value");
         double heartRateValue = asRequiredDouble(valueListNode.get(0),"fpVal");
+        if(heartRateValue==0){
+            return Optional.empty();
+        }
         HeartRate.Builder heartRateBuilder = new HeartRate.Builder(heartRateValue);
         setEffectiveTimeFrameIfPresent(heartRateBuilder,listNode);
         HeartRate heartRate = heartRateBuilder.build();

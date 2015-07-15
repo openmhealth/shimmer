@@ -23,6 +23,9 @@ public class GoogleFitBodyHeightDataPointMapper extends GoogleFitDataPointMapper
 
         JsonNode valueListNode = asRequiredNode(listNode,getValueListNodeName());
         double bodyHeightValue = asRequiredDouble(valueListNode.get(0),"fpVal");
+        if(bodyHeightValue==0){
+            return Optional.empty();
+        }
         BodyHeight.Builder bodyHeightBuilder = new BodyHeight.Builder(new LengthUnitValue(LengthUnit.METER,bodyHeightValue));
 
         setEffectiveTimeFrameIfPresent(bodyHeightBuilder, listNode);

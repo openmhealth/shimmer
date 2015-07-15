@@ -17,6 +17,9 @@ public class GoogleFitBodyWeightDataPointMapper extends GoogleFitDataPointMapper
     public Optional<DataPoint<BodyWeight>> asDataPoint(JsonNode listNode) {
         JsonNode valueList = asRequiredNode(listNode, getValueListNodeName());
         Double bodyWeightValue = asRequiredDouble(valueList.get(0), "fpVal");
+        if(bodyWeightValue==0){
+            return Optional.empty();
+        }
         BodyWeight.Builder bodyWeightBuilder = new BodyWeight.Builder(new MassUnitValue(MassUnit.KILOGRAM,bodyWeightValue));
         setEffectiveTimeFrameIfPresent(bodyWeightBuilder, listNode);
 //        Optional<String> startTimeNanosString = asOptionalString(node, "startTimeNanos");
