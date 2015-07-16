@@ -18,7 +18,9 @@ import static org.openmhealth.shim.googlefit.mapper.GoogleFitDataPointMapper.RES
 
 
 /**
- * Created by Chris Schaefbauer on 7/12/15.
+ * Base class for unit tests that evaluate individual data point mappers, used to build the measure specific unit tests
+ *
+ * @author Chris Schaefbauer
  */
 public abstract class GoogleFitDataPointMapperUnitTests<T extends Measure> extends DataPointMapperUnitTests {
 
@@ -26,59 +28,110 @@ public abstract class GoogleFitDataPointMapperUnitTests<T extends Measure> exten
 
     public abstract void initializeResponseNode() throws IOException;
 
+    /**
+     * Used to test whether the data point mapper generates the correct number of data points given a specific input
+     */
     @Test
     public abstract void asDataPointsShouldReturnCorrectNumberOfDataPoints();
 
+    /**
+     * Used to test whether the data point mapper generates data points with the correct values
+     */
     @Test
     public abstract void asDataPointsShouldReturnCorrectDataPoints();
 
-    public abstract void testGoogleFitMeasureFromDataPoint(T testMeasure, Map<String,Object> properties);
+    /**
+     * Implemented by measure specific test classes in order to test the {@link Measure} contained within the mapper
+     * created {@link DataPoint}. Should contain the assertions needed to test the individual values in the measure.
+     */
+    public abstract void testGoogleFitMeasureFromDataPoint(T testMeasure, Map<String, Object> properties);
 
-    public void testGoogleFitDataPoint(DataPoint<T> dataPoint,Map<String,Object> properties){
-        testGoogleFitMeasureFromDataPoint(dataPoint.getBody(),properties);
+    /**
+     * Used to test data points created through {@link Measure} specific Google Fit mappers
+     *
+     * @param dataPoint datapoint created by the mapper
+     * @param properties a map containing different properties to test against the mapper generated datapoint, should
+     * contain keys that are used in this generic data point test as well as the mapper specific test
+     */
+    public void testGoogleFitDataPoint(DataPoint<T> dataPoint, Map<String, Object> properties) {
+        testGoogleFitMeasureFromDataPoint(dataPoint.getBody(), properties);
         DataPointHeader dataPointHeader = dataPoint.getHeader();
-        assertThat(dataPointHeader.getAcquisitionProvenance().getSourceName(),equalTo(RESOURCE_API_SOURCE_NAME));
+        assertThat(dataPointHeader.getAcquisitionProvenance().getSourceName(), equalTo(RESOURCE_API_SOURCE_NAME));
         assertThat(dataPointHeader.getAcquisitionProvenance().getAdditionalProperties().get(
-                "source_origin_id"),equalTo(properties.get("sourceOriginId")));
-        if(properties.containsKey("modality")){
-            assertThat(dataPointHeader.getAcquisitionProvenance().getModality(),equalTo(properties.get("modality")));
+                "source_origin_id"), equalTo(properties.get("sourceOriginId")));
+        if (properties.containsKey("modality")) {
+            assertThat(dataPointHeader.getAcquisitionProvenance().getModality(), equalTo(properties.get("modality")));
         }
-        if(!properties.containsKey("modality")){
-            assertThat(dataPointHeader.getAcquisitionProvenance().getModality(),nullValue());
+        if (!properties.containsKey("modality")) {
+            assertThat(dataPointHeader.getAcquisitionProvenance().getModality(), nullValue());
         }
 
     }
 
-    public Map<String,Object> createFloatingPointTestProperties(double fpValue, String startDateTime,
-            String endDateTime, String sourceOriginId){
-        Map<String,Object> properties = createTestProperties(startDateTime,endDateTime,sourceOriginId);
-        properties.put("fpValue",fpValue);
+    /**
+     * Creates the properties map used for generating an expected values datapoint to test google fit data points
+     * against
+     *
+     * @param fpValue a floating point value from a Google fit JSON test datapoint
+     * @param startDateTime a string containing the start timestamp in unix epoch nanoseconds
+     * @param endDateTime a string containing the end timestamp in unix epoch nanoseconds
+     * @param sourceOriginId a string containing the origin source id from the datapoint from the JSON test data
+     * @return a map with the properties needed to generate an expected datapoint to test a google fit datapoint
+     */
+    public Map<String, Object> createFloatingPointTestProperties(double fpValue, String startDateTime,
+            String endDateTime, String sourceOriginId) {
+        Map<String, Object> properties = createTestProperties(startDateTime, endDateTime, sourceOriginId);
+        properties.put("fpValue", fpValue);
         return properties;
     }
 
-    public Map<String,Object> createIntegerTestProperties(long intValue,String startDateTime,String endDateTime,String sourceOriginId){
-        Map<String, Object> properties = createTestProperties(startDateTime, endDateTime,sourceOriginId);
-        properties.put("intValue",intValue);
+    /**
+     * Creates the properties map used for generating an expected values datapoint to test google fit data points
+     * against
+     *
+     * @param intValue an integer value from a Google fit JSON test datapoint
+     * @param startDateTime a string containing the start timestamp in unix epoch nanoseconds
+     * @param endDateTime a string containing the end timestamp in unix epoch nanoseconds
+     * @param sourceOriginId a string containing the origin source id from the datapoint from the JSON test data
+     * @return a map with the properties needed to generate an expected datapoint to test a google fit datapoint
+     */
+    public Map<String, Object> createIntegerTestProperties(long intValue, String startDateTime, String endDateTime,
+            String sourceOriginId) {
+        Map<String, Object> properties = createTestProperties(startDateTime, endDateTime, sourceOriginId);
+        properties.put("intValue", intValue);
         return properties;
     }
 
-    public Map<String,Object> createStringTestProperties(String stringValue,String startDateTime,String endDateTime,String sourceOriginId){
-        Map<String, Object> properties = createTestProperties(startDateTime, endDateTime,sourceOriginId);
-        properties.put("stringValue",stringValue);
+    /**
+     * Creates the properties map used for generating an expected values datapoint to test google fit data points
+     * against, used specifically for testing physical activity because it generates a string value as the activity
+     * type
+     *
+     * @param stringValue an string value from a Google fit JSON test datapoint
+     * @param startDateTime a string containing the start timestamp in unix epoch nanoseconds
+     * @param endDateTime a string containing the end timestamp in unix epoch nanoseconds
+     * @param sourceOriginId a string containing the origin source id from the datapoint from the JSON test data
+     * @return a map with the properties needed to generate an expected datapoint to test a google fit datapoint
+     */
+    public Map<String, Object> createStringTestProperties(String stringValue, String startDateTime, String endDateTime,
+            String sourceOriginId) {
+        Map<String, Object> properties = createTestProperties(startDateTime, endDateTime, sourceOriginId);
+        properties.put("stringValue", stringValue);
         return properties;
     }
 
-    private Map<String, Object> createTestProperties(String startDateTimeString, String endDateTimeString, String sourceOriginId) {
+    private Map<String, Object> createTestProperties(String startDateTimeString, String endDateTimeString,
+            String sourceOriginId) {
         HashMap<String, Object> properties = Maps.newHashMap();
-        if(startDateTimeString!=null){
-            properties.put("startDateTimeString",startDateTimeString);
+        if (startDateTimeString != null) {
+            properties.put("startDateTimeString", startDateTimeString);
         }
-        if(endDateTimeString!=null){
-            properties.put("endDateTimeString",endDateTimeString);
+        if (endDateTimeString != null) {
+            properties.put("endDateTimeString", endDateTimeString);
         }
-        if(sourceOriginId!=null){
-            properties.put("sourceOriginId",sourceOriginId);
-            if(sourceOriginId.endsWith("user_input")){
+        if (sourceOriginId != null) {
+            properties.put("sourceOriginId", sourceOriginId);
+            if (sourceOriginId.endsWith("user_input")) {
                 properties.put("modality", DataPointModality.SELF_REPORTED);
             }
         }
@@ -86,14 +139,18 @@ public abstract class GoogleFitDataPointMapperUnitTests<T extends Measure> exten
         return properties;
     }
 
-    public void setExpectedEffectiveTimeFrame(T.Builder builder,Map<String,Object> properties){
-        if(properties.containsKey("endDateTimeString")){
+    /**
+     * Sets the effective time frame for a datapoint builder given a map of properties that contains the key
+     * "startDateTimeString" and optionally, "endDateTimeString"
+     */
+    public void setExpectedEffectiveTimeFrame(T.Builder builder, Map<String, Object> properties) {
+        if (properties.containsKey("endDateTimeString")) {
             builder.setEffectiveTimeFrame(TimeInterval.ofStartDateTimeAndEndDateTime(
                     OffsetDateTime.parse((String) properties.get("startDateTimeString")),
                     OffsetDateTime.parse((String) properties.get("endDateTimeString"))));
         }
-        else{
-            builder.setEffectiveTimeFrame(OffsetDateTime.parse((String)properties.get("startDateTimeString")));
+        else {
+            builder.setEffectiveTimeFrame(OffsetDateTime.parse((String) properties.get("startDateTimeString")));
         }
     }
 }

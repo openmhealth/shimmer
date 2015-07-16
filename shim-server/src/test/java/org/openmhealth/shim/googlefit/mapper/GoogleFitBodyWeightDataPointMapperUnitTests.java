@@ -57,14 +57,6 @@ public class GoogleFitBodyWeightDataPointMapperUnitTests extends GoogleFitDataPo
     public void testGoogleFitMeasureFromDataPoint(BodyWeight testMeasure, Map<String, Object> properties) {
         BodyWeight.Builder expectedBodyWeightBuilder =
                 new BodyWeight.Builder(new MassUnitValue(MassUnit.KILOGRAM,(Double)properties.get("fpValue")));
-//        if(properties.containsKey("endDateTimeString")){
-//            expectedBodyWeightBuilder.setEffectiveTimeFrame(TimeInterval.ofStartDateTimeAndEndDateTime(
-//                    OffsetDateTime.parse((String) properties.get("startDateTimeString")),
-//                    OffsetDateTime.parse((String) properties.get("endDateTimeString"))));
-//        }
-//        else{
-//            expectedBodyWeightBuilder.setEffectiveTimeFrame(OffsetDateTime.parse((String)properties.get("startDateTimeString")));
-//        }
         setExpectedEffectiveTimeFrame(expectedBodyWeightBuilder,properties);
         BodyWeight expectedBodyWeight = expectedBodyWeightBuilder.build();
         assertThat(testMeasure,equalTo(expectedBodyWeight));
