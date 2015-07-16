@@ -12,14 +12,63 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.*;
 
 
 /**
- * Created by Chris Schaefbauer on 7/14/15.
+ * A mapper from Google Fit "merged activity segment" endpoint responses
+ * (derived:com.google.activity.segment:com.google.android.gms:merge_activity_segments) to {@link PhysicalActivity}
+ * objects
+ *
+ * @author Chris Schaefbauer
+ * @see <a href="https://developers.google.com/fit/rest/v1/data-types">Google Fit Data Type Documentation</a>
  */
 public class GoogleFitPhysicalActivityDataPointMapper extends GoogleFitDataPointMapper<PhysicalActivity> {
+
 
     protected ImmutableMap<Integer, String> googleFitDataTypes;
     protected ImmutableList<Integer> sleepActivityTypes;
 
+
     public GoogleFitPhysicalActivityDataPointMapper(){
+        initializeActivityMap();
+        initializeSleepActivityTypes();
+    }
+
+    /**
+     * Maps a JSON response node from the Google Fit API to a {@link PhysicalActivity} measure
+     * @param listNode an individual datapoint from the array in the Google Fit response
+     * @return a {@link DataPoint} object containing a {@link PhysicalActivity} measure with the appropriate values from
+     * the JSON node parameter, wrapped as an {@link Optional}
+     */
+    @Override
+    protected Optional<DataPoint<PhysicalActivity>> asDataPoint(JsonNode listNode) {
+        JsonNode listValueNode = asRequiredNode(listNode,"value");
+        long activityTypeId = asRequiredLong(listValueNode.get(0),"intVal");
+
+        //This means that the activity was actually sleep which should be captured using sleep duration
+        if(sleepActivityTypes.contains((int)activityTypeId)){
+            return Optional.empty();
+        }
+
+        String activityName = googleFitDataTypes.get((int)activityTypeId);
+        PhysicalActivity.Builder physicalActivityBuilder = new PhysicalActivity.Builder(
+                activityName);
+        setEffectiveTimeFrameIfPresent(physicalActivityBuilder,listNode);
+        PhysicalActivity physicalActivity = physicalActivityBuilder.build();
+        Optional<String> originSourceId = asOptionalString(listNode, "originDataSourceId");
+        return Optional.of(newDataPoint(physicalActivity,originSourceId.orElse(null)));
+
+    }
+
+    /**
+     * Loads an immutable list with the activity type identifiers that represent different types of sleeping
+     */
+    private void initializeSleepActivityTypes() {
+        sleepActivityTypes = ImmutableList.of(72, 109, 110, 111, 112);
+    }
+
+    /**
+     * Map between integer values and the activity names that they represent
+     * @see <a href="https://developers.google.com/fit/rest/v1/reference/activity-types">Google Fit Activity Types</a>
+     */
+    private void initializeActivityMap() {
         ImmutableMap.Builder<Integer, String> activityDataTypeBuilder = ImmutableMap.builder();
         activityDataTypeBuilder.put(9, "Aerobics")
                 .put(10, "Badminton")
@@ -133,27 +182,6 @@ public class GoogleFitPhysicalActivityDataPointMapper extends GoogleFitDataPoint
                 .put(111, "REM sleep")
                 .put(112, "Awake (during sleep cycle)");
         googleFitDataTypes = activityDataTypeBuilder.build();
-        sleepActivityTypes = ImmutableList.of(72, 109, 110, 111, 112);
-    }
-
-    @Override
-    protected Optional<DataPoint<PhysicalActivity>> asDataPoint(JsonNode listNode) {
-        JsonNode listValueNode = asRequiredNode(listNode,"value");
-        long activityTypeId = asRequiredLong(listValueNode.get(0),"intVal");
-
-        //This means that the activity was actually sleep which should be captured using sleep duration
-        if(sleepActivityTypes.contains((int)activityTypeId)){
-            return Optional.empty();
-        }
-
-        String activityName = googleFitDataTypes.get((int)activityTypeId);
-        PhysicalActivity.Builder physicalActivityBuilder = new PhysicalActivity.Builder(
-                activityName);
-        setEffectiveTimeFrameIfPresent(physicalActivityBuilder,listNode);
-        PhysicalActivity physicalActivity = physicalActivityBuilder.build();
-        Optional<String> originSourceId = asOptionalString(listNode, "originDataSourceId");
-        return Optional.of(newDataPoint(physicalActivity,originSourceId.orElse(null)));
-
     }
 
 }

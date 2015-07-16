@@ -14,10 +14,21 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asRequir
 
 
 /**
- * Created by Chris Schaefbauer on 7/13/15.
+ * A mapper from Google Fit "merged height" endpoint responses
+ * (derived:com.google.weight:com.google.android.gms:merge_height) to {@link BodyHeight}
+ * objects
+ *
+ * @author Chris Schaefbauer
+ * @see <a href="https://developers.google.com/fit/rest/v1/data-types">Google Fit Data Type Documentation</a>
  */
 public class GoogleFitBodyHeightDataPointMapper extends GoogleFitDataPointMapper<BodyHeight>{
 
+    /**
+     * Maps a JSON response node from the Google Fit API to a {@link BodyHeight} measure
+     * @param listNode an individual datapoint from the array from the Google Fit response
+     * @return a {@link DataPoint} object containing a {@link BodyHeight} measure with the appropriate values from
+     * the JSON node parameter, wrapped as an {@link Optional}
+     */
     @Override
     public Optional<DataPoint<BodyHeight>> asDataPoint(JsonNode listNode) {
 

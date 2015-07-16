@@ -9,10 +9,21 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.*;
 
 
 /**
- * Created by Chris Schaefbauer on 7/12/15.
+ * A mapper from Google Fit "merged weight" endpoint responses
+ * (derived:com.google.weight:com.google.android.gms:merge_weight) to {@link BodyWeight}
+ * objects
+ *
+ * @author Chris Schaefbauer
+ * @see <a href="https://developers.google.com/fit/rest/v1/data-types">Google Fit Data Type Documentation</a>
  */
 public class GoogleFitBodyWeightDataPointMapper extends GoogleFitDataPointMapper<BodyWeight> {
 
+    /**
+     * Maps a JSON response node from the Google Fit API to a {@link BodyWeight} measure
+     * @param listNode an individual datapoint from the array from the Google Fit response
+     * @return a {@link DataPoint} object containing a {@link BodyWeight} measure with the appropriate values from
+     * the JSON node parameter, wrapped as an {@link Optional}
+     */
     @Override
     public Optional<DataPoint<BodyWeight>> asDataPoint(JsonNode listNode) {
         JsonNode valueList = asRequiredNode(listNode, getValueListNodeName());
@@ -22,20 +33,7 @@ public class GoogleFitBodyWeightDataPointMapper extends GoogleFitDataPointMapper
         }
         BodyWeight.Builder bodyWeightBuilder = new BodyWeight.Builder(new MassUnitValue(MassUnit.KILOGRAM,bodyWeightValue));
         setEffectiveTimeFrameIfPresent(bodyWeightBuilder, listNode);
-//        Optional<String> startTimeNanosString = asOptionalString(node, "startTimeNanos");
-//        Optional<String> endTimeNanosString = asOptionalString(node, "endTimeNanos");
-//        if(startTimeNanosString.isPresent()&&endTimeNanosString.isPresent()){
-//            if(startTimeNanosString.equals(endTimeNanosString)){
-//                bodyWeightBuilder.setEffectiveTimeFrameIfPresent(convertGoogleNanosToOffsetDateTime(startTimeNanosString.get()));
-//
-//            }
-//            else{
-//                bodyWeightBuilder.setEffectiveTimeFrameIfPresent(TimeInterval.ofStartDateTimeAndEndDateTime(
-//                        convertGoogleNanosToOffsetDateTime(startTimeNanosString.get()),
-//                        convertGoogleNanosToOffsetDateTime(endTimeNanosString.get())));
-//            }
-//
-//        }
+
         Optional<String> originDataSourceId = asOptionalString(listNode, "originDataSourceId");
 
         BodyWeight bodyWeight = bodyWeightBuilder.build();

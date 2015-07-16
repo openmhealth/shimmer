@@ -19,12 +19,25 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asOption
 
 
 /**
- * Created by Chris Schaefbauer on 7/12/15.
+ * The base class for mappers that translate Google Fit API responses into to {@link
+ * Measure} objects
+ *
+ * @author Chris Schaefbauer
  */
 public abstract class GoogleFitDataPointMapper<T extends Measure> implements JsonNodeDataPointMapper<T> {
 
     public static final String RESOURCE_API_SOURCE_NAME = "Google Fit API";
 
+    /**
+     * Maps a JSON response from the Google Fit API containing a JSON array of data points to a list of {@link DataPoint} objects
+     * of the appropriate measure type. Splits individual nodes based on the name of the list node, "point," and then iteratively
+     * maps the nodes in the list.
+     *
+     * @param responseNodes the response body from a Google Fit endpoint, contained in a list of a single JSON node
+     * @return a list of DataPoint objects of type T with the appropriate values mapped from the input JSON; because
+     * these JSON objects are contained within an array in the input response, each object in that JSON array will map to
+     * an item in the returned list
+     */
     public List<DataPoint<T>> asDataPoints(List<JsonNode> responseNodes){
         checkNotNull(responseNodes);
         checkArgument(responseNodes.size()==1,"Only one response should be input to the mapper");
@@ -41,6 +54,14 @@ public abstract class GoogleFitDataPointMapper<T extends Measure> implements Jso
 
     }
 
+    /**
+     * Abstract method to be implemented by subclasses mapping a JSON response node from the Google Fit API into a {@link
+     * Measure} object of the appropriate type
+     *
+     * @param listNode an individual datapoint from the array from the Google Fit response
+     * @return a {@link DataPoint} object containing the target measure with the appropriate values from the JSON node
+     * parameter, wrapped as an {@link Optional}
+     */
     protected abstract Optional<DataPoint<T>> asDataPoint(JsonNode listNode);
 
 
@@ -63,6 +84,11 @@ public abstract class GoogleFitDataPointMapper<T extends Measure> implements Jso
         return new DataPoint<>(header, measure);
     }
 
+    /**
+     * Converts a nanosecond timestamp from the Google Fit API into an offset datetime value
+     * @param unixEpochNanosString the timestamp directly from the Google JSON document
+     * @return an offset datetime object representing the input timestamp
+     */
     public OffsetDateTime convertGoogleNanosToOffsetDateTime(String unixEpochNanosString){
         return OffsetDateTime.ofInstant(Instant.ofEpochSecond(0, Long.parseLong(unixEpochNanosString)), ZoneId.of("Z"));
     }
