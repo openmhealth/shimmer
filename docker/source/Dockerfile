@@ -32,7 +32,7 @@ COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 # install the HealthVault Java library from https://healthvaultjavalib.codeplex.com/releases/view/125355
 # this library is currently necessary even if you don't intend to integrate with HealthVault
-RUN curl -o /root/healthvault-sdk-1.6.0.zip 'http://download-codeplex.sec.s-msft.com/Download/Release?ProjectName=healthvaultjavalib&DownloadId=878881&FileTime=130496923011230000&Build=20928'
+RUN curl -o /root/healthvault-sdk-1.6.0.zip 'http://download-codeplex.sec.s-msft.com/Download/Release?ProjectName=healthvaultjavalib&DownloadId=878881&FileTime=130496923011230000&Build=21018'
 WORKDIR /root
 RUN unzip healthvault-sdk-1.6.0.zip && cd healthvault-sdk-1.6.0 && mvn install -N && mvn install --pl sdk,hv-jaxb -DskipTests
 

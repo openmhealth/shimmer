@@ -39,7 +39,7 @@ public class BodyHeightBuilderTest {
     @Test
     public void test() throws IOException, ProcessingException {
 
-        final String BODY_HEIGHT_SCHEMA = "http://www.openmhealth.org/schema/omh/clinical/body-height-1.0.json";
+        final String BODY_HEIGHT_SCHEMA = "http://www.openmhealth.org/schema/omh/body-height-1.0.json";
 
         ObjectMapper mapper = new ObjectMapper();
 

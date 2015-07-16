@@ -39,7 +39,7 @@ public class StepBuilderTest {
     //@Ignore("requires updates to external schemas to pass")
     public void testParse() throws IOException, ProcessingException {
 
-        final String STEP_COUNT_SCHEMA = "http://www.openmhealth.org/schema/omh/clinical/step-count-1.0.json";
+        final String STEP_COUNT_SCHEMA = "http://www.openmhealth.org/schema/omh/step-count-1.0.json";
 
         ObjectMapper mapper = new ObjectMapper();
 

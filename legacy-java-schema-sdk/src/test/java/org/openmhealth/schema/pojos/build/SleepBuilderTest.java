@@ -40,7 +40,7 @@ public class SleepBuilderTest {
 //    @Ignore("requires updates to external schemas to pass")
     public void test() throws IOException, ProcessingException {
 
-        final String SLEEP_DURATION_SCHEMA = "http://www.openmhealth.org/schema/omh/clinical/sleep-duration-1.0.json";
+        final String SLEEP_DURATION_SCHEMA = "http://www.openmhealth.org/schema/omh/sleep-duration-1.0.json";
 
         ObjectMapper mapper = new ObjectMapper();
 

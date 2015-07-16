@@ -31,6 +31,7 @@ supports retrieval based on modification date: no
 # pagination
 - supported: no
 
+
 # rate limit
 
 - total: n/a
@@ -49,14 +50,22 @@ device
 - https://build.misfit.com/docs/references#APIReferences-Device
 - product:
   -  shine
+<<<<<<< HEAD
 
+=======
+>>>>>>> develop
 
 summary
 - description: daily summary
 - https://api.misfitwearables.com/move/resource/v1/user/:userId/activity/summary?start_date=X&end_date=Y&detail=true
 - https://build.misfit.com/docs/references#APIReferences-Summary
+<<<<<<< HEAD
 - limited to 31 days, 400 if longer
 - supports time zone: not yet, waiting for API change
+=======
+- limited to 31 days, error if longer
+- supports time zone: no
+>>>>>>> develop
 measures:
     steps: mapped, but time zones are currently broken until API changes are made
     calories: not mapped, pending refactor
@@ -67,6 +76,7 @@ sessions
 - description: workouts
 - https://build.misfit.com/docs/references#APIReferences-Session
 - https://api.misfitwearables.com/move/resource/v1/user/:userId/activity/sessions
+<<<<<<< HEAD
 - limited to 31 days, 400 if longer
 - supports time zone: offset
 - measures and status:
@@ -77,16 +87,36 @@ sessions
   -  distance: mapped
   
   
+=======
+- limited to 31 days, error if longer
+- supports time zone: offset
+- measures:
+  -  activity
+  -  duration
+  -  steps
+  -  calories Burned
+  -  distance
+>>>>>>> develop
     
 sleep
 - description: sleep information
 - https://api.misfitwearables.com/move/resource/v1/user/:userId/activity/sleeps
 - https://build.misfit.com/docs/references#APIReferences-Sleep
+<<<<<<< HEAD
 - limited to 31 days, 400 if longer
 - measures:
   -  sleep details (awake, deep sleep, sleep): mapped, may increase granularity
+=======
+- limited to 31 days, error if longer
+- measures:
+  -  duration
+  -  sleep details (awake, deep sleep, sleep)
+>>>>>>> develop
 
 ## issues
 
 how do we decouple summary from sessions, if summaries *contain* sessions?
+<<<<<<< HEAD
 still need to fix time zones in step count 
+=======
+>>>>>>> develop
