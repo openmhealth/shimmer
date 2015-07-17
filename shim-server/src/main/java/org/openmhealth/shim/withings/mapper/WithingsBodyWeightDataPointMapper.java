@@ -26,8 +26,6 @@ import static org.openmhealth.shim.withings.mapper.WithingsBodyMeasureDataPointM
 public class WithingsBodyWeightDataPointMapper extends WithingsBodyMeasureDataPointMapper<BodyWeight> {
 
     /**
-     * Maps a JSON response node from the Withings body measure endpoint into a {@link BodyWeight} measure
-     *
      * @param node list node from the array "measuregrp" contained in the "body" of the endpoint response
      * @param timeZoneFullName a string containing the full name of the time zone (e.g., America/Los_Angeles) from the
      * "timezone" property of the "body" of the body measure endpoint response
@@ -36,6 +34,7 @@ public class WithingsBodyWeightDataPointMapper extends WithingsBodyMeasureDataPo
      */
     @Override
     Optional<DataPoint<BodyWeight>> asDataPoint(JsonNode node, String timeZoneFullName) {
+
         JsonNode measuresNode = asRequiredNode(node, "measures");
         if (isGoal(node)) {
             return Optional.empty();
@@ -50,7 +49,7 @@ public class WithingsBodyWeightDataPointMapper extends WithingsBodyMeasureDataPo
         }
 
         if (value == null || unit == null) {
-            return Optional.empty(); // there was no body weight measure in this node
+            return Optional.empty();
         }
 
         if (isUnattributedSensed(node)) {
@@ -73,7 +72,6 @@ public class WithingsBodyWeightDataPointMapper extends WithingsBodyMeasureDataPo
         }
 
         Optional<String> userComment = asOptionalString(node, "comment");
-
         if (userComment.isPresent()) {
             bodyWeightBuilder.setUserNotes(userComment.get());
         }
@@ -82,11 +80,10 @@ public class WithingsBodyWeightDataPointMapper extends WithingsBodyMeasureDataPo
 
         BodyWeight bodyWeight = bodyWeightBuilder.build();
 
-        return Optional.of(newDataPoint(bodyWeight, RESOURCE_API_SOURCE_NAME, externalId.orElse(null),
+        return Optional.of(newDataPoint(bodyWeight, externalId.orElse(null),
                 isSensed(node).orElse(null), null));
+
     }
-
-
 
 
 }

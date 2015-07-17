@@ -26,8 +26,6 @@ import static org.openmhealth.shim.withings.mapper.WithingsBodyMeasureDataPointM
 public class WithingsBloodPressureDataPointMapper extends WithingsBodyMeasureDataPointMapper<BloodPressure> {
 
     /**
-     * Maps a JSON response node from the Withings body measure endpoint into a {@link BloodPressure} measure
-     *
      * @param node list node from the array "measuregrp" contained in the "body" of the endpoint response
      * @param timeZoneFullName a string containing the full name of the time zone (e.g., America/Los_Angeles) from the
      * "timezone" property of the "body" of the body measure endpoint response
@@ -36,9 +34,10 @@ public class WithingsBloodPressureDataPointMapper extends WithingsBodyMeasureDat
      */
     @Override
     Optional<DataPoint<BloodPressure>> asDataPoint(JsonNode node, String timeZoneFullName) {
+
         JsonNode measuresNode = asRequiredNode(node, "measures");
 
-        if(isGoal(node)){
+        if (isGoal(node)) {
             return Optional.empty();
         }
 
@@ -46,8 +45,8 @@ public class WithingsBloodPressureDataPointMapper extends WithingsBodyMeasureDat
         Long diastolicUnit = null, systolicUnit = null;
 
         for (JsonNode measureNode : measuresNode) {
-            //We assume that there is only one value and unit for each measure type in the measures array
-            //This implementation, in essence, grabs the value and unit for the last measure of that type in the list
+            // We assume that there is only one value and unit for each measure type in the measures array
+            // This implementation, in essence, grabs the value and unit for the last measure of that type in the list
             Long type = asRequiredLong(measureNode, "type");
             if (type == BLOOD_PRESSURE_DIASTOLIC.getIntVal()) {
                 diastolicValue = asRequiredDouble(measureNode, "value");
@@ -60,11 +59,11 @@ public class WithingsBloodPressureDataPointMapper extends WithingsBodyMeasureDat
         }
 
         if (diastolicValue == null || diastolicUnit == null || systolicValue == null || systolicUnit == null) {
-            //We are missing a unit or value from one of the bp measurements, and therefore unable to create a datapoint
+            // We are missing a unit or value from one of the bp measurements and therefore unable to create a datapoint
             if (diastolicValue != null || diastolicUnit != null || systolicValue != null || systolicUnit != null) {
                 //TODO: log or record that we were unable to map data point because we only had some of the values
-                //In this case, there was a value or unit for at least one of these, however there was not complete
-                //information so we are unable to map the datapoint and we should let them know. If we skip this
+                // In this case, there was a value or unit for at least one of these, however there was not complete
+                // information so we are unable to map the datapoint and we should let them know. If we skip this
                 // step, it implies that there was not any blood pressure related information in the measrgrp which
                 // is one expected outcome, so we do not need to document that situation
             }
@@ -93,10 +92,10 @@ public class WithingsBloodPressureDataPointMapper extends WithingsBodyMeasureDat
         BloodPressure bloodPressureMeasure = bloodPressureBuilder.build();
         Optional<Long> externalId = asOptionalLong(node, "grpid");
         DataPoint<BloodPressure> bloodPressureDataPoint =
-                newDataPoint(bloodPressureMeasure, RESOURCE_API_SOURCE_NAME, externalId.orElse(null),
+                newDataPoint(bloodPressureMeasure, externalId.orElse(null),
                         isSensed(node).orElse(null), null);
         return Optional.of(bloodPressureDataPoint);
-    }
 
+    }
 
 }

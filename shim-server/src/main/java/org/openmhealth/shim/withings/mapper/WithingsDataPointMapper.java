@@ -13,7 +13,7 @@ import static org.openmhealth.schema.domain.omh.DataPointModality.SENSED;
 
 
 /**
- * Created by Chris Schaefbauer on 6/29/15.
+ * @author Chris Schaefbauer
  */
 public abstract class WithingsDataPointMapper<T> implements JsonNodeDataPointMapper<T> {
 
@@ -21,11 +21,25 @@ public abstract class WithingsDataPointMapper<T> implements JsonNodeDataPointMap
     public final static String RESOURCE_API_SOURCE_NAME = "Withings Resource API";
     protected static final String BODY_NODE_PROPERTY = "body";
 
-    protected <T extends Measure> DataPoint<T> newDataPoint(T measure, String sourceName, Long externalId,
+    /**
+     * Creates a {@link DataPoint} from a measure, and its meta-information, generated from a Withings measure specific
+     * {@link WithingsDataPointMapper}
+     *
+     * @param <T> the {@link Measure} type
+     * @param measure {@link Measure} of type T, generated through a measure specific data point mapper
+     * @param externalId the external id from the Withings API Response, can be null if the corresponding property is
+     * missing from the Withings response
+     * @param sensed a boolean indicating whether the datapoint was sensed by a device for now, can be null if the
+     * corresponding property is missing from the Withings response
+     * @param deviceName the name of the Withings device that generated the data point, can be null if the corresponding
+     * property is missing from the Withings response
+     * @return a datapoint
+     */
+    protected <T extends Measure> DataPoint<T> newDataPoint(T measure, Long externalId,
             Boolean sensed, String deviceName) {
 
         DataPointAcquisitionProvenance.Builder provenanceBuilder =
-                new DataPointAcquisitionProvenance.Builder(sourceName);
+                new DataPointAcquisitionProvenance.Builder(RESOURCE_API_SOURCE_NAME);
 
         if (sensed != null) {
             if (sensed) {
@@ -34,15 +48,12 @@ public abstract class WithingsDataPointMapper<T> implements JsonNodeDataPointMap
             else {
                 provenanceBuilder.setModality(SELF_REPORTED);
             }
-
         }
 
         DataPointAcquisitionProvenance acquisitionProvenance = provenanceBuilder.build();
-
-        if(deviceName !=null){
-            acquisitionProvenance.setAdditionalProperty("device_name",deviceName);
+        if (deviceName != null) {
+            acquisitionProvenance.setAdditionalProperty("device_name", deviceName);
         }
-
 
         // TODO discuss the name of the external identifier, to make it clear it's the ID used by the source
         if (externalId != null) {

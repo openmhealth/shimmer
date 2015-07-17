@@ -71,9 +71,8 @@ public class WithingsSleepDurationDataPointMapper extends WithingsListDataPointM
             sleepDuration.setAdditionalProperty("wakeup_count", new Integer(wakeupCount.get().intValue()));
         }
 
-        // The following individual sleep phase values are Withings platform-specific values, so we pass them through as
-        // additionalProperties to ensure we are not losing relevant platform specific values. These values and their
-        // semantics should be interpreted according to the Withings API specification
+        // These sleep phase values are Withings platform-specific, so we pass them through as additionalProperties to
+        // ensure we keep relevant platform specific values. Should be interpreted according to Withings API spec
         sleepDuration.setAdditionalProperty("light_sleep_duration",
                 new DurationUnitValue(DurationUnit.SECOND, lightSleepInSeconds));
         sleepDuration.setAdditionalProperty("deep_sleep_duration",
@@ -93,23 +92,14 @@ public class WithingsSleepDurationDataPointMapper extends WithingsListDataPointM
 
 
         return Optional
-                .of(newDataPoint(sleepDuration, RESOURCE_API_SOURCE_NAME, externalId.orElse(null), true, modelName));
+                .of(newDataPoint(sleepDuration, externalId.orElse(null), true, modelName));
     }
 
-    /**
-     * The list name for splitting out individual sleep summary items that can then be mapped.
-     *
-     * @return the name of the array containing the individual sleep summary nodes
-     */
     @Override
     String getListNodeName() {
         return "series";
     }
 
-    /**
-     * Enum mapping the different sleep tracking device names to the integer value used by Withings to identify them in
-     * datapoints
-     */
     public enum SleepDeviceTypes {
         Pulse(16), Aura(32);
 
@@ -123,7 +113,7 @@ public class WithingsSleepDurationDataPointMapper extends WithingsListDataPointM
             }
         }
 
-        private SleepDeviceTypes(final long deviceId) {
+        SleepDeviceTypes(final long deviceId) {
             this.deviceId = deviceId;
         }
 

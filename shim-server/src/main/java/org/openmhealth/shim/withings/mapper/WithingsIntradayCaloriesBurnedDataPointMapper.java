@@ -24,7 +24,8 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.*;
  * Documentation website</a></p>
  *
  * @author Chris Schaefbauer
- * @see <a href="http://oauth.withings.com/api/doc#api-Measure-get_intraday_measure">Intrday Activity Measures API documentation</a>
+ * @see <a href="http://oauth.withings.com/api/doc#api-Measure-get_intraday_measure">Intrday Activity Measures API
+ * documentation</a>
  */
 public class WithingsIntradayCaloriesBurnedDataPointMapper extends WithingsDataPointMapper<CaloriesBurned> {
 
@@ -40,6 +41,7 @@ public class WithingsIntradayCaloriesBurnedDataPointMapper extends WithingsDataP
      */
     @Override
     public List<DataPoint<CaloriesBurned>> asDataPoints(List<JsonNode> responseNodes) {
+
         checkNotNull(responseNodes);
         checkNotNull(responseNodes.size() == 1, "A single response node is allowed per call.");
 
@@ -47,7 +49,7 @@ public class WithingsIntradayCaloriesBurnedDataPointMapper extends WithingsDataP
         JsonNode seriesNode = asRequiredNode(bodyNode, "series");
 
         Iterator<Map.Entry<String, JsonNode>> fieldsIterator = seriesNode.fields();
-        HashMap<Long, JsonNode> nodesWithCalories = nodesWithCalories(fieldsIterator);
+        HashMap<Long, JsonNode> nodesWithCalories = getNodesWithCalories(fieldsIterator);
         List<Long> startDateTimesInUnixEpochSeconds = Lists.newArrayList(nodesWithCalories.keySet());
 
         //ensure the datapoints are in order of passing time (data points that are earlier in time come before data
@@ -59,6 +61,7 @@ public class WithingsIntradayCaloriesBurnedDataPointMapper extends WithingsDataP
         }
 
         return dataPoints;
+
     }
 
     /**
@@ -72,6 +75,7 @@ public class WithingsIntradayCaloriesBurnedDataPointMapper extends WithingsDataP
      */
     private Optional<DataPoint<CaloriesBurned>> asDataPoint(JsonNode nodeWithCalorie,
             Long startDateTimeInUnixEpochSeconds) {
+
         Long caloriesBurnedValue = asRequiredLong(nodeWithCalorie, "calories");
         CaloriesBurned.Builder caloriesBurnedBuilder =
                 new CaloriesBurned.Builder(new KcalUnitValue(KcalUnit.KILOCALORIE, caloriesBurnedValue));
@@ -91,8 +95,9 @@ public class WithingsIntradayCaloriesBurnedDataPointMapper extends WithingsDataP
         }
 
         CaloriesBurned calorieBurned = caloriesBurnedBuilder.build();
-        return Optional.of(newDataPoint(calorieBurned, WithingsDataPointMapper.RESOURCE_API_SOURCE_NAME, null, true,
+        return Optional.of(newDataPoint(calorieBurned, null, true,
                 null));
+
     }
 
     /**
@@ -104,10 +109,12 @@ public class WithingsIntradayCaloriesBurnedDataPointMapper extends WithingsDataP
      * @return a hashmap with keys as the start datetime (in unix epoch seconds) of each activity event, and values as
      * the information related to the activity event starting at the key datetime
      */
-    private HashMap<Long, JsonNode> nodesWithCalories(Iterator<Map.Entry<String, JsonNode>> fieldsIterator) {
+    private HashMap<Long, JsonNode> getNodesWithCalories(Iterator<Map.Entry<String, JsonNode>> fieldsIterator) {
+
         HashMap<Long, JsonNode> nodesWithCalories = Maps.newHashMap();
         fieldsIterator.forEachRemaining(n -> addNodesIfHasCalories(nodesWithCalories, n));
         return nodesWithCalories;
+
     }
 
     /**
@@ -121,10 +128,12 @@ public class WithingsIntradayCaloriesBurnedDataPointMapper extends WithingsDataP
      */
     private void addNodesIfHasCalories(HashMap<Long, JsonNode> nodesWithCalories,
             Map.Entry<String, JsonNode> intradayActivityEventEntry) {
+
         if (intradayActivityEventEntry.getValue().has("calories")) {
             nodesWithCalories
                     .put(Long.parseLong(intradayActivityEventEntry.getKey()), intradayActivityEventEntry.getValue());
         }
+
     }
 
 

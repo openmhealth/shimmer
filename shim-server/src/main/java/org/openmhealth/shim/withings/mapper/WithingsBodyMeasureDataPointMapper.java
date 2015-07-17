@@ -15,7 +15,7 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.*;
 
 /**
  * Base class for mappers that map body measures responses to specific {@link Measure} data points.
- * Created by Chris Schaefbauer on 6/29/15.
+ * @author Chris Schaefbauer
  */
 public abstract class WithingsBodyMeasureDataPointMapper<T> extends WithingsDataPointMapper<T> {
 
@@ -101,6 +101,7 @@ public abstract class WithingsBodyMeasureDataPointMapper<T> extends WithingsData
      * self-reported by a user
      */
     protected Optional<Boolean> isSensed(JsonNode node) {
+
         Optional<Long> measurementProcess = asOptionalLong(node, "attrib");
         Boolean sensed = null;
         if (measurementProcess.isPresent()) {
@@ -113,6 +114,7 @@ public abstract class WithingsBodyMeasureDataPointMapper<T> extends WithingsData
             }
         }
         return Optional.ofNullable(sensed);
+
     }
 
     /**
@@ -133,6 +135,7 @@ public abstract class WithingsBodyMeasureDataPointMapper<T> extends WithingsData
      * @return whether or not the datapoint is a goal or real measure
      */
     protected Boolean isGoal(JsonNode node) {
+
         Optional<Long> category = asOptionalLong(node, "category");
         if (category.isPresent()) {
             if (category.get() == 2) {
@@ -141,23 +144,28 @@ public abstract class WithingsBodyMeasureDataPointMapper<T> extends WithingsData
         }
 
         return false;
+
     }
 
     /**
      * Determines whether a body measure group item that was sensed is currently unattributed to a user because the
-     * measurement was taken before a new user was synced to the device. Based on Withings feedback, this is only a case
+     * measurement was taken before a new user was synced to the device. Based on Withings feedback, this is only a
+     * case
      * with weight measurements
      *
      * @param node a list node from the "measuregrps" list in the body measures API response
      * @return whether or not a sensed datapoint has been attributed correctly to a user
      */
     protected boolean isUnattributedSensed(JsonNode node) {
+
         Optional<Long> attrib = asOptionalLong(node, "attrib");
         if (attrib.isPresent()) {
             if (attrib.get() == 1) {
                 return true;
             }
         }
+
         return false;
+
     }
 }

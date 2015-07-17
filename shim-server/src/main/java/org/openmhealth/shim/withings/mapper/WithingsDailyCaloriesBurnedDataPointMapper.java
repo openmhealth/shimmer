@@ -13,9 +13,11 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asRequir
 /**
  * A mapper from Withings Activity Measures endpoint responses (/measure?action=getactivity) to {@link CaloriesBurned}
  * objects
- *
- * <p>NOTE: This only captures calories that are burned from activity that is captured by a Withings device or application, and
- * may not be an accurate representation of all the calories burned from metabolic resting or activities not captured.</p>
+ * <p>
+ * <p>NOTE: This only captures calories that are burned from activity that is captured by a Withings device or
+ * application, and
+ * may not be an accurate representation of all the calories burned from metabolic resting or activities not
+ * captured.</p>
  *
  * @author Chris Schaefbauer
  * @see <a href="http://oauth.withings.com/api/doc#api-Measure-get_activity">Activity Measures API documentation</a>
@@ -27,8 +29,10 @@ public class WithingsDailyCaloriesBurnedDataPointMapper extends WithingsListData
      * Maps an individual list node from the array in the Withings activity measure endpoint response into a {@link
      * CaloriesBurned} data point
      * <p>
-     * <p>Note: the start datetime and end datetime values for the mapped {@link CaloriesBurned} {@link DataPoint} assume that
-     * the start timezone and end time zone are the same, both equal to the "timezone" property in the Withings response
+     * <p>Note: the start datetime and end datetime values for the mapped {@link CaloriesBurned} {@link DataPoint}
+     * assume that
+     * the start timezone and end time zone are the same, both equal to the "timezone" property in the Withings
+     * response
      * datapoints. However, according to Withings, the property value they provide is specifically the end datetime
      * timezone.</p>
      *
@@ -38,6 +42,7 @@ public class WithingsDailyCaloriesBurnedDataPointMapper extends WithingsListData
      */
     @Override
     Optional<DataPoint<CaloriesBurned>> asDataPoint(JsonNode node) {
+
         long caloriesBurnedValue = asRequiredLong(node, "calories");
         CaloriesBurned.Builder caloriesBurnedBuilder =
                 new CaloriesBurned.Builder(new KcalUnitValue(KcalUnit.KILOCALORIE, caloriesBurnedValue));
@@ -55,9 +60,10 @@ public class WithingsDailyCaloriesBurnedDataPointMapper extends WithingsListData
             OffsetDateTime offsetStartDateTime = OffsetDateTime.of(localStartDateTime, offset);
             LocalDateTime localEndDateTime = LocalDate.parse(dateString.get()).atStartOfDay().plusDays(1);
 
-            OffsetDateTime offsetEndDateTime = OffsetDateTime.of(localEndDateTime,offset);
+            OffsetDateTime offsetEndDateTime = OffsetDateTime.of(localEndDateTime, offset);
             caloriesBurnedBuilder.setEffectiveTimeFrame(
-                    TimeInterval.ofStartDateTimeAndEndDateTime(offsetStartDateTime, offsetEndDateTime)); //Duration is for one day as the datapoint refers to an entire day of calories burned
+                    TimeInterval.ofStartDateTimeAndEndDateTime(offsetStartDateTime,
+                            offsetEndDateTime));
         }
 
         Optional<String> userComment = asOptionalString(node, "comment");
@@ -67,15 +73,12 @@ public class WithingsDailyCaloriesBurnedDataPointMapper extends WithingsListData
 
         CaloriesBurned caloriesBurned = caloriesBurnedBuilder.build();
         DataPoint<CaloriesBurned> caloriesBurnedDataPoint =
-                newDataPoint(caloriesBurned, RESOURCE_API_SOURCE_NAME, null, true, null);
+                newDataPoint(caloriesBurned, null, true, null);
+
         return Optional.of(caloriesBurnedDataPoint);
+
     }
 
-    /**
-     * Returns the list name for splitting out individual activity measure items that can then be mapped.
-     *
-     * @return the name of the array containing the individual activity measure nodes
-     */
     @Override
     String getListNodeName() {
         return "activities";

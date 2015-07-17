@@ -13,7 +13,8 @@ import static org.openmhealth.shim.withings.mapper.WithingsBodyMeasureDataPointM
 
 
 /**
- * A mapper from Withings Body Measure endpoint responses (/measure?action=getmeas) to {@link BodyHeight} objects when a
+ * A mapper from Withings Body Measure endpoint responses (/measure?action=getmeas) to {@link BodyHeight} objects when
+ * a
  * body height value is present in the body measure group
  *
  * @author Chris Schaefbauer
@@ -22,8 +23,6 @@ import static org.openmhealth.shim.withings.mapper.WithingsBodyMeasureDataPointM
 public class WithingsBodyHeightDataPointMapper extends WithingsBodyMeasureDataPointMapper<BodyHeight> {
 
     /**
-     * Maps a JSON response node from the Withings body measure endpoint into a {@link BodyHeight} measure
-     *
      * @param node list node from the array "measuregrp" contained in the "body" of the endpoint response
      * @param timeZoneFullName a string containing the full name of the time zone (e.g., America/Los_Angeles) from the
      * "timezone" property of the "body" of the body measure endpoint response
@@ -32,14 +31,18 @@ public class WithingsBodyHeightDataPointMapper extends WithingsBodyMeasureDataPo
      */
     @Override
     Optional<DataPoint<BodyHeight>> asDataPoint(JsonNode node, String timeZoneFullName) {
+
         JsonNode measuresNode = asRequiredNode(node, "measures");
-        if(isGoal(node)){
+
+        // We only map measurements, not goals in the Withings API
+        if (isGoal(node)) {
             return Optional.empty();
         }
+
         Double value = null;
         Long unit = null;
+
         for (JsonNode measureNode : measuresNode) {
-            //within each measure group, we look through all the measures to find the height value in that group
             Long type = asRequiredLong(measureNode, "type");
             if (type == HEIGHT.getIntVal()) {
                 value = asRequiredDouble(measureNode, "value");
@@ -48,7 +51,7 @@ public class WithingsBodyHeightDataPointMapper extends WithingsBodyMeasureDataPo
         }
 
         if (value == null || unit == null) {
-            //There is no height data point in this measure group, so we return an empty optional value
+            // There is no height data point in this measure group, so we return an empty optional value
             return Optional.empty();
         }
 
@@ -71,9 +74,11 @@ public class WithingsBodyHeightDataPointMapper extends WithingsBodyMeasureDataPo
         BodyHeight measure = builder.build();
         Optional<Long> groupId = asOptionalLong(node, "grpid");
         DataPoint<BodyHeight> bodyHeightDataPoint =
-                newDataPoint(measure, RESOURCE_API_SOURCE_NAME, groupId.orElse(null), isSensed(node).orElse(null), null);
+                newDataPoint(measure, groupId.orElse(null), isSensed(node).orElse(null),
+                        null);
 
         return Optional.of(bodyHeightDataPoint);
+
     }
 
 

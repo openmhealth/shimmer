@@ -23,7 +23,8 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asRequir
 public abstract class WithingsListDataPointMapper<T> extends WithingsDataPointMapper<T> {
 
     /**
-     * Maps a JSON response with individual data points contained in a JSON array to a list of {@link DataPoint} objects
+     * Maps a JSON response with individual data points contained in a JSON array to a list of {@link DataPoint}
+     * objects
      * with the appropriate measure. Splits individual nodes based on the name of the list node and then iteratively
      * maps the nodes in the list.
      *
@@ -45,6 +46,7 @@ public abstract class WithingsListDataPointMapper<T> extends WithingsDataPointMa
         }
 
         return dataPoints;
+
     }
 
     /**

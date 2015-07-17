@@ -34,6 +34,7 @@ public class WithingsDailyStepCountDataPointMapper extends WithingsListDataPoint
      */
     @Override
     Optional<DataPoint<StepCount>> asDataPoint(JsonNode node) {
+
         long stepValue = asRequiredLong(node, "steps");
         StepCount.Builder stepCountBuilder = new StepCount.Builder(stepValue);
         Optional<String> dateString = asOptionalString(node, "date");
@@ -59,15 +60,12 @@ public class WithingsDailyStepCountDataPointMapper extends WithingsListDataPoint
         }
 
         StepCount stepCount = stepCountBuilder.build();
-        DataPoint<StepCount> stepCountDataPoint = newDataPoint(stepCount, RESOURCE_API_SOURCE_NAME, null, true, null);
+        DataPoint<StepCount> stepCountDataPoint = newDataPoint(stepCount, null, true, null);
+
         return Optional.of(stepCountDataPoint);
+
     }
 
-    /**
-     * Returns the list name for splitting out individual activity measure items that can then be mapped.
-     *
-     * @return the name of the array containing the individual activity measure nodes
-     */
     @Override
     String getListNodeName() {
         return "activities";
