@@ -47,7 +47,7 @@ public class WithingsIntradayStepCountDataPointMapper extends WithingsDataPointM
         JsonNode seriesNode = asRequiredNode(bodyNode, "series");
 
         Iterator<Map.Entry<String, JsonNode>> fieldsIterator = seriesNode.fields();
-        HashMap<Long, JsonNode> nodesWithSteps = getNodesWithSteps(fieldsIterator);
+        Map<Long, JsonNode> nodesWithSteps = getNodesWithSteps(fieldsIterator);
         List<Long> startDateTimesInUnixEpochSeconds = Lists.newArrayList(nodesWithSteps.keySet());
 
         //ensure the datapoints are in order of passing time (data points that are earlier in time come before data
@@ -101,7 +101,7 @@ public class WithingsIntradayStepCountDataPointMapper extends WithingsDataPointM
      * @return a hashmap with keys as the start datetime (in unix epoch seconds) of each activity event, and values as
      * the information related to the activity event starting at the key datetime
      */
-    private HashMap<Long, JsonNode> getNodesWithSteps(Iterator<Map.Entry<String, JsonNode>> fieldsIterator) {
+    private Map<Long, JsonNode> getNodesWithSteps(Iterator<Map.Entry<String, JsonNode>> fieldsIterator) {
         HashMap<Long, JsonNode> nodesWithSteps = Maps.newHashMap();
         fieldsIterator.forEachRemaining(n -> addNodeIfHasSteps(nodesWithSteps, n));
         return nodesWithSteps;

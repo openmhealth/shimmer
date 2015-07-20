@@ -49,7 +49,7 @@ public class WithingsIntradayCaloriesBurnedDataPointMapper extends WithingsDataP
         JsonNode seriesNode = asRequiredNode(bodyNode, "series");
 
         Iterator<Map.Entry<String, JsonNode>> fieldsIterator = seriesNode.fields();
-        HashMap<Long, JsonNode> nodesWithCalories = getNodesWithCalories(fieldsIterator);
+        Map<Long, JsonNode> nodesWithCalories = getNodesWithCalories(fieldsIterator);
         List<Long> startDateTimesInUnixEpochSeconds = Lists.newArrayList(nodesWithCalories.keySet());
 
         //ensure the datapoints are in order of passing time (data points that are earlier in time come before data
@@ -109,7 +109,7 @@ public class WithingsIntradayCaloriesBurnedDataPointMapper extends WithingsDataP
      * @return a hashmap with keys as the start datetime (in unix epoch seconds) of each activity event, and values as
      * the information related to the activity event starting at the key datetime
      */
-    private HashMap<Long, JsonNode> getNodesWithCalories(Iterator<Map.Entry<String, JsonNode>> fieldsIterator) {
+    private Map<Long, JsonNode> getNodesWithCalories(Iterator<Map.Entry<String, JsonNode>> fieldsIterator) {
 
         HashMap<Long, JsonNode> nodesWithCalories = Maps.newHashMap();
         fieldsIterator.forEachRemaining(n -> addNodesIfHasCalories(nodesWithCalories, n));
