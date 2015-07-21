@@ -151,13 +151,14 @@ public class WithingsShim extends OAuth1ShimBase {
 
     @Override
     public ShimDataResponse getData(ShimDataRequest shimDataRequest) throws ShimException {
-        AccessParameters accessParameters = shimDataRequest.getAccessParameters();
 
+        AccessParameters accessParameters = shimDataRequest.getAccessParameters();
         String accessToken = accessParameters.getAccessToken();
         String tokenSecret = accessParameters.getTokenSecret();
-        final String userid = accessParameters.getAdditionalParameters().get("userid").toString();
-        String username = accessParameters.getUsername();
 
+        // userid is a unique id associated with each user and returned by Withings in the authorization, this id is
+        // used as a parameter in the request
+        final String userid = accessParameters.getAdditionalParameters().get("userid").toString();
 
         final WithingsDataType withingsDataType;
         try {
