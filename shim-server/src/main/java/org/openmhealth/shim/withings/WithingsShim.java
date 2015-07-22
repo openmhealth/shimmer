@@ -123,6 +123,9 @@ public class WithingsShim extends OAuth1ShimBase {
         Map<String, Object> addlParams =
                 accessParameters.getAdditionalParameters();
         addlParams = addlParams != null ? addlParams : new LinkedHashMap<String, Object>();
+        // Withings maintains a userid, separate from the username, for each user and requires that as a parameter
+        // for all requests. Userid is exposed during the authentication process and needed to construct the request
+        // URI.
         addlParams.put("userid", request.getParameter("userid"));
 
     }
@@ -180,15 +183,9 @@ public class WithingsShim extends OAuth1ShimBase {
                     + " in shimDataRequest, cannot retrieve data.");
         }
 
-        // Fetch and decode the JSON data.
         ObjectMapper objectMapper = new ObjectMapper();
         URI uri = createWithingsRequestUri(shimDataRequest, userid, withingsDataType);
-        //ResponseEntity<JsonNode> responseEntity = restTemplate.getForEntity(url, JsonNode.class);
-
-
         URL url = signUrl(uri.toString(), accessToken, tokenSecret, null);
-
-        // Fetch and decode the JSON data.
 
         // TODO: Handle requests for a number of days greater than what Withings supports
         HttpGet get = new HttpGet(url.toString());
@@ -210,6 +207,7 @@ public class WithingsShim extends OAuth1ShimBase {
                         break;
                     case STEPS:
                         if (partnerAccess) {
+                            // Use a different mapper because the partner-access endpoint generates a different response
                             mapper = new WithingsIntradayStepCountDataPointMapper();
                         }
                         else {
@@ -269,18 +267,14 @@ public class WithingsShim extends OAuth1ShimBase {
         }
         else {
             dateTimeMap.add("startdateymd", shimDataRequest.getStartDateTime().toLocalDate().toString());
-            //            if(withingsDataType==WithingsDataType.SLEEP){
-            //                dateTimeMap.add("enddate", shimDataRequest.getEndDateTime().toLocalDate().toString());
-            //            }
-            //            else{
             dateTimeMap.add("enddateymd", shimDataRequest.getEndDateTime().toLocalDate().toString());
-            //            }
 
         }
         UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder.fromUriString(DATA_URL).pathSegment(
                 withingsDataType.getEndpoint());
         String measureParameter = "";
         if (isPartnerAccessActivityMeasure(withingsDataType)) {
+            // partner level access allows greater detail around activity, but uses a different endpoint
             measureParameter = PARTNER_ACCESS_ACTIVITY_ENDPOINT;
         }
         else {
