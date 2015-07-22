@@ -21,12 +21,9 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.junit.Test;
-import org.openmhealth.schema.pojos.Activity;
 import org.openmhealth.schema.pojos.BloodPressure;
 import org.openmhealth.schema.pojos.BloodPressureUnit;
 import org.openmhealth.shim.ShimDataResponse;
-import org.openmhealth.shim.ShimDataType;
-import org.openmhealth.shim.runkeeper.RunkeeperShim;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -35,9 +32,7 @@ import java.net.URL;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  * @author Danilo Bonilla
@@ -54,10 +49,10 @@ public class WithingsShimTest {
 
         ObjectMapper objectMapper = new ObjectMapper();
 
-        WithingsShim.WithingsDataType.BODY.getNormalizer();
+        //WithingsShim.WithingsDataType.BLOOD_PRESSURE.getNormalizer();
         SimpleModule module = new SimpleModule();
-        module.addDeserializer(ShimDataResponse.class,
-            WithingsShim.WithingsDataType.BODY.getNormalizer());
+//        module.addDeserializer(ShimDataResponse.class,
+//            WithingsShim.WithingsDataType.BODY.getNormalizer());
 
         objectMapper.registerModule(module);
 
