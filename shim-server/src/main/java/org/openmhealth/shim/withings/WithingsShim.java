@@ -63,15 +63,15 @@ public class WithingsShim extends OAuth1ShimBase {
 
     private static final String TOKEN_URL = "https://oauth.withings.com/account/access_token";
 
-    private static final String PARTNER_ACCESS_ACTIVITY_ENDPOINT = "intradayactivity";
+    private static final String PARTNER_ACCESS_ACTIVITY_ENDPOINT = "getintradayactivity";
 
     @Value("${openmhealth.shim.withings.partner_access:false}")
     protected boolean partnerAccess;
 
     @Autowired
     public WithingsShim(ApplicationAccessParametersRepo applicationParametersRepo,
-                        AuthorizationRequestParametersRepo authorizationRequestParametersRepo,
-                        ShimServerConfig shimServerConfig) {
+            AuthorizationRequestParametersRepo authorizationRequestParametersRepo,
+            ShimServerConfig shimServerConfig) {
         super(applicationParametersRepo, authorizationRequestParametersRepo, shimServerConfig);
     }
 
@@ -107,41 +107,49 @@ public class WithingsShim extends OAuth1ShimBase {
 
     @Override
     public ShimDataType[] getShimDataTypes() {
-        return new ShimDataType[]{
-            WithingsDataType.HEART_RATE, WithingsDataType.BLOOD_PRESSURE, WithingsDataType.SLEEP, WithingsDataType.CALORIES,
+
+        return new ShimDataType[] {
+                WithingsDataType.HEART_RATE, WithingsDataType.BLOOD_PRESSURE, WithingsDataType.SLEEP,
+                WithingsDataType.CALORIES,
                 WithingsDataType.HEIGHT, WithingsDataType.STEPS, WithingsDataType.WEIGHT
         };
+
     }
 
     @Override
     protected void loadAdditionalAccessParameters(
-        HttpServletRequest request, AccessParameters accessParameters) {
+
+            HttpServletRequest request, AccessParameters accessParameters) {
         Map<String, Object> addlParams =
-            accessParameters.getAdditionalParameters();
+                accessParameters.getAdditionalParameters();
         addlParams = addlParams != null ? addlParams : new LinkedHashMap<String, Object>();
         addlParams.put("userid", request.getParameter("userid"));
+
     }
 
     public enum WithingsDataType implements ShimDataType {
-        WEIGHT("measure","getmeas",true),
-        HEIGHT("measure","getmeas",true),
-        STEPS("v2/measure","getactivity",false),
-        CALORIES("v2/measure","getactivity",false),
-        SLEEP("v2/sleep","getsummary",false),
-        HEART_RATE("measure","getmeas",true),
-        BLOOD_PRESSURE("measure","getmeas",true);
+
+        WEIGHT("measure", "getmeas", true),
+        HEIGHT("measure", "getmeas", true),
+        STEPS("v2/measure", "getactivity", false),
+        CALORIES("v2/measure", "getactivity", false),
+        SLEEP("v2/sleep", "getsummary", false),
+        HEART_RATE("measure", "getmeas", true),
+        BLOOD_PRESSURE("measure", "getmeas", true);
 
         private String endpoint;
         private String measureParameter;
         private boolean usesUnixEpochSecondsDate;
 
-        WithingsDataType(String endpoint,String measureParameter, boolean usesUnixEpochSecondsDate){
+        WithingsDataType(String endpoint, String measureParameter, boolean usesUnixEpochSecondsDate) {
             this.endpoint = endpoint;
             this.measureParameter = measureParameter;
             this.usesUnixEpochSecondsDate = usesUnixEpochSecondsDate;
         }
 
-        public String getEndpoint(){ return endpoint; }
+        public String getEndpoint() {
+            return endpoint;
+        }
 
         public String getMeasureParameter() {
             return measureParameter;
@@ -182,6 +190,7 @@ public class WithingsShim extends OAuth1ShimBase {
 
         // Fetch and decode the JSON data.
 
+        // TODO: Handle requests for a number of days greater than what Withings supports
         HttpGet get = new HttpGet(url.toString());
         HttpResponse response;
         try {
@@ -190,7 +199,9 @@ public class WithingsShim extends OAuth1ShimBase {
 
             if (shimDataRequest.getNormalize()) {
                 WithingsDataPointMapper mapper;
+
                 switch (withingsDataType) {
+
                     case WEIGHT:
                         mapper = new WithingsBodyWeightDataPointMapper();
                         break;
@@ -224,6 +235,7 @@ public class WithingsShim extends OAuth1ShimBase {
                         break;
                     default:
                         throw new UnsupportedOperationException();
+
                 }
 
                 InputStream content = responseEntity.getContent();
@@ -231,12 +243,17 @@ public class WithingsShim extends OAuth1ShimBase {
                 List<DataPoint> dataPoints = mapper.asDataPoints(singletonList(jsonNode));
                 return ShimDataResponse.result(WithingsShim.SHIM_KEY,
                         dataPoints);
-            } else {
-                return ShimDataResponse.result(WithingsShim.SHIM_KEY, objectMapper.readTree(responseEntity.getContent()));
             }
-        } catch (IOException e) {
+            else {
+                return ShimDataResponse
+                        .result(WithingsShim.SHIM_KEY, objectMapper.readTree(responseEntity.getContent()));
+            }
+
+        }
+        catch (IOException e) {
             throw new ShimException("Could not fetch data", e);
-        } finally {
+        }
+        finally {
             get.releaseConnection();
         }
     }
@@ -252,29 +269,31 @@ public class WithingsShim extends OAuth1ShimBase {
         }
         else {
             dateTimeMap.add("startdateymd", shimDataRequest.getStartDateTime().toLocalDate().toString());
-//            if(withingsDataType==WithingsDataType.SLEEP){
-//                dateTimeMap.add("enddate", shimDataRequest.getEndDateTime().toLocalDate().toString());
-//            }
-//            else{
-                dateTimeMap.add("enddateymd", shimDataRequest.getEndDateTime().toLocalDate().toString());
-//            }
+            //            if(withingsDataType==WithingsDataType.SLEEP){
+            //                dateTimeMap.add("enddate", shimDataRequest.getEndDateTime().toLocalDate().toString());
+            //            }
+            //            else{
+            dateTimeMap.add("enddateymd", shimDataRequest.getEndDateTime().toLocalDate().toString());
+            //            }
 
         }
         UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder.fromUriString(DATA_URL).pathSegment(
                 withingsDataType.getEndpoint());
         String measureParameter = "";
-        if(isPartnerAccessActivityMeasure(withingsDataType)){
+        if (isPartnerAccessActivityMeasure(withingsDataType)) {
             measureParameter = PARTNER_ACCESS_ACTIVITY_ENDPOINT;
         }
-        else{
+        else {
             measureParameter = withingsDataType.getMeasureParameter();
         }
-        uriComponentsBuilder.queryParam("action", measureParameter).queryParam("userid", userid).queryParams(dateTimeMap);
+        uriComponentsBuilder.queryParam("action", measureParameter).queryParam("userid", userid)
+                .queryParams(dateTimeMap);
         UriComponents uriComponents = uriComponentsBuilder.build();
         return uriComponents.toUri();
     }
 
     private boolean isPartnerAccessActivityMeasure(WithingsDataType withingsDataType) {
-        return (partnerAccess&&(withingsDataType==WithingsDataType.STEPS||withingsDataType==WithingsDataType.CALORIES));
+        return (partnerAccess &&
+                (withingsDataType == WithingsDataType.STEPS || withingsDataType == WithingsDataType.CALORIES));
     }
 }
