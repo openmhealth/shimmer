@@ -227,15 +227,22 @@ The currently supported shims are
     * weight  
         * [omh:body-weight](http://www.openmhealth.org/developers/schemas/#body-weight)
 * withings
-    * body 
-        * [omh:blood-pressure](http://www.openmhealth.org/developers/schemas/#blood-pressure)
-        * [omh:body-height](http://www.openmhealth.org/developers/schemas/#body-height)
-        * [omh:body-weight](http://www.openmhealth.org/developers/schemas/#body-weight)
-        * [omh:heart-rate](http://www.openmhealth.org/developers/schemas/#heart-rate)
-    * intraday
-        * [omh:step-count](http://www.openmhealth.org/developers/schemas/#step-count)
+    * blood_pressure 
+        * [omh:blood-pressure](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_blood-pressure)
+    * height
+        * [omh:body-height](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_body-height)
+    * weight
+        * [omh:body-weight](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_body-weight)
+    * heart_rate
+        * [omh:heart-rate](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_heart-rate)
+    * steps<sup>1</sup> 
+        * [omh:step-count](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_step-count)
+    * calories<sup>1</sup> 
+        * [omh:calories-burned](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_calories-burned)
     * sleep    
-        * [omh:sleep-duration](http://www.openmhealth.org/developers/schemas/#sleep-duration)
+        * [omh:sleep-duration](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_sleep-duration)
+
+<sup>1</sup> Uses the daily activity summary by default or when partner-access is set to false in the application yaml file and uses intraday activity when partner-access is set to true. Intraday activity requests are limited to 24 hours per request.
 
 You can learn more about these shims and endpoints on the Open mHealth [developer site](http://www.openmhealth.org/developers/getting-started/). 
 
