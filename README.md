@@ -242,8 +242,9 @@ The currently supported shims are
     * sleep    
         * [omh:sleep-duration](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_sleep-duration)
 
-<sup>1</sup> Uses the daily activity summary by default or when partner-access is set to false in the application yaml file and uses intraday activity when partner-access is set to true. Intraday activity requests are limited to 24 hours per request.
+<sup>1</sup> *Uses the daily activity summary by default or when partner-access is set to false in the application yaml file and uses intraday activity when partner-access is set to true. Intraday activity requests are limited to 24 hours per request.*
 
+### Learn more and contribute
 You can learn more about these shims and endpoints on the Open mHealth [developer site](http://www.openmhealth.org/developers/getting-started/). 
 
 The list of supported third-party APIs will grow over time as more shims are added. If you'd like to contribute a shim to work with your API or a third-party API,
