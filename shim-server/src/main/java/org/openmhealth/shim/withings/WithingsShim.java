@@ -72,7 +72,9 @@ public class WithingsShim extends OAuth1ShimBase {
     public WithingsShim(ApplicationAccessParametersRepo applicationParametersRepo,
             AuthorizationRequestParametersRepo authorizationRequestParametersRepo,
             ShimServerConfig shimServerConfig) {
+
         super(applicationParametersRepo, authorizationRequestParametersRepo, shimServerConfig);
+
     }
 
     @Override
@@ -123,9 +125,8 @@ public class WithingsShim extends OAuth1ShimBase {
         Map<String, Object> addlParams =
                 accessParameters.getAdditionalParameters();
         addlParams = addlParams != null ? addlParams : new LinkedHashMap<String, Object>();
-        // Withings maintains a userid, separate from the username, for each user and requires that as a parameter
-        // for all requests. Userid is exposed during the authentication process and needed to construct the request
-        // URI.
+        // Withings maintains a unique id, separate from username, for each user and requires that as a parameter
+        // for requests. Userid is exposed during the authentication process and needed to construct the request URI.
         addlParams.put("userid", request.getParameter("userid"));
 
     }
@@ -258,6 +259,7 @@ public class WithingsShim extends OAuth1ShimBase {
 
     URI createWithingsRequestUri(ShimDataRequest shimDataRequest, String userid,
             WithingsDataType withingsDataType) {
+
         MultiValueMap<String, String> dateTimeMap = new LinkedMultiValueMap<>();
         if (withingsDataType.usesUnixEpochSecondsDate || isPartnerAccessActivityMeasure(withingsDataType)) {
             //the partner access endpoints for activity also use epoch secs
@@ -284,10 +286,20 @@ public class WithingsShim extends OAuth1ShimBase {
                 .queryParams(dateTimeMap);
         UriComponents uriComponents = uriComponentsBuilder.build();
         return uriComponents.toUri();
+
     }
 
+    /**
+     * Determines whether the request is a Withings partner-access level activity request based on the configuration
+     * setup and the data type from the Shim API request. This case requires a different endpoint and different time
+     * parameters than the standard activity endpoint.
+     *
+     * @param withingsDataType the withings data type retrieved from the Shim API request
+     */
     private boolean isPartnerAccessActivityMeasure(WithingsDataType withingsDataType) {
+
         return (partnerAccess &&
                 (withingsDataType == WithingsDataType.STEPS || withingsDataType == WithingsDataType.CALORIES));
+
     }
 }
