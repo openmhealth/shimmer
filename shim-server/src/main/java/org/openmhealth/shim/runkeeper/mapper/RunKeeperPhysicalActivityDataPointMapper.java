@@ -63,8 +63,6 @@ public class RunKeeperPhysicalActivityDataPointMapper extends RunKeeperDataPoint
         asOptionalDouble(itemNode, "total_distance")
                 .ifPresent(distanceInM -> builder.setDistance(new LengthUnitValue(METER, distanceInM)));
 
-        asOptionalString(itemNode, "notes").ifPresent(builder::setUserNotes);
-
         return builder.build();
     }
 
