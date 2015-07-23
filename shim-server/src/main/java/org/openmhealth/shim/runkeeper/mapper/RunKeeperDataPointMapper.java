@@ -46,7 +46,9 @@ public abstract class RunKeeperDataPointMapper<T> implements JsonNodeDataPointMa
     /**
      * @return the name of the list node used by this mapper
      */
-    protected abstract String getListNodeName();
+    protected String getListNodeName() {
+        return "items";
+    }
 
     /**
      * @param listEntryNode the list entry node

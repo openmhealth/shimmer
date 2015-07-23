@@ -25,10 +25,6 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.*;
  */
 public class RunKeeperPhysicalActivityDataPointMapper extends RunKeeperDataPointMapper<PhysicalActivity> {
 
-    @Override
-    protected String getListNodeName() {
-        return "items";
-    }
 
     @Override
     protected Optional<DataPoint<PhysicalActivity>> asDataPoint(JsonNode itemNode) {

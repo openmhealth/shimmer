@@ -17,11 +17,6 @@ import java.util.Optional;
 public class RunKeeperBodyWeightDataPointMapper extends RunKeeperDataPointMapper<BodyWeight> {
 
     @Override
-    protected String getListNodeName() {
-        return "items";
-    }
-
-    @Override
     protected Optional<DataPoint<BodyWeight>> asDataPoint(JsonNode itemNode) {
 
         throw new UnsupportedOperationException("This measure cannot be mapped without time zone information.");
