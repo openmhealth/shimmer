@@ -88,7 +88,7 @@ public class RunKeeperPhysicalActivityDataPointMapperUnitTests extends DataPoint
         List<DataPoint<PhysicalActivity>> dataPoints = mapper.asDataPoints(singletonList(responseNode));
 
         assertThat(dataPoints, notNullValue());
-        assertThat(dataPoints.size(), greaterThan(1));
+        assertThat(dataPoints.size(), equalTo(2));
 
         DataPoint<PhysicalActivity> dataPoint = dataPoints.get(1);
 
@@ -96,5 +96,14 @@ public class RunKeeperPhysicalActivityDataPointMapperUnitTests extends DataPoint
 
         assertThat(acquisitionProvenance, notNullValue());
         assertThat(acquisitionProvenance.getModality(), equalTo(SELF_REPORTED));
+    }
+
+    @Test
+    public void asDataPointsShouldReturnNoTimeFrameWhenOffsetMissing(){
+
+        List<DataPoint<PhysicalActivity>> dataPoints = mapper.asDataPoints(singletonList(responseNode));
+
+        DataPoint<PhysicalActivity> testDataPoint = dataPoints.get(1);
+        assertThat(testDataPoint.getBody().getEffectiveTimeFrame(), equalTo(null));
     }
 }
