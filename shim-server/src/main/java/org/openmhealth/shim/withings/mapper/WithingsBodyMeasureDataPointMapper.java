@@ -13,8 +13,8 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.*;
 
 
 /**
- * An abstract mapper from Withings body measure endpoint responses (/measure?action=getmeas) to parameterized measure
- * objects.
+ * An abstract mapper from Withings body measure endpoint responses (/measure?action=getmeas) to data points containing
+ * corresponding measure objects.
  *
  * @param <T> the measure to map to
  * @author Chris Schaefbauer
@@ -53,13 +53,7 @@ public abstract class WithingsBodyMeasureDataPointMapper<T> extends WithingsData
     }
 
     /**
-     * Maps JSON response nodes from the body measures endpoint (/measure?action=getmeas) in the Withings API into a
-     * list of {@link DataPoint} objects with the appropriate measure
-     *
-     * @param responseNodes a list of a single JSON node containing the entire response from the body measures endpoint
-     * @return a list of DataPoint objects of type T with the appropriate values mapped from the input JSON; because
-     * JSON objects are contained within an array in the input response, each measuregrp item in that array will map
-     * into an item in the list
+     * @param responseNodes a singleton list containing the entire response from the endpoint
      */
     @Override
     public List<DataPoint<T>> asDataPoints(List<JsonNode> responseNodes) {
