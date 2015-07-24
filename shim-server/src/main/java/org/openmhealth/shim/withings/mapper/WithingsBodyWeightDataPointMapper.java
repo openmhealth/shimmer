@@ -12,7 +12,7 @@ import java.time.ZoneId;
 import java.util.Optional;
 
 import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.*;
-import static org.openmhealth.shim.withings.mapper.WithingsBodyMeasureDataPointMapper.BodyMeasureTypes.WEIGHT;
+import static org.openmhealth.shim.withings.mapper.WithingsBodyMeasureDataPointMapper.BodyMeasureType.WEIGHT;
 
 
 /**
@@ -42,7 +42,7 @@ public class WithingsBodyWeightDataPointMapper extends WithingsBodyMeasureDataPo
         Double value = null;
         Long unit = null;
         for (JsonNode measureNode : measuresNode) {
-            if (asRequiredLong(measureNode, "type") == WEIGHT.getIntVal()) {
+            if (asRequiredLong(measureNode, "type") == WEIGHT.getMagicNumber()) {
                 value = asRequiredDouble(measureNode, "value");
                 unit = asRequiredLong(measureNode, "unit");
             }

@@ -10,7 +10,7 @@ import java.time.ZoneId;
 import java.util.Optional;
 
 import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.*;
-import static org.openmhealth.shim.withings.mapper.WithingsBodyMeasureDataPointMapper.BodyMeasureTypes.*;
+import static org.openmhealth.shim.withings.mapper.WithingsBodyMeasureDataPointMapper.BodyMeasureType.HEART_RATE;
 
 
 /**
@@ -41,7 +41,7 @@ public class WithingsHeartRateDataPointMapper extends WithingsBodyMeasureDataPoi
 
         for (JsonNode measureNode : measuresNode) {
             Long type = asRequiredLong(measureNode, "type");
-            if (type == HEART_PULSE.getIntVal()) {
+            if (type == HEART_RATE.getMagicNumber()) {
                 value = asRequiredDouble(measureNode, "value");
                 unit = asRequiredLong(measureNode, "unit");
             }

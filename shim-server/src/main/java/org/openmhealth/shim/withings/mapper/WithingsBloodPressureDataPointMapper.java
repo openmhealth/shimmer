@@ -9,10 +9,10 @@ import java.time.ZoneId;
 import java.util.Optional;
 
 import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.*;
-import static org.openmhealth.shim.withings.mapper.WithingsBodyMeasureDataPointMapper.BodyMeasureTypes
-        .BLOOD_PRESSURE_DIASTOLIC;
-import static org.openmhealth.shim.withings.mapper.WithingsBodyMeasureDataPointMapper.BodyMeasureTypes
-        .BLOOD_PRESSURE_SYSTOLIC;
+import static org.openmhealth.shim.withings.mapper.WithingsBodyMeasureDataPointMapper.BodyMeasureType
+        .DIASTOLIC_BLOOD_PRESSURE;
+import static org.openmhealth.shim.withings.mapper.WithingsBodyMeasureDataPointMapper.BodyMeasureType
+        .SYSTOLIC_BLOOD_PRESSURE;
 
 
 /**
@@ -33,7 +33,7 @@ public class WithingsBloodPressureDataPointMapper extends WithingsBodyMeasureDat
      * the JSON node parameter, wrapped as an {@link Optional}
      */
     @Override
-    Optional<DataPoint<BloodPressure>> asDataPoint(JsonNode node, String timeZoneFullName) {
+    public Optional<DataPoint<BloodPressure>> asDataPoint(JsonNode node, String timeZoneFullName) {
 
         JsonNode measuresNode = asRequiredNode(node, "measures");
 
@@ -48,11 +48,11 @@ public class WithingsBloodPressureDataPointMapper extends WithingsBodyMeasureDat
             // We assume that there is only one value and unit for each measure type in the measures array
             // This implementation, in essence, grabs the value and unit for the last measure of that type in the list
             Long type = asRequiredLong(measureNode, "type");
-            if (type == BLOOD_PRESSURE_DIASTOLIC.getIntVal()) {
+            if (type == DIASTOLIC_BLOOD_PRESSURE.getMagicNumber()) {
                 diastolicValue = asRequiredDouble(measureNode, "value");
                 diastolicUnit = asRequiredLong(measureNode, "unit");
             }
-            else if (type == BLOOD_PRESSURE_SYSTOLIC.getIntVal()) {
+            else if (type == SYSTOLIC_BLOOD_PRESSURE.getMagicNumber()) {
                 systolicValue = asRequiredDouble(measureNode, "value");
                 systolicUnit = asRequiredLong(measureNode, "unit");
             }

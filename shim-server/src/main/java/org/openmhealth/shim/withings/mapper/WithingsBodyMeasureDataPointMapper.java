@@ -14,34 +14,42 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.*;
 
 
 /**
- * Base class for mappers that map body measures responses to specific {@link Measure} data points.
+ * An abstract mapper from Withings body measure endpoint responses (/measure?action=getmeas) to parameterized measure
+ * objects.
+ *
+ * @param <T> the measure to map to
  * @author Chris Schaefbauer
+ * @author Emerson Farrugia
+ * @see <a href="http://oauth.withings.com/api/doc#api-Measure-get_measure">Body Measures API documentation</a>
  */
 public abstract class WithingsBodyMeasureDataPointMapper<T> extends WithingsDataPointMapper<T> {
 
     /**
-     * Enumeration representing the different body measure types contained in Body Measure endpoint responses. Calling
-     * getIntVal on a body measure type returns the integer value that corresponds to the value in the Withings API.
+     * A type of body measure included in a response from the endpoint.
      */
-    public enum BodyMeasureTypes {
+    public enum BodyMeasureType {
+
         WEIGHT(1),
         HEIGHT(4),
-        FAT_FREE_MASS(5),
-        FAT_RATIO(6),
-        FAT_MASS_WEIGHT(8),
-        BLOOD_PRESSURE_DIASTOLIC(9),
-        BLOOD_PRESSURE_SYSTOLIC(10),
-        HEART_PULSE(11),
-        SP02(54);
+        // FAT_FREE_MASS(5), // TODO confirm what this means
+        // FAT_RATIO(6), // TODO confirm what this means
+        // FAT_MASS_WEIGHT(8), // TODO confirm what this means
+        DIASTOLIC_BLOOD_PRESSURE(9),
+        SYSTOLIC_BLOOD_PRESSURE(10),
+        HEART_RATE(11),
+        OXYGEN_SATURATION(54);
 
-        private int intVal;
+        private int magicNumber;
 
-        BodyMeasureTypes(int measureType) {
-            this.intVal = measureType;
+        BodyMeasureType(int magicNumber) {
+            this.magicNumber = magicNumber;
         }
 
-        public int getIntVal() {
-            return intVal;
+        /**
+         * @return the magic number used to refer to this body measure type in responses
+         */
+        public int getMagicNumber() {
+            return magicNumber;
         }
     }
 
@@ -119,7 +127,7 @@ public abstract class WithingsBodyMeasureDataPointMapper<T> extends WithingsData
 
     /**
      * Calculates the actual value from the value and unit parameters returned by the Withings API for body
-     * measurements
+     * measurements.
      *
      * @return The value parameter multiplied by 10 to the unit power, in essence shifting the decimal by 'unit'
      * positions
@@ -129,7 +137,7 @@ public abstract class WithingsBodyMeasureDataPointMapper<T> extends WithingsData
     }
 
     /**
-     * Determines whether a body measure group item is a goal instead of an actual measurement
+     * Determines whether a body measure group item is a goal instead of an actual measurement.
      *
      * @param node a list node from the "measuregrps" list in the body measures API response
      * @return whether or not the datapoint is a goal or real measure
@@ -151,7 +159,7 @@ public abstract class WithingsBodyMeasureDataPointMapper<T> extends WithingsData
      * Determines whether a body measure group item that was sensed is currently unattributed to a user because the
      * measurement was taken before a new user was synced to the device. Based on Withings feedback, this is only a
      * case
-     * with weight measurements
+     * with weight measurements.
      *
      * @param node a list node from the "measuregrps" list in the body measures API response
      * @return whether or not a sensed datapoint has been attributed correctly to a user

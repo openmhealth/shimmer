@@ -1,7 +1,10 @@
 package org.openmhealth.shim.withings.mapper;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import org.openmhealth.schema.domain.omh.*;
+import org.openmhealth.schema.domain.omh.BodyHeight;
+import org.openmhealth.schema.domain.omh.DataPoint;
+import org.openmhealth.schema.domain.omh.LengthUnit;
+import org.openmhealth.schema.domain.omh.LengthUnitValue;
 
 import java.time.Instant;
 import java.time.OffsetDateTime;
@@ -9,7 +12,7 @@ import java.time.ZoneId;
 import java.util.Optional;
 
 import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.*;
-import static org.openmhealth.shim.withings.mapper.WithingsBodyMeasureDataPointMapper.BodyMeasureTypes.HEIGHT;
+import static org.openmhealth.shim.withings.mapper.WithingsBodyMeasureDataPointMapper.BodyMeasureType.HEIGHT;
 
 
 /**
@@ -44,7 +47,7 @@ public class WithingsBodyHeightDataPointMapper extends WithingsBodyMeasureDataPo
 
         for (JsonNode measureNode : measuresNode) {
             Long type = asRequiredLong(measureNode, "type");
-            if (type == HEIGHT.getIntVal()) {
+            if (type == HEIGHT.getMagicNumber()) {
                 value = asRequiredDouble(measureNode, "value");
                 unit = asRequiredLong(measureNode, "unit");
             }
