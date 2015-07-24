@@ -1,7 +1,7 @@
 package org.openmhealth.shim.runkeeper.mapper;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import org.openmhealth.schema.domain.omh.DataPoint;
+import org.openmhealth.schema.domain.omh.*;
 import org.openmhealth.shim.common.mapper.JsonNodeDataPointMapper;
 
 import java.time.format.DateTimeFormatter;
@@ -10,7 +10,8 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asRequiredNode;
+import static java.util.UUID.randomUUID;
+import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.*;
 
 
 /**
@@ -48,6 +49,51 @@ public abstract class RunKeeperDataPointMapper<T> implements JsonNodeDataPointMa
      */
     protected String getListNodeName() {
         return "items";
+    }
+
+    protected DataPointHeader getDataPointHeader(JsonNode itemNode, Measure measure) {
+
+        DataPointAcquisitionProvenance.Builder provenanceBuilder =
+                new DataPointAcquisitionProvenance.Builder(RESOURCE_API_SOURCE_NAME);
+
+        getModality(itemNode).ifPresent(provenanceBuilder::setModality);
+
+        DataPointAcquisitionProvenance provenance = provenanceBuilder.build();
+
+        asOptionalString(itemNode, "uri")
+                .ifPresent(externalId -> provenance.setAdditionalProperty("external_id", externalId));
+
+        DataPointHeader.Builder headerBuilder =
+                new DataPointHeader.Builder(randomUUID().toString(), measure.getSchemaId())
+                        .setAcquisitionProvenance(provenance);
+
+        asOptionalInteger(itemNode, "userId").ifPresent(userId -> headerBuilder.setUserId(userId.toString()));
+
+        return headerBuilder.build();
+    }
+
+    /**
+     * @see <a href="http://billday.com/2013/04/09/validating-tracked-versus-manual-fitness-activities-using-the
+     * -health-graph-api/">article on modality</a>
+     */
+    public Optional<DataPointModality> getModality(JsonNode itemNode) {
+
+        String source = asOptionalString(itemNode, "source").orElse(null);
+        String entryMode = asOptionalString(itemNode, "entry_mode").orElse(null);
+        Boolean hasPath = asOptionalBoolean(itemNode, "has_path").orElse(null);
+
+        if (entryMode != null && entryMode.equals("Web")) {
+            return Optional.of(DataPointModality.SELF_REPORTED);
+        }
+
+        if (source != null && source.equals("RunKeeper")
+                && entryMode != null && entryMode.equals("API")
+                && hasPath != null && hasPath) {
+
+            return Optional.of(DataPointModality.SENSED);
+        }
+
+        return Optional.empty();
     }
 
     /**
