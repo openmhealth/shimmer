@@ -4,6 +4,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 import org.openmhealth.schema.domain.omh.*;
 import org.openmhealth.shim.common.mapper.JsonNodeDataPointMapper;
 
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,6 +14,8 @@ import java.util.Optional;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static java.util.UUID.randomUUID;
+import static org.openmhealth.schema.domain.omh.DurationUnit.SECOND;
+import static org.openmhealth.schema.domain.omh.TimeInterval.ofStartDateTimeAndDuration;
 import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.*;
 
 
@@ -94,6 +99,23 @@ public abstract class RunKeeperDataPointMapper<T> implements JsonNodeDataPointMa
         }
 
         return Optional.empty();
+    }
+
+    protected void setEffectiveTimeframeIfPresent(JsonNode itemNode, Measure.Builder builder) {
+        Optional<LocalDateTime> localStartDateTime =
+                asOptionalLocalDateTime(itemNode, "start_time", DATE_TIME_FORMATTER);
+
+        // RunKeeper doesn't support fractional time zones
+        Optional<Integer> utcOffset = asOptionalInteger(itemNode, "utc_offset");
+        Optional<Double> durationInS = asOptionalDouble(itemNode, "duration");
+
+        if (localStartDateTime.isPresent() && utcOffset.isPresent() && durationInS.isPresent()) {
+
+            OffsetDateTime startDateTime = localStartDateTime.get().atOffset(ZoneOffset.ofHours(utcOffset.get()));
+            DurationUnitValue duration = new DurationUnitValue(SECOND, durationInS.get());
+
+            builder.setEffectiveTimeFrame(ofStartDateTimeAndDuration(startDateTime, duration));
+        }
     }
 
     /**

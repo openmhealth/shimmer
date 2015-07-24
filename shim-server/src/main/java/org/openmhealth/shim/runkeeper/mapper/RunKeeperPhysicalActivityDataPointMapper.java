@@ -3,14 +3,9 @@ package org.openmhealth.shim.runkeeper.mapper;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.openmhealth.schema.domain.omh.*;
 
-import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
 import java.util.Optional;
 
-import static org.openmhealth.schema.domain.omh.DurationUnit.SECOND;
 import static org.openmhealth.schema.domain.omh.LengthUnit.METER;
-import static org.openmhealth.schema.domain.omh.TimeInterval.ofStartDateTimeAndDuration;
 import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.*;
 
 
@@ -39,20 +34,7 @@ public class RunKeeperPhysicalActivityDataPointMapper extends RunKeeperDataPoint
 
         PhysicalActivity.Builder builder = new PhysicalActivity.Builder(activityName);
 
-        Optional<LocalDateTime> localStartDateTime =
-                asOptionalLocalDateTime(itemNode, "start_time", DATE_TIME_FORMATTER);
-
-        // RunKeeper doesn't support fractional time zones
-        Optional<Integer> utcOffset = asOptionalInteger(itemNode, "utc_offset");
-        Optional<Double> durationInS = asOptionalDouble(itemNode, "duration");
-
-        if (localStartDateTime.isPresent() && utcOffset.isPresent() && durationInS.isPresent()) {
-
-            OffsetDateTime startDateTime = localStartDateTime.get().atOffset(ZoneOffset.ofHours(utcOffset.get()));
-            DurationUnitValue duration = new DurationUnitValue(SECOND, durationInS.get());
-
-            builder.setEffectiveTimeFrame(ofStartDateTimeAndDuration(startDateTime, duration));
-        }
+        setEffectiveTimeframeIfPresent(itemNode, builder);
 
         asOptionalDouble(itemNode, "total_distance")
                 .ifPresent(distanceInM -> builder.setDistance(new LengthUnitValue(METER, distanceInM)));
