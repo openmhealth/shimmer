@@ -3,7 +3,6 @@ package org.openmhealth.shim.withings.mapper;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.Lists;
 import org.openmhealth.schema.domain.omh.DataPoint;
-import org.openmhealth.schema.domain.omh.Measure;
 
 import java.util.List;
 import java.util.Optional;
@@ -87,10 +86,11 @@ public abstract class WithingsBodyMeasureDataPointMapper<T> extends WithingsData
     }
 
     /**
-     * Abstract method to be implemented by classes that map a specific body measure into a {@link DataPoint} object of
-     * the appropriate {@link Measure} type
+     * @param measureGroupNode an element of the "measuregrp" array
+     * @param olsonTimeZone the time zone of the measure in Olson format
+     * @return a data point containing a measure, if one can be constructed
      */
-    abstract Optional<DataPoint<T>> asDataPoint(JsonNode node, String timeZoneFullName);
+    abstract Optional<DataPoint<T>> asDataPoint(JsonNode measureGroupNode, String olsonTimeZone);
 
     /**
      * Returns the list name for splitting out individual body measure groups that can then be mapped.

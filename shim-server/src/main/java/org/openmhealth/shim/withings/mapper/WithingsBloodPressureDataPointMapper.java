@@ -25,15 +25,8 @@ import static org.openmhealth.shim.withings.mapper.WithingsBodyMeasureDataPointM
  */
 public class WithingsBloodPressureDataPointMapper extends WithingsBodyMeasureDataPointMapper<BloodPressure> {
 
-    /**
-     * @param node list node from the array "measuregrp" contained in the "body" of the endpoint response
-     * @param timeZoneFullName a string containing the full name of the time zone (e.g., America/Los_Angeles) from the
-     * "timezone" property of the "body" of the body measure endpoint response
-     * @return a {@link DataPoint} object containing a {@link BloodPressure} measure with the appropriate values from
-     * the JSON node parameter, wrapped as an {@link Optional}
-     */
     @Override
-    public Optional<DataPoint<BloodPressure>> asDataPoint(JsonNode node, String timeZoneFullName) {
+    public Optional<DataPoint<BloodPressure>> asDataPoint(JsonNode node, String olsonTimeZone) {
 
         JsonNode measuresNode = asRequiredNode(node, "measures");
 
@@ -80,7 +73,7 @@ public class WithingsBloodPressureDataPointMapper extends WithingsBodyMeasureDat
         Optional<Long> dateInEpochSeconds = asOptionalLong(node, "date");
         if (dateInEpochSeconds.isPresent()) {
             OffsetDateTime offsetDateTime = OffsetDateTime.ofInstant(Instant.ofEpochSecond(dateInEpochSeconds.get()),
-                    ZoneId.of(timeZoneFullName));
+                    ZoneId.of(olsonTimeZone));
             bloodPressureBuilder.setEffectiveTimeFrame(offsetDateTime);
         }
 

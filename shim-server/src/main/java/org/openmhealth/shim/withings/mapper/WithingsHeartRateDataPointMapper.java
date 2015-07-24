@@ -22,15 +22,8 @@ import static org.openmhealth.shim.withings.mapper.WithingsBodyMeasureDataPointM
  */
 public class WithingsHeartRateDataPointMapper extends WithingsBodyMeasureDataPointMapper<HeartRate> {
 
-    /**
-     * @param node list node from the array "measuregrp" contained in the "body" of the endpoint response
-     * @param timeZoneFullName a string containing the full name of the time zone (e.g., America/Los_Angeles) from the
-     * "timezone" property of the "body" of the body measure endpoint response
-     * @return a {@link DataPoint} object containing a {@link HeartRate} measure with the appropriate values from
-     * the JSON node parameter, wrapped as an {@link Optional}
-     */
     @Override
-    Optional<DataPoint<HeartRate>> asDataPoint(JsonNode node, String timeZoneFullName) {
+    public Optional<DataPoint<HeartRate>> asDataPoint(JsonNode node, String olsonTimeZone) {
 
         JsonNode measuresNode = asRequiredNode(node, "measures");
         if (isGoal(node)) {
@@ -57,7 +50,7 @@ public class WithingsHeartRateDataPointMapper extends WithingsBodyMeasureDataPoi
         Optional<Long> dateInEpochSecs = asOptionalLong(node, "date");
         if (dateInEpochSecs.isPresent()) {
             OffsetDateTime offsetDateTime =
-                    OffsetDateTime.ofInstant(Instant.ofEpochSecond(dateInEpochSecs.get()), ZoneId.of(timeZoneFullName));
+                    OffsetDateTime.ofInstant(Instant.ofEpochSecond(dateInEpochSecs.get()), ZoneId.of(olsonTimeZone));
             heartRateBuilder.setEffectiveTimeFrame(offsetDateTime);
         }
 
