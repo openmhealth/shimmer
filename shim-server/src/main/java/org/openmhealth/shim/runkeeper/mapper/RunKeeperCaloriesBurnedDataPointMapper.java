@@ -8,8 +8,8 @@ import org.openmhealth.schema.domain.omh.KcalUnitValue;
 
 import java.util.Optional;
 
+import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asOptionalDouble;
 import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asOptionalString;
-import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asRequiredDouble;
 
 
 /**
@@ -20,19 +20,28 @@ public class RunKeeperCaloriesBurnedDataPointMapper extends RunKeeperDataPointMa
 
     @Override
     protected Optional<DataPoint<CaloriesBurned>> asDataPoint(JsonNode itemNode) {
-        CaloriesBurned caloriesBurned = getMeasure(itemNode);
-        return Optional.of(new DataPoint<>(getDataPointHeader(itemNode,caloriesBurned), caloriesBurned));
+        Optional<CaloriesBurned> caloriesBurned = getMeasure(itemNode);
+        if(caloriesBurned.isPresent()){
+            return Optional.of(new DataPoint<>(getDataPointHeader(itemNode,caloriesBurned.get()), caloriesBurned.get()));
+        }
+        else{
+            return Optional.empty();
+        }
+
     }
 
-    private CaloriesBurned getMeasure(JsonNode itemNode) {
-        double calorieValue = asRequiredDouble(itemNode, "total_calories");
-        CaloriesBurned.Builder caloriesBurnedBuilder = new CaloriesBurned.Builder(new KcalUnitValue(KcalUnit.KILOCALORIE,calorieValue));
+    private Optional<CaloriesBurned> getMeasure(JsonNode itemNode) {
+        Optional<Double> calorieValue = asOptionalDouble(itemNode, "total_calories");
+        if(!calorieValue.isPresent()){
+            return Optional.empty();
+        }
+        CaloriesBurned.Builder caloriesBurnedBuilder = new CaloriesBurned.Builder(new KcalUnitValue(KcalUnit.KILOCALORIE,calorieValue.get()));
 
         setEffectiveTimeframeIfPresent(itemNode, caloriesBurnedBuilder);
 
         Optional<String> activityType = asOptionalString(itemNode, "type");
-        activityType.ifPresent(at->caloriesBurnedBuilder.setActivityName(at));
+        activityType.ifPresent(at -> caloriesBurnedBuilder.setActivityName(at));
 
-        return caloriesBurnedBuilder.build();
+        return Optional.of(caloriesBurnedBuilder.build());
     }
 }
