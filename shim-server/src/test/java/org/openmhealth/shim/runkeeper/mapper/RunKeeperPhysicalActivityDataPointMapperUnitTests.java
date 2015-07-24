@@ -48,7 +48,7 @@ public class RunKeeperPhysicalActivityDataPointMapperUnitTests extends DataPoint
         List<DataPoint<PhysicalActivity>> dataPoints = mapper.asDataPoints(singletonList(responseNode));
 
         assertThat(dataPoints, notNullValue());
-        assertThat(dataPoints.size(), equalTo(2));
+        assertThat(dataPoints.size(), equalTo(3));
     }
 
     @Test
@@ -88,7 +88,7 @@ public class RunKeeperPhysicalActivityDataPointMapperUnitTests extends DataPoint
         List<DataPoint<PhysicalActivity>> dataPoints = mapper.asDataPoints(singletonList(responseNode));
 
         assertThat(dataPoints, notNullValue());
-        assertThat(dataPoints.size(), equalTo(2));
+        assertThat(dataPoints.size(), equalTo(3));
 
         DataPoint<PhysicalActivity> dataPoint = dataPoints.get(1);
 

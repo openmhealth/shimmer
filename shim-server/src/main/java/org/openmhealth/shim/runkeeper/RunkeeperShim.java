@@ -18,6 +18,7 @@ package org.openmhealth.shim.runkeeper;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.openmhealth.shim.*;
+import org.openmhealth.shim.runkeeper.mapper.RunKeeperCaloriesBurnedDataPointMapper;
 import org.openmhealth.shim.runkeeper.mapper.RunKeeperDataPointMapper;
 import org.openmhealth.shim.runkeeper.mapper.RunKeeperPhysicalActivityDataPointMapper;
 import org.slf4j.Logger;
@@ -51,6 +52,7 @@ import static org.springframework.http.ResponseEntity.ok;
 /**
  * @author Danilo Bonilla
  * @author Emerson Farrugia
+ * @author Chris Schaefbauer
  */
 @Component
 @ConfigurationProperties(prefix = "openmhealth.shim.runkeeper")
@@ -119,7 +121,8 @@ public class RunkeeperShim extends OAuth2ShimBase {
     // TODO remove this structure once endpoints are figured out
     public enum RunkeeperDataType implements ShimDataType {
 
-        ACTIVITY("application/vnd.com.runkeeper.FitnessActivityFeed+json", "fitnessActivities");
+        ACTIVITY("application/vnd.com.runkeeper.FitnessActivityFeed+json", "fitnessActivities"),
+        CALORIES("application/vnd.com.runkeeper.FitnessActivityFeed+json", "fitnessActivities");
 
         private String dataTypeHeader;
         private String endPointUrl;
@@ -191,8 +194,17 @@ public class RunkeeperShim extends OAuth2ShimBase {
         }
 
         if (shimDataRequest.getNormalize()) {
-
-            RunKeeperDataPointMapper<?> dataPointMapper = new RunKeeperPhysicalActivityDataPointMapper();
+            RunKeeperDataPointMapper<?> dataPointMapper;
+            switch(runkeeperDataType){
+                case ACTIVITY:
+                    dataPointMapper = new RunKeeperPhysicalActivityDataPointMapper();
+                    break;
+                case CALORIES:
+                    dataPointMapper = new RunKeeperCaloriesBurnedDataPointMapper();
+                    break;
+                default:
+                    throw new UnsupportedOperationException();
+            }
 
             return ok().body(ShimDataResponse.result(SHIM_KEY,
                     dataPointMapper.asDataPoints(singletonList(responseEntity.getBody()))));
