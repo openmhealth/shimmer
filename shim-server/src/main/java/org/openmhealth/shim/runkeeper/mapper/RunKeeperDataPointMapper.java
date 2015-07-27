@@ -47,6 +47,7 @@ public abstract class RunKeeperDataPointMapper<T> implements JsonNodeDataPointMa
         }
 
         return dataPoints;
+
     }
 
     /**
@@ -56,6 +57,9 @@ public abstract class RunKeeperDataPointMapper<T> implements JsonNodeDataPointMa
         return "items";
     }
 
+    /**
+     * @return a {@link DataPointHeader} for data points created from Runkeeper Healthgraph API responses
+     */
     protected DataPointHeader getDataPointHeader(JsonNode itemNode, Measure measure) {
 
         DataPointAcquisitionProvenance.Builder provenanceBuilder =
@@ -75,6 +79,7 @@ public abstract class RunKeeperDataPointMapper<T> implements JsonNodeDataPointMa
         asOptionalInteger(itemNode, "userId").ifPresent(userId -> headerBuilder.setUserId(userId.toString()));
 
         return headerBuilder.build();
+
     }
 
     /**
@@ -99,9 +104,16 @@ public abstract class RunKeeperDataPointMapper<T> implements JsonNodeDataPointMa
         }
 
         return Optional.empty();
+
     }
 
+    /**
+     * Sets the effective time frame property for a measure builder
+     * @param itemNode an individual datapoint from the list of datapoints returned in the API response
+     * @param builder the measure builder to have the effective date property set
+     */
     protected void setEffectiveTimeframeIfPresent(JsonNode itemNode, Measure.Builder builder) {
+
         Optional<LocalDateTime> localStartDateTime =
                 asOptionalLocalDateTime(itemNode, "start_time", DATE_TIME_FORMATTER);
 
@@ -116,6 +128,7 @@ public abstract class RunKeeperDataPointMapper<T> implements JsonNodeDataPointMa
 
             builder.setEffectiveTimeFrame(ofStartDateTimeAndDuration(startDateTime, duration));
         }
+
     }
 
     /**
