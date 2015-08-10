@@ -56,7 +56,6 @@ import static org.springframework.http.ResponseEntity.ok;
  */
 @Component
 @ConfigurationProperties(prefix = "openmhealth.shim.runkeeper")
-// TODO rename to RunKeeperShim
 public class RunkeeperShim extends OAuth2ShimBase {
 
     private static final Logger logger = getLogger(RunkeeperShim.class);
