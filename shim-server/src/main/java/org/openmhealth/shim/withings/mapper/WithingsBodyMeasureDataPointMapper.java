@@ -1,11 +1,21 @@
 package org.openmhealth.shim.withings.mapper;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.google.common.collect.Lists;
+import org.openmhealth.schema.domain.omh.DataPoint;
+import org.openmhealth.schema.domain.omh.Measure;
 
+import java.time.Instant;
+import java.time.OffsetDateTime;
+import java.util.List;
 import java.util.Optional;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static java.lang.Math.pow;
+import static java.time.ZoneId.of;
 import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asOptionalLong;
+import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asOptionalString;
+import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asRequiredNode;
 
 
 /**
@@ -17,7 +27,7 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asOption
  * @author Emerson Farrugia
  * @see <a href="http://oauth.withings.com/api/doc#api-Measure-get_measure">Body Measures API documentation</a>
  */
-public abstract class WithingsBodyMeasureDataPointMapper<T> extends WithingsListDataPointMapper<T> {
+public abstract class WithingsBodyMeasureDataPointMapper<T extends Measure> extends WithingsListDataPointMapper<T> {
 
     /**
      * A type of body measure included in a response from the endpoint.
@@ -55,6 +65,32 @@ public abstract class WithingsBodyMeasureDataPointMapper<T> extends WithingsList
      */
     String getListNodeName() {
         return "measuregrps";
+    }
+
+    @Override
+    public List<DataPoint<T>> asDataPoints(List<JsonNode> responseNodes) {
+
+        checkNotNull(responseNodes);
+        checkNotNull(responseNodes.size() == 1, "A single response node is allowed per call.");
+        JsonNode responseNodeBody = asRequiredNode(responseNodes.get(0), BODY_NODE_PROPERTY);
+        List<DataPoint<T>> dataPoints = Lists.newArrayList();
+        JsonNode listNode = asRequiredNode(responseNodeBody, getListNodeName());
+        for (JsonNode listEntryNode : listNode) {
+            if (isUnattributedSensed(listEntryNode)) {
+                //This is a corner case captured by the Withings API where the data point value captured by the scale is
+                // similar to multiple users and they were not prompted to specify the data point owner because the new
+                // user was created and not synced to the scale before taking a measurement
+                //TODO: Log that datapoint was not captured and to revisit since user can assign in the web interface
+            }
+            else if (!isGoal(
+                    listEntryNode)) { // If the measurement point represents a goal (not a measurement) then we skip
+                asDataPoint(listEntryNode).ifPresent(dataPoints::add);
+            }
+
+        }
+
+        return dataPoints;
+
     }
 
     /**
@@ -109,6 +145,23 @@ public abstract class WithingsBodyMeasureDataPointMapper<T> extends WithingsList
 
         return false;
 
+    }
+
+    protected void setEffectiveTimeFrame(T.Builder measureBuilder, JsonNode listEntryNode) {
+        Optional<Long> dateTimeInUtcSec = asOptionalLong(listEntryNode, "date");
+        if (dateTimeInUtcSec.isPresent()) {
+            OffsetDateTime offsetDateTime = OffsetDateTime.ofInstant(Instant.ofEpochSecond(dateTimeInUtcSec.get()),
+                    of("Z"));
+
+            measureBuilder.setEffectiveTimeFrame(offsetDateTime);
+        }
+    }
+
+    protected void setUserComment(T.Builder bodyWeightBuilder, JsonNode node) {
+        Optional<String> userComment = asOptionalString(node, "comment");
+        if (userComment.isPresent()) {
+            bodyWeightBuilder.setUserNotes(userComment.get());
+        }
     }
 
     /**

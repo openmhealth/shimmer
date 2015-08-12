@@ -4,11 +4,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import org.openmhealth.schema.domain.omh.DataPoint;
 import org.openmhealth.schema.domain.omh.HeartRate;
 
-import java.time.Instant;
-import java.time.OffsetDateTime;
 import java.util.Optional;
 
-import static java.time.ZoneId.of;
 import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.*;
 import static org.openmhealth.shim.withings.mapper.WithingsBodyMeasureDataPointMapper.BodyMeasureType.HEART_RATE;
 
@@ -23,12 +20,10 @@ import static org.openmhealth.shim.withings.mapper.WithingsBodyMeasureDataPointM
 public class WithingsHeartRateDataPointMapper extends WithingsBodyMeasureDataPointMapper<HeartRate> {
 
     @Override
-    public Optional<DataPoint<HeartRate>> asDataPoint(JsonNode node) {
+    public Optional<DataPoint<HeartRate>> asDataPoint(JsonNode listEntryNode) {
 
-        JsonNode measuresNode = asRequiredNode(node, "measures");
-        if (isGoal(node)) {
-            return Optional.empty();
-        }
+        JsonNode measuresNode = asRequiredNode(listEntryNode, "measures");
+
         Double value = null;
         Long unit = null;
 
@@ -47,22 +42,14 @@ public class WithingsHeartRateDataPointMapper extends WithingsBodyMeasureDataPoi
 
         HeartRate.Builder heartRateBuilder = new HeartRate.Builder(actualValueOf(value, unit));
 
-        Optional<Long> dateInEpochSecs = asOptionalLong(node, "date");
-        if (dateInEpochSecs.isPresent()) {
-            OffsetDateTime offsetDateTime =
-                    OffsetDateTime.ofInstant(Instant.ofEpochSecond(dateInEpochSecs.get()), of("Z"));
-            heartRateBuilder.setEffectiveTimeFrame(offsetDateTime);
-        }
 
-        Optional<String> userComment = asOptionalString(node, "comment");
-        if (userComment.isPresent()) {
-            heartRateBuilder.setUserNotes(userComment.get());
-        }
+        setEffectiveTimeFrame(heartRateBuilder, listEntryNode);
+        setUserComment(heartRateBuilder, listEntryNode);
 
         HeartRate heartRate = heartRateBuilder.build();
-        Optional<Long> externalId = asOptionalLong(node, "grpid");
+        Optional<Long> externalId = asOptionalLong(listEntryNode, "grpid");
         DataPoint<HeartRate> heartRateDataPoint =
-                newDataPoint(heartRate, externalId.orElse(null), isSensed(node).orElse(null),
+                newDataPoint(heartRate, externalId.orElse(null), isSensed(listEntryNode).orElse(null),
                         null);
         return Optional.of(heartRateDataPoint);
 

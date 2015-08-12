@@ -6,11 +6,8 @@ import org.openmhealth.schema.domain.omh.DataPoint;
 import org.openmhealth.schema.domain.omh.LengthUnit;
 import org.openmhealth.schema.domain.omh.LengthUnitValue;
 
-import java.time.Instant;
-import java.time.OffsetDateTime;
 import java.util.Optional;
 
-import static java.time.ZoneId.of;
 import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.*;
 import static org.openmhealth.shim.withings.mapper.WithingsBodyMeasureDataPointMapper.BodyMeasureType.HEIGHT;
 
@@ -26,14 +23,9 @@ import static org.openmhealth.shim.withings.mapper.WithingsBodyMeasureDataPointM
 public class WithingsBodyHeightDataPointMapper extends WithingsBodyMeasureDataPointMapper<BodyHeight> {
 
     @Override
-    public Optional<DataPoint<BodyHeight>> asDataPoint(JsonNode node) {
+    public Optional<DataPoint<BodyHeight>> asDataPoint(JsonNode listEntryNode) {
 
-        JsonNode measuresNode = asRequiredNode(node, "measures");
-
-        // We only map measurements, not goals in the Withings API
-        if (isGoal(node)) {
-            return Optional.empty();
-        }
+        JsonNode measuresNode = asRequiredNode(listEntryNode, "measures");
 
         Double value = null;
         Long unit = null;
@@ -54,23 +46,13 @@ public class WithingsBodyHeightDataPointMapper extends WithingsBodyMeasureDataPo
         BodyHeight.Builder builder = new BodyHeight.Builder(new LengthUnitValue(LengthUnit.METER,
                 actualValueOf(value, unit)));
 
-        Optional<Long> dateInEpochSec = asOptionalLong(node, "date");
-        if (dateInEpochSec.isPresent()) {
-
-            OffsetDateTime offsetDateTime = OffsetDateTime.ofInstant(Instant.ofEpochSecond(dateInEpochSec.get()),
-                    of("Z"));
-            builder.setEffectiveTimeFrame(offsetDateTime);
-        }
-
-        Optional<String> userComment = asOptionalString(node, "comment");
-        if (userComment.isPresent()) {
-            builder.setUserNotes(userComment.get());
-        }
+        setEffectiveTimeFrame(builder, listEntryNode);
+        setUserComment(builder, listEntryNode);
 
         BodyHeight measure = builder.build();
-        Optional<Long> groupId = asOptionalLong(node, "grpid");
+        Optional<Long> groupId = asOptionalLong(listEntryNode, "grpid");
         DataPoint<BodyHeight> bodyHeightDataPoint =
-                newDataPoint(measure, groupId.orElse(null), isSensed(node).orElse(null),
+                newDataPoint(measure, groupId.orElse(null), isSensed(listEntryNode).orElse(null),
                         null);
 
         return Optional.of(bodyHeightDataPoint);

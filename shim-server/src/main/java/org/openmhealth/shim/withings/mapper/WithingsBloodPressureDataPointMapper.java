@@ -3,14 +3,13 @@ package org.openmhealth.shim.withings.mapper;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.openmhealth.schema.domain.omh.*;
 
-import java.time.Instant;
-import java.time.OffsetDateTime;
 import java.util.Optional;
 
-import static java.time.ZoneId.of;
 import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.*;
-import static org.openmhealth.shim.withings.mapper.WithingsBodyMeasureDataPointMapper.BodyMeasureType.DIASTOLIC_BLOOD_PRESSURE;
-import static org.openmhealth.shim.withings.mapper.WithingsBodyMeasureDataPointMapper.BodyMeasureType.SYSTOLIC_BLOOD_PRESSURE;
+import static org.openmhealth.shim.withings.mapper.WithingsBodyMeasureDataPointMapper.BodyMeasureType
+        .DIASTOLIC_BLOOD_PRESSURE;
+import static org.openmhealth.shim.withings.mapper.WithingsBodyMeasureDataPointMapper.BodyMeasureType
+        .SYSTOLIC_BLOOD_PRESSURE;
 
 
 /**
@@ -24,13 +23,9 @@ import static org.openmhealth.shim.withings.mapper.WithingsBodyMeasureDataPointM
 public class WithingsBloodPressureDataPointMapper extends WithingsBodyMeasureDataPointMapper<BloodPressure> {
 
     @Override
-    public Optional<DataPoint<BloodPressure>> asDataPoint(JsonNode node) {
+    public Optional<DataPoint<BloodPressure>> asDataPoint(JsonNode listEntryNode) {
 
-        JsonNode measuresNode = asRequiredNode(node, "measures");
-
-        if (isGoal(node)) {
-            return Optional.empty();
-        }
+        JsonNode measuresNode = asRequiredNode(listEntryNode, "measures");
 
         Double diastolicValue = null, systolicValue = null;
         Long diastolicUnit = null, systolicUnit = null;
@@ -68,23 +63,15 @@ public class WithingsBloodPressureDataPointMapper extends WithingsBodyMeasureDat
         BloodPressure.Builder bloodPressureBuilder =
                 new BloodPressure.Builder(systolicBloodPressure, diastolicBloodPressure);
 
-        Optional<Long> dateInEpochSeconds = asOptionalLong(node, "date");
-        if (dateInEpochSeconds.isPresent()) {
-            OffsetDateTime offsetDateTime = OffsetDateTime.ofInstant(Instant.ofEpochSecond(dateInEpochSeconds.get()),
-                    of("Z"));
-            bloodPressureBuilder.setEffectiveTimeFrame(offsetDateTime);
-        }
+        setEffectiveTimeFrame(bloodPressureBuilder, listEntryNode);
+        setUserComment(bloodPressureBuilder, listEntryNode);
 
-        Optional<String> userComment = asOptionalString(node, "comment");
-        if (userComment.isPresent()) {
-            bloodPressureBuilder.setUserNotes(userComment.get());
-        }
 
         BloodPressure bloodPressureMeasure = bloodPressureBuilder.build();
-        Optional<Long> externalId = asOptionalLong(node, "grpid");
+        Optional<Long> externalId = asOptionalLong(listEntryNode, "grpid");
         DataPoint<BloodPressure> bloodPressureDataPoint =
                 newDataPoint(bloodPressureMeasure, externalId.orElse(null),
-                        isSensed(node).orElse(null), null);
+                        isSensed(listEntryNode).orElse(null), null);
         return Optional.of(bloodPressureDataPoint);
 
     }

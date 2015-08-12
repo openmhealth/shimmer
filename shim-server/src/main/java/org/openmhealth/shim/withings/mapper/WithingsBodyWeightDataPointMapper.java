@@ -6,11 +6,8 @@ import org.openmhealth.schema.domain.omh.DataPoint;
 import org.openmhealth.schema.domain.omh.MassUnit;
 import org.openmhealth.schema.domain.omh.MassUnitValue;
 
-import java.time.Instant;
-import java.time.OffsetDateTime;
 import java.util.Optional;
 
-import static java.time.ZoneId.of;
 import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.*;
 import static org.openmhealth.shim.withings.mapper.WithingsBodyMeasureDataPointMapper.BodyMeasureType.WEIGHT;
 
@@ -29,9 +26,7 @@ public class WithingsBodyWeightDataPointMapper extends WithingsBodyMeasureDataPo
     public Optional<DataPoint<BodyWeight>> asDataPoint(JsonNode node) {
 
         JsonNode measuresNode = asRequiredNode(node, "measures");
-        if (isGoal(node)) {
-            return Optional.empty();
-        }
+
         Double value = null;
         Long unit = null;
         for (JsonNode measureNode : measuresNode) {
@@ -45,29 +40,11 @@ public class WithingsBodyWeightDataPointMapper extends WithingsBodyMeasureDataPo
             return Optional.empty();
         }
 
-        if (isUnattributedSensed(node)) {
-            //This is a corner case captured by the Withings API where the data point value captured by the scale is
-            // similar to multiple users and they were not prompted to specify the data point owner because the new
-            // user was created and not synced to the scale before taking a measurement
-            //TODO: Log that datapoint was not captured and to be revisited since user can assign in the web interface
-            return Optional.empty();
-        }
-
         BodyWeight.Builder bodyWeightBuilder = new BodyWeight.Builder(new MassUnitValue(MassUnit.KILOGRAM,
                 actualValueOf(value, unit)));
 
-        Optional<Long> dateTimeInUtcSec = asOptionalLong(node, "date");
-        if (dateTimeInUtcSec.isPresent()) {
-            OffsetDateTime offsetDateTime = OffsetDateTime.ofInstant(Instant.ofEpochSecond(dateTimeInUtcSec.get()),
-                    of("Z"));
-
-            bodyWeightBuilder.setEffectiveTimeFrame(offsetDateTime);
-        }
-
-        Optional<String> userComment = asOptionalString(node, "comment");
-        if (userComment.isPresent()) {
-            bodyWeightBuilder.setUserNotes(userComment.get());
-        }
+        setEffectiveTimeFrame(bodyWeightBuilder, node);
+        setUserComment(bodyWeightBuilder, node);
 
         Optional<Long> externalId = asOptionalLong(node, "grpid");
 
