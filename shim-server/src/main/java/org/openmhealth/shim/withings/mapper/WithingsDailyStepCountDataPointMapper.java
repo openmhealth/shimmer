@@ -26,7 +26,7 @@ public class WithingsDailyStepCountDataPointMapper extends WithingsListDataPoint
 
     /**
      * Maps an individual list node from the array in the Withings activity measure endpoint response into a {@link
-     * StepCount} data point
+     * StepCount} data point.
      *
      * @param node activity node from the array "activites" contained in the "body" of the endpoint response
      * @return a {@link DataPoint} object containing a {@link StepCount} measure with the appropriate values from

@@ -12,7 +12,7 @@ import static org.openmhealth.shim.withings.mapper.WithingsBodyMeasureDataPointM
 
 /**
  * A mapper from Withings Body Measure endpoint responses (/measure?action=getmeas) to {@link HeartRate} objects when a
- * heart rate value is present in the body measure group
+ * heart rate value is present in the body measure group.
  *
  * @author Chris Schaefbauer
  * @see <a href="http://oauth.withings.com/api/doc#api-Measure-get_measure">Body Measures API documentation</a>

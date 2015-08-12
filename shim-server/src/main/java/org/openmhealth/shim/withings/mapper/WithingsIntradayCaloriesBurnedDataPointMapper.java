@@ -16,7 +16,7 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.*;
 
 /**
  * A mapper from Withings Intraday Activity endpoint responses (/measure?action=getactivity) to {@link CaloriesBurned}
- * objects
+ * objects.
  * <p>
  * <p>This mapper handles responses from an API request that requires special permissions from Withings. This special
  * activation can be requested from their <a href="http://oauth.withings
@@ -31,7 +31,7 @@ public class WithingsIntradayCaloriesBurnedDataPointMapper extends WithingsDataP
 
     /**
      * Maps JSON response nodes from the intraday activities endpoint (measure?action=getintradayactivity) in the
-     * Withings API into a list of {@link CaloriesBurned} {@link DataPoint} objects
+     * Withings API into a list of {@link CaloriesBurned} {@link DataPoint} objects.
      *
      * @param responseNodes a list of a single JSON node containing the entire response from the intraday activities
      * endpoint
@@ -66,7 +66,7 @@ public class WithingsIntradayCaloriesBurnedDataPointMapper extends WithingsDataP
 
     /**
      * Maps an individual list node from the array in the Withings activity measure endpoint response into a {@link
-     * CaloriesBurned} data point
+     * CaloriesBurned} data point.
      *
      * @param nodeWithCalorie activity node from the array "activites" contained in the "body" of the endpoint response
      * that has a calories field
@@ -102,7 +102,7 @@ public class WithingsIntradayCaloriesBurnedDataPointMapper extends WithingsDataP
 
     /**
      * Creates a hashmap that contains only the entries from the intraday activities dictionary that have calories
-     * burned counts
+     * burned counts.
      *
      * @param fieldsIterator an iterator of map entries containing the key-value pairs related to each intraday
      * activity event
@@ -118,7 +118,7 @@ public class WithingsIntradayCaloriesBurnedDataPointMapper extends WithingsDataP
     }
 
     /**
-     * Adds a key-value entry into the nodesWithCalories hashmap if it has a calories value
+     * Adds a key-value entry into the nodesWithCalories hashmap if it has a calories value.
      *
      * @param nodesWithCalories pass by reference hashmap to which the key-value pair should be added if a calories
      * value exists

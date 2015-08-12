@@ -16,7 +16,7 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asRequir
 
 /**
  * A mapper from Withings Sleep Summary endpoint responses (/sleep?action=getsummary) to {@link SleepDuration}
- * objects
+ * objects.
  *
  * @author Chris Schaefbauer
  * @see <a href="http://oauth.withings.com/api/doc#api-Measure-get_sleep_summary">Sleep Summary API documentation</a>
@@ -25,7 +25,7 @@ public class WithingsSleepDurationDataPointMapper extends WithingsListDataPointM
 
     /**
      * Maps an individual list node from the array in the Withings sleep summary endpoint response into a {@link
-     * SleepDuration} data point
+     * SleepDuration} data point.
      *
      * @param node activity node from the array "series" contained in the "body" of the endpoint response
      * @return a {@link DataPoint} object containing a {@link SleepDuration} measure with the appropriate values from

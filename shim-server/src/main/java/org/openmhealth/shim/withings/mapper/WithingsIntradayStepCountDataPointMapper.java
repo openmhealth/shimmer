@@ -16,7 +16,7 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.*;
 
 /**
  * A mapper from Withings Intraday Activity endpoint responses (/measure?action=getactivity) to {@link StepCount}
- * objects
+ * objects.
  * <p>
  * <p>This mapper handles responses from an API request that requires special permissions from Withings. This special
  * activation can be requested from their <a href="http://oauth.withings
@@ -30,7 +30,7 @@ public class WithingsIntradayStepCountDataPointMapper extends WithingsDataPointM
 
     /**
      * Maps JSON response nodes from the intraday activities endpoint (measure?action=getintradayactivity) in the
-     * Withings API into a list of {@link StepCount} {@link DataPoint} objects
+     * Withings API into a list of {@link StepCount} {@link DataPoint} objects.
      *
      * @param responseNodes a list of a single JSON node containing the entire response from the intraday activities
      * endpoint
@@ -64,7 +64,7 @@ public class WithingsIntradayStepCountDataPointMapper extends WithingsDataPointM
 
     /**
      * Maps an individual list node from the array in the Withings activity measure endpoint response into a {@link
-     * StepCount} data point
+     * StepCount} data point.
      *
      * @param nodeWithSteps activity node from the array "activites" contained in the "body" of the endpoint response
      * @return a {@link DataPoint} object containing a {@link StepCount} measure with the appropriate values from
@@ -93,7 +93,7 @@ public class WithingsIntradayStepCountDataPointMapper extends WithingsDataPointM
     }
 
     /**
-     * Creates a hashmap that contains only the entries from the intraday activities dictionary that have step counts
+     * Creates a hashmap that contains only the entries from the intraday activities dictionary that have step counts.
      *
      * @param fieldsIterator an iterator of map entries containing the key-value pairs related to each intraday
      * activity
@@ -108,7 +108,7 @@ public class WithingsIntradayStepCountDataPointMapper extends WithingsDataPointM
     }
 
     /**
-     * Adds a key-value entry into the nodesWithStepValue hashmap if it has a steps value
+     * Adds a key-value entry into the nodesWithStepValue hashmap if it has a steps value.
      *
      * @param nodesWithStepValue pass by reference hashmap to which the key-value pair should be added if a step count
      * value exists

@@ -14,7 +14,7 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asRequir
 
 /**
  * The base class for mappers that translate Withings API responses with datapoints contained in an array to {@link
- * Measure} objects
+ * Measure} objects.
  *
  * @author Chris Schaefbauer
  * @author Emerson Farrugia
@@ -51,7 +51,7 @@ public abstract class WithingsListDataPointMapper<T> extends WithingsDataPointMa
 
     /**
      * Abstract method to be implemented by subclasses mapping a JSON response node from the Withings API into a {@link
-     * Measure} object of the appropriate type
+     * Measure} object of the appropriate type.
      *
      * @param node JSON response from the Withings API endpoint
      * @return a {@link DataPoint} object containing the target measure with the appropriate values from the JSON node

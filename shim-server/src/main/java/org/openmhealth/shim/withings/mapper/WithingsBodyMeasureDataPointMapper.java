@@ -94,7 +94,7 @@ public abstract class WithingsBodyMeasureDataPointMapper<T extends Measure> exte
     }
 
     /**
-     * Identifies whether a body measures group node was sensed by a device or self-reported by a user
+     * Identifies whether a body measures group node was sensed by a device or self-reported by a user.
      *
      * @param node a list node from the "measuregrps" array from a body measures endpoint response
      * @return a boolean value indicating true if the data point was sensed by a device or false if the data point was
@@ -147,6 +147,10 @@ public abstract class WithingsBodyMeasureDataPointMapper<T extends Measure> exte
 
     }
 
+    /**
+     * @param listEntryNode list node from the 'measuregrps' array, representing an group of measures taken at a
+     * specific timepoint.
+     */
     protected void setEffectiveTimeFrame(T.Builder measureBuilder, JsonNode listEntryNode) {
         Optional<Long> dateTimeInUtcSec = asOptionalLong(listEntryNode, "date");
         if (dateTimeInUtcSec.isPresent()) {
@@ -157,10 +161,14 @@ public abstract class WithingsBodyMeasureDataPointMapper<T extends Measure> exte
         }
     }
 
-    protected void setUserComment(T.Builder bodyWeightBuilder, JsonNode node) {
-        Optional<String> userComment = asOptionalString(node, "comment");
+    /**
+     * @param listEntryNode list node from the 'measuregrps' array, representing an group of measures taken at a
+     * specific timepoint.
+     */
+    protected void setUserComment(T.Builder measureBuilder, JsonNode listEntryNode) {
+        Optional<String> userComment = asOptionalString(listEntryNode, "comment");
         if (userComment.isPresent()) {
-            bodyWeightBuilder.setUserNotes(userComment.get());
+            measureBuilder.setUserNotes(userComment.get());
         }
     }
 

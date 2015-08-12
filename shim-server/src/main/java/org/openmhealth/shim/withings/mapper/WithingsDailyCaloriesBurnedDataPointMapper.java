@@ -27,7 +27,7 @@ public class WithingsDailyCaloriesBurnedDataPointMapper extends WithingsListData
 
     /**
      * Maps an individual list node from the array in the Withings activity measure endpoint response into a {@link
-     * CaloriesBurned} data point
+     * CaloriesBurned} data point.
      * <p>
      * <p>Note: the start datetime and end datetime values for the mapped {@link CaloriesBurned} {@link DataPoint}
      * assume that

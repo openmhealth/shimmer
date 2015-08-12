@@ -15,7 +15,7 @@ import static org.openmhealth.shim.withings.mapper.WithingsBodyMeasureDataPointM
 /**
  * A mapper from Withings Body Measure endpoint responses (/measure?action=getmeas) to {@link BodyHeight} objects when
  * a
- * body height value is present in the body measure group
+ * body height value is present in the body measure group.
  *
  * @author Chris Schaefbauer
  * @see <a href="http://oauth.withings.com/api/doc#api-Measure-get_measure">Body Measures API documentation</a>

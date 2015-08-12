@@ -15,7 +15,7 @@ import static org.openmhealth.shim.withings.mapper.WithingsBodyMeasureDataPointM
 /**
  * A mapper from Withings Body Measure endpoint responses (/measure?action=getmeas) to {@link BloodPressure} objects
  * when both systolic and
- * diastolic values are present in the response
+ * diastolic values are present in the response.
  *
  * @author Chris Schaefbauer
  * @see <a href="http://oauth.withings.com/api/doc#api-Measure-get_measure">Body Measures API documentation</a>
