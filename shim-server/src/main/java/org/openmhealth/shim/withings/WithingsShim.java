@@ -272,6 +272,7 @@ public class WithingsShim extends OAuth1ShimBase {
             dateTimeMap.add("enddateymd", shimDataRequest.getEndDateTime().toLocalDate().toString());
 
         }
+
         UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder.fromUriString(DATA_URL).pathSegment(
                 withingsDataType.getEndpoint());
         String measureParameter = "";
@@ -284,6 +285,23 @@ public class WithingsShim extends OAuth1ShimBase {
         }
         uriComponentsBuilder.queryParam("action", measureParameter).queryParam("userid", userid)
                 .queryParams(dateTimeMap);
+
+        if (withingsDataType.getMeasureParameter() == "getmeas") {
+
+            if (withingsDataType !=
+                    WithingsDataType.BLOOD_PRESSURE) { // blood pressure requires both diastolic and systolic and
+                    // Withings API does not allow us to ask for multiple types, so we need to request everything and
+                    // processr
+
+                WithingsBodyMeasureDataPointMapper.BodyMeasureType measureType =
+                        WithingsBodyMeasureDataPointMapper.BodyMeasureType.valueOf(withingsDataType.name());
+                uriComponentsBuilder.queryParam("meastype", measureType.getMagicNumber());
+            }
+
+            uriComponentsBuilder.queryParam("category",1); //filter out goal datapoints
+
+        }
+
         UriComponents uriComponents = uriComponentsBuilder.build();
         return uriComponents.toUri();
 
