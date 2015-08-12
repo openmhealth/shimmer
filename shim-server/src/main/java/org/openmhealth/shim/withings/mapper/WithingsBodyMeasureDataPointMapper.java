@@ -1,15 +1,11 @@
 package org.openmhealth.shim.withings.mapper;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.google.common.collect.Lists;
-import org.openmhealth.schema.domain.omh.DataPoint;
 
-import java.util.List;
 import java.util.Optional;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static java.lang.Math.pow;
-import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.*;
+import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asOptionalLong;
 
 
 /**
@@ -21,7 +17,7 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.*;
  * @author Emerson Farrugia
  * @see <a href="http://oauth.withings.com/api/doc#api-Measure-get_measure">Body Measures API documentation</a>
  */
-public abstract class WithingsBodyMeasureDataPointMapper<T> extends WithingsDataPointMapper<T> {
+public abstract class WithingsBodyMeasureDataPointMapper<T> extends WithingsListDataPointMapper<T> {
 
     /**
      * A type of body measure included in a response from the endpoint.
@@ -51,40 +47,6 @@ public abstract class WithingsBodyMeasureDataPointMapper<T> extends WithingsData
             return magicNumber;
         }
     }
-
-    /**
-     * @param responseNodes a singleton list containing the entire response from the endpoint
-     */
-    @Override
-    public List<DataPoint<T>> asDataPoints(List<JsonNode> responseNodes) {
-
-        checkNotNull(responseNodes);
-        checkNotNull(responseNodes.size() == 1, "A single response node is allowed per call.");
-
-        JsonNode responseNodeBody = asRequiredNode(responseNodes.get(0), BODY_NODE_PROPERTY);
-        List<DataPoint<T>> dataPoints = Lists.newArrayList();
-        JsonNode listNode = asRequiredNode(responseNodeBody, getListNodeName());
-        Optional<String> timeZoneFullName = asOptionalString(responseNodeBody,
-                TIME_ZONE_PROPERTY); //assumes that time zone is available in all data points
-        for (JsonNode listEntryNode : listNode) {
-            if (timeZoneFullName.isPresent() && !timeZoneFullName.get().isEmpty()) {
-                asDataPoint(listEntryNode, timeZoneFullName.get()).ifPresent(dataPoints::add);
-            }
-            else {
-                //TODO: log that we have not captured this data point because it is missing timezone
-            }
-
-        }
-
-        return dataPoints;
-    }
-
-    /**
-     * @param measureGroupNode an element of the "measuregrp" array
-     * @param olsonTimeZone the time zone of the measure in Olson format
-     * @return a data point containing a measure, if one can be constructed
-     */
-    abstract Optional<DataPoint<T>> asDataPoint(JsonNode measureGroupNode, String olsonTimeZone);
 
     /**
      * Returns the list name for splitting out individual body measure groups that can then be mapped.

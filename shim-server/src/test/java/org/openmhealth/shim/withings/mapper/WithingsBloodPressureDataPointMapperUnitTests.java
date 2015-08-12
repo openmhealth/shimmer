@@ -45,7 +45,7 @@ public class WithingsBloodPressureDataPointMapperUnitTests extends DataPointMapp
 
         BloodPressure.Builder expectedBloodPressureBuilder = new BloodPressure.Builder(new SystolicBloodPressure(
                 BloodPressureUnit.MM_OF_MERCURY,104.0), new DiastolicBloodPressure(BloodPressureUnit.MM_OF_MERCURY,68.0));
-        expectedBloodPressureBuilder.setEffectiveTimeFrame(OffsetDateTime.parse("2015-05-30T23:06:23-07:00"));
+        expectedBloodPressureBuilder.setEffectiveTimeFrame(OffsetDateTime.parse("2015-05-31T06:06:23Z"));
         BloodPressure expectedBloodPressure = expectedBloodPressureBuilder.build();
         assertThat(dataPoints.get(0).getBody(),equalTo(expectedBloodPressure));
 

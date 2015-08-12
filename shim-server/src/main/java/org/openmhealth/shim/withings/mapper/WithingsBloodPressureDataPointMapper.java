@@ -5,14 +5,12 @@ import org.openmhealth.schema.domain.omh.*;
 
 import java.time.Instant;
 import java.time.OffsetDateTime;
-import java.time.ZoneId;
 import java.util.Optional;
 
+import static java.time.ZoneId.of;
 import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.*;
-import static org.openmhealth.shim.withings.mapper.WithingsBodyMeasureDataPointMapper.BodyMeasureType
-        .DIASTOLIC_BLOOD_PRESSURE;
-import static org.openmhealth.shim.withings.mapper.WithingsBodyMeasureDataPointMapper.BodyMeasureType
-        .SYSTOLIC_BLOOD_PRESSURE;
+import static org.openmhealth.shim.withings.mapper.WithingsBodyMeasureDataPointMapper.BodyMeasureType.DIASTOLIC_BLOOD_PRESSURE;
+import static org.openmhealth.shim.withings.mapper.WithingsBodyMeasureDataPointMapper.BodyMeasureType.SYSTOLIC_BLOOD_PRESSURE;
 
 
 /**
@@ -26,7 +24,7 @@ import static org.openmhealth.shim.withings.mapper.WithingsBodyMeasureDataPointM
 public class WithingsBloodPressureDataPointMapper extends WithingsBodyMeasureDataPointMapper<BloodPressure> {
 
     @Override
-    public Optional<DataPoint<BloodPressure>> asDataPoint(JsonNode node, String olsonTimeZone) {
+    public Optional<DataPoint<BloodPressure>> asDataPoint(JsonNode node) {
 
         JsonNode measuresNode = asRequiredNode(node, "measures");
 
@@ -73,7 +71,7 @@ public class WithingsBloodPressureDataPointMapper extends WithingsBodyMeasureDat
         Optional<Long> dateInEpochSeconds = asOptionalLong(node, "date");
         if (dateInEpochSeconds.isPresent()) {
             OffsetDateTime offsetDateTime = OffsetDateTime.ofInstant(Instant.ofEpochSecond(dateInEpochSeconds.get()),
-                    ZoneId.of(olsonTimeZone));
+                    of("Z"));
             bloodPressureBuilder.setEffectiveTimeFrame(offsetDateTime);
         }
 

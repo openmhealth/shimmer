@@ -46,8 +46,8 @@ public class WithingsBodyWeightDataPointMapperUnitTests extends DataPointMapperU
     public void asDataPointsShouldReturnCorrectDataPoints(){
         List<DataPoint<BodyWeight>> dataPointList = mapper.asDataPoints(singletonList(responseNode));
 
-        testDataPoint(dataPointList.get(0),74.126,"2015-05-30T23:06:23-07:00",366956482L);
-        testDataPoint(dataPointList.get(1),74.128,"2015-04-20T10:13:56-07:00",347186704L);
+        testDataPoint(dataPointList.get(0),74.126,"2015-05-31T06:06:23Z",366956482L);
+        testDataPoint(dataPointList.get(1),74.128,"2015-04-20T17:13:56Z",347186704L);
 
     }
 

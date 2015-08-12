@@ -8,9 +8,9 @@ import org.openmhealth.schema.domain.omh.MassUnitValue;
 
 import java.time.Instant;
 import java.time.OffsetDateTime;
-import java.time.ZoneId;
 import java.util.Optional;
 
+import static java.time.ZoneId.of;
 import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.*;
 import static org.openmhealth.shim.withings.mapper.WithingsBodyMeasureDataPointMapper.BodyMeasureType.WEIGHT;
 
@@ -26,7 +26,7 @@ import static org.openmhealth.shim.withings.mapper.WithingsBodyMeasureDataPointM
 public class WithingsBodyWeightDataPointMapper extends WithingsBodyMeasureDataPointMapper<BodyWeight> {
 
     @Override
-    public Optional<DataPoint<BodyWeight>> asDataPoint(JsonNode node, String olsonTimeZone) {
+    public Optional<DataPoint<BodyWeight>> asDataPoint(JsonNode node) {
 
         JsonNode measuresNode = asRequiredNode(node, "measures");
         if (isGoal(node)) {
@@ -59,7 +59,7 @@ public class WithingsBodyWeightDataPointMapper extends WithingsBodyMeasureDataPo
         Optional<Long> dateTimeInUtcSec = asOptionalLong(node, "date");
         if (dateTimeInUtcSec.isPresent()) {
             OffsetDateTime offsetDateTime = OffsetDateTime.ofInstant(Instant.ofEpochSecond(dateTimeInUtcSec.get()),
-                    ZoneId.of(olsonTimeZone));
+                    of("Z"));
 
             bodyWeightBuilder.setEffectiveTimeFrame(offsetDateTime);
         }

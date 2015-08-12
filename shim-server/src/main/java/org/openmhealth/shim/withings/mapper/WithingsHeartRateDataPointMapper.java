@@ -6,9 +6,9 @@ import org.openmhealth.schema.domain.omh.HeartRate;
 
 import java.time.Instant;
 import java.time.OffsetDateTime;
-import java.time.ZoneId;
 import java.util.Optional;
 
+import static java.time.ZoneId.of;
 import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.*;
 import static org.openmhealth.shim.withings.mapper.WithingsBodyMeasureDataPointMapper.BodyMeasureType.HEART_RATE;
 
@@ -23,7 +23,7 @@ import static org.openmhealth.shim.withings.mapper.WithingsBodyMeasureDataPointM
 public class WithingsHeartRateDataPointMapper extends WithingsBodyMeasureDataPointMapper<HeartRate> {
 
     @Override
-    public Optional<DataPoint<HeartRate>> asDataPoint(JsonNode node, String olsonTimeZone) {
+    public Optional<DataPoint<HeartRate>> asDataPoint(JsonNode node) {
 
         JsonNode measuresNode = asRequiredNode(node, "measures");
         if (isGoal(node)) {
@@ -50,7 +50,7 @@ public class WithingsHeartRateDataPointMapper extends WithingsBodyMeasureDataPoi
         Optional<Long> dateInEpochSecs = asOptionalLong(node, "date");
         if (dateInEpochSecs.isPresent()) {
             OffsetDateTime offsetDateTime =
-                    OffsetDateTime.ofInstant(Instant.ofEpochSecond(dateInEpochSecs.get()), ZoneId.of(olsonTimeZone));
+                    OffsetDateTime.ofInstant(Instant.ofEpochSecond(dateInEpochSecs.get()), of("Z"));
             heartRateBuilder.setEffectiveTimeFrame(offsetDateTime);
         }
 

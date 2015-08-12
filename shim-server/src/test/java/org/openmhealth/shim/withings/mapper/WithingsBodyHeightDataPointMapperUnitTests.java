@@ -43,7 +43,7 @@ public class WithingsBodyHeightDataPointMapperUnitTests extends DataPointMapperU
     public void asDataPointsShouldReturnCorrectDataPoints(){
         List<DataPoint<BodyHeight>> dataPoints = mapper.asDataPoints(singletonList(responseNode));
         BodyHeight.Builder expectedBodyHeightBuilder = new BodyHeight.Builder(new LengthUnitValue(LengthUnit.METER,1.93));
-        expectedBodyHeightBuilder.setEffectiveTimeFrame(OffsetDateTime.parse("2015-02-23T11:24:49-08:00"));
+        expectedBodyHeightBuilder.setEffectiveTimeFrame(OffsetDateTime.parse("2015-02-23T19:24:49Z"));
         BodyHeight expectedBodyHeight = expectedBodyHeightBuilder.build();
         assertThat(dataPoints.get(0).getBody(),equalTo(expectedBodyHeight));
         DataPointHeader testDataPointHeader = dataPoints.get(0).getHeader();

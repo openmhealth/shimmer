@@ -43,9 +43,9 @@ public class WithingsHeartRateDataPointMapperUnitTests extends DataPointMapperUn
     @Test
     public void asDataPointsShouldReturnCorrectDataPoints(){
         List<DataPoint<HeartRate>> dataPoints = mapper.asDataPoints(singletonList(responseNode));
-        testHeartRateDataPoint(dataPoints.get(0),41.0,"2015-05-30T23:06:23-07:00",366956482L,null,DataPointModality.SENSED);
-        testHeartRateDataPoint(dataPoints.get(1),51.0,"2015-03-02T08:28:55-08:00",323560022L,null,DataPointModality.SELF_REPORTED);
-        testHeartRateDataPoint(dataPoints.get(2),47.0,"2015-02-26T13:57:17-08:00",321858727L,"a few minutes after a walk",DataPointModality.SELF_REPORTED);
+        testHeartRateDataPoint(dataPoints.get(0),41.0,"2015-05-31T06:06:23Z",366956482L,null,DataPointModality.SENSED);
+        testHeartRateDataPoint(dataPoints.get(1),51.0,"2015-03-02T16:28:55Z",323560022L,null,DataPointModality.SELF_REPORTED);
+        testHeartRateDataPoint(dataPoints.get(2),47.0,"2015-02-26T21:57:17Z",321858727L,"a few minutes after a walk",DataPointModality.SELF_REPORTED);
     }
 
     private void testHeartRateDataPoint(DataPoint<HeartRate> heartRateDataPoint, double value, String dateString,
