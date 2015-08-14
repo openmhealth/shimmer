@@ -20,7 +20,7 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asOption
 
 /**
  * The base class for mappers that translate Google Fit API responses into to {@link
- * Measure} objects
+ * Measure} objects.
  *
  * @author Chris Schaefbauer
  */
@@ -42,6 +42,7 @@ public abstract class GoogleFitDataPointMapper<T extends Measure> implements Jso
      * an item in the returned list
      */
     public List<DataPoint<T>> asDataPoints(List<JsonNode> responseNodes) {
+
         checkNotNull(responseNodes);
         checkArgument(responseNodes.size() == 1, "Only one response should be input to the mapper");
 
@@ -58,11 +59,9 @@ public abstract class GoogleFitDataPointMapper<T extends Measure> implements Jso
     }
 
     /**
-     * Abstract method to be implemented by subclasses mapping a JSON response node from the Google Fit API into a
-     * {@link
-     * Measure} object of the appropriate type
+     * Maps a JSON response node from the Google Fit API into a {@link Measure} object of the appropriate type.
      *
-     * @param listNode an individual datapoint from the array from the Google Fit response
+     * @param listNode an individual datapoint from the array contained in the Google Fit response
      * @return a {@link DataPoint} object containing the target measure with the appropriate values from the JSON node
      * parameter, wrapped as an {@link Optional}
      */
@@ -71,12 +70,11 @@ public abstract class GoogleFitDataPointMapper<T extends Measure> implements Jso
 
     /**
      * Creates a complete {@link DataPoint} object with the measure parameter and the appropriate header and header
-     * information
+     * information.
      *
      * @param measure the {@link Measure} of type T to be wrapped as a {@link DataPoint}
      * @param fitDataSourceId the origin data source from the Google Fit API, contained in the originDataSourceId
      * property; refers to the originating source that brought the data into Google Fit
-     * @return a {@link DataPoint} containing the measure parameter and other meta/header information
      */
     public DataPoint<T> newDataPoint(T measure, String fitDataSourceId) {
 
@@ -104,24 +102,23 @@ public abstract class GoogleFitDataPointMapper<T extends Measure> implements Jso
     }
 
     /**
-     * Converts a nanosecond timestamp from the Google Fit API into an offset datetime value
+     * Converts a nanosecond timestamp from the Google Fit API into an offset datetime value.
      *
      * @param unixEpochNanosString the timestamp directly from the Google JSON document
      * @return an offset datetime object representing the input timestamp
      */
     public OffsetDateTime convertGoogleNanosToOffsetDateTime(String unixEpochNanosString) {
+
         return OffsetDateTime.ofInstant(Instant.ofEpochSecond(0, Long.parseLong(unixEpochNanosString)), ZoneId.of("Z"));
     }
 
     /**
-     * Sets the effective time frame for a measure builder based on the appropriate values in the Google Fit API
-     * response
-     *
      * @param builder a measure builder of type T
      * @param listNode the JSON node representing an individual datapoint, which contains the start and end time
      * properties, from within the response array
      */
     public void setEffectiveTimeFrameIfPresent(T.Builder builder, JsonNode listNode) {
+
         Optional<String> startTimeNanosString = asOptionalString(listNode, "startTimeNanos");
         Optional<String> endTimeNanosString = asOptionalString(listNode, "endTimeNanos");
 
@@ -142,14 +139,14 @@ public abstract class GoogleFitDataPointMapper<T extends Measure> implements Jso
     }
 
     /**
-     * The name of the list that contains the datapoints associated with the request
+     * The name of the list that contains the datapoints associated with the request.
      */
     protected String getListNodeName() {
         return "point";
     }
 
     /**
-     * The name of the list node contained within each datapoint that contains the target value
+     * The name of the list node contained within each datapoint that contains the target value.
      */
     protected String getValueListNodeName() {
         return "value";

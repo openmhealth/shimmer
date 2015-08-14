@@ -16,28 +16,23 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asRequir
 /**
  * A mapper from Google Fit "merged height" endpoint responses
  * (derived:com.google.weight:com.google.android.gms:merge_height) to {@link BodyHeight}
- * objects
+ * objects.
  *
  * @author Chris Schaefbauer
  * @see <a href="https://developers.google.com/fit/rest/v1/data-types">Google Fit Data Type Documentation</a>
  */
-public class GoogleFitBodyHeightDataPointMapper extends GoogleFitDataPointMapper<BodyHeight>{
+public class GoogleFitBodyHeightDataPointMapper extends GoogleFitDataPointMapper<BodyHeight> {
 
-    /**
-     * Maps a JSON response node from the Google Fit API to a {@link BodyHeight} measure
-     * @param listNode an individual datapoint from the array from the Google Fit response
-     * @return a {@link DataPoint} object containing a {@link BodyHeight} measure with the appropriate values from
-     * the JSON node parameter, wrapped as an {@link Optional}
-     */
     @Override
     public Optional<DataPoint<BodyHeight>> asDataPoint(JsonNode listNode) {
 
-        JsonNode valueListNode = asRequiredNode(listNode,getValueListNodeName());
-        double bodyHeightValue = asRequiredDouble(valueListNode.get(0),"fpVal");
-        if(bodyHeightValue==0){
+        JsonNode valueListNode = asRequiredNode(listNode, getValueListNodeName());
+        double bodyHeightValue = asRequiredDouble(valueListNode.get(0), "fpVal");
+        if (bodyHeightValue == 0) {
             return Optional.empty();
         }
-        BodyHeight.Builder bodyHeightBuilder = new BodyHeight.Builder(new LengthUnitValue(LengthUnit.METER,bodyHeightValue));
+        BodyHeight.Builder bodyHeightBuilder =
+                new BodyHeight.Builder(new LengthUnitValue(LengthUnit.METER, bodyHeightValue));
 
         setEffectiveTimeFrameIfPresent(bodyHeightBuilder, listNode);
 
@@ -45,8 +40,6 @@ public class GoogleFitBodyHeightDataPointMapper extends GoogleFitDataPointMapper
         Optional<String> originDataSourceId = asOptionalString(listNode, "originDataSourceId");
         return Optional.of(newDataPoint(bodyHeight, originDataSourceId.orElse(null)));
     }
-
-
 
 
 }
