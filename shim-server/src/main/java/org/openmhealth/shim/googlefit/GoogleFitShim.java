@@ -17,8 +17,6 @@
 package org.openmhealth.shim.googlefit;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.openmhealth.shim.*;
 import org.openmhealth.shim.googlefit.mapper.*;
 import org.slf4j.Logger;
@@ -42,7 +40,9 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
+import org.springframework.web.util.UriComponentsBuilder;
 
+import java.net.URI;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
@@ -55,7 +55,7 @@ import static org.springframework.http.ResponseEntity.ok;
 
 
 /**
- * Encapsulates parameters specific to the Google Fit API.
+ * Encapsulates parameters specific to the Google Fit REST API and processes requests for Google Fit data from shimmer.
  *
  * @author Eric Jain
  * @author Chris Schaefbauer
@@ -63,12 +63,12 @@ import static org.springframework.http.ResponseEntity.ok;
 @Component
 @ConfigurationProperties(prefix = "openmhealth.shim.googlefit")
 public class GoogleFitShim extends OAuth2ShimBase {
+
     private static final Logger logger = getLogger(GoogleFitShim.class);
 
     public static final String SHIM_KEY = "googlefit";
 
-    private static final String DATASET_URL =
-            "https://www.googleapis.com/fitness/v1/users/me/dataSources/%s/datasets/%d-%d?limit=%d";
+    private static final String DATA_URL = "https://www.googleapis.com/fitness/v1/users/me/dataSources";
 
     private static final String AUTHORIZE_URL = "https://accounts.google.com/o/oauth2/auth";
 
@@ -163,10 +163,6 @@ public class GoogleFitShim extends OAuth2ShimBase {
                     + " in shimDataRequest, cannot retrieve data.");
         }
 
-        long numToReturn = 100;
-        if (shimDataRequest.getNumToReturn() != null) {
-            numToReturn = shimDataRequest.getNumToReturn();
-        }
 
         OffsetDateTime todayInUTC =
                 LocalDate.now().atStartOfDay().atOffset(ZoneOffset.UTC);
@@ -182,13 +178,16 @@ public class GoogleFitShim extends OAuth2ShimBase {
         // entire last day
         long endTimeNanos = (endDateInUTC.toEpochSecond() * 1000000000) + endDateInUTC.toInstant().getNano();
 
-        String urlRequest =
-                String.format(DATASET_URL, googleFitDataType.getStreamId(), startTimeNanos, endTimeNanos, numToReturn);
 
-        ObjectMapper objectMapper = new ObjectMapper();
+        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromUriString(DATA_URL)
+                .pathSegment(googleFitDataType.getStreamId(), "datasets", "{startDate}-{endDate}");
+        // TODO: Add limits back into the request once Google has fixed the 'limit' query parameter and paging
+
+        URI uriRequest = uriBuilder.buildAndExpand(startTimeNanos, endTimeNanos).encode().toUri();
+
         ResponseEntity<JsonNode> responseEntity;
-        try{
-            responseEntity = restTemplate.getForEntity(urlRequest, JsonNode.class);
+        try {
+            responseEntity = restTemplate.getForEntity(uriRequest, JsonNode.class);
         }
         catch (HttpClientErrorException | HttpServerErrorException e) {
             // TODO figure out how to handle this
@@ -198,7 +197,7 @@ public class GoogleFitShim extends OAuth2ShimBase {
 
         if (shimDataRequest.getNormalize()) {
             GoogleFitDataPointMapper<?> dataPointMapper;
-            switch(googleFitDataType){
+            switch (googleFitDataType) {
                 case BODY_WEIGHT:
                     dataPointMapper = new GoogleFitBodyWeightDataPointMapper();
                     break;
@@ -220,16 +219,13 @@ public class GoogleFitShim extends OAuth2ShimBase {
                 default:
                     throw new UnsupportedOperationException();
             }
-            SimpleModule module = new SimpleModule();
-            module.addDeserializer(ShimDataResponse.class, googleFitDataType.getNormalizer());
-            objectMapper.registerModule(module);
 
-            return ok().body(ShimDataResponse.result(GoogleFitShim.SHIM_KEY,dataPointMapper.asDataPoints(
+            return ok().body(ShimDataResponse.result(GoogleFitShim.SHIM_KEY, dataPointMapper.asDataPoints(
                     singletonList(responseEntity.getBody()))));
         }
         else {
 
-            return ok().body(ShimDataResponse.result(GoogleFitShim.SHIM_KEY,responseEntity.getBody()));
+            return ok().body(ShimDataResponse.result(GoogleFitShim.SHIM_KEY, responseEntity.getBody()));
         }
     }
 
@@ -276,7 +272,8 @@ public class GoogleFitShim extends OAuth2ShimBase {
             return accessToken;
         }
     }
-    
+
+
     /**
      * Adds parameters required by Google to authorization token requests.
      */
