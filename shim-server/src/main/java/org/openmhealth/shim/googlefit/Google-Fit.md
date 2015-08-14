@@ -83,7 +83,7 @@ The request parameters that are required and optional are the same across all da
 
 - Reference: https://developers.google.com/fit/rest/v1/data-types
 
-### Description
+### description
 This description relates to the primary endpoint above, for merged data points. This endpoint returns all of the body weight data points that were synced to the Google Fit platform from devices that are connected to Google Fit. The Body weight values are returned as floats in kilogram units. Each datapoint has a start datetime (startTimeNanos) and end datetime (endTimeNanos) and although they are likely the same, we will need to check that before creating the data point. The nanos values are unix epoch nanoseconds that are aligned to UTC. 
 
 ## get body height
@@ -93,7 +93,7 @@ This description relates to the primary endpoint above, for merged data points. 
 
 - Reference: https://developers.google.com/fit/rest/v1/data-types
 
-### Description
+### description
 This description relates to the primary endpoint above, for merged data points. This endpoint returns all of the body height data points that were synced to the Google Fit platform from devices connected to Google Fit. The body height values are returned as floating point numbers with a unit of meters. Each datapoint has a start datetime (startTimeNanos) and end datetime (endTimeNanos) and although they are likely the same, we will need to check that before creating the data point. The nanos values are unix epoch nanoseconds that are aligned to UTC. 
 
 ## get step count
@@ -101,7 +101,7 @@ This description relates to the primary endpoint above, for merged data points. 
 
 Merge appears to combine some of the step count periods into single datapoints and then cut off one or two steps. Actually, the estimated steps breaks out some of the merged segments and adds activity estimates and does other estimating to account for anomalous steps and biking/driving steps. We use the merge_step_deltas as the merged value from across all step counter sources which will be the raw data reported which is more accurate to what the devices report which will be less confusing.
 
-### Description
+### description
 Retrieves all of the step count data points that have been recorded to the Google Fit platform, across all devices and applications that are connected to Google Play. Step counts are merged using machine learning and other approaches so that there are not duplicate step counts during the same time period. 
 
 ## get calories
@@ -111,7 +111,7 @@ It appears that between these two, there is some merging of calorie counts durin
 
 Seems that the best approach would be to use merge_calories_expended and filter out the metabolic rate (BMR) calories, which are datapoints with a originDataSourceId of “derived:com.google.calories.expended:com.google.android.gms:from_bmr”.
 
-### Description
+### description
 Retrieves a set of ‘calories expended’ data points that is merged from all sources accessible on the Google Fit platform. The merging process is based on a set of heuristics, machine learning, and other algorithms and does not contain duplicate calories expended datapoints during any time period. The response also contains datapoints that contain ‘calories expended’ data based on basal metabolic resting rate in addition to user input data, inferred calories expended from activities, and sensed or measured data from devices. 
 
 ## get heart rate
@@ -119,7 +119,7 @@ Retrieves a set of ‘calories expended’ data points that is merged from all s
 
 - reference: https://developers.google.com/fit/rest/v1/data-types
 
-### Description
+### description
 Retrieves heart rate measurements that have been stored on the Google Fit platform through a third-party device or application. Currently there is no way to add heart rate measurements as a user. 
 
 ## get activities
@@ -127,5 +127,8 @@ Retrieves heart rate measurements that have been stored on the Google Fit platfo
 
 - Reference: https://developers.google.com/fit/rest/v1/reference/activity-types
 
-### Description
+### description
 Retrieves information about continuous activities that were performed by the user during different time period, but not information about the outcomes of those sessions (calories burned, distance traveled, etc). These activity segments can be created through user input, application data, or inferred through sensors and other data. 
+
+# issues
+Currently the limit parameter is not working, for at least some merged datasources, and pagination does not work because the 'nextPageToken' property is not returned in responses
