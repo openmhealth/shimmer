@@ -23,6 +23,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.openmhealth.schema.domain.omh.DataPoint;
 import org.openmhealth.shim.*;
+import org.openmhealth.shim.withings.domain.WithingsBodyMeasureType;
 import org.openmhealth.shim.withings.mapper.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -41,6 +42,7 @@ import java.net.URL;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import static java.util.Collections.singletonList;
 
@@ -124,7 +126,7 @@ public class WithingsShim extends OAuth1ShimBase {
             HttpServletRequest request, AccessParameters accessParameters) {
         Map<String, Object> addlParams =
                 accessParameters.getAdditionalParameters();
-        addlParams = addlParams != null ? addlParams : new LinkedHashMap<String, Object>();
+        addlParams = addlParams != null ? addlParams : new LinkedHashMap<>();
         // Withings maintains a unique id, separate from username, for each user and requires that as a parameter
         // for requests. Userid is exposed during the authentication process and needed to construct the request URI.
         addlParams.put("userid", request.getParameter("userid"));
@@ -275,7 +277,7 @@ public class WithingsShim extends OAuth1ShimBase {
 
         UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder.fromUriString(DATA_URL).pathSegment(
                 withingsDataType.getEndpoint());
-        String measureParameter = "";
+        String measureParameter;
         if (isPartnerAccessActivityMeasure(withingsDataType)) {
             // partner level access allows greater detail around activity, but uses a different endpoint
             measureParameter = PARTNER_ACCESS_ACTIVITY_ENDPOINT;
@@ -286,15 +288,15 @@ public class WithingsShim extends OAuth1ShimBase {
         uriComponentsBuilder.queryParam("action", measureParameter).queryParam("userid", userid)
                 .queryParams(dateTimeMap);
 
-        if (withingsDataType.getMeasureParameter() == "getmeas") {
+        if (Objects.equals(withingsDataType.getMeasureParameter(), "getmeas")) {
 
             if (withingsDataType !=
                     WithingsDataType.BLOOD_PRESSURE) { // blood pressure requires both diastolic and systolic and
                     // Withings API does not allow us to ask for multiple types, so we need to request everything and
                     // processr
 
-                WithingsBodyMeasureDataPointMapper.BodyMeasureType measureType =
-                        WithingsBodyMeasureDataPointMapper.BodyMeasureType.valueOf(withingsDataType.name());
+                WithingsBodyMeasureType measureType =
+                        WithingsBodyMeasureType.valueOf(withingsDataType.name());
                 uriComponentsBuilder.queryParam("meastype", measureType.getMagicNumber());
             }
 

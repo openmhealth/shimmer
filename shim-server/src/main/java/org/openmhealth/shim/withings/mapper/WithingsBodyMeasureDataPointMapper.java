@@ -4,18 +4,24 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.Lists;
 import org.openmhealth.schema.domain.omh.DataPoint;
 import org.openmhealth.schema.domain.omh.Measure;
+import org.openmhealth.shim.common.mapper.JsonNodeMappingException;
+import org.openmhealth.shim.withings.domain.WithingsBodyMeasureType;
+import org.openmhealth.shim.withings.domain.WithingsMeasureGroupAttribution;
+import org.slf4j.Logger;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static java.lang.Math.pow;
-import static java.time.ZoneId.of;
-import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asOptionalLong;
-import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asOptionalString;
-import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asRequiredNode;
+import static java.lang.String.format;
+import static java.time.ZoneOffset.UTC;
+import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.*;
+import static org.slf4j.LoggerFactory.getLogger;
 
 
 /**
@@ -27,170 +33,165 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asRequir
  * @author Emerson Farrugia
  * @see <a href="http://oauth.withings.com/api/doc#api-Measure-get_measure">Body Measures API documentation</a>
  */
-public abstract class WithingsBodyMeasureDataPointMapper<T extends Measure> extends WithingsListDataPointMapper<T> {
+public abstract class WithingsBodyMeasureDataPointMapper<T extends Measure> extends WithingsDataPointMapper<T> {
 
-    /**
-     * A type of body measure included in a response from the endpoint.
-     */
-    public enum BodyMeasureType {
-
-        WEIGHT(1),
-        HEIGHT(4),
-        // FAT_FREE_MASS(5), // TODO confirm what this means
-        // FAT_RATIO(6), // TODO confirm what this means
-        // FAT_MASS_WEIGHT(8), // TODO confirm what this means
-        DIASTOLIC_BLOOD_PRESSURE(9),
-        SYSTOLIC_BLOOD_PRESSURE(10),
-        HEART_RATE(11),
-        OXYGEN_SATURATION(54);
-
-        private int magicNumber;
-
-        BodyMeasureType(int magicNumber) {
-            this.magicNumber = magicNumber;
-        }
-
-        /**
-         * @return the magic number used to refer to this body measure type in responses
-         */
-        public int getMagicNumber() {
-            return magicNumber;
-        }
-    }
-
-    /**
-     * Returns the list name for splitting out individual body measure groups that can then be mapped.
-     *
-     * @return the name of the array containing the individual body measure group nodes
-     */
-    String getListNodeName() {
-        return "measuregrps";
-    }
+    private static final Logger logger = getLogger(WithingsBodyMeasureDataPointMapper.class);
 
     @Override
     public List<DataPoint<T>> asDataPoints(List<JsonNode> responseNodes) {
 
         checkNotNull(responseNodes);
         checkNotNull(responseNodes.size() == 1, "A single response node is allowed per call.");
+
         JsonNode responseNodeBody = asRequiredNode(responseNodes.get(0), BODY_NODE_PROPERTY);
         List<DataPoint<T>> dataPoints = Lists.newArrayList();
-        JsonNode listNode = asRequiredNode(responseNodeBody, getListNodeName());
-        for (JsonNode listEntryNode : listNode) {
-            if (isUnattributedSensed(listEntryNode)) {
-                //This is a corner case captured by the Withings API where the data point value captured by the scale is
-                // similar to multiple users and they were not prompted to specify the data point owner because the new
-                // user was created and not synced to the scale before taking a measurement
-                //TODO: Log that datapoint was not captured and to revisit since user can assign in the web interface
-            }
-            else if (!isGoal(
-                    listEntryNode)) { // If the measurement point represents a goal (not a measurement) then we skip
-                asDataPoint(listEntryNode).ifPresent(dataPoints::add);
+
+        for (JsonNode measureGroupNode : asRequiredNode(responseNodeBody, "measuregrps")) {
+
+            if (isGoal(measureGroupNode)) {
+                continue;
             }
 
+            if (isOwnerAmbiguous(measureGroupNode)) {
+                logger.warn("The following Withings measure group is being ignored because its owner is ambiguous.\n{}",
+                        measureGroupNode);
+                continue;
+            }
+
+            JsonNode measuresNode = asRequiredNode(measureGroupNode, "measures");
+
+            Measure.Builder<T, ?> measureBuilder = newMeasureBuilder(measuresNode).orElse(null);
+            if (measureBuilder == null) {
+                continue;
+            }
+
+            Optional<Long> dateTimeInEpochSeconds = asOptionalLong(measureGroupNode, "date");
+            if (dateTimeInEpochSeconds.isPresent()) {
+
+                Instant dateTimeInstant = Instant.ofEpochSecond(dateTimeInEpochSeconds.get());
+                measureBuilder.setEffectiveTimeFrame(OffsetDateTime.ofInstant(dateTimeInstant, UTC));
+            }
+
+            Optional<String> userComment = asOptionalString(measureGroupNode, "comment");
+            if (userComment.isPresent()) {
+                measureBuilder.setUserNotes(userComment.get());
+            }
+
+            T measure = measureBuilder.build();
+
+            Optional<Long> externalId = asOptionalLong(measureGroupNode, "grpid");
+
+            dataPoints.add(newDataPoint(measure, externalId.orElse(null), isSensed(measureGroupNode), null));
         }
 
         return dataPoints;
-
     }
 
     /**
-     * Identifies whether a body measures group node was sensed by a device or self-reported by a user.
-     *
-     * @param node a list node from the "measuregrps" array from a body measures endpoint response
-     * @return a boolean value indicating true if the data point was sensed by a device or false if the data point was
-     * self-reported by a user
+     * @return true if the measure group is a goal, or false otherwise
      */
-    protected Optional<Boolean> isSensed(JsonNode node) {
+    protected boolean isGoal(JsonNode measureGroupNode) {
 
-        Optional<Long> measurementProcess = asOptionalLong(node, "attrib");
-        Boolean sensed = null;
-        if (measurementProcess.isPresent()) {
-            if (measurementProcess.get() == 0 ||
-                    measurementProcess.get() == 1) { //TODO: Need to check the semantics of 1
-                sensed = true;
+        int categoryValue = asRequiredInteger(measureGroupNode, "category");
+
+        if (categoryValue == 1) {
+            return true;
+        }
+        else if (categoryValue == 2) {
+            return false;
+        }
+
+        throw new JsonNodeMappingException(format(
+                "The following Withings measure group node has an unrecognized category value.\n%s", measureGroupNode));
+    }
+
+    /**
+     * @return true if the measure group can't be attributed to a single user, or false if it can
+     * @see {@link WithingsMeasureGroupAttribution#isAmbiguous()}
+     */
+    protected boolean isOwnerAmbiguous(JsonNode measureGroupNode) {
+
+        return getMeasureGroupAttribution(measureGroupNode)
+                .orElseThrow(() -> new JsonNodeMappingException(format(
+                        "The following Withings measure group node doesn't contain an attribution property.\n%s",
+                        measureGroupNode)))
+                .isAmbiguous();
+    }
+
+    /**
+     * @see {@link WithingsMeasureGroupAttribution}
+     */
+    protected Optional<WithingsMeasureGroupAttribution> getMeasureGroupAttribution(JsonNode measureGroupNode) {
+
+        Optional<Integer> attributionValue = asOptionalInteger(measureGroupNode, "attrib");
+
+        if (attributionValue.isPresent()) {
+            Optional<WithingsMeasureGroupAttribution> attribution =
+                    WithingsMeasureGroupAttribution.findByMagicNumber(attributionValue.get().intValue());
+
+            if (attribution.isPresent()) {
+                return attribution;
             }
-            else {
-                sensed = false;
-            }
+
+            throw new JsonNodeMappingException(format(
+                    "The following Withings measure group node has an unrecognized attribution value.\n%s",
+                    measureGroupNode));
         }
-        return Optional.ofNullable(sensed);
-
-    }
-
-    /**
-     * Calculates the actual value from the value and unit parameters returned by the Withings API for body
-     * measurements.
-     *
-     * @return The value parameter multiplied by 10 to the unit power, in essence shifting the decimal by 'unit'
-     * positions
-     */
-    protected double actualValueOf(double value, long unit) {
-        return value * pow(10, unit);
-    }
-
-    /**
-     * Determines whether a body measure group item is a goal instead of an actual measurement.
-     *
-     * @param node a list node from the "measuregrps" list in the body measures API response
-     * @return whether or not the datapoint is a goal or real measure
-     */
-    protected Boolean isGoal(JsonNode node) {
-
-        Optional<Long> category = asOptionalLong(node, "category");
-        if (category.isPresent()) {
-            if (category.get() == 2) {
-                return true;
-            }
-        }
-
-        return false;
-
-    }
-
-    /**
-     * @param listEntryNode list node from the 'measuregrps' array, representing an group of measures taken at a
-     * specific timepoint.
-     */
-    protected void setEffectiveTimeFrame(T.Builder measureBuilder, JsonNode listEntryNode) {
-        Optional<Long> dateTimeInUtcSec = asOptionalLong(listEntryNode, "date");
-        if (dateTimeInUtcSec.isPresent()) {
-            OffsetDateTime offsetDateTime = OffsetDateTime.ofInstant(Instant.ofEpochSecond(dateTimeInUtcSec.get()),
-                    of("Z"));
-
-            measureBuilder.setEffectiveTimeFrame(offsetDateTime);
+        else {
+            return Optional.empty();
         }
     }
 
     /**
-     * @param listEntryNode list node from the 'measuregrps' array, representing an group of measures taken at a
-     * specific timepoint.
+     * @return true if the measure group was sensed, or false if it was self-reported
      */
-    protected void setUserComment(T.Builder measureBuilder, JsonNode listEntryNode) {
-        Optional<String> userComment = asOptionalString(listEntryNode, "comment");
-        if (userComment.isPresent()) {
-            measureBuilder.setUserNotes(userComment.get());
-        }
+    protected boolean isSensed(JsonNode measureGroupNode) {
+
+        return getMeasureGroupAttribution(measureGroupNode)
+                .orElseThrow(() -> new JsonNodeMappingException(format(
+                        "The following Withings measure group node doesn't contain an attribution property.\n%s",
+                        measureGroupNode)))
+                .isSensed();
     }
 
     /**
-     * Determines whether a body measure group item that was sensed is currently unattributed to a user because the
-     * measurement was taken before a new user was synced to the device. Based on Withings feedback, this is only a
-     * case
-     * with weight measurements.
-     *
-     * @param node a list node from the "measuregrps" list in the body measures API response
-     * @return whether or not a sensed datapoint has been attributed correctly to a user
+     * @param measuresNode the list of measures in a measure group node
+     * @return a measure builder initialised with the data in the measures list
      */
-    protected boolean isUnattributedSensed(JsonNode node) {
+    abstract Optional<Measure.Builder<T, ?>> newMeasureBuilder(JsonNode measuresNode);
 
-        Optional<Long> attrib = asOptionalLong(node, "attrib");
-        if (attrib.isPresent()) {
-            if (attrib.get() == 1) {
-                return true;
-            }
+    /**
+     * @return a {@link BigDecimal} corresponding to the specified measure node
+     */
+    protected BigDecimal getValue(JsonNode measureNode) {
+
+        long unscaledValue = asRequiredLong(measureNode, "value");
+        int scale = asRequiredInteger(measureNode, "unit");
+
+        return BigDecimal.valueOf(unscaledValue, scale);
+
+    }
+
+    /**
+     * @param bodyMeasureType the body measure type of interest
+     * @return the
+     */
+    protected Optional<BigDecimal> getValueForType(JsonNode measuresNode, WithingsBodyMeasureType bodyMeasureType) {
+
+        List<BigDecimal> values = StreamSupport.stream(measuresNode.spliterator(), false)
+                .filter((measureNode) -> asRequiredLong(measureNode, "type") == bodyMeasureType.getMagicNumber())
+                .map(this::getValue)
+                .collect(Collectors.toList());
+
+        if (values.isEmpty()) {
+            return Optional.empty();
         }
 
-        return false;
+        if (values.size() > 1) {
+            logger.warn("The following Withings measures node contains multiple measures of type {}\n{}.",
+                    bodyMeasureType, measuresNode);
+        }
 
+        return Optional.of(values.get(0));
     }
 }

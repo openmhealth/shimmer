@@ -17,7 +17,6 @@ import static org.openmhealth.schema.domain.omh.DataPointModality.SENSED;
 public abstract class WithingsDataPointMapper<T> implements JsonNodeDataPointMapper<T> {
 
     public final static String RESOURCE_API_SOURCE_NAME = "Withings Resource API";
-    protected final static String TIME_ZONE_PROPERTY = "timezone";
     protected static final String BODY_NODE_PROPERTY = "body";
 
     /**
