@@ -95,10 +95,10 @@ public abstract class WithingsBodyMeasureDataPointMapper<T extends Measure> exte
         int categoryValue = asRequiredInteger(measureGroupNode, "category");
 
         if (categoryValue == 1) {
-            return true;
+            return false;
         }
         else if (categoryValue == 2) {
-            return false;
+            return true;
         }
 
         throw new JsonNodeMappingException(format(
