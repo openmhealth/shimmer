@@ -15,10 +15,10 @@ import java.util.Optional;
  */
 public enum WithingsMeasureGroupAttribution {
 
-    SENSED_AND_UNAMBIGUOUS(0, true, true),
-    SENSED_BUT_AMBIGUOUS(1, true, false),
-    SELF_REPORTED(2, false, true),
-    SELF_REPORTED_DURING_CREATION(4, false, true); // TODO confirm
+    SENSED_AND_UNAMBIGUOUS(0, true, false),
+    SENSED_BUT_AMBIGUOUS(1, true, true),
+    SELF_REPORTED(2, false, false),
+    SELF_REPORTED_DURING_CREATION(4, false, false); // TODO confirm
 
     private int magicNumber;
     private boolean sensed;
