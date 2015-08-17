@@ -168,7 +168,7 @@ public abstract class WithingsBodyMeasureDataPointMapper<T extends Measure> exte
         long unscaledValue = asRequiredLong(measureNode, "value");
         int scale = asRequiredInteger(measureNode, "unit");
 
-        return BigDecimal.valueOf(unscaledValue, scale);
+        return BigDecimal.valueOf(unscaledValue, -1 * scale);
 
     }
 
