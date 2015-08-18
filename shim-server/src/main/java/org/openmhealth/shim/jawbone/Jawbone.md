@@ -3,7 +3,7 @@
 # general
 docs main page: https://jawbone.com/up/developer/
 
-# getting started on RunKeeper
+# getting started on Jawbone
 
 1. sign up at https://jawbone.com/start/signup
 1. create an app from https://jawbone.com/up/developer/account

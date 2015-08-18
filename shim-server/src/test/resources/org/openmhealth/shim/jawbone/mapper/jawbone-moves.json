@@ -1,0 +1,215 @@
+{
+    "data": {
+        "items": [
+            {
+                "date": 20150810,
+                "details": {
+                    "active_time": 101,
+                    "bg_calories": 10.9779999852,
+                    "bmr": 1968.47135419,
+                    "bmr_day": 1968.47135419,
+                    "calories": 13.2817996442,
+                    "distance": 170.0,
+                    "hourly_totals": {
+                        "2015081009": {
+                            "active_time": 81,
+                            "calories": 8.90799993277,
+                            "distance": 137.0,
+                            "inactive_time": 900,
+                            "longest_active_time": 81,
+                            "longest_idle_time": 900,
+                            "steps": 159
+                        },
+                        "2015081011": {
+                            "active_time": 20,
+                            "calories": 2.07000005245,
+                            "distance": 33.0,
+                            "inactive_time": 2460,
+                            "longest_active_time": 20,
+                            "longest_idle_time": 2460,
+                            "steps": 38
+                        }
+                    },
+                    "inactive_time": 13080,
+                    "km": 0.17,
+                    "longest_active": 81,
+                    "longest_idle": 8580,
+                    "steps": 197,
+                    "sunrise": 0,
+                    "sunset": 0,
+                    "tz": "America/Denver",
+                    "tzs": [
+                        [
+                            1439219760,
+                            "America/Denver"
+                        ]
+                    ],
+                    "wo_active_time": 0,
+                    "wo_calories": 0,
+                    "wo_count": 0,
+                    "wo_longest": 0,
+                    "wo_time": 0
+                },
+                "snapshot_image": "/nudge/image/e/1439354197/QkfTizSpRdvMvnHFctzItGNZMT-1F5vw/nq7c6F3gu84.png",
+                "time_completed": 1439228580,
+                "time_created": 1439219760,
+                "time_updated": 1439867504,
+                "title": "197 steps",
+                "type": "move",
+                "xid": "QkfTizSpRdvMvnHFctzItGNZMT-1F5vw"
+            },
+            {
+                "date": 20150807,
+                "details": {
+                    "active_time": 300,
+                    "bg_calories": 24.3789999485,
+                    "bmr": 1963.98751233,
+                    "bmr_day": 1963.98751233,
+                    "calories": 31.2221620124,
+                    "distance": 384.0,
+                    "hourly_totals": {
+                        "2015080705": {
+                            "active_time": 14,
+                            "calories": 1.73199999332,
+                            "distance": 25.0,
+                            "inactive_time": 0,
+                            "longest_active_time": 14,
+                            "longest_idle_time": 0,
+                            "steps": 29
+                        },
+                        "2015080706": {
+                            "active_time": 36,
+                            "calories": 4.06300008297,
+                            "distance": 61.0,
+                            "inactive_time": 0,
+                            "longest_active_time": 20,
+                            "longest_idle_time": 0,
+                            "steps": 70
+                        },
+                        "2015080714": {
+                            "active_time": 63,
+                            "calories": 5.27899992466,
+                            "distance": 89.0,
+                            "inactive_time": 0,
+                            "longest_active_time": 63,
+                            "longest_idle_time": 0,
+                            "steps": 111
+                        },
+                        "2015080716": {
+                            "active_time": 31,
+                            "calories": 2.97500002384,
+                            "distance": 48.0,
+                            "inactive_time": 2700,
+                            "longest_active_time": 19,
+                            "longest_idle_time": 1920,
+                            "steps": 58
+                        },
+                        "2015080717": {
+                            "active_time": 156,
+                            "calories": 10.3299999237,
+                            "distance": 161.0,
+                            "inactive_time": 0,
+                            "longest_active_time": 156,
+                            "longest_idle_time": 0,
+                            "steps": 229
+                        }
+                    },
+                    "inactive_time": 31920,
+                    "km": 0.384,
+                    "longest_active": 156,
+                    "longest_idle": 21720,
+                    "steps": 497,
+                    "sunrise": 0,
+                    "sunset": 0,
+                    "tz": "America/Denver",
+                    "tzs": [
+                        [
+                            1438947840,
+                            "America/Denver"
+                        ]
+                    ],
+                    "wo_active_time": 0,
+                    "wo_calories": 0,
+                    "wo_count": 0,
+                    "wo_longest": 0,
+                    "wo_time": 0
+                },
+                "snapshot_image": "/nudge/image/e/1439354196/QkfTizSpRdsKPdFEw4yOvfDgh2mK6lqI/nq7c6F3gu84.png",
+                "time_completed": 1438990020,
+                "time_created": 1438947840,
+                "time_updated": 1439867504,
+                "title": "497 steps",
+                "type": "move",
+                "xid": "QkfTizSpRdsKPdFEw4yOvfDgh2mK6lqI"
+            },
+            {
+                "date": 20150805,
+                "details": {
+                    "active_time": 345,
+                    "bg_calories": 28.3100005388,
+                    "bmr": 1962.99790392,
+                    "bmr_day": 1962.99790392,
+                    "calories": 36.17978471,
+                    "distance": 468.0,
+                    "hourly_totals": {
+                        "2015080500": {
+                            "active_time": 336,
+                            "calories": 27.0590004921,
+                            "distance": 451.0,
+                            "inactive_time": 0,
+                            "longest_active_time": 336,
+                            "longest_idle_time": 0,
+                            "steps": 574
+                        },
+                        "2015080506": {
+                            "active_time": 9,
+                            "calories": 1.25100004673,
+                            "distance": 17.0,
+                            "inactive_time": 0,
+                            "longest_active_time": 9,
+                            "longest_idle_time": 0,
+                            "steps": 19
+                        }
+                    },
+                    "inactive_time": 32400,
+                    "km": 0.468,
+                    "longest_active": 336,
+                    "longest_idle": 32400,
+                    "steps": 593,
+                    "sunrise": 0,
+                    "sunset": 0,
+                    "tz": "America/Denver",
+                    "tzs": [
+                        [
+                            1438747200,
+                            "America/New_York"
+                        ],
+                        [
+                            1438778520,
+                            "America/Denver"
+                        ]
+                    ],
+                    "wo_active_time": 0,
+                    "wo_calories": 0,
+                    "wo_count": 0,
+                    "wo_longest": 0,
+                    "wo_time": 0
+                },
+                "snapshot_image": "/nudge/image/e/1438778750/QkfTizSpRdsdNZPA9R8QASzqKUk1mod1/nq7c6F3gu84.png",
+                "time_completed": 1438778520,
+                "time_created": 1438747200,
+                "time_updated": 1439867504,
+                "title": "593 steps",
+                "type": "move",
+                "xid": "QkfTizSpRdsdNZPA9R8QASzqKUk1mod1"
+            }
+        ],
+        "size": 3
+    },
+    "meta": {
+        "code": 200,
+        "message": "OK",
+        "time": 1439867504,
+        "user_xid": "VB0mNZWqiOUDWkkl72vgRQ"
+    }
+}
