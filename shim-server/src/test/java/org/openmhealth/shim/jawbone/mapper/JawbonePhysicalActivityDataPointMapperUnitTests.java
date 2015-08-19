@@ -48,7 +48,7 @@ public class JawbonePhysicalActivityDataPointMapperUnitTests extends DataPointMa
         List<DataPoint<PhysicalActivity>> dataPoints = mapper.asDataPoints(Collections.singletonList(responseNode));
 
         assertThat(dataPoints, notNullValue());
-        assertThat(dataPoints.size(), equalTo(1));
+        assertThat(dataPoints.size(), equalTo(3));
     }
 
     @Test

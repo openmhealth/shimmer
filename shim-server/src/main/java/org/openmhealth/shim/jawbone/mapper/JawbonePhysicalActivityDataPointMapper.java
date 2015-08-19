@@ -1,7 +1,6 @@
 package org.openmhealth.shim.jawbone.mapper;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import org.openmhealth.schema.domain.omh.DataPoint;
 import org.openmhealth.schema.domain.omh.DurationUnitValue;
 import org.openmhealth.schema.domain.omh.LengthUnitValue;
 import org.openmhealth.schema.domain.omh.PhysicalActivity;
@@ -72,8 +71,7 @@ public class JawbonePhysicalActivityDataPointMapper extends JawboneDataPointMapp
     }
 
     @Override
-    public Optional<DataPoint<PhysicalActivity>> asDataPoint(JsonNode workoutNode) {
-
+    protected Optional<PhysicalActivity> getMeasure(JsonNode workoutNode) {
         checkNotNull(workoutNode);
 
         // assume that the title and workout type are optional since the documentation isn't clear
@@ -101,19 +99,7 @@ public class JawbonePhysicalActivityDataPointMapper extends JawboneDataPointMapp
         asOptionalInteger(workoutNode, "details.intensity")
                 .ifPresent(intensity -> builder.setReportedActivityIntensity(asSelfReportedIntensity(intensity)));
 
-        PhysicalActivity measure = builder.build();
-
-        Optional<String> externalId = asOptionalString(workoutNode, "xid");
-
-        // steps are only returned if the user was wearing the UP band, i.e. that the data was sensed
-        Optional<Integer> steps = asOptionalInteger(workoutNode, "details.steps");
-
-        Boolean sensed = null;
-        if (steps.isPresent() && steps.get() > 0) {
-            sensed = true;
-        }
-
-        return Optional.of(newDataPoint(measure, RESOURCE_API_SOURCE_NAME, externalId.orElse(null), sensed));
+        return Optional.of(builder.build());
     }
 
     /**
@@ -159,5 +145,15 @@ public class JawbonePhysicalActivityDataPointMapper extends JawboneDataPointMapp
             default:
                 throw new IllegalArgumentException(format("The intensity value '%d' isn't supported.", intensityValue));
         }
+    }
+
+    @Override
+    protected boolean isSensed(JsonNode workoutNode){
+        Optional<Integer> steps = asOptionalInteger(workoutNode, "details.steps");
+
+        if (steps.isPresent() && steps.get() > 0) {
+            return true;
+        }
+        return false;
     }
 }
