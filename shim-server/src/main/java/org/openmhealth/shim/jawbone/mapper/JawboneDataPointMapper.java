@@ -94,36 +94,4 @@ public abstract class JawboneDataPointMapper<T extends Measure> implements JsonN
         return false; //TODO overwrite for physical activity
     }
 
-    /**
-     * @param measure the body of the data point
-     * @param sourceName the name of the source of the measure
-     * @param externalId the identifier of the measure as recorded by the data provider
-     * @param sensed true if the measure is sensed by a device, false if it's manually entered, null otherwise
-     * @param <T> the measure type
-     * @return a data point
-     */
-    // TODO extract this since it's identical to Misfit's
-    protected <T extends Measure> DataPoint<T> newDataPoint(T measure, String sourceName, String externalId,
-            Boolean sensed) {
-
-        DataPointAcquisitionProvenance.Builder provenanceBuilder =
-                new DataPointAcquisitionProvenance.Builder(sourceName);
-
-        if (sensed != null && sensed) {
-            provenanceBuilder.setModality(SENSED);
-        }
-
-        DataPointAcquisitionProvenance acquisitionProvenance = provenanceBuilder.build();
-
-        // TODO discuss the name of the external identifier, to make it clear it's the ID used by the source
-        if (externalId != null) {
-            acquisitionProvenance.setAdditionalProperty("external_id", externalId);
-        }
-
-        DataPointHeader header = new DataPointHeader.Builder(UUID.randomUUID().toString(), measure.getSchemaId())
-                .setAcquisitionProvenance(acquisitionProvenance)
-                .build();
-
-        return new DataPoint<>(header, measure);
-    }
 }

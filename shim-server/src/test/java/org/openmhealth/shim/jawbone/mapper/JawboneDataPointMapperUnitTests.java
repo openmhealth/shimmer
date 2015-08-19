@@ -23,6 +23,7 @@ public abstract class JawboneDataPointMapperUnitTests<T extends Measure> extends
     static final String HEADER_SCHEMA_ID_KEY = "schemaId";
     static final String HEADER_SOURCE_UPDATE_KEY = "sourceUpdatedDateTime";
     static final String HEADER_SHARED_KEY = "shared";
+    static final String HEADER_SENSED_KEY = "sensed";
 
     JsonNode responseNode;
     public abstract void initializeResponseNode() throws IOException;
@@ -36,6 +37,7 @@ public abstract class JawboneDataPointMapperUnitTests<T extends Measure> extends
         assertThat(testMeasureHeader.getAcquisitionProvenance().getAdditionalProperties().get(
                 "source_updated_date_time"),equalTo(OffsetDateTime.parse((String)testProperties.get(
                 HEADER_SOURCE_UPDATE_KEY))));
-        assertThat(testMeasureHeader.getAdditionalProperties().get(HEADER_SHARED_KEY),equalTo(testProperties.getOrDefault("shared",null)));
+        assertThat(testMeasureHeader.getAdditionalProperties().get(HEADER_SHARED_KEY),equalTo(testProperties.getOrDefault(HEADER_SHARED_KEY,null)));
+        assertThat(testMeasureHeader.getAcquisitionProvenance().getModality(),equalTo(testProperties.getOrDefault(HEADER_SENSED_KEY,null)));
     }
 }

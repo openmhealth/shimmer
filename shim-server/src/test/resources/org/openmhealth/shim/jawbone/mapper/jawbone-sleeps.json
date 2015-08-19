@@ -48,7 +48,7 @@
                     "sunset": 0,
                     "tz": "America/New_York"
                 },
-                "shared": true,
+                "shared": false,
                 "snapshot_image": "/nudge/image/e/1438690256/QkfTizSpRdvIs6MMJbKP6ulqeYwu5c2v/nq7c6F3gu84.png",
                 "sub_type": 0,
                 "time_completed": 1438686900,
