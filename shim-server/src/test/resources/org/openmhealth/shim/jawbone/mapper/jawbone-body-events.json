@@ -30,9 +30,9 @@
                 "image": "",
                 "lean_mass": null,
                 "note": null,
-                "shared": false,
+                "shared": true,
                 "time_created": 1439354238,
-                "time_updated": 1439354238,
+                "time_updated": 1439454238,
                 "title": null,
                 "type": "body",
                 "waistline": null,
@@ -40,7 +40,7 @@
                 "xid": "QkfTizSpRdukQY3ns4PYbkucZTM5yPMg"
             },
             {
-                "bmi": 25,
+                "bmi": 25.2,
                 "body_fat": null,
                 "date": 20150806,
                 "details": {
