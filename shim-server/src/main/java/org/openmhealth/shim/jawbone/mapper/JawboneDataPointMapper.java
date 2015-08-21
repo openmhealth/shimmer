@@ -1,15 +1,13 @@
 package org.openmhealth.shim.jawbone.mapper;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import org.openmhealth.schema.domain.omh.DataPoint;
-import org.openmhealth.schema.domain.omh.DataPointAcquisitionProvenance;
-import org.openmhealth.schema.domain.omh.DataPointHeader;
-import org.openmhealth.schema.domain.omh.Measure;
+import org.openmhealth.schema.domain.omh.*;
 import org.openmhealth.shim.common.mapper.JsonNodeDataPointMapper;
 
 import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -26,6 +24,8 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.*;
 public abstract class JawboneDataPointMapper<T extends Measure> implements JsonNodeDataPointMapper<T> {
 
     public static final String RESOURCE_API_SOURCE_NAME = "Jawbone UP API";
+    private static final int TIMEZONE_ENUM_INDEX_TZ = 1;
+    private static final int TIMEZONE_ENUM_INDEX_START = 0;
 
 
     @Override
@@ -89,9 +89,84 @@ public abstract class JawboneDataPointMapper<T extends Measure> implements JsonN
         return header;
     }
 
+    protected void setEffectiveTimeFrame(T.Builder builder, JsonNode listEntryNode) {
+
+        Optional<Long> optionalStartTime = asOptionalLong(listEntryNode, "time_created");
+        Optional<Long> optionalEndTime = asOptionalLong(listEntryNode, "time_completed");
+
+        if (optionalStartTime.isPresent() && optionalStartTime.get() != null && optionalEndTime.isPresent() &&
+                optionalEndTime.get() != null) {
+
+            ZoneId timeZoneForStartTime = getTimeZoneForTimestamp(optionalStartTime.get(), listEntryNode);
+            ZoneId timeZoneForEndTime = getTimeZoneForTimestamp(optionalEndTime.get(), listEntryNode);
+            OffsetDateTime startTime = OffsetDateTime.ofInstant(Instant.ofEpochSecond(optionalStartTime.get()),
+                    timeZoneForStartTime);
+            OffsetDateTime endTime =
+                    OffsetDateTime.ofInstant(Instant.ofEpochSecond(optionalEndTime.get()), timeZoneForEndTime);
+            builder.setEffectiveTimeFrame(TimeInterval.ofStartDateTimeAndEndDateTime(startTime, endTime));
+        }
+    }
+
+    private ZoneId getTimeZoneForTimestamp(Long unixEpochTimestamp, JsonNode listEntryNode) {
+
+        Optional<JsonNode> optionalTimeZonesNode = asOptionalNode(listEntryNode, "details.tzs");
+        Optional<JsonNode> optionalTimeZoneNode = asOptionalNode(listEntryNode, "details.tz");
+
+        ZoneId zoneIdForTimestamp = ZoneId.of("Z"); // set default to Z in case problems with getting timezone
+
+        if (optionalTimeZonesNode.isPresent() && optionalTimeZonesNode.get().size() > 0) {
+            JsonNode timeZonesNode = optionalTimeZonesNode.get();
+            if (timeZonesNode.size() == 1) {
+                zoneIdForTimestamp = parseZone(timeZonesNode.get(0).get(TIMEZONE_ENUM_INDEX_TZ));
+            }
+            else {
+                long currentLatestTimeZoneStart = 0;
+                for (JsonNode timeZoneNodesEntry : timeZonesNode) {
+
+                    long timeZoneStartTime = timeZoneNodesEntry.get(TIMEZONE_ENUM_INDEX_START).asLong();
+                    if (unixEpochTimestamp >= timeZoneStartTime) {
+
+                        if (timeZoneStartTime > currentLatestTimeZoneStart) { // we cannot guarantee the order of the
+                                // "tzs" array and we need to find the latest timezone that started before our time
+
+                            zoneIdForTimestamp = parseZone(timeZoneNodesEntry.get(TIMEZONE_ENUM_INDEX_TZ));
+                            currentLatestTimeZoneStart = timeZoneStartTime;
+                        }
+                    }
+                }
+            }
+        }
+        else if (optionalTimeZoneNode.isPresent() && !optionalTimeZoneNode.get().isNull()) {
+            zoneIdForTimestamp = parseZone(optionalTimeZoneNode.get());
+        }
+
+        return zoneIdForTimestamp;
+
+    }
+
     protected boolean isSensed(JsonNode listEntryNode) {
 
         return false; //TODO overwrite for physical activity
+    }
+
+    static ZoneId parseZone(JsonNode node) {
+
+        ZoneId zone;
+        if (node.isNull()) {
+            zone = ZoneId.of("Z");
+        }
+        else if (node.asInt() != 0) { // "-25200"
+            ZoneOffset zoneOffset = ZoneOffset.ofTotalSeconds(node.asInt());
+            zone = ZoneId.ofOffset("GMT", zoneOffset);
+
+        }
+        else if (node.isTextual()) { // "GMT-0700" or "America/Los Angeles"
+            zone = ZoneId.of(node.textValue());
+        }
+        else {
+            throw new IllegalArgumentException("Can't parse time zone: <" + node + ">");
+        }
+        return zone;
     }
 
 }

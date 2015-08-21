@@ -59,90 +59,6 @@
                 "xid": "QkfTizSpRdvMvnHFctzItGNZMT-1F5vw"
             },
             {
-                "date": 20150807,
-                "details": {
-                    "active_time": 300,
-                    "bg_calories": 24.3789999485,
-                    "bmr": 1963.98751233,
-                    "bmr_day": 1963.98751233,
-                    "calories": 31.2221620124,
-                    "distance": 384.0,
-                    "hourly_totals": {
-                        "2015080705": {
-                            "active_time": 14,
-                            "calories": 1.73199999332,
-                            "distance": 25.0,
-                            "inactive_time": 0,
-                            "longest_active_time": 14,
-                            "longest_idle_time": 0,
-                            "steps": 29
-                        },
-                        "2015080706": {
-                            "active_time": 36,
-                            "calories": 4.06300008297,
-                            "distance": 61.0,
-                            "inactive_time": 0,
-                            "longest_active_time": 20,
-                            "longest_idle_time": 0,
-                            "steps": 70
-                        },
-                        "2015080714": {
-                            "active_time": 63,
-                            "calories": 5.27899992466,
-                            "distance": 89.0,
-                            "inactive_time": 0,
-                            "longest_active_time": 63,
-                            "longest_idle_time": 0,
-                            "steps": 111
-                        },
-                        "2015080716": {
-                            "active_time": 31,
-                            "calories": 2.97500002384,
-                            "distance": 48.0,
-                            "inactive_time": 2700,
-                            "longest_active_time": 19,
-                            "longest_idle_time": 1920,
-                            "steps": 58
-                        },
-                        "2015080717": {
-                            "active_time": 156,
-                            "calories": 10.3299999237,
-                            "distance": 161.0,
-                            "inactive_time": 0,
-                            "longest_active_time": 156,
-                            "longest_idle_time": 0,
-                            "steps": 229
-                        }
-                    },
-                    "inactive_time": 31920,
-                    "km": 0.384,
-                    "longest_active": 156,
-                    "longest_idle": 21720,
-                    "steps": 497,
-                    "sunrise": 0,
-                    "sunset": 0,
-                    "tz": "America/Denver",
-                    "tzs": [
-                        [
-                            1438947840,
-                            "America/Denver"
-                        ]
-                    ],
-                    "wo_active_time": 0,
-                    "wo_calories": 0,
-                    "wo_count": 0,
-                    "wo_longest": 0,
-                    "wo_time": 0
-                },
-                "snapshot_image": "/nudge/image/e/1439354196/QkfTizSpRdsKPdFEw4yOvfDgh2mK6lqI/nq7c6F3gu84.png",
-                "time_completed": 1438990020,
-                "time_created": 1438947840,
-                "time_updated": 1439867504,
-                "title": "497 steps",
-                "type": "move",
-                "xid": "QkfTizSpRdsKPdFEw4yOvfDgh2mK6lqI"
-            },
-            {
                 "date": 20150805,
                 "details": {
                     "active_time": 345,
@@ -202,6 +118,39 @@
                 "title": "593 steps",
                 "type": "move",
                 "xid": "QkfTizSpRdsdNZPA9R8QASzqKUk1mod1"
+            },
+            {
+                "date": 20150819,
+                "details": {
+                    "active_time": 3600,
+                    "bg_calories": 0,
+                    "bmr": 1607.97329172,
+                    "bmr_day": 1607.97329172,
+                    "calories": 385.911882249,
+                    "km": 0.0,
+                    "longest_active": 3600,
+                    "longest_idle": 0,
+                    "steps": 0,
+                    "tz": "America/Denver",
+                    "tzs": [
+                        [
+                            1439994003,
+                            -21600
+                        ]
+                    ],
+                    "wo_active_time": 3600,
+                    "wo_calories": 316.0,
+                    "wo_count": 1,
+                    "wo_longest": 3600,
+                    "wo_time": 3600
+                },
+                "snapshot_image": "",
+                "time_completed": 1439994003,
+                "time_created": 1439990403,
+                "time_updated": 1440084303,
+                "title": "0 steps",
+                "type": "move",
+                "xid": "95FS5K2xvcTa3RE2Q1JjlqracI4NI38q"
             }
         ],
         "size": 3
