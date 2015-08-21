@@ -4,10 +4,14 @@ import com.fasterxml.jackson.databind.JsonNode;
 import org.openmhealth.schema.domain.omh.DataPointHeader;
 import org.openmhealth.schema.domain.omh.Measure;
 import org.openmhealth.shim.common.mapper.DataPointMapperUnitTests;
+import org.testng.annotations.Test;
 
 import java.io.IOException;
+import java.time.Instant;
 import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.util.Map;
+import java.util.Optional;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -25,8 +29,61 @@ public abstract class JawboneDataPointMapperUnitTests<T extends Measure> extends
     static final String HEADER_SHARED_KEY = "shared";
     static final String HEADER_SENSED_KEY = "sensed";
 
+    JawboneDataPointMapper<T> mapper = new JawboneDataPointMapper<T>() {
+        @Override
+        protected Optional<T> getMeasure(JsonNode listEntryNode) {
+            return null;
+        }
+    };
+
     JsonNode responseNode;
     public abstract void initializeResponseNode() throws IOException;
+
+    @Test
+    public void parseZoneShouldReturnCorrectOlsonTimeZoneId() throws IOException {
+
+        JsonNode testOlsonTimeZoneJsonNode = objectMapper.readTree("\"America/New_York\"");
+
+        ZoneId testZoneId = JawboneDataPointMapper.parseZone(testOlsonTimeZoneJsonNode);
+        ZoneId expectedZoneId = ZoneId.of("America/New_York");
+        assertThat(testZoneId,equalTo(expectedZoneId));
+
+        OffsetDateTime testOffsetDateTime = OffsetDateTime.ofInstant(Instant.ofEpochSecond(1438747200),testZoneId);
+        OffsetDateTime expectedOffsetDateTime = OffsetDateTime.parse("2015-08-05T00:00:00-04:00");
+        assertThat(testOffsetDateTime,equalTo(expectedOffsetDateTime));
+
+
+
+    }
+
+    @Test
+    public void parseZoneShouldReturnCorrectSecondsOffsetTimeZoneId() throws IOException {
+
+        JsonNode testSecondOffsetTimeZoneJsonNode = objectMapper.readTree("-21600");
+
+        ZoneId testZoneId =  JawboneDataPointMapper.parseZone(testSecondOffsetTimeZoneJsonNode).normalized();
+        ZoneId expectedZoneId = ZoneId.of("-06:00");
+        assertThat(testZoneId.getRules(),equalTo(expectedZoneId.getRules()));
+
+        OffsetDateTime testOffsetDateTime = OffsetDateTime.ofInstant(Instant.ofEpochSecond(1438747200), testZoneId);
+        OffsetDateTime expectedOffsetDateTime = OffsetDateTime.parse("2015-08-04T22:00:00-06:00");
+        assertThat(testOffsetDateTime,equalTo(expectedOffsetDateTime));
+
+    }
+
+    @Test
+    public void parseZoneShouldReturnCorrectGmtOffsetTimeZoneID() throws IOException {
+
+        JsonNode testGmtOffsetTimeZoneJsonNode = objectMapper.readTree("\"GMT-0600\"");
+
+        ZoneId testZoneId = JawboneDataPointMapper.parseZone(testGmtOffsetTimeZoneJsonNode);
+        ZoneId expectedZoneId = ZoneId.of("-06:00");
+        assertThat(testZoneId.getRules(),equalTo(expectedZoneId.getRules()));
+
+        OffsetDateTime testOffsetDateTime = OffsetDateTime.ofInstant(Instant.ofEpochSecond(1438747200), testZoneId);
+        OffsetDateTime expectedOffsetDateTime = OffsetDateTime.parse("2015-08-04T22:00:00-06:00");
+        assertThat(testOffsetDateTime,equalTo(expectedOffsetDateTime));
+    }
 
     protected static void testDataPointHeader(DataPointHeader testMeasureHeader, Map<String,Object> testProperties){
 
