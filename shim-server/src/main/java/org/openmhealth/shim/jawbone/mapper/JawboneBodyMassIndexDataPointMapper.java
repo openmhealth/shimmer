@@ -18,6 +18,7 @@ public class JawboneBodyMassIndexDataPointMapper extends JawboneBodyEventsDataPo
 
     @Override
     Optional<Measure.Builder<BodyMassIndex, ?>> newMeasureBuilder(JsonNode measuresNode) {
+
         TypedUnitValue<BodyMassIndexUnit> bmiValue =
                 new TypedUnitValue<>(BodyMassIndexUnit.KILOGRAMS_PER_SQUARE_METER,
                         asRequiredDouble(measuresNode, "bmi"));

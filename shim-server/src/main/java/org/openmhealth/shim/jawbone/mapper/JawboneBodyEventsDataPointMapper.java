@@ -34,9 +34,8 @@ public abstract class JawboneBodyEventsDataPointMapper<T extends Measure> extend
         optionalUserNote.ifPresent(userNote->builder.setUserNotes(userNote));
 
         return Optional.of(builder.build());
-        
-    }
 
+    }
 
     private boolean containsType(JsonNode listEntryNode,JawboneBodyEventType bodyEventType) {
 

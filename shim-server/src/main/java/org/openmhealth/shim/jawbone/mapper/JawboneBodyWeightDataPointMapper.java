@@ -18,6 +18,7 @@ public class JawboneBodyWeightDataPointMapper extends JawboneBodyEventsDataPoint
 
     @Override
     protected Optional<Measure.Builder<BodyWeight, ?>> newMeasureBuilder(JsonNode listEntryNode) {
+
         Optional<Double> optionalWeight = asOptionalDouble(listEntryNode, "weight");
         if(optionalWeight.isPresent()){
             if(optionalWeight.get() == null){
