@@ -154,7 +154,7 @@ public abstract class JawboneDataPointMapper<T extends Measure> implements JsonN
 
     protected boolean isSensed(JsonNode listEntryNode) {
 
-        return false; //TODO overwrite for physical activity
+        return false;
     }
 
     static ZoneId parseZone(JsonNode node) {
