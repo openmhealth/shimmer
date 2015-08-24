@@ -1,6 +1,7 @@
 package org.openmhealth.shim.jawbone.mapper;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import org.openmhealth.schema.domain.omh.DurationUnit;
 import org.openmhealth.schema.domain.omh.DurationUnitValue;
 import org.openmhealth.schema.domain.omh.LengthUnitValue;
 import org.openmhealth.schema.domain.omh.PhysicalActivity;
@@ -17,7 +18,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static java.lang.String.format;
 import static java.time.Instant.ofEpochSecond;
 import static java.time.OffsetDateTime.ofInstant;
-import static org.openmhealth.schema.domain.omh.DurationUnit.SECOND;
 import static org.openmhealth.schema.domain.omh.LengthUnit.METER;
 import static org.openmhealth.schema.domain.omh.PhysicalActivity.SelfReportedIntensity.*;
 import static org.openmhealth.schema.domain.omh.TimeInterval.ofEndDateTimeAndDuration;
@@ -90,9 +90,8 @@ public class JawbonePhysicalActivityDataPointMapper extends JawboneDataPointMapp
         Optional<ZoneId> timeZoneId = asOptionalZoneId(workoutNode, "details.tz");
 
         if (endTimestamp.isPresent() && durationInSec.isPresent() && timeZoneId.isPresent()) {
-            DurationUnitValue durationUnitValue = new DurationUnitValue(SECOND, durationInSec.get());
-            OffsetDateTime endDateTime = ofInstant(ofEpochSecond(endTimestamp.get()), timeZoneId.get());
-
+            DurationUnitValue durationUnitValue = new DurationUnitValue(DurationUnit.SECOND, durationInSec.get());
+            OffsetDateTime endDateTime = ofInstant(ofEpochSecond(endTimestamp.get()), JawboneDataPointMapper.getTimeZoneForTimestamp(workoutNode,endTimestamp.get()));
             builder.setEffectiveTimeFrame(ofEndDateTimeAndDuration(endDateTime, durationUnitValue));
         }
 
