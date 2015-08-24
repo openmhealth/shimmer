@@ -97,17 +97,25 @@ public abstract class JawboneDataPointMapper<T extends Measure> implements JsonN
         if (optionalStartTime.isPresent() && optionalStartTime.get() != null && optionalEndTime.isPresent() &&
                 optionalEndTime.get() != null) {
 
-            ZoneId timeZoneForStartTime = getTimeZoneForTimestamp(optionalStartTime.get(), listEntryNode);
-            ZoneId timeZoneForEndTime = getTimeZoneForTimestamp(optionalEndTime.get(), listEntryNode);
+            ZoneId timeZoneForStartTime = getTimeZoneForTimestamp(listEntryNode, optionalStartTime.get());
+            ZoneId timeZoneForEndTime = getTimeZoneForTimestamp(listEntryNode, optionalEndTime.get());
+
             OffsetDateTime startTime = OffsetDateTime.ofInstant(Instant.ofEpochSecond(optionalStartTime.get()),
                     timeZoneForStartTime);
             OffsetDateTime endTime =
                     OffsetDateTime.ofInstant(Instant.ofEpochSecond(optionalEndTime.get()), timeZoneForEndTime);
+
             builder.setEffectiveTimeFrame(TimeInterval.ofStartDateTimeAndEndDateTime(startTime, endTime));
+        }
+        else if(optionalStartTime.isPresent()&&optionalStartTime.get()!=null){
+
+            ZoneId timeZoneForStartTime = getTimeZoneForTimestamp(listEntryNode, optionalStartTime.get());
+            builder.setEffectiveTimeFrame(
+                    OffsetDateTime.ofInstant(Instant.ofEpochSecond(optionalStartTime.get()), timeZoneForStartTime));
         }
     }
 
-    private ZoneId getTimeZoneForTimestamp(Long unixEpochTimestamp, JsonNode listEntryNode) {
+    static ZoneId getTimeZoneForTimestamp(JsonNode listEntryNode, Long unixEpochTimestamp) {
 
         Optional<JsonNode> optionalTimeZonesNode = asOptionalNode(listEntryNode, "details.tzs");
         Optional<JsonNode> optionalTimeZoneNode = asOptionalNode(listEntryNode, "details.tz");

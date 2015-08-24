@@ -3,13 +3,13 @@ package org.openmhealth.shim.jawbone.mapper;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.openmhealth.schema.domain.omh.DataPointHeader;
 import org.openmhealth.schema.domain.omh.Measure;
+import org.openmhealth.schema.domain.omh.StepCount;
+import org.openmhealth.schema.domain.omh.TimeInterval;
 import org.openmhealth.shim.common.mapper.DataPointMapperUnitTests;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
-import java.time.Instant;
-import java.time.OffsetDateTime;
-import java.time.ZoneId;
+import java.time.*;
 import java.util.Map;
 import java.util.Optional;
 
@@ -37,64 +37,65 @@ public abstract class JawboneDataPointMapperUnitTests<T extends Measure> extends
     };
 
     JsonNode responseNode;
+
     public abstract void initializeResponseNode() throws IOException;
 
+    /* Tests */
+
     @Test
-    public void parseZoneShouldReturnCorrectOlsonTimeZoneId() throws IOException {
+    public void setEffectiveTimeFrameShouldSetCorrectForDateTime() throws IOException {
 
-        JsonNode testOlsonTimeZoneJsonNode = objectMapper.readTree("\"America/New_York\"");
+        JsonNode testDateTimeNode = objectMapper.readTree("{\n" +
+                "\"details\": {\n" +
+                "\"tz\": \"GMT-0600\"\n" +
+                "},\n" +
+                "\"time_created\": 1438747200,\n" +
+                "\"time_updated\": 1439867504\n" +
+                "}");
 
-        ZoneId testZoneId = JawboneDataPointMapper.parseZone(testOlsonTimeZoneJsonNode);
-        ZoneId expectedZoneId = ZoneId.of("America/New_York");
-        assertThat(testZoneId,equalTo(expectedZoneId));
+        StepCount.Builder testBuilder = new StepCount.Builder(10);
+        mapper.setEffectiveTimeFrame(testBuilder, testDateTimeNode);
+        StepCount stepCount = testBuilder.build();
 
-        OffsetDateTime testOffsetDateTime = OffsetDateTime.ofInstant(Instant.ofEpochSecond(1438747200),testZoneId);
-        OffsetDateTime expectedOffsetDateTime = OffsetDateTime.parse("2015-08-05T00:00:00-04:00");
-        assertThat(testOffsetDateTime,equalTo(expectedOffsetDateTime));
-
-
-
+        assertThat(stepCount.getEffectiveTimeFrame().getDateTime(),
+                equalTo(OffsetDateTime.parse("2015-08-04T22:00:00-06:00")));
     }
 
     @Test
-    public void parseZoneShouldReturnCorrectSecondsOffsetTimeZoneId() throws IOException {
+    public void setEffectiveTimeFrameShouldSetCorrectTimeInterval() throws IOException {
 
-        JsonNode testSecondOffsetTimeZoneJsonNode = objectMapper.readTree("-21600");
+        JsonNode testDateTimeNode = objectMapper.readTree("{\n" +
+                "\"details\": {\n" +
+                "\"tz\": \"GMT-0200\"\n" +
+                "},\n" +
+                "\"time_created\": 1439990403,\n" +
+                "\"time_updated\": 1439867504,\n" +
+                "\"time_completed\": 1439994003\n" +
+                "}");
 
-        ZoneId testZoneId =  JawboneDataPointMapper.parseZone(testSecondOffsetTimeZoneJsonNode).normalized();
-        ZoneId expectedZoneId = ZoneId.of("-06:00");
-        assertThat(testZoneId.getRules(),equalTo(expectedZoneId.getRules()));
+        StepCount.Builder testBuilder = new StepCount.Builder(10);
+        mapper.setEffectiveTimeFrame(testBuilder, testDateTimeNode);
+        StepCount stepCount = testBuilder.build();
 
-        OffsetDateTime testOffsetDateTime = OffsetDateTime.ofInstant(Instant.ofEpochSecond(1438747200), testZoneId);
-        OffsetDateTime expectedOffsetDateTime = OffsetDateTime.parse("2015-08-04T22:00:00-06:00");
-        assertThat(testOffsetDateTime,equalTo(expectedOffsetDateTime));
-
+        assertThat(stepCount.getEffectiveTimeFrame().getTimeInterval(), equalTo(
+                TimeInterval.ofStartDateTimeAndEndDateTime(OffsetDateTime.parse("2015-08-19T11:20:03-02:00"),
+                        OffsetDateTime.parse("2015-08-19T12:20:03-02:00"))));
     }
 
-    @Test
-    public void parseZoneShouldReturnCorrectGmtOffsetTimeZoneID() throws IOException {
+    /* Test helper classes */
 
-        JsonNode testGmtOffsetTimeZoneJsonNode = objectMapper.readTree("\"GMT-0600\"");
-
-        ZoneId testZoneId = JawboneDataPointMapper.parseZone(testGmtOffsetTimeZoneJsonNode);
-        ZoneId expectedZoneId = ZoneId.of("-06:00");
-        assertThat(testZoneId.getRules(),equalTo(expectedZoneId.getRules()));
-
-        OffsetDateTime testOffsetDateTime = OffsetDateTime.ofInstant(Instant.ofEpochSecond(1438747200), testZoneId);
-        OffsetDateTime expectedOffsetDateTime = OffsetDateTime.parse("2015-08-04T22:00:00-06:00");
-        assertThat(testOffsetDateTime,equalTo(expectedOffsetDateTime));
-    }
-
-    protected static void testDataPointHeader(DataPointHeader testMeasureHeader, Map<String,Object> testProperties){
+    protected static void testDataPointHeader(DataPointHeader testMeasureHeader, Map<String, Object> testProperties) {
 
         assertThat(testMeasureHeader.getBodySchemaId(), equalTo(testProperties.get(HEADER_SCHEMA_ID_KEY)));
-        assertThat(testMeasureHeader.getAcquisitionProvenance().getSourceName(),equalTo(RESOURCE_API_SOURCE_NAME));
-        assertThat(testMeasureHeader.getAcquisitionProvenance().getAdditionalProperties().get("external_id"),equalTo(
+        assertThat(testMeasureHeader.getAcquisitionProvenance().getSourceName(), equalTo(RESOURCE_API_SOURCE_NAME));
+        assertThat(testMeasureHeader.getAcquisitionProvenance().getAdditionalProperties().get("external_id"), equalTo(
                 testProperties.getOrDefault(HEADER_EXTERNAL_ID_KEY, null)));
         assertThat(testMeasureHeader.getAcquisitionProvenance().getAdditionalProperties().get(
-                "source_updated_date_time"),equalTo(OffsetDateTime.parse((String)testProperties.get(
+                "source_updated_date_time"), equalTo(OffsetDateTime.parse((String) testProperties.get(
                 HEADER_SOURCE_UPDATE_KEY))));
-        assertThat(testMeasureHeader.getAdditionalProperties().get(HEADER_SHARED_KEY),equalTo(testProperties.getOrDefault(HEADER_SHARED_KEY,null)));
-        assertThat(testMeasureHeader.getAcquisitionProvenance().getModality(),equalTo(testProperties.getOrDefault(HEADER_SENSED_KEY,null)));
+        assertThat(testMeasureHeader.getAdditionalProperties().get(HEADER_SHARED_KEY),
+                equalTo(testProperties.getOrDefault(HEADER_SHARED_KEY, null)));
+        assertThat(testMeasureHeader.getAcquisitionProvenance().getModality(),
+                equalTo(testProperties.getOrDefault(HEADER_SENSED_KEY, null)));
     }
 }
