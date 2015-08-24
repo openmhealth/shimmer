@@ -50,7 +50,6 @@ device
 - product:
   -  shine
 
-
 summary
 - description: daily summary
 - https://api.misfitwearables.com/move/resource/v1/user/:userId/activity/summary?start_date=X&end_date=Y&detail=true
@@ -76,14 +75,13 @@ sessions
   -  calories burned: not mapped, pending refactor
   -  distance: mapped
   
-  
-    
 sleep
 - description: sleep information
 - https://api.misfitwearables.com/move/resource/v1/user/:userId/activity/sleeps
 - https://build.misfit.com/docs/references#APIReferences-Sleep
-- limited to 31 days, 400 if longer
+- limited to 31 days, error if longer
 - measures:
+  -  duration
   -  sleep details (awake, deep sleep, sleep): mapped, may increase granularity
 
 ## issues

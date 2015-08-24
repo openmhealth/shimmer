@@ -292,7 +292,11 @@ public class Application extends WebSecurityConfigurerAdapter {
         ShimDataRequest shimDataRequest = new ShimDataRequest();
 
         shimDataRequest.setDataTypeKey(dataTypeKey);
-        shimDataRequest.setNormalize(!"".equals(normalize));
+
+        if(!normalize.equals("")){
+            shimDataRequest.setNormalize(Boolean.parseBoolean(normalize));
+        }
+
         if (!"".equals(dateStart)) {
             shimDataRequest.setStartDateTime(LocalDate.parse(dateStart).atStartOfDay().atOffset(UTC));
         }

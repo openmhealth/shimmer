@@ -41,7 +41,7 @@ public class BloodPressureBuilderTest {
     @SuppressWarnings("unchecked")
     public void testParse() throws IOException, ProcessingException {
 
-        final String BLOOD_PRESSURE_SCHEMA = "http://www.openmhealth.org/schema/omh/clinical/blood-pressure-1.0.json";
+        final String BLOOD_PRESSURE_SCHEMA = "http://www.openmhealth.org/schema/omh/blood-pressure-1.0.json";
 
         ObjectMapper mapper = new ObjectMapper();
 
