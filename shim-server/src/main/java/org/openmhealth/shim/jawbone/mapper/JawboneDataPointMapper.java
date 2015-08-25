@@ -19,6 +19,10 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.*;
 
 
 /**
+ * The base class for mappers that translate Jawbone API responses with datapoints contained in an array to {@link
+ * Measure} objects.
+ *
+ * @author Chris Schaefbauer
  * @author Emerson Farrugia
  */
 public abstract class JawboneDataPointMapper<T extends Measure> implements JsonNodeDataPointMapper<T> {
@@ -27,7 +31,18 @@ public abstract class JawboneDataPointMapper<T extends Measure> implements JsonN
     private static final int TIMEZONE_ENUM_INDEX_TZ = 1;
     private static final int TIMEZONE_ENUM_INDEX_START = 0;
 
-
+    /**
+     * Maps a JSON response with individual data points contained in the "items" JSON array to a list of {@link
+     * DataPoint}
+     * objects
+     * with the appropriate measure. Splits individual nodes and then iteratively
+     * maps the nodes in the list.
+     *
+     * @param responseNodes a list of a single JSON node containing the entire response from a Jawbone endpoint
+     * @return a list of DataPoint objects of type T with the appropriate values mapped from the input JSON; because
+     * these JSON objects are contained within an array in the input response, each object in that array will map into
+     * an item in the list
+     */
     @Override
     public List<DataPoint<T>> asDataPoints(List<JsonNode> responseNodes) {
 
@@ -46,7 +61,7 @@ public abstract class JawboneDataPointMapper<T extends Measure> implements JsonN
             if (measure.isPresent()) {
 
                 dataPoints.add(new DataPoint<>(getHeader(itemNode, measure.get()), measure.get()));
-                //asDataPoint(itemNode).ifPresent(dataPoints::add);
+
             }
 
         }
@@ -55,12 +70,17 @@ public abstract class JawboneDataPointMapper<T extends Measure> implements JsonN
     }
 
     /**
-     * @param listEntryNode the list entry node
-     * @return the data point mapped to from that entry, unless skipped
+     * Generates a {@link Measure} of the appropriate type from an individual list entry node with the correct values
+     *
+     * @param listEntryNode an individual entry node from the "items" array of a Jawbone endpoint response
+     * @return the measure mapped to from that entry, unless skipped
      */
-    //protected abstract Optional<DataPoint<T>> asDataPoint(JsonNode listEntryNode);
     protected abstract Optional<T> getMeasure(JsonNode listEntryNode);
 
+    /**
+     * @param listEntryNode an individual entry node from the "items" array of a Jawbone endpoint response
+     * @return a {@link DataPointHeader} for containing the appropriate information based on the input parameters
+     */
     protected DataPointHeader getHeader(JsonNode listEntryNode, T measure) {
 
         DataPointAcquisitionProvenance.Builder provenanceBuilder =
@@ -89,6 +109,10 @@ public abstract class JawboneDataPointMapper<T extends Measure> implements JsonN
         return header;
     }
 
+    /**
+     * @param builder a {@link Measure} builder
+     * @param listEntryNode an individual entry node from the "items" array of a Jawbone endpoint response
+     */
     protected void setEffectiveTimeFrame(T.Builder builder, JsonNode listEntryNode) {
 
         Optional<Long> optionalStartTime = asOptionalLong(listEntryNode, "time_created");
@@ -107,7 +131,7 @@ public abstract class JawboneDataPointMapper<T extends Measure> implements JsonN
 
             builder.setEffectiveTimeFrame(TimeInterval.ofStartDateTimeAndEndDateTime(startTime, endTime));
         }
-        else if(optionalStartTime.isPresent()&&optionalStartTime.get()!=null){
+        else if (optionalStartTime.isPresent() && optionalStartTime.get() != null) {
 
             ZoneId timeZoneForStartTime = getTimeZoneForTimestamp(listEntryNode, optionalStartTime.get());
             builder.setEffectiveTimeFrame(
@@ -115,6 +139,12 @@ public abstract class JawboneDataPointMapper<T extends Measure> implements JsonN
         }
     }
 
+    /**
+     * @param listEntryNode an individual entry node from the "items" array of a Jawbone endpoint response
+     * @param unixEpochTimestamp unix epoch seconds timestamp from a time property in the list entry node
+     * @return the appropriate {@link ZoneId} for the timestamp parameter based on the timezones contained within the
+     * list entry node
+     */
     static ZoneId getTimeZoneForTimestamp(JsonNode listEntryNode, Long unixEpochTimestamp) {
 
         Optional<JsonNode> optionalTimeZonesNode = asOptionalNode(listEntryNode, "details.tzs");
@@ -123,19 +153,23 @@ public abstract class JawboneDataPointMapper<T extends Measure> implements JsonN
         ZoneId zoneIdForTimestamp = ZoneId.of("Z"); // set default to Z in case problems with getting timezone
 
         if (optionalTimeZonesNode.isPresent() && optionalTimeZonesNode.get().size() > 0) {
+
             JsonNode timeZonesNode = optionalTimeZonesNode.get();
+
             if (timeZonesNode.size() == 1) {
                 zoneIdForTimestamp = parseZone(timeZonesNode.get(0).get(TIMEZONE_ENUM_INDEX_TZ));
             }
             else {
+
                 long currentLatestTimeZoneStart = 0;
                 for (JsonNode timeZoneNodesEntry : timeZonesNode) {
 
                     long timeZoneStartTime = timeZoneNodesEntry.get(TIMEZONE_ENUM_INDEX_START).asLong();
+
                     if (unixEpochTimestamp >= timeZoneStartTime) {
 
                         if (timeZoneStartTime > currentLatestTimeZoneStart) { // we cannot guarantee the order of the
-                                // "tzs" array and we need to find the latest timezone that started before our time
+                            // "tzs" array and we need to find the latest timezone that started before our time
 
                             zoneIdForTimestamp = parseZone(timeZoneNodesEntry.get(TIMEZONE_ENUM_INDEX_TZ));
                             currentLatestTimeZoneStart = timeZoneStartTime;
@@ -145,34 +179,48 @@ public abstract class JawboneDataPointMapper<T extends Measure> implements JsonN
             }
         }
         else if (optionalTimeZoneNode.isPresent() && !optionalTimeZoneNode.get().isNull()) {
+
             zoneIdForTimestamp = parseZone(optionalTimeZoneNode.get());
         }
 
         return zoneIdForTimestamp;
-
     }
 
+    /**
+     * Determines whether a datapoint is sensed. A false response does not guarantee that the datapoint is unsensed or
+     * user entered.
+     *
+     * @param listEntryNode an individual entry node from the "items" array of a Jawbone endpoint response
+     */
     protected boolean isSensed(JsonNode listEntryNode) {
 
-        return false;
+        return false; // We make the conservative assumption that the data points are "not sensed", however
+        // subclasses can override based on available information within different endpoint responses or API
+        // documentation
     }
 
-    static ZoneId parseZone(JsonNode node) {
+    /**
+     * Translates a timezone descriptor from one of various representations (olson, seconds offset, gmt offset) into a
+     * ZoneId
+     *
+     * @param timeZoneValueNode the value associated with a timezone property
+     */
+    static ZoneId parseZone(JsonNode timeZoneValueNode) {
 
         ZoneId zone;
-        if (node.isNull()) {
-            zone = ZoneId.of("Z");
+        if (timeZoneValueNode.isNull()) {
+            zone = ZoneId.of("Z"); // default to "Z" if timezone is not present
         }
-        else if (node.asInt() != 0) { // "-25200"
-            ZoneOffset zoneOffset = ZoneOffset.ofTotalSeconds(node.asInt());
+        else if (timeZoneValueNode.asInt() != 0) { // "-25200"
+            ZoneOffset zoneOffset = ZoneOffset.ofTotalSeconds(timeZoneValueNode.asInt());
             zone = ZoneId.ofOffset("GMT", zoneOffset);
 
         }
-        else if (node.isTextual()) { // "GMT-0700" or "America/Los Angeles"
-            zone = ZoneId.of(node.textValue());
+        else if (timeZoneValueNode.isTextual()) { // "GMT-0700" or "America/Los_Angeles"
+            zone = ZoneId.of(timeZoneValueNode.textValue());
         }
         else {
-            throw new IllegalArgumentException("Can't parse time zone: <" + node + ">");
+            throw new IllegalArgumentException("Can't parse time zone: <" + timeZoneValueNode + ">");
         }
         return zone;
     }

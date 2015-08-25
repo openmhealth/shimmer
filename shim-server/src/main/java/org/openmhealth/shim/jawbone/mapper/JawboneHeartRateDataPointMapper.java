@@ -11,6 +11,7 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asRequir
 
 /**
  * @author Chris Schaefbauer
+ * @see <a href="https://jawbone.com/up/developer/endpoints/heartrate">API documentation</a>
  */
 public class JawboneHeartRateDataPointMapper extends JawboneDataPointMapper<HeartRate>{
 

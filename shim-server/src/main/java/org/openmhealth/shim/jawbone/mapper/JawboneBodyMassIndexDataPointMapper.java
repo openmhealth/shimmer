@@ -17,11 +17,11 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asRequir
 public class JawboneBodyMassIndexDataPointMapper extends JawboneBodyEventsDataPointMapper<BodyMassIndex>{
 
     @Override
-    Optional<Measure.Builder<BodyMassIndex, ?>> newMeasureBuilder(JsonNode measuresNode) {
+    Optional<Measure.Builder<BodyMassIndex, ?>> newMeasureBuilder(JsonNode listEntryNode) {
 
         TypedUnitValue<BodyMassIndexUnit> bmiValue =
                 new TypedUnitValue<>(BodyMassIndexUnit.KILOGRAMS_PER_SQUARE_METER,
-                        asRequiredDouble(measuresNode, "bmi"));
+                        asRequiredDouble(listEntryNode, "bmi"));
         Measure.Builder<BodyMassIndex, ?> bmiBuilder = new BodyMassIndex.Builder(bmiValue);
         return Optional.of(bmiBuilder);
     }

@@ -13,18 +13,20 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asRequir
 
 /**
  * @author Chris Schaefbauer
+ * @see <a href="https://jawbone.com/up/developer/endpoints/sleeps">API documentation</a>
  */
 public class JawboneSleepDurationDataPointMapper extends JawboneDataPointMapper<SleepDuration> {
 
     @Override
     protected Optional<SleepDuration> getMeasure(JsonNode listEntryNode) {
+
         Long totalSleepSessionDuration = asRequiredLong(listEntryNode, "details.duration");
         Long totalTimeAwake = asRequiredLong(listEntryNode, "details.awake");
 
         SleepDuration.Builder sleepDurationBuilder = new SleepDuration.Builder(
                 new DurationUnitValue(DurationUnit.SECOND, totalSleepSessionDuration - totalTimeAwake));
 
-        setEffectiveTimeFrame(sleepDurationBuilder,listEntryNode);
+        setEffectiveTimeFrame(sleepDurationBuilder, listEntryNode);
 
         SleepDuration sleepDuration = sleepDurationBuilder.build();
         asOptionalLong(listEntryNode, "details.awakenings")
@@ -34,12 +36,15 @@ public class JawboneSleepDurationDataPointMapper extends JawboneDataPointMapper<
     }
 
     @Override
-    protected boolean isSensed(JsonNode listEntryNode){
+    protected boolean isSensed(JsonNode listEntryNode) {
+
         Optional<Long> optionalLightSleep = asOptionalLong(listEntryNode, "details.light");
         Optional<Long> optionalAwakeTime = asOptionalLong(listEntryNode, "details.awake");
-        if(optionalAwakeTime.isPresent()&&optionalLightSleep.isPresent()){
-            if(optionalAwakeTime.get()>0 || optionalLightSleep.get()>0){
-                return true;
+        if (optionalAwakeTime.isPresent() && optionalLightSleep.isPresent()) {
+            if (optionalAwakeTime.get() > 0 || optionalLightSleep.get() > 0) {
+                return true; // Jawbone documentation states that sleep details, specifically awake and light sleep
+                // values, are only recorded when sleep has been sensed by a Jawbone wearable. If these values are
+                // zero, however, this does not guarantee that the datapoint is user entered or unsensed.
             }
         }
         return false;

@@ -29,6 +29,8 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.*;
  *
  * @author Emerson Farrugia
  * @author Danilo Bonilla
+ * @author Chris Schaefbauer
+ *
  * @see <a href="https://jawbone.com/up/developer/endpoints/workouts">API documentation</a>
  */
 public class JawbonePhysicalActivityDataPointMapper extends JawboneDataPointMapper<PhysicalActivity> {
@@ -91,7 +93,8 @@ public class JawbonePhysicalActivityDataPointMapper extends JawboneDataPointMapp
 
         if (endTimestamp.isPresent() && durationInSec.isPresent() && timeZoneId.isPresent()) {
             DurationUnitValue durationUnitValue = new DurationUnitValue(DurationUnit.SECOND, durationInSec.get());
-            OffsetDateTime endDateTime = ofInstant(ofEpochSecond(endTimestamp.get()), JawboneDataPointMapper.getTimeZoneForTimestamp(workoutNode,endTimestamp.get()));
+            OffsetDateTime endDateTime = ofInstant(ofEpochSecond(endTimestamp.get()),
+                    JawboneDataPointMapper.getTimeZoneForTimestamp(workoutNode, endTimestamp.get()));
             builder.setEffectiveTimeFrame(ofEndDateTimeAndDuration(endDateTime, durationUnitValue));
         }
 
@@ -103,6 +106,7 @@ public class JawbonePhysicalActivityDataPointMapper extends JawboneDataPointMapp
 
     /**
      * TODO confirm that we want to make titles trump types
+     *
      * @param title the title of the workout, if any
      * @param workoutType the type of the workout, if specified
      * @return the name of the activity
@@ -147,11 +151,12 @@ public class JawbonePhysicalActivityDataPointMapper extends JawboneDataPointMapp
     }
 
     @Override
-    protected boolean isSensed(JsonNode workoutNode){
+    protected boolean isSensed(JsonNode workoutNode) {
         Optional<Integer> steps = asOptionalInteger(workoutNode, "details.steps");
 
         if (steps.isPresent() && steps.get() > 0) {
-            return true;
+            return true; // Jawbone API documentation states that steps is only included if the activity was sensed
+            // by a Jawbone wearable device
         }
         return false;
     }
