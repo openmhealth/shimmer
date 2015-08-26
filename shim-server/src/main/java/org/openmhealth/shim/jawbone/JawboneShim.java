@@ -47,9 +47,10 @@ import static org.slf4j.LoggerFactory.getLogger;
 
 
 /**
- * Encapsulates parameters specific to the Jawbone API.
+ * Encapsulates parameters specific to the Jawbone API and processes requests for Jawbone data from shimmer.
  *
  * @author Danilo Bonilla
+ * @author Chris Schaefbauer
  */
 @Component
 @ConfigurationProperties(prefix = "openmhealth.shim.jawbone")

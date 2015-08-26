@@ -32,6 +32,14 @@ public abstract class JawboneDataPointMapper<T extends Measure> implements JsonN
     private static final int TIMEZONE_ENUM_INDEX_START = 0;
 
     /**
+     * Generates a {@link Measure} of the appropriate type from an individual list entry node with the correct values
+     *
+     * @param listEntryNode an individual entry node from the "items" array of a Jawbone endpoint response
+     * @return the measure mapped to from that entry, unless skipped
+     */
+    protected abstract Optional<T> getMeasure(JsonNode listEntryNode);
+
+    /**
      * Maps a JSON response with individual data points contained in the "items" JSON array to a list of {@link
      * DataPoint}
      * objects
@@ -68,14 +76,6 @@ public abstract class JawboneDataPointMapper<T extends Measure> implements JsonN
 
         return dataPoints;
     }
-
-    /**
-     * Generates a {@link Measure} of the appropriate type from an individual list entry node with the correct values
-     *
-     * @param listEntryNode an individual entry node from the "items" array of a Jawbone endpoint response
-     * @return the measure mapped to from that entry, unless skipped
-     */
-    protected abstract Optional<T> getMeasure(JsonNode listEntryNode);
 
     /**
      * @param listEntryNode an individual entry node from the "items" array of a Jawbone endpoint response

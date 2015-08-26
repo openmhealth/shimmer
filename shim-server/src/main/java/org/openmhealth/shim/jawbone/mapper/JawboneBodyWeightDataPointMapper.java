@@ -13,6 +13,7 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asOption
 
 /**
  * @author Chris Schaefbauer
+ * @see <a href="https://jawbone.com/up/developer/endpoints/body">API documentation</a>
  */
 public class JawboneBodyWeightDataPointMapper extends JawboneBodyEventsDataPointMapper<BodyWeight> {
 
@@ -20,11 +21,12 @@ public class JawboneBodyWeightDataPointMapper extends JawboneBodyEventsDataPoint
     protected Optional<Measure.Builder<BodyWeight, ?>> newMeasureBuilder(JsonNode listEntryNode) {
 
         Optional<Double> optionalWeight = asOptionalDouble(listEntryNode, "weight");
-        if(optionalWeight.isPresent()){
-            if(optionalWeight.get() == null){
+        if (optionalWeight.isPresent()) {
+            if (optionalWeight.get() == null) {
                 return Optional.empty();
             }
-            BodyWeight.Builder bodyWeightBuilder = new BodyWeight.Builder(new MassUnitValue(MassUnit.KILOGRAM,optionalWeight.get()));
+            BodyWeight.Builder bodyWeightBuilder =
+                    new BodyWeight.Builder(new MassUnitValue(MassUnit.KILOGRAM, optionalWeight.get()));
             return Optional.of(bodyWeightBuilder);
         }
 

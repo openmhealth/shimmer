@@ -13,6 +13,7 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asRequir
 
 /**
  * @author Chris Schaefbauer
+ * @see <a href="https://jawbone.com/up/developer/endpoints/body">API documentation</a>
  */
 public class JawboneBodyMassIndexDataPointMapper extends JawboneBodyEventsDataPointMapper<BodyMassIndex>{
 

@@ -11,6 +11,9 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asOption
 
 
 /**
+ * Base class for Jawbone mappers that translate different individual body events (e.g., weight, bmi) into {@link
+ * Measure} objects
+ *
  * @author Chris Schaefbauer
  * @see <a href="https://jawbone.com/up/developer/endpoints/body">API documentation</a>
  */
@@ -67,6 +70,7 @@ public abstract class JawboneBodyEventsDataPointMapper<T extends Measure> extend
 
     /**
      * Creates a {@link Builder} for a specific body event measure
+     *
      * @param listEntryNode an individual entry node from the "items" array of a Jawbone endpoint response
      */
     abstract Optional<Measure.Builder<T, ?>> newMeasureBuilder(JsonNode listEntryNode);
