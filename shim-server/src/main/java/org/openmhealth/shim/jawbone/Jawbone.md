@@ -41,23 +41,25 @@ supports retrieval based on modification date: updated_after parameter
 - size gives number of entries in current page
 - items are listed newest to oldest
 
-# other
-- If-Modified-Since supported, times are specified in GMT according to HTTP spec
 
-# incremental data
+
+## incremental data
 - endpoints accept a ‘updated_after’ parameter that retrieves items that were updated after a specific date
 
-# time zone and time representation
+## time zone and time representation
 - Most data points return datetime as unix epoch nanoseconds that are aligned to UTC
 
-# rate limit
+## rate limit
 
 - n/a
 
-# endpoints
+## other
+- If-Modified-Since supported, times are specified in GMT according to HTTP spec
+
+## endpoints
 All endpoint responses contain two properties, one named ‘meta’ and one named ‘data’, both of which are JSON objects. 
 
-## endpoint parameters
+### endpoint parameters
 - Required parameters: None
 
 - Optional parameters
@@ -69,70 +71,70 @@ All endpoint responses contain two properties, one named ‘meta’ and one name
   - updated_after - epoch timestamp to list events that have been updated later than the timestamp
 
 
-## get body events
+### get body events
 - Endpoint: /nudge/api/v.1.1/users/@me/body_events
 - Reference: https://jawbone.com/up/developer/endpoints/body
 
-### measures
+#### measures
 - body weight: mapped
 - bmi: mapped
 
-### description
+#### description
 The endpoint returns different body measurements for an individual, each of which contains body measures such as weight, bmi, and body fat percentage.
 
-### response
+#### response
 The ‘data’ property contains an array, ‘items’, that contains a list of data points (JSON objects) each of which represents a different body measurement. Each body measurement is a set of measures (e.g., body weight, body mass index, etc) taken at a specific time.  
 
-## get moves
+### get moves
 - endpoint: /nudge/api/v.1.1/users/@me/moves
 - reference: https://jawbone.com/up/developer/endpoints/moves
 
-### measures
+#### measures
 - step count: mapped
 - calories burned: not mapper, problematic representation
 
-### description
+#### description
 Returns activity information for each day. There is only one moves entry per day, so that entry contains all of the summarized activity information for that day as well as detailed activity information within that moves datapoint. Moves data is only created through the Up app and jawbone wearables. 
 
-### response
+#### response
 The ‘data’ property contains an array, ‘items’, that contains a list of data points (JSON objects) each of which represents a single day and the activities that occurred on that day. Within each item there is summary information as well as a ‘details’ property which is a JSON object containing properties describing the activities of the day, such as ‘distance’ and ‘active_time.’ The ‘details’ object contains a dictionary, ‘hourly_totals,’ where the key is a timestamp for a given hour of that day and the value is an object with key/value pairs capturing the different activities that occurred during that hour. There is also a ‘tzs’ array that is a list of arrays representing the timezones that the user was in at different times during the hour. Each array is a timestamp paired with a timezone, representing transitions to new timezones. 
 
-## get sleeps
+### get sleeps
 - endpoint: /nudge/api/v.1.1/users/@me/sleeps
 - reference: https://jawbone.com/up/developer/endpoints/sleeps
 
-### description
+#### description
 Returns a list of sleep activities for the user, including sleep details and summary information.
 
-### measures
+#### measures
 - sleep duration: mapped
 
-### response
+#### response
 The ‘data’ property contains an array, ‘items’, that contains a list of data points (JSON objects) each of which represents a sleep session and the information regarding that session. Each datapoint contains a ‘details’ object with more information about the sleep session including the timezone and timeslept.  
 
 ‘Duration’ is the total time spent for the sleep session, intended to be a “total time in bed” time. ‘Duration’ - ‘awake’ = the actual sleeping duration = ‘light’ + ‘sound’ (or ‘deep’) + ‘rem’
 
-## get workouts
+### get workouts
 - endpoint: /nudge/api/v.1.1/users/@me/workouts
 - reference: https://jawbone.com/up/developer/endpoints/workouts
 
-### description 
+#### description 
 Retrieves a list of workouts that the user has completed. Workouts can be logged through Jawbone devices and applications as well as by 3rd parties. 
 
-### response
+#### response
 The ‘data’ property contains an array, ‘items’, that contains a list of data points (JSON objects) each of which represents a discrete workout activity in which the user engaged. Within each datapoint there is a ‘details’ object that contains information about the activity as well as the timezone. 
 
-## get heartrates
+### get heartrates
 - endpoint: /nudge/api/v.1.1/users/@me/heartrates
 - reference: https://jawbone.com/up/developer/endpoints/heartrate
 
-### measures
+#### measures
 - heart rate: mapped
 
-### description
+#### description
 Retrieves heart rate measurements from Jawbone specific devices. 
 
-### response
+#### response
 The ‘data’ property contains an array, ‘items’, that contains a list of data points (JSON objects) each of which represents a heart rate measurement recorded by a Jawbone device. Within each datapoint there is a ‘details’ object that contains information about the activity as well as the timezone. 
 
 
