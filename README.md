@@ -213,14 +213,18 @@ The currently supported shims are
     * weight
         * [omh:body-weight](http://www.openmhealth.org/developers/schemas/#body-weight)
 * jawbone
-    * body
-        * [omh:body-weight](http://www.openmhealth.org/developers/schemas/#body-weight)
-    * moves
-        * [omh:step-count](http://www.openmhealth.org/developers/schemas/#step-count)
+    * weight
+        * [omh:body-weight](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_body-weight)
+    * body_mass_index
+        * [omh:body-mass-index](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_body-mass-index)
+    * steps
+        * [omh:step-count](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_step-count)
     * sleep
-        * [omh:sleep-duration](http://www.openmhealth.org/developers/schemas/#sleep-duration)
-    * workouts
-        * [omh:physical-activity](http://www.openmhealth.org/developers/schemas/#physical-activity)
+        * [omh:sleep-duration](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_sleep-duration)
+    * activity
+        * [omh:physical-activity](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_physical-activity)
+    * heart_rate
+        * [omh:heart-rate](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_heart-rate)
 * runkeeper
     * activity
         * [omh:physical-activity](http://www.openmhealth.org/developers/schemas/#physical-activity)
