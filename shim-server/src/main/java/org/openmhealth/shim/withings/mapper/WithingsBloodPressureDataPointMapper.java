@@ -29,8 +29,8 @@ public class WithingsBloodPressureDataPointMapper extends WithingsBodyMeasureDat
     @Override
     public Optional<Measure.Builder<BloodPressure, ?>> newMeasureBuilder(JsonNode measuresNode) {
 
-        Optional<BigDecimal> systolicValue = getValueForType(measuresNode, SYSTOLIC_BLOOD_PRESSURE);
-        Optional<BigDecimal> diastolicValue = getValueForType(measuresNode, DIASTOLIC_BLOOD_PRESSURE);
+        Optional<BigDecimal> systolicValue = getValueForMeasureType(measuresNode, SYSTOLIC_BLOOD_PRESSURE);
+        Optional<BigDecimal> diastolicValue = getValueForMeasureType(measuresNode, DIASTOLIC_BLOOD_PRESSURE);
 
         if (!systolicValue.isPresent() && !diastolicValue.isPresent()) {
             return empty();

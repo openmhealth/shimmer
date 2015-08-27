@@ -173,10 +173,12 @@ public abstract class WithingsBodyMeasureDataPointMapper<T extends Measure> exte
     }
 
     /**
-     * @param bodyMeasureType the body measure type of interest
-     * @return the
+     * @param measuresNode the list of measures in a measure group node
+     * @param bodyMeasureType the measure type of interest
+     * @return the value of the specified measure type, if present
      */
-    protected Optional<BigDecimal> getValueForType(JsonNode measuresNode, WithingsBodyMeasureType bodyMeasureType) {
+    protected Optional<BigDecimal> getValueForMeasureType(JsonNode measuresNode,
+            WithingsBodyMeasureType bodyMeasureType) {
 
         List<BigDecimal> values = StreamSupport.stream(measuresNode.spliterator(), false)
                 .filter((measureNode) -> asRequiredLong(measureNode, "type") == bodyMeasureType.getMagicNumber())
@@ -188,8 +190,9 @@ public abstract class WithingsBodyMeasureDataPointMapper<T extends Measure> exte
         }
 
         if (values.size() > 1) {
-            logger.warn("The following Withings measures node contains multiple measures of type {}\n{}.",
-                    bodyMeasureType, measuresNode);
+            throw new JsonNodeMappingException(format(
+                    "The following Withings measures node contains multiple measures of type %s.\n%s.",
+                    bodyMeasureType, measuresNode));
         }
 
         return Optional.of(values.get(0));

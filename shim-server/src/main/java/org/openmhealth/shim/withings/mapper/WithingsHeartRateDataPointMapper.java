@@ -21,7 +21,7 @@ public class WithingsHeartRateDataPointMapper extends WithingsBodyMeasureDataPoi
     @Override
     public Optional<Measure.Builder<HeartRate, ?>> newMeasureBuilder(JsonNode measuresNode) {
 
-        Optional<BigDecimal> value = getValueForType(measuresNode, HEART_RATE);
+        Optional<BigDecimal> value = getValueForMeasureType(measuresNode, HEART_RATE);
 
         if (!value.isPresent()) {
             return empty();

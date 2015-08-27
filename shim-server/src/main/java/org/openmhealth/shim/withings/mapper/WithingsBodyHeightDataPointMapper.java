@@ -23,7 +23,7 @@ public class WithingsBodyHeightDataPointMapper extends WithingsBodyMeasureDataPo
     @Override
     public Optional<Measure.Builder<BodyHeight, ?>> newMeasureBuilder(JsonNode measuresNode) {
 
-        Optional<BigDecimal> value = getValueForType(measuresNode, BODY_HEIGHT);
+        Optional<BigDecimal> value = getValueForMeasureType(measuresNode, BODY_HEIGHT);
 
         if (!value.isPresent()) {
             return empty();
