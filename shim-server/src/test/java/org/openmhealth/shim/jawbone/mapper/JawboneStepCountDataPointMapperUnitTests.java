@@ -33,7 +33,7 @@ public class JawboneStepCountDataPointMapperUnitTests extends JawboneDataPointMa
     }
 
     @Test
-    public void asDataPointsShouldReturnNoDataPointsWithEmptyResponse(){
+    public void asDataPointsShouldReturnNoDataPointsWithEmptyResponse() {
 
         testEmptyNode(mapper);
     }
@@ -60,7 +60,7 @@ public class JawboneStepCountDataPointMapperUnitTests extends JawboneDataPointMa
         testProperties.put(HEADER_SCHEMA_ID_KEY, StepCount.SCHEMA_ID);
         testProperties.put(HEADER_SOURCE_UPDATE_KEY, "2015-08-18T03:11:44Z");
         testProperties.put(HEADER_SENSED_KEY, DataPointModality.SENSED);
-        testProperties.put(HEADER_EXTERNAL_ID_KEY,"QkfTizSpRdvMvnHFctzItGNZMT-1F5vw");
+        testProperties.put(HEADER_EXTERNAL_ID_KEY, "QkfTizSpRdvMvnHFctzItGNZMT-1F5vw");
 
         testDataPointHeader(dataPoints.get(0).getHeader(), testProperties);
 
@@ -72,8 +72,9 @@ public class JawboneStepCountDataPointMapperUnitTests extends JawboneDataPointMa
         List<DataPoint<StepCount>> dataPoints = mapper.asDataPoints(singletonList(responseNode));
 
         StepCount expectedStepCount = new StepCount.Builder(593).setEffectiveTimeFrame(
-                TimeInterval.ofStartDateTimeAndEndDateTime(OffsetDateTime.parse("2015-08-05T00:00:00-04:00"),OffsetDateTime.parse("2015-08-05T06:42:00-06:00"))).build();
-        assertThat(dataPoints.get(1).getBody(),equalTo(expectedStepCount));
+                TimeInterval.ofStartDateTimeAndEndDateTime(OffsetDateTime.parse("2015-08-05T00:00:00-04:00"),
+                        OffsetDateTime.parse("2015-08-05T06:42:00-06:00"))).build();
+        assertThat(dataPoints.get(1).getBody(), equalTo(expectedStepCount));
     }
 
 }

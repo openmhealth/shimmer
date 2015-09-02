@@ -48,7 +48,7 @@ public class JawbonePhysicalActivityDataPointMapperUnitTests extends JawboneData
     }
 
     @Test
-    public void asDataPointsShouldReturnNoDataPointsWithEmptyResponse(){
+    public void asDataPointsShouldReturnNoDataPointsWithEmptyResponse() {
 
         testEmptyNode(mapper);
     }
@@ -96,7 +96,7 @@ public class JawbonePhysicalActivityDataPointMapperUnitTests extends JawboneData
     }
 
     @Test
-    public void asDataPointsShouldReturnCorrectMissingSensedDataPoints(){
+    public void asDataPointsShouldReturnCorrectMissingSensedDataPoints() {
 
         List<DataPoint<PhysicalActivity>> dataPoints = mapper.asDataPoints(singletonList(responseNode));
 
@@ -104,14 +104,14 @@ public class JawbonePhysicalActivityDataPointMapperUnitTests extends JawboneData
                 new LengthUnitValue(LengthUnit.METER, 1188)).setEffectiveTimeFrame(
                 TimeInterval.ofEndDateTimeAndDuration(OffsetDateTime.parse("2015-04-29T16:07:07-04:00"),
                         new DurationUnitValue(DurationUnit.SECOND, 343))).build();
-        assertThat(dataPoints.get(1).getBody(),equalTo(expectedPhysicalActivity));
+        assertThat(dataPoints.get(1).getBody(), equalTo(expectedPhysicalActivity));
 
         DataPointHeader testDataPointHeader = dataPoints.get(1).getHeader();
         Map<String, Object> testProperties = Maps.newHashMap();
         testProperties.put(HEADER_EXTERNAL_ID_KEY, "SbiOBJjJJk8n2xLpNTMFng12pGRjX-qe");
         testProperties.put(HEADER_SOURCE_UPDATE_KEY, "2015-04-29T20:07:56Z");
-        testProperties.put(HEADER_SCHEMA_ID_KEY,PhysicalActivity.SCHEMA_ID);
-        testDataPointHeader(testDataPointHeader,testProperties);
+        testProperties.put(HEADER_SCHEMA_ID_KEY, PhysicalActivity.SCHEMA_ID);
+        testDataPointHeader(testDataPointHeader, testProperties);
 
     }
 
@@ -160,20 +160,20 @@ public class JawbonePhysicalActivityDataPointMapperUnitTests extends JawboneData
                 "\"details\": {\n" +
                 "\"steps\": 0,\n" +
                 "\"time\": 2460\n" +
-                "}\n"+
+                "}\n" +
                 "}");
         assertFalse(mapper.isSensed(nodeWithSteps));
 
         nodeWithSteps = objectMapper.readTree("{\n" +
                 "\"details\": {\n" +
                 "\"time\": 2460\n" +
-                "}\n"+
+                "}\n" +
                 "}");
         assertFalse(mapper.isSensed(nodeWithSteps));
     }
 
     @Test
-    public void getActivityNameShouldReturnTitleWhenPresent(){
+    public void getActivityNameShouldReturnTitleWhenPresent() {
 
         String activityName = mapper.getActivityName("run", 15);
         assertThat(activityName, equalTo("run"));
@@ -181,21 +181,21 @@ public class JawbonePhysicalActivityDataPointMapperUnitTests extends JawboneData
     }
 
     @Test
-    public void getActivityNameShouldReturnCorrectSubtypeWhenTitleIsMissing(){
+    public void getActivityNameShouldReturnCorrectSubtypeWhenTitleIsMissing() {
 
         String activityName = mapper.getActivityName(null, 9);
-        assertThat(activityName,equalTo("crossfit"));
+        assertThat(activityName, equalTo("crossfit"));
 
         activityName = mapper.getActivityName(null, 29);
-        assertThat(activityName,equalTo("workout"));
+        assertThat(activityName, equalTo("workout"));
 
     }
 
     @Test
-    public void getActivityNameShouldReturnGenericWorkoutNameWhenSubtypeAndTitleAreMissing(){
+    public void getActivityNameShouldReturnGenericWorkoutNameWhenSubtypeAndTitleAreMissing() {
 
         String activityName = mapper.getActivityName(null, null);
-        assertThat(activityName,equalTo("workout"));
+        assertThat(activityName, equalTo("workout"));
     }
 
 }

@@ -36,7 +36,7 @@ public class JawboneBodyWeightDataPointMapperUnitTests extends JawboneDataPointM
     }
 
     @Test
-    public void asDataPointsShouldReturnNoDataPointsWithEmptyResponse(){
+    public void asDataPointsShouldReturnNoDataPointsWithEmptyResponse() {
 
         testEmptyNode(mapper);
     }
@@ -72,20 +72,20 @@ public class JawboneBodyWeightDataPointMapperUnitTests extends JawboneDataPointM
     }
 
     @Test
-    public void asDataPointsShouldReturnCorrectDataPointWhenUserNoteIsNull(){
+    public void asDataPointsShouldReturnCorrectDataPointWhenUserNoteIsNull() {
 
         List<DataPoint<BodyWeight>> dataPoints = mapper.asDataPoints(singletonList(responseNode));
         BodyWeight testBodyWeight = dataPoints.get(1).getBody();
         BodyWeight expectedBodyWeight = new BodyWeight.Builder(new MassUnitValue(MassUnit.KILOGRAM, 86.5010436535))
                 .setEffectiveTimeFrame(OffsetDateTime.parse("2015-08-11T22:37:18-06:00"))
                 .build();
-        assertThat(testBodyWeight,equalTo(expectedBodyWeight));
+        assertThat(testBodyWeight, equalTo(expectedBodyWeight));
 
-        Map<String,Object> testProperties = Maps.newHashMap();
-        testProperties.put("schemaId",BodyWeight.SCHEMA_ID);
-        testProperties.put("externalId","QkfTizSpRdukQY3ns4PYbkucZTM5yPMg");
-        testProperties.put("sourceUpdatedDateTime","2015-08-13T08:23:58Z");
-        testProperties.put("shared",true);
+        Map<String, Object> testProperties = Maps.newHashMap();
+        testProperties.put("schemaId", BodyWeight.SCHEMA_ID);
+        testProperties.put("externalId", "QkfTizSpRdukQY3ns4PYbkucZTM5yPMg");
+        testProperties.put("sourceUpdatedDateTime", "2015-08-13T08:23:58Z");
+        testProperties.put("shared", true);
         testDataPointHeader(dataPoints.get(1).getHeader(), testProperties);
     }
 

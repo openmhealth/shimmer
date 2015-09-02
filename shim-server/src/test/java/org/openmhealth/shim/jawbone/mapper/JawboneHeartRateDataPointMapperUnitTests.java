@@ -36,30 +36,31 @@ public class JawboneHeartRateDataPointMapperUnitTests extends JawboneDataPointMa
     }
 
     @Test
-    public void asDataPointsShouldReturnNoDataPointsWithEmptyResponse(){
+    public void asDataPointsShouldReturnNoDataPointsWithEmptyResponse() {
 
         testEmptyNode(mapper);
     }
 
     @Test
-    public void asDataPointsShouldReturnCorrectNumberOfDataPoints(){
+    public void asDataPointsShouldReturnCorrectNumberOfDataPoints() {
 
         List<DataPoint<HeartRate>> dataPoints = mapper.asDataPoints(singletonList(responseNode));
-        assertThat(dataPoints.size(),equalTo(1));
+        assertThat(dataPoints.size(), equalTo(1));
     }
 
     @Test
-    public void asDataPointsShouldReturnCorrectDataPoints(){
+    public void asDataPointsShouldReturnCorrectDataPoints() {
 
         List<DataPoint<HeartRate>> dataPoints = mapper.asDataPoints(singletonList(responseNode));
         HeartRate expectedHeartRate = new HeartRate.Builder(55).setTemporalRelationshipToPhysicalActivity(
-                TemporalRelationshipToPhysicalActivity.AT_REST).setEffectiveTimeFrame(OffsetDateTime.parse("2013-11-20T08:05:00-08:00")).build();
+                TemporalRelationshipToPhysicalActivity.AT_REST)
+                .setEffectiveTimeFrame(OffsetDateTime.parse("2013-11-20T08:05:00-08:00")).build();
         assertThat(dataPoints.get(0).getBody(), equalTo(expectedHeartRate));
 
         Map<String, Object> testProperties = Maps.newHashMap();
-        testProperties.put(HEADER_EXTERNAL_ID_KEY,"40F7_htRRnT8Vo7nRBZO1X");
-        testProperties.put(HEADER_SOURCE_UPDATE_KEY,"2013-11-21T15:59:59Z");
-        testProperties.put(HEADER_SCHEMA_ID_KEY,HeartRate.SCHEMA_ID);
+        testProperties.put(HEADER_EXTERNAL_ID_KEY, "40F7_htRRnT8Vo7nRBZO1X");
+        testProperties.put(HEADER_SOURCE_UPDATE_KEY, "2013-11-21T15:59:59Z");
+        testProperties.put(HEADER_SCHEMA_ID_KEY, HeartRate.SCHEMA_ID);
         testProperties.put(HEADER_SENSED_KEY, DataPointModality.SENSED);
         testDataPointHeader(dataPoints.get(0).getHeader(), testProperties);
 

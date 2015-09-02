@@ -33,7 +33,7 @@ public class JawboneBodyMassIndexDataPointMapperUnitTests extends JawboneDataPoi
     }
 
     @Test
-    public void asDataPointsShouldReturnNoDataPointsWithEmptyResponse(){
+    public void asDataPointsShouldReturnNoDataPointsWithEmptyResponse() {
 
         testEmptyNode(mapper);
     }
@@ -62,13 +62,10 @@ public class JawboneBodyMassIndexDataPointMapperUnitTests extends JawboneDataPoi
         testProperties.put(HEADER_SOURCE_UPDATE_KEY, "2015-08-13T08:23:58Z");
         testProperties.put(HEADER_SHARED_KEY, true);
         testDataPointHeader(dataPoints.get(0).getHeader(), testProperties);
-
-
-
     }
 
     @Test
-    public void asDataPointsShouldReturnCorrectLastDataPoint(){
+    public void asDataPointsShouldReturnCorrectLastDataPoint() {
 
         List<DataPoint<BodyMassIndex>> dataPoints = mapper.asDataPoints(singletonList(responseNode));
         BodyMassIndex expectedBodyMassIndex = new BodyMassIndex
@@ -78,11 +75,11 @@ public class JawboneBodyMassIndexDataPointMapperUnitTests extends JawboneDataPoi
         assertThat(dataPoints.get(1).getBody(), equalTo(expectedBodyMassIndex));
 
         Map<String, Object> testProperties = Maps.newHashMap();
-        testProperties.put(HEADER_EXTERNAL_ID_KEY,"QkfTizSpRdt6MGLRxULIlVTscmwD_cPJ");
-        testProperties.put(HEADER_SCHEMA_ID_KEY,BodyMassIndex.SCHEMA_ID );
-        testProperties.put(HEADER_SOURCE_UPDATE_KEY,"2015-08-07T05:36:57Z");
-        testProperties.put(HEADER_SHARED_KEY,false);
-        testDataPointHeader(dataPoints.get(1).getHeader(),testProperties);
+        testProperties.put(HEADER_EXTERNAL_ID_KEY, "QkfTizSpRdt6MGLRxULIlVTscmwD_cPJ");
+        testProperties.put(HEADER_SCHEMA_ID_KEY, BodyMassIndex.SCHEMA_ID);
+        testProperties.put(HEADER_SOURCE_UPDATE_KEY, "2015-08-07T05:36:57Z");
+        testProperties.put(HEADER_SHARED_KEY, false);
+        testDataPointHeader(dataPoints.get(1).getHeader(), testProperties);
     }
 
 

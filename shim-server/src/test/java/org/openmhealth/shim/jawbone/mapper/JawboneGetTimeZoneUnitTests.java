@@ -52,7 +52,7 @@ public class JawboneGetTimeZoneUnitTests {
         testSecondOffsetTimeZoneNode = objectMapper.readTree("12600");
         testZoneId = JawboneDataPointMapper.parseZone(testSecondOffsetTimeZoneNode);
         expectedZoneId = ZoneId.of("+03:30");
-        assertThat(testZoneId.getRules(),equalTo(expectedZoneId.getRules()));
+        assertThat(testZoneId.getRules(), equalTo(expectedZoneId.getRules()));
 
     }
 
@@ -79,7 +79,7 @@ public class JawboneGetTimeZoneUnitTests {
         ZoneId expectedZoneId = ZoneId.of("+05:45");
         assertThat(testZoneId.getRules().toString(), equalTo(expectedZoneId.getRules()
                 .toString())); //comparing toString because parsing fractional stores a bit more information so the
-                // rules don't appear identical
+        // rules don't appear identical
 
         OffsetDateTime testOffsetDateTime = OffsetDateTime.ofInstant(Instant.ofEpochSecond(1438747200), testZoneId);
         OffsetDateTime expectedOffsetDateTime = OffsetDateTime.parse("2015-08-05T09:45:00+05:45");
@@ -253,21 +253,22 @@ public class JawboneGetTimeZoneUnitTests {
 
         ZoneId timeZoneForTimestamp = JawboneDataPointMapper.getTimeZoneForTimestamp(testDateTimeNode, 1425798620L);
         assertThat(timeZoneForTimestamp.getRules(), equalTo(ZoneId.of("America/Denver").getRules()));
-        assertThat(timeZoneForTimestamp.getRules().getOffset(Instant.ofEpochSecond(1425798620)),equalTo(ZoneOffset.of(
+        assertThat(timeZoneForTimestamp.getRules().getOffset(Instant.ofEpochSecond(1425798620)), equalTo(ZoneOffset.of(
                 "-07:00")));
         OffsetDateTime testOffsetDateTime =
                 OffsetDateTime.ofInstant(Instant.ofEpochSecond(1425796620), timeZoneForTimestamp);
         OffsetDateTime expectedDateTime = OffsetDateTime.parse("2015-03-07T23:37:00-07:00");
-        assertThat(testOffsetDateTime,equalTo(expectedDateTime));
+        assertThat(testOffsetDateTime, equalTo(expectedDateTime));
 
         timeZoneForTimestamp = JawboneDataPointMapper.getTimeZoneForTimestamp(testDateTimeNode, 1425845420L);
-        assertThat(timeZoneForTimestamp.getRules().getOffset(Instant.ofEpochSecond(1425845420)),equalTo(ZoneOffset.of("-06:00")));
+        assertThat(timeZoneForTimestamp.getRules().getOffset(Instant.ofEpochSecond(1425845420)),
+                equalTo(ZoneOffset.of("-06:00")));
 
 
         testOffsetDateTime =
                 OffsetDateTime.ofInstant(Instant.ofEpochSecond(1425845420), timeZoneForTimestamp);
         expectedDateTime = OffsetDateTime.parse("2015-03-08T14:10:20-06:00");
-        assertThat(testOffsetDateTime,equalTo(expectedDateTime));
+        assertThat(testOffsetDateTime, equalTo(expectedDateTime));
 
     }
 
