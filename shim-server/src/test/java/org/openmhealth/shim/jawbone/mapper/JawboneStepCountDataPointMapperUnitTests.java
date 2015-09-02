@@ -24,11 +24,18 @@ public class JawboneStepCountDataPointMapperUnitTests extends JawboneDataPointMa
     private JawboneStepCountDataPointMapper mapper = new JawboneStepCountDataPointMapper();
 
     @BeforeTest
-    public void initializeResponseNode() throws IOException {
+    public void initializeResponseNodes() throws IOException {
 
         ClassPathResource resource =
                 new ClassPathResource("org/openmhealth/shim/jawbone/mapper/jawbone-moves.json");
         responseNode = objectMapper.readTree(resource.getInputStream());
+        initializeEmptyNode();
+    }
+
+    @Test
+    public void asDataPointsShouldReturnNoDataPointsWithEmptyResponse(){
+
+        testEmptyNode(mapper);
     }
 
     @Test

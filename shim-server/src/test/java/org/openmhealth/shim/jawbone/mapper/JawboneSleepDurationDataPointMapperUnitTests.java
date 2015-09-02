@@ -24,20 +24,30 @@ public class JawboneSleepDurationDataPointMapperUnitTests extends JawboneDataPoi
     JawboneSleepDurationDataPointMapper mapper = new JawboneSleepDurationDataPointMapper();
 
     @BeforeTest
-    public void initializeResponseNode() throws IOException {
+    public void initializeResponseNodes() throws IOException {
+
         ClassPathResource resource =
                 new ClassPathResource("org/openmhealth/shim/jawbone/mapper/jawbone-sleeps.json");
         responseNode = objectMapper.readTree(resource.getInputStream());
+        initializeEmptyNode();
+    }
+
+    @Test
+    public void asDataPointsShouldReturnNoDataPointsWithEmptyResponse(){
+
+        testEmptyNode(mapper);
     }
 
     @Test
     public void asDataPointsShouldReturnCorrectNumberOfDataPoints(){
+
         List<DataPoint<SleepDuration>> dataPoints = mapper.asDataPoints(singletonList(responseNode));
         assertThat(dataPoints.size(),equalTo(2));
     }
 
     @Test
     public void asDataPointsShouldReturnCorrectDataPoints(){
+
         List<DataPoint<SleepDuration>> dataPoints = mapper.asDataPoints(singletonList(responseNode));
 
 

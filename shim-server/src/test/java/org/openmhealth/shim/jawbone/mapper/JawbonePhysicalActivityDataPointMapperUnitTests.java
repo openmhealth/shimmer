@@ -40,10 +40,17 @@ public class JawbonePhysicalActivityDataPointMapperUnitTests extends JawboneData
     private JsonNode responseNode;
 
     @BeforeTest
-    public void initializeResponseNode() throws IOException {
+    public void initializeResponseNodes() throws IOException {
 
         ClassPathResource resource = new ClassPathResource("org/openmhealth/shim/jawbone/mapper/jawbone-workouts.json");
         responseNode = objectMapper.readTree(resource.getInputStream());
+        initializeEmptyNode();
+    }
+
+    @Test
+    public void asDataPointsShouldReturnNoDataPointsWithEmptyResponse(){
+
+        testEmptyNode(mapper);
     }
 
     @Test

@@ -27,11 +27,18 @@ public class JawboneBodyWeightDataPointMapperUnitTests extends JawboneDataPointM
     JawboneBodyWeightDataPointMapper mapper = new JawboneBodyWeightDataPointMapper();
 
     @BeforeTest
-    public void initializeResponseNode() throws IOException {
+    public void initializeResponseNodes() throws IOException {
 
         ClassPathResource resource =
                 new ClassPathResource("org/openmhealth/shim/jawbone/mapper/jawbone-body-events.json");
         responseNode = objectMapper.readTree(resource.getInputStream());
+        initializeEmptyNode();
+    }
+
+    @Test
+    public void asDataPointsShouldReturnNoDataPointsWithEmptyResponse(){
+
+        testEmptyNode(mapper);
     }
 
     @Test
