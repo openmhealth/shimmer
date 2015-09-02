@@ -28,9 +28,11 @@ public class GoogleFitBodyHeightDataPointMapper extends GoogleFitDataPointMapper
 
         JsonNode valueListNode = asRequiredNode(listNode, getValueListNodeName());
         double bodyHeightValue = asRequiredDouble(valueListNode.get(0), "fpVal");
+
         if (bodyHeightValue == 0) {
             return Optional.empty();
         }
+
         BodyHeight.Builder bodyHeightBuilder =
                 new BodyHeight.Builder(new LengthUnitValue(LengthUnit.METER, bodyHeightValue));
 
@@ -38,6 +40,7 @@ public class GoogleFitBodyHeightDataPointMapper extends GoogleFitDataPointMapper
 
         BodyHeight bodyHeight = bodyHeightBuilder.build();
         Optional<String> originDataSourceId = asOptionalString(listNode, "originDataSourceId");
+
         return Optional.of(newDataPoint(bodyHeight, originDataSourceId.orElse(null)));
     }
 
