@@ -43,7 +43,14 @@ public abstract class RunKeeperDataPointMapper<T> implements JsonNodeDataPointMa
         List<DataPoint<T>> dataPoints = new ArrayList<>();
 
         for (JsonNode listEntryNode : listNode) {
-            asDataPoint(listEntryNode).ifPresent(dataPoints::add);
+
+            // The Runkeeper HealthGraph API does not allow 3rd parties to write the utc_offset property in their
+            // posts, so we filter out data in the HealthGraph API that does not come directly from Runkeeper. This
+            // ensures that we can establish a time frame for each activity because we have utc_offset information.
+            if (listEntryNode.has("utc_offset")) {
+                asDataPoint(listEntryNode).ifPresent(dataPoints::add);
+            }
+
         }
 
         return dataPoints;
@@ -92,11 +99,12 @@ public abstract class RunKeeperDataPointMapper<T> implements JsonNodeDataPointMa
         String entryMode = asOptionalString(itemNode, "entry_mode").orElse(null);
         Boolean hasPath = asOptionalBoolean(itemNode, "has_path").orElse(null);
 
-        if (entryMode != null && entryMode.equals("Web")) {
+        if (entryMode != null && entryMode.equals("Web") && source != null && source.equalsIgnoreCase("RunKeeper")) {
+
             return Optional.of(DataPointModality.SELF_REPORTED);
         }
 
-        if (source != null && source.equals("RunKeeper")
+        if (source != null && source.equalsIgnoreCase("RunKeeper")
                 && entryMode != null && entryMode.equals("API")
                 && hasPath != null && hasPath) {
 
@@ -109,6 +117,7 @@ public abstract class RunKeeperDataPointMapper<T> implements JsonNodeDataPointMa
 
     /**
      * Sets the effective time frame property for a measure builder
+     *
      * @param itemNode an individual datapoint from the list of datapoints returned in the API response
      * @param builder the measure builder to have the effective date property set
      */
