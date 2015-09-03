@@ -18,7 +18,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
  */
 public class RunkeeperDataPointMapperUnitTests extends DataPointMapperUnitTests {
 
-    RunKeeperDataPointMapper mapper = new RunKeeperDataPointMapper() {
+    RunkeeperDataPointMapper mapper = new RunkeeperDataPointMapper() {
         @Override
         protected Optional<DataPoint> asDataPoint(JsonNode listEntryNode) {
             return null;

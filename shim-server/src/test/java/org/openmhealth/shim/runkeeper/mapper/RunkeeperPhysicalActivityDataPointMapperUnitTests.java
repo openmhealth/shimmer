@@ -21,15 +21,15 @@ import static org.openmhealth.schema.domain.omh.DataPointModality.SELF_REPORTED;
 import static org.openmhealth.schema.domain.omh.DataPointModality.SENSED;
 import static org.openmhealth.schema.domain.omh.DurationUnit.SECOND;
 import static org.openmhealth.schema.domain.omh.LengthUnit.METER;
-import static org.openmhealth.shim.runkeeper.mapper.RunKeeperDataPointMapper.RESOURCE_API_SOURCE_NAME;
+import static org.openmhealth.shim.runkeeper.mapper.RunkeeperDataPointMapper.RESOURCE_API_SOURCE_NAME;
 
 
 /**
  * @author Emerson Farrugia
  */
-public class RunKeeperPhysicalActivityDataPointMapperUnitTests extends DataPointMapperUnitTests {
+public class RunkeeperPhysicalActivityDataPointMapperUnitTests extends DataPointMapperUnitTests {
 
-    private final RunKeeperPhysicalActivityDataPointMapper mapper = new RunKeeperPhysicalActivityDataPointMapper();
+    private final RunkeeperPhysicalActivityDataPointMapper mapper = new RunkeeperPhysicalActivityDataPointMapper();
 
     private JsonNode responseNode;
 

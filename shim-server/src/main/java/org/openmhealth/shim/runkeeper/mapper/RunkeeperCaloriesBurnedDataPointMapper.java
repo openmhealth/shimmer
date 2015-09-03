@@ -16,7 +16,7 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asOption
  * @author Chris Schaefbauer
  * @author Emerson Farrugia
  */
-public class RunKeeperCaloriesBurnedDataPointMapper extends RunKeeperDataPointMapper<CaloriesBurned> {
+public class RunkeeperCaloriesBurnedDataPointMapper extends RunkeeperDataPointMapper<CaloriesBurned> {
 
 
     @Override

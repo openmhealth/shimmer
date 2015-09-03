@@ -17,7 +17,7 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.*;
  * @author Danilo Bonilla
  * @see <a href="http://runkeeper.com/developer/healthgraph/fitness-activities#past">API documentation</a>
  */
-public class RunKeeperPhysicalActivityDataPointMapper extends RunKeeperDataPointMapper<PhysicalActivity> {
+public class RunkeeperPhysicalActivityDataPointMapper extends RunkeeperDataPointMapper<PhysicalActivity> {
 
     @Override
     protected Optional<DataPoint<PhysicalActivity>> asDataPoint(JsonNode itemNode) {

@@ -18,9 +18,9 @@ package org.openmhealth.shim.runkeeper;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.openmhealth.shim.*;
-import org.openmhealth.shim.runkeeper.mapper.RunKeeperCaloriesBurnedDataPointMapper;
-import org.openmhealth.shim.runkeeper.mapper.RunKeeperDataPointMapper;
-import org.openmhealth.shim.runkeeper.mapper.RunKeeperPhysicalActivityDataPointMapper;
+import org.openmhealth.shim.runkeeper.mapper.RunkeeperCaloriesBurnedDataPointMapper;
+import org.openmhealth.shim.runkeeper.mapper.RunkeeperDataPointMapper;
+import org.openmhealth.shim.runkeeper.mapper.RunkeeperPhysicalActivityDataPointMapper;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -193,13 +193,13 @@ public class RunkeeperShim extends OAuth2ShimBase {
         }
 
         if (shimDataRequest.getNormalize()) {
-            RunKeeperDataPointMapper<?> dataPointMapper;
+            RunkeeperDataPointMapper<?> dataPointMapper;
             switch(runkeeperDataType){
                 case ACTIVITY:
-                    dataPointMapper = new RunKeeperPhysicalActivityDataPointMapper();
+                    dataPointMapper = new RunkeeperPhysicalActivityDataPointMapper();
                     break;
                 case CALORIES:
-                    dataPointMapper = new RunKeeperCaloriesBurnedDataPointMapper();
+                    dataPointMapper = new RunkeeperCaloriesBurnedDataPointMapper();
                     break;
                 default:
                     throw new UnsupportedOperationException();

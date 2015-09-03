@@ -19,10 +19,10 @@ import static org.hamcrest.MatcherAssert.assertThat;
 /**
  * @author Chris Schaefbauer
  */
-public class RunKeeperCaloriesBurnedDataPointMapperUnitTests extends DataPointMapperUnitTests {
+public class RunkeeperCaloriesBurnedDataPointMapperUnitTests extends DataPointMapperUnitTests {
 
     private JsonNode responseNode;
-    private RunKeeperCaloriesBurnedDataPointMapper mapper = new RunKeeperCaloriesBurnedDataPointMapper();
+    private RunkeeperCaloriesBurnedDataPointMapper mapper = new RunkeeperCaloriesBurnedDataPointMapper();
 
     @BeforeTest
     public void initializeResponseNode() throws IOException {
@@ -69,7 +69,7 @@ public class RunKeeperCaloriesBurnedDataPointMapperUnitTests extends DataPointMa
                 equalTo("/fitnessActivities/465161536"));
 
         assertThat(firstTestHeader.getAcquisitionProvenance().getSourceName(),
-                equalTo(RunKeeperDataPointMapper.RESOURCE_API_SOURCE_NAME));
+                equalTo(RunkeeperDataPointMapper.RESOURCE_API_SOURCE_NAME));
 
     }
 }

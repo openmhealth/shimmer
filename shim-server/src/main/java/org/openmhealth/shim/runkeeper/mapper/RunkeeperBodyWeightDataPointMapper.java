@@ -14,7 +14,7 @@ import java.util.Optional;
  * @author Emerson Farrugia
  * @see <a href="http://runkeeper.com/developer/healthgraph/weight-sets#past">API documentation</a>
  */
-public class RunKeeperBodyWeightDataPointMapper extends RunKeeperDataPointMapper<BodyWeight> {
+public class RunkeeperBodyWeightDataPointMapper extends RunkeeperDataPointMapper<BodyWeight> {
 
     @Override
     protected Optional<DataPoint<BodyWeight>> asDataPoint(JsonNode itemNode) {
