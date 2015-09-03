@@ -43,6 +43,4 @@ public class RunKeeperPhysicalActivityDataPointMapper extends RunKeeperDataPoint
     }
 
 
-
-
 }

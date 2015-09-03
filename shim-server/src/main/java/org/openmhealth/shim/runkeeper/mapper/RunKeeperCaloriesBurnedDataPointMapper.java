@@ -16,17 +16,19 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asOption
  * @author Chris Schaefbauer
  * @author Emerson Farrugia
  */
-public class RunKeeperCaloriesBurnedDataPointMapper extends RunKeeperDataPointMapper<CaloriesBurned>{
+public class RunKeeperCaloriesBurnedDataPointMapper extends RunKeeperDataPointMapper<CaloriesBurned> {
 
 
     @Override
     protected Optional<DataPoint<CaloriesBurned>> asDataPoint(JsonNode itemNode) {
 
         Optional<CaloriesBurned> caloriesBurned = getMeasure(itemNode);
-        if(caloriesBurned.isPresent()){
-            return Optional.of(new DataPoint<>(getDataPointHeader(itemNode,caloriesBurned.get()), caloriesBurned.get()));
+
+        if (caloriesBurned.isPresent()) {
+            return Optional
+                    .of(new DataPoint<>(getDataPointHeader(itemNode, caloriesBurned.get()), caloriesBurned.get()));
         }
-        else{
+        else {
             return Optional.empty(); // return empty if there was no calories information to generate a datapoint
         }
 
@@ -35,10 +37,11 @@ public class RunKeeperCaloriesBurnedDataPointMapper extends RunKeeperDataPointMa
     private Optional<CaloriesBurned> getMeasure(JsonNode itemNode) {
 
         Optional<Double> calorieValue = asOptionalDouble(itemNode, "total_calories");
-        if(!calorieValue.isPresent()){  // Not all activity datapoints have the "total_calories" property
+        if (!calorieValue.isPresent()) {  // Not all activity datapoints have the "total_calories" property
             return Optional.empty();
         }
-        CaloriesBurned.Builder caloriesBurnedBuilder = new CaloriesBurned.Builder(new KcalUnitValue(KcalUnit.KILOCALORIE,calorieValue.get()));
+        CaloriesBurned.Builder caloriesBurnedBuilder =
+                new CaloriesBurned.Builder(new KcalUnitValue(KcalUnit.KILOCALORIE, calorieValue.get()));
 
         setEffectiveTimeframeIfPresent(itemNode, caloriesBurnedBuilder);
 
