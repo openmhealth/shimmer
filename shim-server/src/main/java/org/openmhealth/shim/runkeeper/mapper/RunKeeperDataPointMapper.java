@@ -116,7 +116,7 @@ public abstract class RunKeeperDataPointMapper<T> implements JsonNodeDataPointMa
     }
 
     /**
-     * Sets the effective time frame property for a measure builder
+     * Sets the effective time frame property for a measure builder.
      *
      * @param itemNode an individual datapoint from the list of datapoints returned in the API response
      * @param builder the measure builder to have the effective date property set

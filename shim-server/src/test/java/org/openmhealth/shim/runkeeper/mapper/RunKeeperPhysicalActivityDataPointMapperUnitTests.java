@@ -33,6 +33,7 @@ public class RunKeeperPhysicalActivityDataPointMapperUnitTests extends DataPoint
 
     private JsonNode responseNode;
 
+
     @BeforeTest
     public void initializeResponseNode() throws IOException {
 
@@ -48,7 +49,7 @@ public class RunKeeperPhysicalActivityDataPointMapperUnitTests extends DataPoint
         List<DataPoint<PhysicalActivity>> dataPoints = mapper.asDataPoints(singletonList(responseNode));
 
         assertThat(dataPoints, notNullValue());
-        assertThat(dataPoints.size(), equalTo(3));
+        assertThat(dataPoints.size(), equalTo(2));
     }
 
     @Test
@@ -75,8 +76,11 @@ public class RunKeeperPhysicalActivityDataPointMapperUnitTests extends DataPoint
         DataPointAcquisitionProvenance acquisitionProvenance = dataPoint.getHeader().getAcquisitionProvenance();
 
         assertThat(acquisitionProvenance, notNullValue());
+
         assertThat(acquisitionProvenance.getSourceName(), equalTo(RESOURCE_API_SOURCE_NAME));
+
         assertThat(acquisitionProvenance.getModality(), equalTo(SENSED));
+
         assertThat(acquisitionProvenance.getAdditionalProperty("external_id").isPresent(), equalTo(true));
         assertThat(acquisitionProvenance.getAdditionalProperty("external_id").get(),
                 equalTo("/fitnessActivities/465161536"));
@@ -88,7 +92,7 @@ public class RunKeeperPhysicalActivityDataPointMapperUnitTests extends DataPoint
         List<DataPoint<PhysicalActivity>> dataPoints = mapper.asDataPoints(singletonList(responseNode));
 
         assertThat(dataPoints, notNullValue());
-        assertThat(dataPoints.size(), equalTo(3));
+        assertThat(dataPoints.size(), equalTo(2));
 
         DataPoint<PhysicalActivity> dataPoint = dataPoints.get(1);
 
@@ -99,11 +103,15 @@ public class RunKeeperPhysicalActivityDataPointMapperUnitTests extends DataPoint
     }
 
     @Test
-    public void asDataPointsShouldReturnNoTimeFrameWhenOffsetMissing(){
+    public void asDataPointsShouldNotCreateDataPointWhenOffsetMissing() throws IOException {
 
-        List<DataPoint<PhysicalActivity>> dataPoints = mapper.asDataPoints(singletonList(responseNode));
+        ClassPathResource resource =
+                new ClassPathResource(
+                        "org/openmhealth/shim/runkeeper/mapper/runkeeper-fitness-activities-no-offset.json");
+        JsonNode responseNodeWithoutUtcOffset = objectMapper.readTree(resource.getInputStream());
 
-        DataPoint<PhysicalActivity> testDataPoint = dataPoints.get(1);
-        assertThat(testDataPoint.getBody().getEffectiveTimeFrame(), equalTo(null));
+        List<DataPoint<PhysicalActivity>> dataPoints = mapper.asDataPoints(singletonList(responseNodeWithoutUtcOffset));
+
+        assertThat(dataPoints.size(), equalTo(0));
     }
 }
