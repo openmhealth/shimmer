@@ -2,6 +2,7 @@ package org.openmhealth.shim.misfit;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.base.Joiner;
+import com.google.common.base.Splitter;
 import org.openmhealth.shim.*;
 import org.openmhealth.shim.misfit.mapper.MisfitDataPointMapper;
 import org.openmhealth.shim.misfit.mapper.MisfitPhysicalActivityDataPointMapper;
@@ -101,7 +102,10 @@ public class MisfitShim extends OAuth2ShimBase {
     @Override
     public ShimDataType[] getShimDataTypes() {
         return MisfitDataTypes.values();
-        };
+    }
+
+    ;
+
 
     // TODO remove this structure once endpoints are figured out
     public enum MisfitDataTypes implements ShimDataType {
@@ -144,12 +148,18 @@ public class MisfitShim extends OAuth2ShimBase {
                 now.plusDays(1) : shimDataRequest.getEndDateTime();
 
         if (Duration.between(startDateTime, endDateTime).toDays() > MAX_DURATION_IN_DAYS) {
-            endDateTime = startDateTime.plusDays(MAX_DURATION_IN_DAYS - 1);  // TODO when refactoring, break apart queries
+            endDateTime =
+                    startDateTime.plusDays(MAX_DURATION_IN_DAYS - 1);  // TODO when refactoring, break apart queries
         }
 
         UriComponentsBuilder uriBuilder = UriComponentsBuilder
-                .fromUriString(DATA_URL)
-                .pathSegment(misfitDataType.getEndPoint())
+                .fromUriString(DATA_URL);
+
+        for (String pathSegment : Splitter.on("/").split(misfitDataType.getEndPoint())) {
+            uriBuilder.pathSegment(pathSegment);
+        }
+
+        uriBuilder
                 .queryParam("start_date", startDateTime.toLocalDate()) // TODO convert ODT to LocalDate properly
                 .queryParam("end_date", endDateTime.toLocalDate())
                 .queryParam("detail", true); // added to all endpoints to support summaries
