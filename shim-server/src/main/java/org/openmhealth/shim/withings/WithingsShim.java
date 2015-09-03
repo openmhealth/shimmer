@@ -288,15 +288,18 @@ public class WithingsShim extends OAuth1ShimBase {
         uriComponentsBuilder.queryParam("action", measureParameter).queryParam("userid", userid)
                 .queryParams(dateTimeMap);
 
+        // if it's a body measure
         if (Objects.equals(withingsDataType.getMeasureParameter(), "getmeas")) {
 
-            if (withingsDataType !=
-                    WithingsDataType.BLOOD_PRESSURE) { // blood pressure requires both diastolic and systolic and
-                    // Withings API does not allow us to ask for multiple types, so we need to request everything and
-                    // processr
+            /*
+                The Withings API allows us to query for single body measures, which we take advantage of to reduce
+                unnecessary data transfer. However, since blood pressure is represented as two separate measures,
+                namely a diastolic and a systolic measure, when the measure type is blood pressure we ask for all
+                measures and then filter out the ones we don't care about.
+             */
+            if (withingsDataType != WithingsDataType.BLOOD_PRESSURE) {
 
-                WithingsBodyMeasureType measureType =
-                        WithingsBodyMeasureType.valueOf(withingsDataType.name());
+                WithingsBodyMeasureType measureType = WithingsBodyMeasureType.valueOf(withingsDataType.name());
                 uriComponentsBuilder.queryParam("meastype", measureType.getMagicNumber());
             }
 
