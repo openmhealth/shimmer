@@ -197,7 +197,7 @@ public class GoogleFitShim extends OAuth2ShimBase {
 
         if (shimDataRequest.getNormalize()) {
             GoogleFitDataPointMapper<?> dataPointMapper;
-            switch (googleFitDataType) {
+            switch ( googleFitDataType ) {
                 case BODY_WEIGHT:
                     dataPointMapper = new GoogleFitBodyWeightDataPointMapper();
                     break;
@@ -232,16 +232,18 @@ public class GoogleFitShim extends OAuth2ShimBase {
     @Override
     protected String getAuthorizationUrl(UserRedirectRequiredException exception) {
         final OAuth2ProtectedResourceDetails resource = getResource();
-        return exception.getRedirectUri()
-                + "?state="
-                + exception.getStateKey()
-                + "&client_id="
-                + resource.getClientId()
-                + "&response_type=code"
-                + "&access_type=offline"
-                + "&approval_prompt=force" // required to get refresh tokens
-                + "&scope=" + StringUtils.collectionToDelimitedString(resource.getScope(), " ")
-                + "&redirect_uri=" + getCallbackUrl();
+        
+        UriComponentsBuilder uriBuilder = UriComponentsBuilder
+                .fromUriString(exception.getRedirectUri())
+                .queryParam("state", exception.getStateKey())
+                .queryParam("client_id", resource.getClientId())
+                .queryParam("response_type", "code")
+                .queryParam("access_type", "offline")
+                .queryParam("approval_prompt", "force")
+                .queryParam("scope", StringUtils.collectionToDelimitedString(resource.getScope(), " "))
+                .queryParam("redirect_uri", getCallbackUrl());
+
+        return uriBuilder.build().encode().toUriString();
     }
 
     /**
