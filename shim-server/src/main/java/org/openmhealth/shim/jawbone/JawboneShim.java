@@ -183,7 +183,7 @@ public class JawboneShim extends OAuth2ShimBase {
         if (shimDataRequest.getNormalize()) {
 
             JawboneDataPointMapper mapper;
-            switch (jawboneDataType) {
+            switch ( jawboneDataType ) {
                 case WEIGHT:
                     mapper = new JawboneBodyWeightDataPointMapper();
                     break;
@@ -221,14 +221,17 @@ public class JawboneShim extends OAuth2ShimBase {
     protected String getAuthorizationUrl(UserRedirectRequiredException exception) {
 
         final OAuth2ProtectedResourceDetails resource = getResource();
-        return exception.getRedirectUri()
-                + "?state="
-                + exception.getStateKey()
-                + "&client_id="
-                + resource.getClientId()
-                + "&response_type=code"
-                + "&scope=" + StringUtils.collectionToDelimitedString(resource.getScope(), " ")
-                + "&redirect_uri=" + getCallbackUrl();
+        
+        UriComponentsBuilder uriBuilder = UriComponentsBuilder
+                .fromUriString(exception.getRedirectUri())
+                .queryParam("state", exception.getStateKey())
+                .queryParam("client_id", resource.getClientId())
+                .queryParam("response_type", "code")
+                .queryParam("scope", StringUtils.collectionToDelimitedString(resource.getScope(), " "))
+                .queryParam("redirect_uri", getCallbackUrl());
+
+        return uriBuilder.build().encode().toUriString();
+
     }
 
 
