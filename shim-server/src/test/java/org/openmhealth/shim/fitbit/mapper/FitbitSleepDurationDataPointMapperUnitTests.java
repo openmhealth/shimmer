@@ -54,12 +54,26 @@ public class FitbitSleepDurationDataPointMapperUnitTests extends DataPointMapper
 
         SleepDuration.Builder expectedSleepDurationBuilder = new SleepDuration.Builder(new DurationUnitValue(DurationUnit.MINUTE,831));
         OffsetDateTime offsetStartDateTime = OffsetDateTime.parse("2014-07-19T11:58:00Z");
-        expectedSleepDurationBuilder.setEffectiveTimeFrame(TimeInterval.ofStartDateTimeAndDuration(offsetStartDateTime,new DurationUnitValue(DurationUnit.MINUTE,961)));
+        expectedSleepDurationBuilder.setEffectiveTimeFrame(TimeInterval
+                .ofStartDateTimeAndDuration(offsetStartDateTime, new DurationUnitValue(DurationUnit.MINUTE, 961)));
 
         SleepDuration expectedSleepDuration = expectedSleepDurationBuilder.build();
 
         SleepDuration body = dataPoints.get(0).getBody();
         assertThat(body,equalTo(expectedSleepDuration));
+
+
+    }
+
+    @Test
+    public void asDataPointsShouldReturnEmptyListWhenResponseIsEmpty() throws IOException {
+
+        ClassPathResource resource = new ClassPathResource("org/openmhealth/shim/fitbit/mapper/fitbit-get-sleep-empty.json");
+        JsonNode responseNodeEmptySleep = objectMapper.readTree(resource.getInputStream());
+
+        List<DataPoint<SleepDuration>> dataPoints = mapper.asDataPoints(singletonList(responseNodeEmptySleep));
+
+        assertThat(dataPoints.size(),equalTo(0));
 
 
     }
