@@ -23,14 +23,11 @@ public class FitbitPhysicalActivityDataPointMapper extends FitbitDataPointMapper
      *
      * @param node a JSON node for an individual object in the "activities" array retrieved from the activities/date/
      * Fitbit API endpoint
-     * @param offsetFromUTCInMilliseconds the "offsetFromUTCMillis" property from a JSON response from the
-     * user/<user-id>/profile Fitbit API endpoint, may be incorrect if the user has changed time zone since the data point
-     * was created
      * @return a {@link DataPoint} object containing a {@link PhysicalActivity} measure with the appropriate values from
      * the node parameter, wrapped as an {@link Optional}
      */
     @Override
-    protected Optional<DataPoint<PhysicalActivity>> asDataPoint(JsonNode node, int offsetFromUTCInMilliseconds) {
+    protected Optional<DataPoint<PhysicalActivity>> asDataPoint(JsonNode node) {
 
         String activityName = asRequiredString(node, "name");
         PhysicalActivity.Builder activityBuilder = new PhysicalActivity.Builder(activityName);
@@ -45,8 +42,7 @@ public class FitbitPhysicalActivityDataPointMapper extends FitbitDataPointMapper
             Optional<LocalDateTime> localStartDateTime = asOptionalLocalDateTime(node, "startDate", "startTime");
             Optional<Long> duration = asOptionalLong(node, "duration");
             if (localStartDateTime.isPresent()) {
-                OffsetDateTime offsetStartDateTime = combineDateTimeAndTimezone(localStartDateTime.get(),
-                        offsetFromUTCInMilliseconds);
+                OffsetDateTime offsetStartDateTime = combineDateTimeAndTimezone(localStartDateTime.get());
                 if (duration.isPresent()) {
                     activityBuilder.setEffectiveTimeFrame(TimeInterval.ofStartDateTimeAndDuration(offsetStartDateTime,
                             new DurationUnitValue(DurationUnit.MILLISECOND, duration.get())));
@@ -63,8 +59,7 @@ public class FitbitPhysicalActivityDataPointMapper extends FitbitDataPointMapper
                 //In this case we have a date, but no time, so we set the startTime to beginning of day on the
                 // startDate, add the offset, then set the duration as the entire day
                 LocalDateTime localStartDateTime = localStartDate.get().atStartOfDay();
-                OffsetDateTime offsetStartDateTime = combineDateTimeAndTimezone(localStartDateTime,
-                        offsetFromUTCInMilliseconds);
+                OffsetDateTime offsetStartDateTime = combineDateTimeAndTimezone(localStartDateTime);
                 activityBuilder.setEffectiveTimeFrame(TimeInterval
                         .ofStartDateTimeAndDuration(offsetStartDateTime, new DurationUnitValue(DurationUnit.DAY, 1)));
             }

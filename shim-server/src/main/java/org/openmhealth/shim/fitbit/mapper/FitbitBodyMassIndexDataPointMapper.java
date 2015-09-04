@@ -25,20 +25,17 @@ public class FitbitBodyMassIndexDataPointMapper extends FitbitDataPointMapper<Bo
      *
      * @param node a JSON node for an individual object in the "weight" array retrieved from the body/log/weight Fitbit
      * API call
-     * @param offsetFromUTCInMilliseconds the "offsetFromUTCMillis" property from a JSON response node from the
-     * user/<user-id>/profile Fitbit API call, may be incorrect if the user has changed time zone since the data point
-     * was created
      * @return a {@link DataPoint} object containing a {@link BodyMassIndex} measure with the appropriate values from
      * the JSON node parameter, wrapped as an {@link Optional}
      */
     @Override
-    protected Optional<DataPoint<BodyMassIndex>> asDataPoint(JsonNode node, int offsetFromUTCInMilliseconds) {
+    protected Optional<DataPoint<BodyMassIndex>> asDataPoint(JsonNode node) {
         TypedUnitValue<BodyMassIndexUnit> bmiValue =
                 new TypedUnitValue<BodyMassIndexUnit>(BodyMassIndexUnit.KILOGRAMS_PER_SQUARE_METER,
                         asRequiredDouble(node, "bmi"));
         BodyMassIndex.Builder builder = new BodyMassIndex.Builder(bmiValue);
 
-        Optional<OffsetDateTime> dateTime = combineDateTimeAndTimezone(node, offsetFromUTCInMilliseconds);
+        Optional<OffsetDateTime> dateTime = combineDateTimeAndTimezone(node);
 
         if (dateTime.isPresent()) {
             builder.setEffectiveTimeFrame(dateTime.get());

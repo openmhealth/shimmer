@@ -19,14 +19,11 @@ public class FitbitSleepDurationDataPointMapper extends FitbitDataPointMapper<Sl
      * Maps a JSON response node from the Fitbit API into a {@link SleepDuration} measure
      * @param node a JSON node for an individual object in the "sleep" array retrieved from the sleep/date/
      * Fitbit API endpoint
-     * @param offsetFromUTCInMilliseconds the "offsetFromUTCMillis" property from a JSON response from the
-     * user/<user-id>/profile Fitbit API endpoint, may be incorrect if the user has changed time zone since the data point
-     * was created
      * @return a {@link DataPoint} object containing a {@link SleepDuration} measure with the appropriate values from
      * the node parameter, wrapped as an {@link Optional}
      */
     @Override
-    protected Optional<DataPoint<SleepDuration>> asDataPoint(JsonNode node, int offsetFromUTCInMilliseconds) {
+    protected Optional<DataPoint<SleepDuration>> asDataPoint(JsonNode node) {
         DurationUnitValue unitValue = new DurationUnitValue(DurationUnit.MINUTE,asRequiredDouble(node,"minutesAsleep"));
         SleepDuration.Builder sleepDurationBuilder = new SleepDuration.Builder(unitValue);
 
@@ -34,8 +31,7 @@ public class FitbitSleepDurationDataPointMapper extends FitbitDataPointMapper<Sl
         Optional<LocalDateTime> localStartTime = asOptionalLocalDateTime(node, "startTime");
 
         if(localStartTime.isPresent()){
-            OffsetDateTime offsetStartDateTime = combineDateTimeAndTimezone(localStartTime.get(),
-                    offsetFromUTCInMilliseconds);
+            OffsetDateTime offsetStartDateTime = combineDateTimeAndTimezone(localStartTime.get());
             Optional<Double> timeInBed = asOptionalDouble(node, "timeInBed");
             if(timeInBed.isPresent()){
                 sleepDurationBuilder.setEffectiveTimeFrame(TimeInterval.ofStartDateTimeAndDuration(offsetStartDateTime,new DurationUnitValue(DurationUnit.MINUTE,timeInBed.get())));
