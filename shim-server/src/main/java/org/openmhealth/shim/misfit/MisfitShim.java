@@ -104,15 +104,13 @@ public class MisfitShim extends OAuth2ShimBase {
         return MisfitDataTypes.values();
     }
 
-    ;
-
 
     // TODO remove this structure once endpoints are figured out
     public enum MisfitDataTypes implements ShimDataType {
 
         SLEEP("activity/sleeps"),
         ACTIVITIES("activity/sessions"),
-        MOVES("activity/summary");
+        STEPS("activity/summary");
 
         private String endPoint;
 
@@ -185,7 +183,7 @@ public class MisfitShim extends OAuth2ShimBase {
                 case SLEEP:
                     dataPointMapper = sleepDurationMapper;
                     break;
-                case MOVES:
+                case STEPS:
                     dataPointMapper = stepCountMapper;
                     break;
                 default:
