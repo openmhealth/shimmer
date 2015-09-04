@@ -2,9 +2,7 @@ package org.openmhealth.shim.fitbit.mapper;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.hamcrest.CoreMatchers;
-import org.openmhealth.schema.domain.omh.DataPoint;
-import org.openmhealth.schema.domain.omh.StepCount;
-import org.openmhealth.schema.domain.omh.TimeInterval;
+import org.openmhealth.schema.domain.omh.*;
 import org.openmhealth.shim.common.mapper.DataPointMapperUnitTests;
 import org.springframework.core.io.ClassPathResource;
 import org.testng.annotations.BeforeTest;
@@ -55,11 +53,9 @@ public class FitbitStepCountDataPointUnitTests extends DataPointMapperUnitTests 
 
         OffsetDateTime startDateTime = OffsetDateTime.parse(dateString + "T" + "00:00:00Z", DateTimeFormatter.ISO_OFFSET_DATE_TIME);
         startDateTime = startDateTime.withNano(000000000);
-        OffsetDateTime endDateTime = OffsetDateTime.parse(dateString + "T" + "23:59:59Z", DateTimeFormatter.ISO_OFFSET_DATE_TIME);
-        endDateTime = endDateTime.withNano(999999999);
 
         dataPointBuilderForExpected.setEffectiveTimeFrame(
-                TimeInterval.ofStartDateTimeAndEndDateTime(startDateTime, endDateTime));
+                TimeInterval.ofStartDateTimeAndDuration(startDateTime, new DurationUnitValue(DurationUnit.DAY,1)));
         StepCount expectedStepCount = dataPointBuilderForExpected.build();
 
         assertThat(dataPoint.getBody(), CoreMatchers.equalTo(expectedStepCount));
