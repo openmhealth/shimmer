@@ -1,6 +1,7 @@
 package org.openmhealth.shim.misfit.mapper;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import org.hamcrest.Matchers;
 import org.openmhealth.schema.domain.omh.*;
 import org.openmhealth.shim.common.mapper.DataPointMapperUnitTests;
 import org.openmhealth.shim.common.mapper.JsonNodeMappingException;
@@ -16,6 +17,7 @@ import java.util.List;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.greaterThan;
@@ -95,6 +97,17 @@ public class MisfitSleepDurationDataPointMapperUnitTests extends DataPointMapper
     }
 
     @Test
+    public void asDataPointsShouldReturnEmptyListIfEmptyResponse() throws IOException {
+
+        JsonNode emptyNode = objectMapper.readTree("{\n" +
+                "    \"sleeps\": []\n" +
+                "}");
+        List<DataPoint<SleepDuration>> dataPoints = mapper.asDataPoints(singletonList(emptyNode));
+
+        assertThat(dataPoints.size(), Matchers.equalTo(0));
+    }
+
+    @Test
     public void asDataPointsShouldReturnCorrectDataPoints() {
 
         List<DataPoint<SleepDuration>> dataPoints = mapper.asDataPoints(singletonList(responseNode));
@@ -121,5 +134,20 @@ public class MisfitSleepDurationDataPointMapperUnitTests extends DataPointMapper
         assertThat(acquisitionProvenance, notNullValue());
         assertThat(acquisitionProvenance.getSourceName(), equalTo(RESOURCE_API_SOURCE_NAME));
         assertThat(acquisitionProvenance.getModality(), equalTo(SENSED));
+    }
+
+    @Test
+    public void asDataPointsShouldSetModalityAsSensedOnlyWhenAutodetectedIsTrue() throws IOException {
+
+        ClassPathResource resource =
+                new ClassPathResource("org/openmhealth/shim/misfit/mapper/misfit-sleeps-detected-and-not.json");
+        JsonNode responseNodeForSleepSensing = objectMapper.readTree(resource.getInputStream());
+
+        List<DataPoint<SleepDuration>> dataPoints = mapper.asDataPoints(singletonList(responseNodeForSleepSensing));
+
+        assertThat(dataPoints.get(0).getHeader().getAcquisitionProvenance().getModality(), equalTo(SENSED));
+        assertThat(dataPoints.get(1).getHeader().getAcquisitionProvenance().getModality(),nullValue());
+        assertThat(dataPoints.get(2).getHeader().getAcquisitionProvenance().getModality(),nullValue());
+
     }
 }

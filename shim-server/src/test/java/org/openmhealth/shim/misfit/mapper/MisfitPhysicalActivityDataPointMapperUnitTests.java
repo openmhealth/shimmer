@@ -1,6 +1,7 @@
 package org.openmhealth.shim.misfit.mapper;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import org.hamcrest.Matchers;
 import org.openmhealth.schema.domain.omh.*;
 import org.openmhealth.shim.common.mapper.DataPointMapperUnitTests;
 import org.springframework.core.io.ClassPathResource;
@@ -13,6 +14,7 @@ import java.time.ZoneOffset;
 import java.util.Collections;
 import java.util.List;
 
+import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -75,5 +77,16 @@ public class MisfitPhysicalActivityDataPointMapperUnitTests extends DataPointMap
         assertThat(acquisitionProvenance.getAdditionalProperty("external_id").isPresent(), equalTo(true));
         assertThat(acquisitionProvenance.getAdditionalProperty("external_id").get(),
                 equalTo("552eab896c59ae1f7300003e"));
+    }
+
+    @Test
+    public void asDataPointsShouldReturnEmptyListIfEmptyResponse() throws IOException {
+
+        JsonNode emptyNode = objectMapper.readTree("{\n" +
+                "    \"sessions\": []\n" +
+                "}");
+        List<DataPoint<PhysicalActivity>> dataPoints = mapper.asDataPoints(singletonList(emptyNode));
+
+        assertThat(dataPoints.size(), Matchers.equalTo(0));
     }
 }
