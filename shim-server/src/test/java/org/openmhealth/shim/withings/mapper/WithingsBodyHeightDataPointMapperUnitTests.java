@@ -46,12 +46,12 @@ public class WithingsBodyHeightDataPointMapperUnitTests extends DataPointMapperU
 
         JsonNode measuresNode = objectMapper.readTree("[\n" +
                 "    {\n" +
-                "        \"type\": 1,\n" + // WithingsBodyMeasureType.BODY_WEIGHT
+                "        \"type\": 4,\n" + // WithingsBodyMeasureType.BODY_HEIGHT
                 "        \"unit\": 0,\n" +
                 "        \"value\": 68\n" +
                 "    },\n" +
                 "    {\n" +
-                "        \"type\": 1,\n" +
+                "        \"type\": 4,\n" +
                 "        \"unit\": 0,\n" +
                 "        \"value\": 104\n" +
                 "    }\n" +
