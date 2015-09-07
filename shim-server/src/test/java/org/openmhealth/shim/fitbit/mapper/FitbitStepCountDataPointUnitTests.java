@@ -17,6 +17,7 @@ import static java.util.Collections.singletonList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
+
 /**
  * @author Chris Schaefbauer
  */
@@ -28,40 +29,64 @@ public class FitbitStepCountDataPointUnitTests extends DataPointMapperUnitTests 
     @BeforeTest
     public void initializeResponseNodes() throws IOException {
 
-        ClassPathResource resource = new ClassPathResource("org/openmhealth/shim/fitbit/mapper/fitbit-time-series-steps.json");
+        ClassPathResource resource =
+                new ClassPathResource("org/openmhealth/shim/fitbit/mapper/fitbit-time-series-steps.json");
         responseNodeStepTimeSeries = objectMapper.readTree(resource.getInputStream());
 
     }
 
     @Test
-    public void asDataPointsShouldReturnCorrectNumberOfDataPoints(){
+    public void asDataPointsShouldReturnCorrectNumberOfDataPoints() {
+
         List<DataPoint<StepCount>> stepDataPoints = mapper.asDataPoints(singletonList(responseNodeStepTimeSeries));
-        assertThat(stepDataPoints.size(),equalTo(3));
+        assertThat(stepDataPoints.size(), equalTo(2));
     }
 
     @Test
-    public void asDataPointsShouldReturnCorrectDataPoints(){
+    public void asDataPointsShouldReturnCorrectDataPoints() {
+
         List<DataPoint<StepCount>> stepDataPoints = mapper.asDataPoints(singletonList(responseNodeStepTimeSeries));
-        testFitbitStepCountDataPoint(stepDataPoints.get(0),0,"2015-05-24");
-        testFitbitStepCountDataPoint(stepDataPoints.get(1),2170,"2015-05-26");
-        testFitbitStepCountDataPoint(stepDataPoints.get(2),3248,"2015-05-27");
+
+        testFitbitStepCountDataPoint(stepDataPoints.get(0), 2170, "2015-05-26");
+        testFitbitStepCountDataPoint(stepDataPoints.get(1), 3248, "2015-05-27");
     }
 
-    public void testFitbitStepCountDataPoint(DataPoint<StepCount> dataPoint,long stepCount,String dateString){
+    @Test
+    public void asDataPointsShouldReturnNoDataPointWhenStepCountEqualsZero() throws IOException {
+
+        JsonNode zeroStepsNode = objectMapper.readTree(
+                "{\n" +
+                        "\"activities-steps\": [ \n" +
+                        "{\n" +
+                        "\"dateTime\": \"2015-05-24\"\n," +
+                        "\"value\": \"0\"\n" +
+                        "}\n" +
+                        "]\n" +
+                        "}");
+
+        List<DataPoint<StepCount>> dataPoints = mapper.asDataPoints(singletonList(zeroStepsNode));
+        assertThat(dataPoints.size(),equalTo(0));
+
+    }
+
+    public void testFitbitStepCountDataPoint(DataPoint<StepCount> dataPoint, long stepCount, String dateString) {
 
         StepCount.Builder dataPointBuilderForExpected = new StepCount.Builder(stepCount);
 
-        OffsetDateTime startDateTime = OffsetDateTime.parse(dateString + "T" + "00:00:00Z", DateTimeFormatter.ISO_OFFSET_DATE_TIME);
+        OffsetDateTime startDateTime =
+                OffsetDateTime.parse(dateString + "T" + "00:00:00Z", DateTimeFormatter.ISO_OFFSET_DATE_TIME);
         startDateTime = startDateTime.withNano(000000000);
 
         dataPointBuilderForExpected.setEffectiveTimeFrame(
-                TimeInterval.ofStartDateTimeAndDuration(startDateTime, new DurationUnitValue(DurationUnit.DAY,1)));
+                TimeInterval.ofStartDateTimeAndDuration(startDateTime, new DurationUnitValue(DurationUnit.DAY, 1)));
         StepCount expectedStepCount = dataPointBuilderForExpected.build();
 
         assertThat(dataPoint.getBody(), CoreMatchers.equalTo(expectedStepCount));
         assertThat(dataPoint.getHeader().getBodySchemaId(), CoreMatchers.equalTo(StepCount.SCHEMA_ID));
-        assertThat(dataPoint.getHeader().getAcquisitionProvenance().getAdditionalProperties().get("external_id"), CoreMatchers.nullValue());
-        assertThat(dataPoint.getHeader().getAcquisitionProvenance().getSourceName(), CoreMatchers.equalTo(FitbitDataPointMapper.RESOURCE_API_SOURCE_NAME));
+        assertThat(dataPoint.getHeader().getAcquisitionProvenance().getAdditionalProperties().get("external_id"),
+                CoreMatchers.nullValue());
+        assertThat(dataPoint.getHeader().getAcquisitionProvenance().getSourceName(),
+                CoreMatchers.equalTo(FitbitDataPointMapper.RESOURCE_API_SOURCE_NAME));
 
     }
 
