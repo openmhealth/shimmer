@@ -36,12 +36,15 @@ public class FitbitPhysicalActivityDataPointMapper extends FitbitDataPointMapper
 
         //hasStartTime is true if the startTime value has been set, which is required of entries through the user GUI
         // and from sensed data,
-        //however some of their data import workflows may set dummy values for these (00:00:00), in which case
+        // however some of their data import workflows may set dummy values for these (00:00:00), in which case
         // hasStartTime is false and the time shouldn't be used
         if (hasStartTime) {
+
             Optional<LocalDateTime> localStartDateTime = asOptionalLocalDateTime(node, "startDate", "startTime");
             Optional<Long> duration = asOptionalLong(node, "duration");
+
             if (localStartDateTime.isPresent()) {
+
                 OffsetDateTime offsetStartDateTime = combineDateTimeAndTimezone(localStartDateTime.get());
                 if (duration.isPresent()) {
                     activityBuilder.setEffectiveTimeFrame(TimeInterval.ofStartDateTimeAndDuration(offsetStartDateTime,
@@ -54,7 +57,9 @@ public class FitbitPhysicalActivityDataPointMapper extends FitbitDataPointMapper
             }
         }
         else {
+
             Optional<LocalDate> localStartDate = asOptionalLocalDate(node, "startDate");
+
             if (localStartDate.isPresent()) {
                 //In this case we have a date, but no time, so we set the startTime to beginning of day on the
                 // startDate, add the offset, then set the duration as the entire day
@@ -66,6 +71,7 @@ public class FitbitPhysicalActivityDataPointMapper extends FitbitDataPointMapper
         }
 
         Optional<Double> distance = asOptionalDouble(node, "distance");
+
         if (distance.isPresent()) {
             //by default fitbit returns metric unit values (https://wiki.fitbit.com/display/API/API+Unit+System), so
             // this assumes that the response is using the default for distance (KM)

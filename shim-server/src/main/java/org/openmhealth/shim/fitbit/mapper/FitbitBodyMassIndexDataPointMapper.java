@@ -30,6 +30,7 @@ public class FitbitBodyMassIndexDataPointMapper extends FitbitDataPointMapper<Bo
      */
     @Override
     protected Optional<DataPoint<BodyMassIndex>> asDataPoint(JsonNode node) {
+
         TypedUnitValue<BodyMassIndexUnit> bmiValue =
                 new TypedUnitValue<BodyMassIndexUnit>(BodyMassIndexUnit.KILOGRAMS_PER_SQUARE_METER,
                         asRequiredDouble(node, "bmi"));
@@ -37,7 +38,7 @@ public class FitbitBodyMassIndexDataPointMapper extends FitbitDataPointMapper<Bo
 
         Optional<OffsetDateTime> dateTime = combineDateTimeAndTimezone(node);
 
-        if (dateTime.isPresent()) {
+        if ( dateTime.isPresent()) {
             builder.setEffectiveTimeFrame(dateTime.get());
         }
 

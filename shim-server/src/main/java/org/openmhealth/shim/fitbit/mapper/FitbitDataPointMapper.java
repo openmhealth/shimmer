@@ -28,23 +28,20 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.*;
  * @author Emerson Farrugia
  */
 public abstract class FitbitDataPointMapper<T> implements JsonNodeDataPointMapper<T> {
-    //TODO: Add heart rate mapper and hook the mappers up to the shim itself
 
     public static final String RESOURCE_API_SOURCE_NAME = "Fitbit Resource API";
 
     /**
      * Maps JSON response nodes from the Fitbit API into a list of {@link DataPoint} objects with the appropriate type.
      * <p>
-     * <p>Data points from the Fitbit API do not have an associated time zone, so this mapper uses the
-     * time zone from the user's profile. The user's current time zone may have changed since the data point was
-     * created, so the original offset for that date point may differ from the offset used in this mapper. There is
-     * currently no way to determine the appropriate time zone for a datapoint given the Fitbit API.</p>
+     * <p>Data points from the Fitbit API do not have any time zone information, so these mappers use UTC as the
+     * timezone. There is currently no way to determine the correct time zone for a datapoint given the Fitbit API.</p>
      *
      * @param responseNodes the list of two json nodes - the first being the get-user-info response (from
      * user/<user-id>/profile) and the second being the specific data point of interest for the mapper
      * @return a list of DataPoint objects of type T with the appropriate values mapped from the input JSON; if JSON
-     * objects are contained within an array in the input response, each item in that array will map into an item in the
-     * lit
+     * objects are contained within an array in the input response, each item in that array will map into an item in
+     * the list
      */
     @Override
     public List<DataPoint<T>> asDataPoints(List<JsonNode> responseNodes) {
@@ -76,22 +73,26 @@ public abstract class FitbitDataPointMapper<T> implements JsonNodeDataPointMappe
      * to schema objects
      */
     protected <T extends Measure> DataPoint<T> newDataPoint(T measure, Long externalId) {
+
         DataPointAcquisitionProvenance acquisitionProvenance =
                 new DataPointAcquisitionProvenance.Builder(RESOURCE_API_SOURCE_NAME).build();
+
         if (externalId != null) {
             acquisitionProvenance.setAdditionalProperty("external_id", externalId);
         }
+
         DataPointHeader header = new Builder(UUID.randomUUID().toString(), measure.getSchemaId())
                 .setAcquisitionProvenance(acquisitionProvenance).build();
+
         return new DataPoint<>(header, measure);
     }
 
     /**
      * Takes a Fitbit response JSON node, which contains a date and time property, and then maps them into an {@link
-     * OffsetDateTime} object with an offset given by the second parameter
+     * OffsetDateTime} object
      *
-     * @return the date and time based on the "date" and "time" properties of the JsonNode parameter with the
-     * appropriate UTC offset, wrapped as an {@link Optional}
+     * @return the date and time based on the "date" and "time" properties of the JsonNode parameter, wrapped as an
+     * {@link Optional}
      */
     protected Optional<OffsetDateTime> combineDateTimeAndTimezone(JsonNode node) {
 
@@ -99,20 +100,19 @@ public abstract class FitbitDataPointMapper<T> implements JsonNodeDataPointMappe
         Optional<OffsetDateTime> offsetDateTime = null;
 
         if (dateTime.isPresent()) {
-            // FIXME fix the time zone offset to use the appropriate offset for the data point once it is fixed by
-            // Fitbit
+            // FIXME fix the time zone offset to use the correct offset for the data point once it is fixed by Fitbit
             offsetDateTime = Optional.ofNullable(OffsetDateTime.of(dateTime.get(), ZoneOffset.UTC));
 
         }
+
         return offsetDateTime;
     }
 
     /**
-     * Transforms a {@link LocalDateTime} object into an {@link OffsetDateTime} object with a zone offset given by the
-     * offsetFromUTCInMilliseconds parameter
+     * Transforms a {@link LocalDateTime} object into an {@link OffsetDateTime} object with a UTC time zone
      *
      * @param dateTime local date and time for the Fitbit response JSON node
-     * @return the date and time based on the input dateTime parameter with the appropriate UTC offset
+     * @return the date and time based on the input dateTime parameter
      */
     protected OffsetDateTime combineDateTimeAndTimezone(LocalDateTime dateTime) {
 

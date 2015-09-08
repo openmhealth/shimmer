@@ -320,8 +320,9 @@ public class FitbitShim extends OAuth1ShimBase {
 
         UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder.fromUriString(DATA_URL).
                 path("/1/user/-/{fitbitDataTypeEndpoint}/date/{fromDateString}/{toDateString}{stepTimeSeries}.json");
-        String endpointUrl = uriComponentsBuilder.buildAndExpand(fitbitDataType.getEndPoint(), fromDateString, toDateString,
-                (fitbitDataType == FitbitDataType.STEPS ? "/1d/1min" : "")).encode().toUriString();
+        String endpointUrl =
+                uriComponentsBuilder.buildAndExpand(fitbitDataType.getEndPoint(), fromDateString, toDateString,
+                        (fitbitDataType == FitbitDataType.STEPS ? "/1d/1min" : "")).encode().toUriString();
 
         return executeRequest(endpointUrl, accessToken, tokenSecret, normalize, fitbitDataType);
     }

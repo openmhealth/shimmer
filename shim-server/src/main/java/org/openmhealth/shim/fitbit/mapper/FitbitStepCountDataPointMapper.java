@@ -38,6 +38,7 @@ public class FitbitStepCountDataPointMapper extends FitbitDataPointMapper<StepCo
         StepCount.Builder builder = new StepCount.Builder(stepCountValue);
 
         Optional<LocalDate> stepDate = asOptionalLocalDate(node, "dateTime");
+
         if (stepDate.isPresent()) {
             LocalDateTime startDateTime = stepDate.get().atTime(0, 0, 0, 0);
 

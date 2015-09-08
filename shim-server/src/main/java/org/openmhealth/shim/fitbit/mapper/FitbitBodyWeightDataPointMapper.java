@@ -39,7 +39,6 @@ public class FitbitBodyWeightDataPointMapper extends FitbitDataPointMapper<BodyW
             builder.setEffectiveTimeFrame(dateTime.get());
         }
 
-
         Optional<Long> externalId = asOptionalLong(node, "logId");
         BodyWeight measure = builder.build();
 
