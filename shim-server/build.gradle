@@ -56,7 +56,6 @@ dependencyManagement {
 }
 
 dependencies {
-    compile project(':legacy-java-schema-sdk') // TODO delete this when shims have been migrated
     compile project(':java-shim-sdk')
     compile "commons-io:commons-io:2.4"
     compile "org.apache.httpcomponents:httpclient"
