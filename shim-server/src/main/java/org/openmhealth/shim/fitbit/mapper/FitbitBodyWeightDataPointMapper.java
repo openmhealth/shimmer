@@ -29,6 +29,7 @@ public class FitbitBodyWeightDataPointMapper extends FitbitDataPointMapper<BodyW
      */
     @Override
     protected Optional<DataPoint<BodyWeight>> asDataPoint(JsonNode node) {
+
         MassUnitValue bodyWeight = new MassUnitValue(MassUnit.KILOGRAM, asRequiredDouble(node, "weight"));
         BodyWeight.Builder builder = new BodyWeight.Builder(bodyWeight);
 

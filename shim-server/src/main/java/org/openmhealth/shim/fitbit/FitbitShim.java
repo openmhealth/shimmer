@@ -33,6 +33,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -65,6 +66,7 @@ public class FitbitShim extends OAuth1ShimBase {
     public FitbitShim(ApplicationAccessParametersRepo applicationParametersRepo,
             AuthorizationRequestParametersRepo authorizationRequestParametersRepo,
             ShimServerConfig shimServerConfig) {
+
         super(applicationParametersRepo, authorizationRequestParametersRepo, shimServerConfig);
     }
 
@@ -121,9 +123,6 @@ public class FitbitShim extends OAuth1ShimBase {
         WEIGHT("body/log/weight"),
         SLEEP("sleep"),
         BODY_MASS_INDEX("body/log/weight"),
-        //HEART("heart"),
-        //BLOOD_PRESSURE("bp"),
-        //BLOOD_GLUCOSE("glucose"),
         STEPS("activities/steps"),
         ACTIVITY("activities");
 
@@ -140,6 +139,7 @@ public class FitbitShim extends OAuth1ShimBase {
 
     @Override
     public ShimDataResponse getData(ShimDataRequest shimDataRequest) throws ShimException {
+
         AccessParameters accessParameters = shimDataRequest.getAccessParameters();
         String accessToken = accessParameters.getAccessToken();
         String tokenSecret = accessParameters.getTokenSecret();
@@ -202,28 +202,23 @@ public class FitbitShim extends OAuth1ShimBase {
      */
     @SuppressWarnings("unchecked")
     private ShimDataResponse aggregateNormalized(List<ShimDataResponse> dayResponses) {
+
         if (CollectionUtils.isEmpty(dayResponses)) {
             return ShimDataResponse.empty(FitbitShim.SHIM_KEY);
         }
-        Map<String, Collection<Object>> aggregateMap = new HashMap<>();
+
         List<DataPoint> aggregateDataPoints = Lists.newArrayList();
+
         for (ShimDataResponse dayResponse : dayResponses) {
             if (dayResponse.getBody() != null) {
 
                 List<DataPoint> dayList = (List<DataPoint>) dayResponse.getBody();
-//                Map<String, Collection<Object>> dayMap =
-//                        (Map<String, Collection<Object>>) dayResponse.getBody();
 
-                for (DataPoint dataPoint : dayList){
+                for (DataPoint dataPoint : dayList) {
 
                     aggregateDataPoints.add(dataPoint);
                 }
-//                for (String typeKey : dayMap.keySet()) {
-//                    if (!aggregateMap.containsKey(typeKey)) {
-//                        aggregateMap.put(typeKey, new ArrayList<>());
-//                    }
-//                    aggregateMap.get(typeKey).addAll(dayMap.get(typeKey));
-//                }
+
             }
         }
         return aggregateDataPoints.size() == 0 ?
@@ -283,8 +278,7 @@ public class FitbitShim extends OAuth1ShimBase {
 
                 FitbitDataPointMapper dataPointMapper;
 
-                switch(fitbitDataType){
-
+                switch ( fitbitDataType ) {
                     case STEPS:
                         dataPointMapper = new FitbitStepCountDataPointMapper();
                         break;
@@ -294,15 +288,19 @@ public class FitbitShim extends OAuth1ShimBase {
                     case WEIGHT:
                         dataPointMapper = new FitbitBodyWeightDataPointMapper();
                         break;
+                    case SLEEP:
+                        dataPointMapper = new FitbitSleepDurationDataPointMapper();
+                        break;
+                    case BODY_MASS_INDEX:
+                        dataPointMapper = new FitbitBodyMassIndexDataPointMapper();
+                        break;
                     default:
                         throw new UnsupportedOperationException();
                 }
 
-                return ShimDataResponse.result(FitbitShim.SHIM_KEY,dataPointMapper.asDataPoints(singletonList(jsonNode)));
-//                SimpleModule module = new SimpleModule();
-//                module.addDeserializer(ShimDataResponse.class, fitbitDataType.getNormalizer());
-//                objectMapper.registerModule(module);
-//                return objectMapper.readValue(jsonContent, ShimDataResponse.class);
+                return ShimDataResponse
+                        .result(FitbitShim.SHIM_KEY, dataPointMapper.asDataPoints(singletonList(jsonNode)));
+
             }
             else {
                 return ShimDataResponse.result(FitbitShim.SHIM_KEY,
@@ -326,13 +324,12 @@ public class FitbitShim extends OAuth1ShimBase {
         String fromDateString = fromTime.toLocalDate().toString();
         String toDateString = toTime.toLocalDate().toString();
 
-        String endPointUrl = DATA_URL;
-        endPointUrl += "/1/user/-/"
-                + fitbitDataType.getEndPoint() + "/date/" + fromDateString + "/" + toDateString
-                + (fitbitDataType == FitbitDataType.STEPS ? "/1d/1min" : "") //special setting for time series
-                + ".json";
+        UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder.fromUriString(DATA_URL).
+                path("/1/user/-/{fitbitDataTypeEndpoint}/date/{fromDateString}/{toDateString}{stepTimeSeries}.json");
+        String endpointUrl = uriComponentsBuilder.buildAndExpand(fitbitDataType.getEndPoint(), fromDateString, toDateString,
+                (fitbitDataType == FitbitDataType.STEPS ? "/1d/1min" : "")).encode().toUriString();
 
-        return executeRequest(endPointUrl, accessToken, tokenSecret, normalize, fitbitDataType);
+        return executeRequest(endpointUrl, accessToken, tokenSecret, normalize, fitbitDataType);
     }
 
     private ShimDataResponse getDaysData(OffsetDateTime dateTime,
@@ -342,16 +339,15 @@ public class FitbitShim extends OAuth1ShimBase {
 
         String dateString = dateTime.toLocalDate().toString();
 
-        String endPointUrl = DATA_URL;
-        endPointUrl += "/1/user/-/"
-                + fitbitDataType.getEndPoint() + "/date/" + dateString
-                + (fitbitDataType == FitbitDataType.STEPS ? "/1d/1min" : "") //special setting for time series
-                + ".json";
+        UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder.fromUriString(DATA_URL).
+                path("/1/user/-/{fitbitDataTypeEndpoint}/date/{dateString}{stepTimeSeries}.json");
+        String endpointUrl = uriComponentsBuilder.buildAndExpand(fitbitDataType.getEndPoint(), dateString,
+                (fitbitDataType == FitbitDataType.STEPS ? "/1d/1min" : "")).encode().toString();
 
         ApplicationAccessParameters parameters = findApplicationAccessParameters();
         HttpRequestBase dataRequest =
                 OAuth1Utils.getSignedRequest(HttpMethod.GET,
-                        endPointUrl, parameters.getClientId(), parameters.getClientSecret(), accessToken, tokenSecret,
+                        endpointUrl, parameters.getClientId(), parameters.getClientSecret(), accessToken, tokenSecret,
                         null);
 
         HttpResponse response;
@@ -359,30 +355,18 @@ public class FitbitShim extends OAuth1ShimBase {
             response = httpClient.execute(dataRequest);
             HttpEntity responseEntity = response.getEntity();
 
-            /**
-             * The fitbit API's system works by retrieving each day's
-             * data. The date captured is not returned in the data from fitbit because
-             * it's implicit so we create a JSON wrapper that includes it.
-             */
             StringWriter writer = new StringWriter();
             IOUtils.copy(responseEntity.getContent(), writer);
-            String jsonContent = "{\"result\": {\"date\": \"" + dateString + "\" " +
-                    ",\"content\": " + writer.toString() + "}}";
 
             ObjectMapper objectMapper = new ObjectMapper();
+
             if (normalize) {
-//                SimpleModule module = new SimpleModule();
-//                module.addDeserializer(ShimDataResponse.class, fitbitDataType.getNormalizer());
-//                objectMapper.registerModule(module);
-
-                IOUtils.copy(responseEntity.getContent(), writer);
-
+                
                 JsonNode jsonNode = objectMapper.readValue(writer.toString(), JsonNode.class);
 
                 FitbitDataPointMapper dataPointMapper;
 
-                switch(fitbitDataType){
-
+                switch ( fitbitDataType ) {
                     case STEPS:
                         dataPointMapper = new FitbitStepCountDataPointMapper();
                         break;
@@ -402,10 +386,19 @@ public class FitbitShim extends OAuth1ShimBase {
                         throw new UnsupportedOperationException();
                 }
 
-                return ShimDataResponse.result(FitbitShim.SHIM_KEY,dataPointMapper.asDataPoints(singletonList(jsonNode)));
-                //return objectMapper.readValue(jsonContent, ShimDataResponse.class);
+                return ShimDataResponse
+                        .result(FitbitShim.SHIM_KEY, dataPointMapper.asDataPoints(singletonList(jsonNode)));
+
             }
             else {
+                /**
+                 * The fitbit API's system works by retrieving each day's
+                 * data. The date captured is not returned in the data from fitbit because
+                 * it's implicit so we create a JSON wrapper that includes it.
+                 */
+                String jsonContent = "{\"result\": {\"date\": \"" + dateString + "\" " +
+                        ",\"content\": " + writer.toString() + "}}";
+
                 return ShimDataResponse.result(FitbitShim.SHIM_KEY,
                         objectMapper.readTree(jsonContent));
             }
