@@ -1,6 +1,6 @@
 {
     "minStartTimeNs": "1420099200000000000",
-    "maxEndTimeNs": "1425110400000000000",
+    "maxEndTimeNs": "1436469400000000000",
     "dataSourceId": "derived:com.google.weight:com.google.android.gms:merge_weight",
     "point": [
         {
@@ -16,18 +16,6 @@
             "modifiedTimeMillis": "1423945751811"
         },
         {
-            "startTimeNanos": "1423872000000000000",
-            "endTimeNanos": "1423872000000000000",
-            "dataTypeName": "com.google.weight",
-            "originDataSourceId": "raw:com.google.weight:com.fatsecret.android:",
-            "value": [
-                {
-                    "fpVal": 72.30000305175781
-                }
-            ],
-            "modifiedTimeMillis": "1423944855438"
-        },
-        {
             "startTimeNanos": "1424192233313000000",
             "endTimeNanos": "1424192233313000000",
             "dataTypeName": "com.google.weight",
@@ -38,6 +26,18 @@
                 }
             ],
             "modifiedTimeMillis": "1424192280895"
+        },
+        {
+            "startTimeNanos": "1436325420000000000",
+            "endTimeNanos": "1436325430020000000",
+            "dataTypeName": "com.google.weight",
+            "originDataSourceId": "raw:com.google.weight:com.google.android.apps.fitness:user_input",
+            "value": [
+                {
+                    "fpVal": 75.75070190429688
+                }
+            ],
+            "modifiedTimeMillis": "1436325433427"
         }
     ]
 }

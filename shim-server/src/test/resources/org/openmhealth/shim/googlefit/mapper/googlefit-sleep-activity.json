@@ -1,0 +1,20 @@
+{
+    "minStartTimeNs": "1420099200000000000",
+    "maxEndTimeNs": "1436277600000000000",
+    "dataSourceId": "derived:com.google.activity.segment:com.google.android.gms:merge_activity_segments",
+    "point": [
+        {
+            "startTimeNanos": "1436275800000000000",
+            "endTimeNanos": "1436277600000000000",
+            "dataTypeName": "com.google.activity.segment",
+            "originDataSourceId": "raw:com.google.activity.segment:com.google.android.apps.fitness:user_input",
+            "value": [
+                {
+                    "intVal": 72
+                }
+            ],
+            "modifiedTimeMillis": "1436325507606"
+        }
+
+    ]
+}

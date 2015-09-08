@@ -20,7 +20,7 @@ public class GoogleFitShimTest extends ShimTestSupport {
 	@Test
     public void testActivity() {
 
-	    List<Activity> datapoints = read("googlefit-activity.json", Activity.SCHEMA_ACTIVITY, GoogleFitShim.GoogleFitDataTypes.ACTIVITY.getNormalizer());
+	    List<Activity> datapoints = read("googlefit-physical-activity.json", Activity.SCHEMA_ACTIVITY, GoogleFitShim.GoogleFitDataTypes.ACTIVITY.getNormalizer());
         assertEquals(3, datapoints.size());
         
         assertTimeFrameEquals("2015-01-01T22:21:57.000Z", "2015-01-01T23:29:49.000Z", datapoints.get(0).getEffectiveTimeFrame());
