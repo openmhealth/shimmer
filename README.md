@@ -2,9 +2,9 @@
 
 ### Overview
 
-A *shim* is an adapter that reads raw data from a third-party API (e.g. Jawbone, Fitbit) and converts that data into an [Open mHealth compliant data format](http://dev.openmhealth.org/documentation/#/schema-docs/overview). It's called a shim
+A *shim* is an adapter that reads raw data from a third-party API (e.g. Jawbone, Fitbit) and converts that data into an [Open mHealth compliant data format](http://www.openmhealth.org/documentation/#/schema-docs/overview). It's called a shim
 because it lets you treat third-party data like Open mHealth compliant data when writing your application. 
-To learn more about shims, please visit the [shim section](http://www.openmhealth.org/developers/apis/) on our site.
+To learn more about shims, please visit the [shim section](http://www.openmhealth.org/documentation/#/data-providers/data-provider-api-library) on our site.
  
 A shim is a library, not an application. To use a shim, it needs to be hosted in a standalone application called a *shim server*. 
 The shim server API lets your application use a shim to read data from a third-party API. This data is available in two formats;
@@ -189,58 +189,58 @@ The currently supported shims are
  
 * fitbit
     * activity
-        * [omh:physical-activity](http://www.openmhealth.org/developers/schemas/#physical-activity)
+        * [omh:physical-activity](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_physical-activity)
     * blood_pressure
-        * [omh:blood-pressure](http://www.openmhealth.org/developers/schemas/#blood-pressure)
+        * [omh:blood-pressure](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_blood-pressure)
     * blood_glucose
-        * [omh:blood-glucose](http://www.openmhealth.org/developers/schemas/#blood-glucose)
+        * [omh:blood-glucose](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_blood-glucose)
     * heart
-        * [omh:heart-rate](http://www.openmhealth.org/developers/schemas/#heart-rate)
+        * [omh:heart-rate](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_heart-rate)
     * steps
-        * [omh:step-count](http://www.openmhealth.org/developers/schemas/#step-count)
+        * [omh:step-count](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_step-count)
     * weight
-        * [omh:body-weight](http://www.openmhealth.org/developers/schemas/#body-weight)
+        * [omh:body-weight](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_body-weight)
 * healthvault
     * activity 
-        * [omh:physical-activity](http://www.openmhealth.org/developers/schemas/#physical-activity)
+        * [omh:physical-activity](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_physical-activity)
     * blood_glucose
-        * [omh:blood-glucose](http://www.openmhealth.org/developers/schemas/#blood-glucose)
+        * [omh:blood-glucose](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_blood-glucose)
     * blood_pressure
-        * [omh:blood-pressure](http://www.openmhealth.org/developers/schemas/#blood-pressure)
-        * [omh:heart-rate](http://www.openmhealth.org/developers/schemas/#heart-rate)
+        * [omh:blood-pressure](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_blood-pressure)
+        * [omh:heart-rate](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_heart-rate)
     * height
-        * [omh:body-height](http://www.openmhealth.org/developers/schemas/#body-height)
+        * [omh:body-height](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_body-height)
     * weight
-        * [omh:body-weight](http://www.openmhealth.org/developers/schemas/#body-weight)
+        * [omh:body-weight](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_body-weight)
 * jawbone
     * body
-        * [omh:body-weight](http://www.openmhealth.org/developers/schemas/#body-weight)
+        * [omh:body-weight](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_body-weight)
     * moves
-        * [omh:step-count](http://www.openmhealth.org/developers/schemas/#step-count)
+        * [omh:step-count](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_step-count)
     * sleep
-        * [omh:sleep-duration](http://www.openmhealth.org/developers/schemas/#sleep-duration)
+        * [omh:sleep-duration](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_sleep-duration)
     * workouts
-        * [omh:physical-activity](http://www.openmhealth.org/developers/schemas/#physical-activity)
+        * [omh:physical-activity](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_physical-activity)
 * runkeeper
     * activity
-        * [omh:physical-activity](http://www.openmhealth.org/developers/schemas/#physical-activity)
+        * [omh:physical-activity](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_physical-activity)
     * weight  
-        * [omh:body-weight](http://www.openmhealth.org/developers/schemas/#body-weight)
+        * [omh:body-weight](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_body-weight)
 * withings
     * body 
-        * [omh:blood-pressure](http://www.openmhealth.org/developers/schemas/#blood-pressure)
-        * [omh:body-height](http://www.openmhealth.org/developers/schemas/#body-height)
-        * [omh:body-weight](http://www.openmhealth.org/developers/schemas/#body-weight)
-        * [omh:heart-rate](http://www.openmhealth.org/developers/schemas/#heart-rate)
+        * [omh:blood-pressure](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_blood-pressure)
+        * [omh:body-height](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_body-height)
+        * [omh:body-weight](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_body-weight)
+        * [omh:heart-rate](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_heart-rate)
     * intraday
-        * [omh:step-count](http://www.openmhealth.org/developers/schemas/#step-count)
+        * [omh:step-count](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_step-count)
     * sleep    
-        * [omh:sleep-duration](http://www.openmhealth.org/developers/schemas/#sleep-duration)
+        * [omh:sleep-duration](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_sleep-duration)
 
-You can learn more about these shims and endpoints on the Open mHealth [developer site](http://www.openmhealth.org/developers/getting-started/). 
+You can learn more about these shims and endpoints in the [documentation section](http://www.openmhealth.org/documentation/#/overview/get-started) of the Open mHealth site. 
 
 The list of supported third-party APIs will grow over time as more shims are added. If you'd like to contribute a shim to work with your API or a third-party API,
-send us a [pull request](https://github.com/openmhealth/omh-shims/pulls). If you need any help, feel free to
+send us a [pull request](https://github.com/openmhealth/shimmer/pulls). If you need any help, feel free to
 reach out on [admin@openmhealth.org](mailto://admin@openmhealth.org) or on the Open mHealth [developer group](https://groups.google.com/forum/#!forum/omh-developers).
       
 
