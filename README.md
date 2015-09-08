@@ -14,7 +14,7 @@ The shim server API lets your application use a shim to read data from a third-p
 This repository contains a shim server, a shim server UI, and shims for third-party APIs. The currently supported APIs are:
 
 * [Fitbit](http://dev.fitbit.com/)
-* [Google Fit](https://developers.google.com/fit/rest/) ([console](https://console.developers.google.com/start))
+* [Google Fit](https://developers.google.com/fit/rest/) ([application management portal](https://console.developers.google.com/start))
 * [Jawbone UP](https://jawbone.com/up/developer)
 * [Microsoft HealthVault](https://developer.healthvault.com/)
 * [Misfit](https://build.misfit.com/)
@@ -266,7 +266,7 @@ The currently supported shims are
         * [omh:sleep-duration](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_sleep-duration)
 
 <sup>1</sup> *The Fitbit API does not provide time zone information for the data points it returns. Furthermore, it is not possible to infer the time zone from any of the information provided. Because Open mHealth schemas require timestamps to have a time zone, we need to assign a time zone to timestamps. We set the time zone of all timestamps to UTC for consistency, even if the data may not have occurred in that time zone. This means that unless the event actually occurred in UTC, the timestamps will be incorrect. Please consider this when working with data normalized into OmH schemas that are retrieved from the Fitbit shim. We will fix this as soon as Fitbit makes changes to their API to provide time zone information.*  
-<sup>2</sup> *Uses the daily activity summary by default or when partner access is disabled in the application YAML file and uses intraday activity when partner access is enabled. Intraday activity requests are limited to 24 hours worth of data per request.*
+<sup>2</sup> *Uses the daily activity summary when partner access is disabled (default) and uses intraday activity when partner access is enabled. See the YAML configuration file for details. Intraday activity requests are limited to 24 hours worth of data per request.*
 
 ### Learn more and contribute
 You can learn more about these shims and endpoints in the [documentation section](http://www.openmhealth.org/documentation/#/overview/get-started) of the Open mHealth site. 
