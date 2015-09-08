@@ -16,28 +16,15 @@
 
 package org.openmhealth.shim.jawbone;
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.jayway.jsonpath.JsonPath;
-import net.minidev.json.JSONObject;
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
-import org.openmhealth.schema.pojos.*;
-import org.openmhealth.schema.pojos.build.ActivityBuilder;
-import org.openmhealth.schema.pojos.build.BodyWeightBuilder;
-import org.openmhealth.schema.pojos.build.SleepDurationBuilder;
-import org.openmhealth.schema.pojos.build.StepCountBuilder;
-import org.openmhealth.schema.pojos.generic.MassUnitValue;
 import org.openmhealth.shim.*;
+import org.openmhealth.shim.jawbone.mapper.*;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.http.*;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.client.OAuth2RestOperations;
 import org.springframework.security.oauth2.client.resource.OAuth2ProtectedResourceDetails;
 import org.springframework.security.oauth2.client.resource.UserRedirectRequiredException;
@@ -45,20 +32,25 @@ import org.springframework.security.oauth2.client.token.AccessTokenRequest;
 import org.springframework.security.oauth2.client.token.RequestEnhancer;
 import org.springframework.security.oauth2.client.token.grant.code.AuthorizationCodeAccessTokenProvider;
 import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
 import org.springframework.util.MultiValueMap;
 import org.springframework.util.StringUtils;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
+import org.springframework.web.util.UriComponentsBuilder;
 
-import java.io.IOException;
-import java.util.*;
+import java.time.OffsetDateTime;
+import java.util.Arrays;
+import java.util.List;
 
-import static org.openmhealth.schema.pojos.generic.DurationUnitValue.DurationUnit.*;
-import static org.openmhealth.schema.pojos.generic.LengthUnitValue.LengthUnit;
+import static java.util.Collections.singletonList;
+import static org.slf4j.LoggerFactory.getLogger;
+
 
 /**
- * Encapsulates parameters specific to the Jawbone API.
+ * Encapsulates parameters specific to the Jawbone API and processes requests for Jawbone data from shimmer.
  *
  * @author Danilo Bonilla
+ * @author Chris Schaefbauer
  */
 @Component
 @ConfigurationProperties(prefix = "openmhealth.shim.jawbone")
@@ -73,13 +65,15 @@ public class JawboneShim extends OAuth2ShimBase {
     private static final String TOKEN_URL = "https://jawbone.com/auth/oauth2/token";
 
     public static final List<String> JAWBONE_SCOPES = Arrays.asList(
-        "extended_read", "weight_read", "cardiac_read", "meal_read", "move_read", "sleep_read");
+            "extended_read", "weight_read", "heartrate_read", "meal_read", "move_read", "sleep_read");
+
+    private static final Logger logger = getLogger(JawboneShim.class);
 
     @Autowired
     public JawboneShim(ApplicationAccessParametersRepo applicationParametersRepo,
-                       AuthorizationRequestParametersRepo authorizationRequestParametersRepo,
-                       AccessParametersRepo accessParametersRepo,
-                       ShimServerConfig shimServerConfig1) {
+            AuthorizationRequestParametersRepo authorizationRequestParametersRepo,
+            AccessParametersRepo accessParametersRepo,
+            ShimServerConfig shimServerConfig1) {
         super(applicationParametersRepo, authorizationRequestParametersRepo, accessParametersRepo, shimServerConfig1);
     }
 
@@ -114,290 +108,131 @@ public class JawboneShim extends OAuth2ShimBase {
 
     @Override
     public ShimDataType[] getShimDataTypes() {
-        return new JawboneDataTypes[]{
-            JawboneDataTypes.BODY, JawboneDataTypes.SLEEP, JawboneDataTypes.WORKOUTS, JawboneDataTypes.MOVES};
+
+        return new JawboneDataTypes[] {
+                JawboneDataTypes.SLEEP, JawboneDataTypes.ACTIVITY, JawboneDataTypes.BODY_MASS_INDEX,
+                JawboneDataTypes.WEIGHT, JawboneDataTypes.HEART_RATE, JawboneDataTypes.STEPS};
     }
 
     public enum JawboneDataTypes implements ShimDataType {
 
-        BODY("body_events", new JsonDeserializer<ShimDataResponse>() {
-            @Override
-            public ShimDataResponse deserialize(JsonParser jsonParser,
-                                                DeserializationContext deserializationContext)
-                throws IOException {
-                JsonNode responseNode = jsonParser.getCodec().readTree(jsonParser);
-                String rawJson = responseNode.toString();
-
-                List<BodyWeight> bodyWeights = new ArrayList<>();
-
-                JsonPath bodyWeightsPath = JsonPath.compile("$.data.items[*]");
-                List<Object> jbWeights = JsonPath.read(rawJson, bodyWeightsPath.getPath());
-                if (CollectionUtils.isEmpty(jbWeights)) {
-                    return ShimDataResponse.result(JawboneShim.SHIM_KEY, null);
-                }
-                ObjectMapper mapper = new ObjectMapper();
-                for (Object rawWeight : jbWeights) {
-
-                    JsonNode jbWeight = mapper.readTree(((JSONObject) rawWeight).toJSONString());
-
-                    DateTimeZone dateTimeZone = parseZone(jbWeight.path("details").path("tz"));
-
-                    DateTime timeStamp = new DateTime(
-                        jbWeight.get("time_created").asLong() * 1000, dateTimeZone);
-                    timeStamp = timeStamp.toDateTime(DateTimeZone.UTC);
-
-                    BodyWeight bodyWeight = new BodyWeightBuilder()
-                        .setWeight(
-                            jbWeight.get("weight").asText(),
-                            MassUnitValue.MassUnit.kg.toString())
-                        .setTimeTaken(timeStamp).build();
-
-                    bodyWeights.add(bodyWeight);
-                }
-                Map<String, Object> results = new HashMap<>();
-                results.put(BodyWeight.SCHEMA_BODY_WEIGHT, bodyWeights);
-                return ShimDataResponse.result(JawboneShim.SHIM_KEY, results);
-            }
-        }),
-
-        SLEEP("sleeps", new JsonDeserializer<ShimDataResponse>() {
-            @Override
-            public ShimDataResponse deserialize(JsonParser jsonParser,
-                                                DeserializationContext deserializationContext)
-                throws IOException {
-                JsonNode responseNode = jsonParser.getCodec().readTree(jsonParser);
-                String rawJson = responseNode.toString();
-
-                List<SleepDuration> sleepDurations = new ArrayList<>();
-
-                JsonPath sleepsPath = JsonPath.compile("$.data.items[*]");
-                List<Object> jbSleeps = JsonPath.read(rawJson, sleepsPath.getPath());
-                if (CollectionUtils.isEmpty(jbSleeps)) {
-                    return ShimDataResponse.result(JawboneShim.SHIM_KEY, null);
-                }
-                ObjectMapper mapper = new ObjectMapper();
-                for (Object rawSleep : jbSleeps) {
-                    JsonNode jbSleep = mapper.readTree(((JSONObject) rawSleep).toJSONString());
-
-                    DateTimeZone dateTimeZone = parseZone(jbSleep.path("details").path("tz"));
-
-                    DateTime timeStamp = new DateTime(
-                        jbSleep.get("time_created").asLong() * 1000, dateTimeZone);
-                    timeStamp = timeStamp.toDateTime(DateTimeZone.UTC);
-
-                    DateTime timeCompleted = new DateTime(
-                        jbSleep.get("time_completed").asLong() * 1000, dateTimeZone);
-                    timeCompleted = timeCompleted.toDateTime(DateTimeZone.UTC);
-
-                    SleepDuration sleepDuration = new SleepDurationBuilder()
-                        .withStartAndEndAndDuration(
-                            timeStamp, timeCompleted,
-                            jbSleep.get("details").get("duration").asDouble() / 60d,
-                            SleepDurationUnitValue.Unit.min)
-                        .build();
-
-                    sleepDurations.add(sleepDuration);
-                }
-                Map<String, Object> results = new HashMap<>();
-                results.put(SleepDuration.SCHEMA_SLEEP_DURATION, sleepDurations);
-                return ShimDataResponse.result(JawboneShim.SHIM_KEY, results);
-            }
-        }),
-
-        WORKOUTS("workouts", new JsonDeserializer<ShimDataResponse>() {
-            @Override
-            public ShimDataResponse deserialize(JsonParser jsonParser,
-                                                DeserializationContext deserializationContext)
-                throws IOException {
-                JsonNode responseNode = jsonParser.getCodec().readTree(jsonParser);
-                String rawJson = responseNode.toString();
-
-                List<Activity> activities = new ArrayList<>();
-
-                JsonPath workoutsPath = JsonPath.compile("$.data.items[*]");
-                List<Object> jbWorkouts = JsonPath.read(rawJson, workoutsPath.getPath());
-                if (CollectionUtils.isEmpty(jbWorkouts)) {
-                    return ShimDataResponse.result(JawboneShim.SHIM_KEY, null);
-                }
-                ObjectMapper mapper = new ObjectMapper();
-                for (Object rawWorkout : jbWorkouts) {
-                    JsonNode jbWorkout = mapper.readTree(((JSONObject) rawWorkout).toJSONString());
-
-                    DateTimeZone dateTimeZone = parseZone(jbWorkout.path("details").path("tz"));
-
-                    DateTime timeStamp = new DateTime(
-                        jbWorkout.get("time_created").asLong() * 1000, dateTimeZone);
-                    timeStamp = timeStamp.toDateTime(DateTimeZone.UTC);
-
-                    Activity activity = new ActivityBuilder()
-                        .setActivityName(jbWorkout.get("title").asText())
-                        .setDistance(jbWorkout.get("details").get("meters").asDouble(), LengthUnit.m)
-                        .withStartAndDuration(
-                            timeStamp, jbWorkout.get("details").get("time").asDouble(), sec)
-                        .build();
-
-                    activities.add(activity);
-                }
-                Map<String, Object> results = new HashMap<>();
-                results.put(Activity.SCHEMA_ACTIVITY, activities);
-                return ShimDataResponse.result(JawboneShim.SHIM_KEY, results);
-            }
-        }),
-
-        MOVES("moves", new JsonDeserializer<ShimDataResponse>() {
-            @Override
-            public ShimDataResponse deserialize(JsonParser jsonParser,
-                                                DeserializationContext deserializationContext)
-                throws IOException {
-
-                JsonNode responseNode = jsonParser.getCodec().readTree(jsonParser);
-                String rawJson = responseNode.toString();
-                JsonPath stepsPath = JsonPath.compile("$.data.items[*]");
-
-                List<Object> jbStepEntries = JsonPath.read(rawJson, stepsPath.getPath());
-
-                if (CollectionUtils.isEmpty(jbStepEntries)) {
-                    return ShimDataResponse.empty(JawboneShim.SHIM_KEY);
-                }
-
-                DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyyMMddHH");
-
-                List<StepCount> stepCounts = new ArrayList<>();
-
-                ObjectMapper mapper = new ObjectMapper();
-                for (Object rawStepEntry : jbStepEntries) {
-                    JsonNode jbStepEntry = mapper.readTree(((JSONObject) rawStepEntry).toJSONString());
-
-                    DateTimeZone dateTimeZone = parseZone(jbStepEntry.path("details").path("tz"));
-
-                    JsonNode hourlyTotals = jbStepEntry.get("details").get("hourly_totals");
-                    if (hourlyTotals == null) {
-                        continue;
-                    }
-                    for (Iterator<Map.Entry<String, JsonNode>> iterator = hourlyTotals.fields(); iterator.hasNext(); ) {
-                        Map.Entry<String, JsonNode> item = iterator.next();
-
-                        String timestampStr = item.getKey();
-                        JsonNode node = item.getValue();
-
-                        DateTime dateTime = formatter.withZone(dateTimeZone).parseDateTime(timestampStr);
-                        dateTime = dateTime.toDateTime(DateTimeZone.UTC);
-
-                        if (node.get("steps").asInt() > 0) {
-                            stepCounts.add(new StepCountBuilder()
-                                .withStartAndDuration(
-                                    dateTime, Double.parseDouble(node.get("active_time") + ""), sec)
-                                .setSteps(node.get("steps").asInt()).build());
-                        }
-                    }
-                }
-                Map<String, Object> results = new HashMap<>();
-                results.put(StepCount.SCHEMA_STEP_COUNT, stepCounts);
-                return ShimDataResponse.result(JawboneShim.SHIM_KEY, results);
-
-            }
-        });
+        SLEEP("sleeps"),
+        ACTIVITY("workouts"),
+        WEIGHT("body_events"),
+        STEPS("moves"),
+        BODY_MASS_INDEX("body_events"),
+        HEART_RATE("heartrates");
 
         private String endPoint;
 
-        private JsonDeserializer<ShimDataResponse> normalizer;
+        JawboneDataTypes(String endPoint) {
 
-        JawboneDataTypes(String endPoint, JsonDeserializer<ShimDataResponse> normalizer) {
             this.endPoint = endPoint;
-            this.normalizer = normalizer;
-        }
-
-        @Override
-        public JsonDeserializer<ShimDataResponse> getNormalizer() {
-            return normalizer;
         }
 
         public String getEndPoint() {
+
             return endPoint;
-        }
-        
-        static DateTimeZone parseZone(JsonNode node) {
-            DateTimeZone zone = null;
-            if (node.isNull()) {
-                zone = DateTimeZone.UTC;
-            } else if (node.asInt() != 0) { // "-25200"
-                zone = DateTimeZone.forOffsetMillis(node.asInt() * 1000);
-            } else if (node.isTextual()) { // "GMT-0700" or "America/Los Angeles"
-                zone = DateTimeZone.forID(node.textValue().replace("GMT", "").replaceAll(" ", "_"));
-            } else {
-                throw new IllegalArgumentException("Can't parse time zone: <" + node + ">");
-            }
-            return zone;
         }
     }
 
     protected ResponseEntity<ShimDataResponse> getData(OAuth2RestOperations restTemplate,
-                                                       ShimDataRequest shimDataRequest) throws ShimException {
-        String urlRequest = DATA_URL;
+            ShimDataRequest shimDataRequest) throws ShimException {
 
         final JawboneDataTypes jawboneDataType;
         try {
             jawboneDataType = JawboneDataTypes.valueOf(
-                shimDataRequest.getDataTypeKey().trim().toUpperCase());
-        } catch (NullPointerException | IllegalArgumentException e) {
+                    shimDataRequest.getDataTypeKey().trim().toUpperCase());
+        }
+        catch (NullPointerException | IllegalArgumentException e) {
             throw new ShimException("Null or Invalid data type parameter: "
-                + shimDataRequest.getDataTypeKey()
-                + " in shimDataRequest, cannot retrieve data.");
+                    + shimDataRequest.getDataTypeKey()
+                    + " in shimDataRequest, cannot retrieve data.");
         }
 
-        urlRequest += jawboneDataType.getEndPoint() + "?";
-
+        // FIXME this needs to get changed or documented
         long numToReturn = 100;
         if (shimDataRequest.getNumToReturn() != null) {
             numToReturn = shimDataRequest.getNumToReturn();
         }
 
-        DateTime today = new DateTime();
+        OffsetDateTime today = OffsetDateTime.now();
 
-        DateTime startDate = shimDataRequest.getStartDate() == null ?
-            today.minusDays(1) : shimDataRequest.getStartDate();
-        long startTimeTs = startDate.toDate().getTime() / 1000;
+        OffsetDateTime startDateTime = shimDataRequest.getStartDateTime() == null ?
+                today.minusDays(1) : shimDataRequest.getStartDateTime();
+        long startTimeInEpochSecond = startDateTime.toEpochSecond();
 
-        DateTime endDate = shimDataRequest.getEndDate() == null ?
-            today.plusDays(1) : shimDataRequest.getEndDate();
-        long endTimeTs = endDate.toDate().getTime() / 1000;
+        OffsetDateTime endDateTime = shimDataRequest.getEndDateTime() == null ?
+                today.plusDays(1) : shimDataRequest.getEndDateTime();
+        long endTimeInEpochSecond = endDateTime.toEpochSecond();
 
-        urlRequest += "&start_time=" + startTimeTs;
-        urlRequest += "&end_time=" + endTimeTs;
-        urlRequest += "&limit=" + numToReturn;
+        UriComponentsBuilder uriComponentsBuilder =
+                UriComponentsBuilder.fromUriString(DATA_URL).path(jawboneDataType.getEndPoint())
+                        .queryParam("start_time", startTimeInEpochSecond).queryParam("end_time", endTimeInEpochSecond)
+                        .queryParam("limit", numToReturn);
 
-        ObjectMapper objectMapper = new ObjectMapper();
-
-        ResponseEntity<byte[]> responseEntity = restTemplate.getForEntity(urlRequest, byte[].class);
-        JsonNode json = null;
+        ResponseEntity<JsonNode> responseEntity;
         try {
-            if (shimDataRequest.getNormalize()) {
-                SimpleModule module = new SimpleModule();
-                module.addDeserializer(ShimDataResponse.class, jawboneDataType.getNormalizer());
-                objectMapper.registerModule(module);
-                return new ResponseEntity<>(
-                    objectMapper.readValue(responseEntity.getBody(), ShimDataResponse.class), HttpStatus.OK);
-            } else {
-                return new ResponseEntity<>(
-                    ShimDataResponse.result(JawboneShim.SHIM_KEY, objectMapper.readTree(responseEntity.getBody())), HttpStatus.OK);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-            throw new ShimException("Could not read response data.");
+            responseEntity = restTemplate.getForEntity(uriComponentsBuilder.build().encode().toUri(), JsonNode.class);
         }
+        catch (HttpClientErrorException | HttpServerErrorException e) {
+            // FIXME figure out how to handle this
+            logger.error("A request for Jawbone data failed.", e);
+            throw e;
+        }
+
+        if (shimDataRequest.getNormalize()) {
+
+            JawboneDataPointMapper mapper;
+            switch ( jawboneDataType ) {
+                case WEIGHT:
+                    mapper = new JawboneBodyWeightDataPointMapper();
+                    break;
+                case STEPS:
+                    mapper = new JawboneStepCountDataPointMapper();
+                    break;
+                case BODY_MASS_INDEX:
+                    mapper = new JawboneBodyMassIndexDataPointMapper();
+                    break;
+                case ACTIVITY:
+                    mapper = new JawbonePhysicalActivityDataPointMapper();
+                    break;
+                case SLEEP:
+                    mapper = new JawboneSleepDurationDataPointMapper();
+                    break;
+                case HEART_RATE:
+                    mapper = new JawboneHeartRateDataPointMapper();
+                    break;
+                default:
+                    throw new UnsupportedOperationException();
+            }
+
+            return ResponseEntity.ok().body(ShimDataResponse
+                    .result(JawboneShim.SHIM_KEY, mapper.asDataPoints(singletonList(responseEntity.getBody()))));
+
+        }
+        else {
+
+            return ResponseEntity.ok().body(ShimDataResponse.result(JawboneShim.SHIM_KEY, responseEntity.getBody()));
+        }
+
     }
 
     @Override
     protected String getAuthorizationUrl(UserRedirectRequiredException exception) {
+
         final OAuth2ProtectedResourceDetails resource = getResource();
-        return exception.getRedirectUri()
-            + "?state="
-            + exception.getStateKey()
-            + "&client_id="
-            + resource.getClientId()
-            + "&response_type=code"
-            + "&scope=" + StringUtils.collectionToDelimitedString(resource.getScope(), " ")
-            + "&redirect_uri=" + getCallbackUrl();
+        
+        UriComponentsBuilder uriBuilder = UriComponentsBuilder
+                .fromUriString(exception.getRedirectUri())
+                .queryParam("state", exception.getStateKey())
+                .queryParam("client_id", resource.getClientId())
+                .queryParam("response_type", "code")
+                .queryParam("scope", StringUtils.collectionToDelimitedString(resource.getScope(), " "))
+                .queryParam("redirect_uri", getCallbackUrl());
+
+        return uriBuilder.build().encode().toUriString();
+
     }
 
 
@@ -405,6 +240,7 @@ public class JawboneShim extends OAuth2ShimBase {
      * Simple overrides to base spring class from oauth.
      */
     public class JawboneAuthorizationCodeAccessTokenProvider extends AuthorizationCodeAccessTokenProvider {
+
         public JawboneAuthorizationCodeAccessTokenProvider() {
             this.setTokenRequestEnhancer(new JawboneTokenRequestEnhancer());
         }
@@ -415,14 +251,16 @@ public class JawboneShim extends OAuth2ShimBase {
         }
     }
 
+
     /**
      * Adds jawbone required parameters to authorization token requests.
      */
     private class JawboneTokenRequestEnhancer implements RequestEnhancer {
+
         @Override
         public void enhance(AccessTokenRequest request,
-                            OAuth2ProtectedResourceDetails resource,
-                            MultiValueMap<String, String> form, HttpHeaders headers) {
+                OAuth2ProtectedResourceDetails resource,
+                MultiValueMap<String, String> form, HttpHeaders headers) {
             form.set("client_id", resource.getClientId());
             form.set("client_secret", resource.getClientSecret());
         }
