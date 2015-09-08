@@ -1,0 +1,23 @@
+{
+    "status": 0,
+    "body": {
+        "series": [
+            {
+                "startdate": 1417550400,
+                "state": 0,
+                "enddate": 1417551300
+            },
+            {
+                "startdate": 1417551360,
+                "state": 1,
+                "enddate": 1417552320
+            },
+            {
+                "startdate": 1417552380,
+                "state": 3,
+                "enddate": 1417554000
+            }
+        ],
+        "model": 32
+    }
+}

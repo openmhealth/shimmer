@@ -13,7 +13,6 @@ The shim server API lets your application use a shim to read data from a third-p
  
 This repository contains a shim server, a shim server UI, and shims for third-party APIs. The currently supported APIs are:
 
-* [Fat Secret](http://platform.fatsecret.com/api/)
 * [Fitbit](http://dev.fitbit.com/)
 * [Microsoft HealthVault](https://developer.healthvault.com/)
 * [Jawbone UP](https://jawbone.com/up/developer)
@@ -225,13 +224,18 @@ The currently supported shims are
     * calories  
         * [omh:calories-burned](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_calories-burned)
 * withings
-    * body 
+    * blood_pressure 
         * [omh:blood-pressure](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_blood-pressure)
+    * height
         * [omh:body-height](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_body-height)
+    * weight
         * [omh:body-weight](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_body-weight)
+    * heart_rate
         * [omh:heart-rate](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_heart-rate)
-    * intraday
+    * steps<sup>2</sup> 
         * [omh:step-count](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_step-count)
+    * calories<sup>2</sup> 
+        * [omh:calories-burned](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_calories-burned)
     * sleep    
         * [omh:sleep-duration](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_sleep-duration)
 * misfit
@@ -243,7 +247,9 @@ The currently supported shims are
         * [omh:physical-activity](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_physical-activity)
 
 <sup>1</sup> *The Fitbit API does not provide time zone information for the data points it returns. Furthermore, it is not possible to infer the time zone from any of the information provided. Because Open mHealth schemas require timestamps to have a time zone, we need to assign a time zone to timestamps. We set the time zone of all timestamps to UTC for consistency, even if the data may not have occurred in that time zone. This means that unless the event actually occurred in UTC, the timestamps will be incorrect. Please consider this when working with data normalized into OmH schemas that are retrieved from the Fitbit shim. We will fix this as soon as Fitbit makes changes to their API to provide time zone information.*  
+<sup>2</sup> *Uses the daily activity summary by default or when partner access is disabled in the application YAML file and uses intraday activity when partner access is enabled. Intraday activity requests are limited to 24 hours worth of data per request.*
 
+### Learn more and contribute
 You can learn more about these shims and endpoints in the [documentation section](http://www.openmhealth.org/documentation/#/overview/get-started) of the Open mHealth site. 
 
 The list of supported third-party APIs will grow over time as more shims are added. If you'd like to contribute a shim to work with your API or a third-party API,

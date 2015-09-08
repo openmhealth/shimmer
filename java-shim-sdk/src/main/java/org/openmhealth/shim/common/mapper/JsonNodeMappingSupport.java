@@ -107,6 +107,19 @@ public class JsonNodeMappingSupport {
         return asRequiredValue(parentNode, path, JsonNode::isIntegralNumber, JsonNode::longValue, Long.class);
     }
 
+    // TODO add tests
+    /**
+     * @param parentNode a parent node
+     * @param path the path to a child node
+     * @return the value of the child node as an integer
+     * @throws MissingJsonNodeMappingException if the child doesn't exist
+     * @throws IncompatibleJsonNodeMappingException if the value of the child node isn't an integer
+     */
+    public static Integer asRequiredInteger(JsonNode parentNode, String path) {
+
+        return asRequiredValue(parentNode, path, JsonNode::isIntegralNumber, JsonNode::intValue, Integer.class);
+    }
+
     /**
      * @param parentNode a parent node
      * @param path the path to a child node

@@ -1,0 +1,41 @@
+{
+    "body": {
+        "series": {
+            "1434758640": {
+                "calories": 1,
+                "distance": 15,
+                "duration": 60,
+                "elevation": 0,
+                "steps": 21
+            },
+            "1434758700": {
+                "duration": 1440
+            },
+            "1434760140": {
+                "calories": 2,
+                "distance": 35,
+                "duration": 60,
+                "elevation": 0,
+                "steps": 47
+            },
+            "1434760200": {
+                "calories": 1,
+                "distance": 17,
+                "duration": 60,
+                "elevation": 0,
+                "steps": 20
+            },
+            "1434760260": {
+                "duration": 600
+            },
+            "1434760860": {
+                "calories": 7,
+                "distance": 59,
+                "duration": 60,
+                "elevation": 0,
+                "steps": 74
+            }
+        }
+    },
+    "status": 0
+}
