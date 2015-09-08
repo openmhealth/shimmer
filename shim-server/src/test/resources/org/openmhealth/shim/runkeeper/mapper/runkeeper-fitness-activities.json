@@ -1,0 +1,30 @@
+{
+    "items": [
+        {
+            "utc_offset": 2,
+            "duration": 4364.74158141667,
+            "start_time": "Sun, 19 Oct 2014 13:17:27",
+            "total_calories": 210.796359954334,
+            "tracking_mode": "outdoor",
+            "total_distance": 10128.7131871337,
+            "entry_mode": "API",
+            "has_path": true,
+            "source": "RunKeeper",
+            "type": "Cycling",
+            "uri": "/fitnessActivities/465161536"
+        },
+        {
+            "duration": 3522,
+            "start_time": "Sun, 24 Jan 2010 10:00:36",
+            "total_calories": 747.501013824121,
+            "tracking_mode": "outdoor",
+            "total_distance": 10000,
+            "entry_mode": "Web",
+            "has_path": false,
+            "source": "RunKeeper",
+            "type": "Running",
+            "uri": "/fitnessActivities/4928696"
+        }
+    ],
+    "size": 2
+}

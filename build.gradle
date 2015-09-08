@@ -4,7 +4,7 @@ subprojects {
 
     repositories {
         mavenLocal()
-        mavenCentral()
+        jcenter()
     }
 
     group = 'org.openmhealth.shim'
@@ -12,12 +12,17 @@ subprojects {
     ext {
         javaVersion = 1.8
         shimServerVersion = '0.2.3'
+        omhSchemaSdkVersion = '1.0.1'
     }
 
     sourceCompatibility = javaVersion
     targetCompatibility = javaVersion
+
+    test {
+        useTestNG()
+    }
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '2.3'
+    gradleVersion = '2.4'
 }

@@ -1,0 +1,43 @@
+{
+    "meta": {
+        "user_xid": "6xl39CsoVp2KirfHwVq_Fx",
+        "message": "OK",
+        "code": 200,
+        "time": 1386122022
+    },
+    "data": {
+        "items": [
+            {
+                "xid": "40F7_htRRnT8Vo7nRBZO1X",
+                "title": "Run",
+                "type": "workout",
+                "sub_type": 2,
+                "time_created": 1384963500,
+                "time_updated": 1385049599,
+                "time_completed": 1385099220,
+                "date": 20131121,
+                "place_lat": "37.451572",
+                "place_lon": "-122.184435",
+                "place_acc": 10,
+                "place_name": "Gym",
+                "route": "/nudge/image/d/3c1b0970533811e39d7f12313d00449a_image.png",
+                "image": "/nudge/image/d/3c1b0970533811e39d7f12313d00449a_image.png" ,
+                "snapshot_image": "/nudge/image/e/1385107735/40F7_htRRnT8VJ5BRfj-_A/grEGutn_3mE.png",
+                "details": {
+                    "steps": 5128,
+                    "time": 2460,
+                    "bg_active_time": 2163,
+                    "meters": 5116,
+                    "km": 5.116,
+                    "intensity": 3,
+                    "calories": 691,
+                    "bmr": 56.071321076,
+                    "bg_calories": 448.95380111,
+                    "bmr_calories": 56.071321076,
+                    "tz": "America/Los_Angeles"
+                }
+            }
+        ],
+        "size": 1
+    }
+}

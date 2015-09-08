@@ -17,8 +17,7 @@
 package org.openmhealth.shim;
 
 
-import org.joda.time.DateTime;
-
+import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -45,7 +44,7 @@ public class AccessParameters {
 
     private String stateKey;
 
-    private DateTime dateCreated = new DateTime();
+    private LocalDateTime dateCreated = LocalDateTime.now();
 
     private byte[] serializedToken; //Required only by spring oauth2
 
@@ -65,11 +64,11 @@ public class AccessParameters {
         this.shimKey = shimKey;
     }
 
-    public DateTime getDateCreated() {
+    public LocalDateTime getDateCreated() {
         return dateCreated;
     }
 
-    public void setDateCreated(DateTime dateCreated) {
+    public void setDateCreated(LocalDateTime dateCreated) {
         this.dateCreated = dateCreated;
     }
 

@@ -17,7 +17,6 @@
 package org.openmhealth.shim;
 
 
-import org.openmhealth.shim.runkeeper.RunkeeperShim.RunkeeperDataType;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.client.DefaultOAuth2ClientContext;
