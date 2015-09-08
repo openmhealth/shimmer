@@ -23,8 +23,6 @@ import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpRequestBase;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 import org.openmhealth.schema.domain.omh.DataPoint;
 import org.openmhealth.shim.*;
 import org.openmhealth.shim.fitbit.mapper.*;
@@ -40,7 +38,8 @@ import java.io.StringWriter;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 import static java.util.Collections.singletonList;
 
@@ -108,11 +107,6 @@ public class FitbitShim extends OAuth1ShimBase {
         return HttpMethod.POST;
     }
 
-    private static DateTimeFormatter formatterMins =
-            DateTimeFormat.forPattern("yyyy-MM-dd HH:mm").withZoneUTC();
-
-    private static final DateTimeFormatter dayFormatter = DateTimeFormat.forPattern("yyyy-MM-dd");
-
     @Override
     public ShimDataType[] getShimDataTypes() {
         return FitbitDataType.values();
@@ -158,7 +152,6 @@ public class FitbitShim extends OAuth1ShimBase {
          * Setup default date parameters
          */
         OffsetDateTime today = LocalDate.now().atStartOfDay(ZoneId.of("Z")).toOffsetDateTime();
-        //dayFormatter.parseDateTime(new DateTime().toString(dayFormatter)); //ensure beginning of today
 
         OffsetDateTime startDate = shimDataRequest.getStartDateTime() == null ?
                 today.minusDays(1) : shimDataRequest.getStartDateTime();
@@ -191,6 +184,7 @@ public class FitbitShim extends OAuth1ShimBase {
 
             ShimDataResponse shimDataResponse = shimDataRequest.getNormalize() ?
                     aggregateNormalized(dayResponses) : aggregateIntoList(dayResponses);
+
             return shimDataResponse;
         }
     }
@@ -221,9 +215,8 @@ public class FitbitShim extends OAuth1ShimBase {
 
             }
         }
-        return aggregateDataPoints.size() == 0 ?
-                ShimDataResponse.empty(FitbitShim.SHIM_KEY) :
-                ShimDataResponse.result(FitbitShim.SHIM_KEY, aggregateDataPoints);
+
+        return ShimDataResponse.result(FitbitShim.SHIM_KEY, aggregateDataPoints);
     }
 
     /**
@@ -303,6 +296,7 @@ public class FitbitShim extends OAuth1ShimBase {
 
             }
             else {
+
                 return ShimDataResponse.result(FitbitShim.SHIM_KEY,
                         objectMapper.readTree(jsonContent));
             }
@@ -361,7 +355,7 @@ public class FitbitShim extends OAuth1ShimBase {
             ObjectMapper objectMapper = new ObjectMapper();
 
             if (normalize) {
-                
+
                 JsonNode jsonNode = objectMapper.readValue(writer.toString(), JsonNode.class);
 
                 FitbitDataPointMapper dataPointMapper;
