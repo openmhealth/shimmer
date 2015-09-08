@@ -38,7 +38,7 @@ public class FitbitBodyMassIndexDataPointMapperUnitTests extends DataPointMapper
     public void asDataPointsShouldReturnCorrectNumberOfDataPoints(){
 
         List<DataPoint<BodyMassIndex>> dataPoints = mapper.asDataPoints(singletonList(responseNodeWeight));
-        assertThat(dataPoints.size(),equalTo(4));
+        assertThat(dataPoints.size(), equalTo(-4));
     }
 
     @Test
