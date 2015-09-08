@@ -32,18 +32,12 @@ attempt to protect the data retrieved from third-party APIs.
 
 ### Installation
 
-There are three ways to build and run the shim server. 
+There are two ways to build and run Shimmer. 
 
 1. You can run a Docker container that executes a pre-built binary. 
   * This is the fastest way to get up and running and isolates the install from your system.
 1. You can build all the code from source and run it on your host system.
-  * This is a quick way to get up and running
-   if your system already has MongoDB and is prepped to build Java code. 
-1. You can run a Docker container that builds all the code from source and executes the resulting binary.
-  * This isolates the install from your system while still letting you hack the code. But it can take a while to build
-   the container due to the large number of libraries and subsystems that need to be downloaded and installed.
-  * If you know Docker and want to speed things up, remove optional components from the Dockerfile and link them
-  from separate containers.
+  * This is a quick way to get up and running if your system already has MongoDB and is prepped to build Java code. 
 
 #### Option 1. Running a pre-built binary in Docker
 
@@ -107,23 +101,6 @@ not yet. To add HealthVault support to the shim server,
 1. Run `mvn install -N && mvn install --pl sdk,hv-jaxb -DskipTests`
   
 This will make the HealthVault libraries available to Gradle.  
-
-#### Option 3. Building from source and running in Docker
-
-If you don't have Docker installed, download [Docker](https://docs.docker.com/installation/#installation/) 
- and follow the installation instructions for your platform.
-
-Then,
-
-1. Download the latest [release](https://github.com/openmhealth/shimmer/releases) of this Git repository or clone it. 
-1. Navigate to the `docker/source` directory in a terminal.
-1. Run `docker build -t="openmhealth/omh-shim-server" .`
-  * This will require about 1.5GB of disk space.  
-1. Run `docker run -d -p 8083:8083 -p 2022:22 openmhealth/omh-shim-server`
-1. The server should now be running on the Docker host on default port 8083. You can change the port number in the Docker `run` command.
-1. Visit `http://<your-docker-host>:8083` in a browser.
-
-If you want to SSH into the container, run `ssh root@<your-docker-host> -p 2022`. The password is `docker`.
 
 ### Setting up your credentials
 
