@@ -16,7 +16,6 @@ This repository contains a shim server, a shim server UI, and shims for third-pa
 * [Fitbit](http://dev.fitbit.com/)
 * [Google Fit](https://developers.google.com/fit/rest/) ([application management portal](https://console.developers.google.com/start))
 * [Jawbone UP](https://jawbone.com/up/developer)
-* [Microsoft HealthVault](https://developer.healthvault.com/)
 * [Misfit](https://build.misfit.com/)
 * [RunKeeper](http://developer.runkeeper.com/healthgraph) ([application management portal](http://runkeeper.com/partner))
 * [Withings](http://oauth.withings.com/api)
@@ -66,7 +65,6 @@ If you prefer not to use Docker,
 
 1. You must have a Java 8 or higher JDK installed. You can use either [OpenJDK](http://openjdk.java.net/install/) or the [Oracle JDK](http://www.oracle.com/technetwork/java/javase/downloads/index.html).
 1. A running [MongoDB](http://docs.mongodb.org/manual/) installation is required.
-1. [Maven](http://maven.apache.org/) is required to build and install Microsoft HealthVault libraries.
 1. You technically don't need to run the shim server UI, but it makes your life easier. If you're building the UI,
   1. [Node.js](http://nodejs.org/download/) is required.
   1. [Xcode Command Line Tools](https://developer.apple.com/xcode/) are required if you're on a Mac.
@@ -84,24 +82,10 @@ Then,
 1. Edit the `application.yaml` file.
   * Check that the `spring:data:mongodb:uri` parameter points to your running MongoDB instance.
   * You might need to change the host to `localhost`, for example.
-1. Follow [these instructions](#preparing-to-use-microsoft-healthvault) to install Microsoft HealthVault libraries. These libraries are
- currently required for the shim server to work.
 1. To build and run the shim server, navigate to the base directory and run `./gradlew shim-server:bootRun`
 1. The server should now be running on `localhost` on port 8083. You can change the port number in the `application.yaml` file.
 1. Visit `http://localhost:8083` in a browser.
                            
-##### Preparing to use Microsoft HealthVault
-    
-The Microsoft HealthVault shim has dependencies which can't be automatically downloaded from public servers, at least 
-not yet. To add HealthVault support to the shim server,
-
-1. Download the HealthVault Java Library version [R1.6.0](https://healthvaultjavalib.codeplex.com/releases/view/125355) archive.
-1. Extract the archive.
-1. Navigate to the extracted directory in a terminal.
-1. Run `mvn install -N && mvn install --pl sdk,hv-jaxb -DskipTests`
-  
-This will make the HealthVault libraries available to Gradle.  
-
 ### Setting up your credentials
 
 You need to obtain authentication credentials, typically an OAuth client ID and client secret, for any shim you'd like to run. 
@@ -189,18 +173,6 @@ The currently supported shims are
         * [omh:step-count](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_step-count)
     * calories_burned
         * [omh:calories-burned](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_calories-burned)
-* healthvault
-    * activity 
-        * [omh:physical-activity](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_physical-activity)
-    * blood_glucose
-        * [omh:blood-glucose](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_blood-glucose)
-    * blood_pressure
-        * [omh:blood-pressure](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_blood-pressure)
-        * [omh:heart-rate](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_heart-rate)
-    * height
-        * [omh:body-height](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_body-height)
-    * weight
-        * [omh:body-weight](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_body-weight)
 * jawbone
     * weight
         * [omh:body-weight](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_body-weight)
