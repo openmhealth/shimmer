@@ -1,22 +1,17 @@
 package org.openmhealth.shim.fitbit;
 
-import static org.junit.Assert.assertEquals;
-
-import java.util.List;
-
 import org.junit.Test;
 import org.openmhealth.schema.pojos.Activity;
-import org.openmhealth.schema.pojos.BloodGlucose;
-import org.openmhealth.schema.pojos.BloodGlucoseUnitValue;
-import org.openmhealth.schema.pojos.BloodPressure;
 import org.openmhealth.schema.pojos.BodyWeight;
-import org.openmhealth.schema.pojos.HeartRate;
-import org.openmhealth.schema.pojos.HeartRateUnitValue;
 import org.openmhealth.schema.pojos.StepCount;
 import org.openmhealth.schema.pojos.generic.DurationUnitValue;
 import org.openmhealth.schema.pojos.generic.LengthUnitValue;
 import org.openmhealth.schema.pojos.generic.MassUnitValue;
 import org.openmhealth.shim.testing.ShimTestSupport;
+
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
 
 public class FitbitShimTest extends ShimTestSupport {
 
@@ -30,35 +25,6 @@ public class FitbitShimTest extends ShimTestSupport {
         assertMassUnitEquals("49.4", MassUnitValue.MassUnit.kg, datapoints.get(0).getMassUnitValue());
     }
 
-    @Test
-    public void testHeartRate() {
-
-        List<HeartRate> datapoints = read("fitbit-heart.json", HeartRate.SCHEMA_HEART_RATE, FitbitShim.FitbitDataType.HEART.getNormalizer());
-        assertEquals(6, datapoints.size());
-        
-        assertTimeFrameEquals("2014-07-13T03:30:00.000Z", datapoints.get(0).getEffectiveTimeFrame());
-        assertHeartRateUnitEquals(50, HeartRateUnitValue.Unit.bpm, datapoints.get(0).getHeartRate());
-    }
-
-    @Test
-    public void testBloodPressure() {
-
-        List<BloodPressure> datapoints = read("fitbit-bp.json", BloodPressure.SCHEMA_BLOOD_PRESSURE, FitbitShim.FitbitDataType.BLOOD_PRESSURE.getNormalizer());
-        assertEquals(3, datapoints.size());
-        
-        assertTimeFrameEquals("2014-07-13T11:30:00.000Z", datapoints.get(0).getEffectiveTimeFrame());
-        assertBloodPressureEquals(131, 82, datapoints.get(0));
-    }
-
-    @Test
-    public void testBloodGlucose() {
-
-        List<BloodGlucose> datapoints = read("fitbit-glucose.json", BloodGlucose.SCHEMA_BLOOD_GLUCOSE, FitbitShim.FitbitDataType.BLOOD_GLUCOSE.getNormalizer());
-        assertEquals(3, datapoints.size());
-        
-        assertTimeFrameEquals("2014-07-13T12:30:00.000Z", datapoints.get(0).getEffectiveTimeFrame());
-        assertBloodGlucoseUnitEquals("5", BloodGlucoseUnitValue.Unit.mg_dL, datapoints.get(0).getBloodGlucose());
-    }
 
     @Test
     public void testStepCount() {

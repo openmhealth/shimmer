@@ -82,6 +82,19 @@ public class JsonNodeMappingSupport {
         return asRequiredValue(parentNode, path, JsonNode::isTextual, JsonNode::textValue, String.class);
     }
 
+    // TODO add tests
+    /**
+     * @param parentNode a parent node
+     * @param path the path to a child node
+     * @return the value of the child node as a boolean
+     * @throws MissingJsonNodeMappingException if the child doesn't exist
+     * @throws IncompatibleJsonNodeMappingException if the value of the child node isn't a boolean
+     */
+    public static Boolean asRequiredBoolean(JsonNode parentNode, String path) {
+
+        return asRequiredValue(parentNode, path, JsonNode::isBoolean, JsonNode::booleanValue, Boolean.class);
+    }
+
     /**
      * @param parentNode a parent node
      * @param path the path to a child node
@@ -287,6 +300,55 @@ public class JsonNodeMappingSupport {
     public static Optional<LocalDateTime> asOptionalLocalDateTime(JsonNode parentNode, String path) {
 
         return asOptionalLocalDateTime(parentNode, path, ISO_LOCAL_DATE_TIME);
+    }
+
+    // TODO refactor this by delegating to existing methods, then add tests
+    public static Optional<LocalDateTime> asOptionalLocalDateTime(JsonNode parentNode, String pathToDate,
+            String pathToTime) {
+        Optional<String> time = asOptionalString(parentNode, pathToTime);
+        Optional<String> date = asOptionalString(parentNode, pathToDate);
+        if (!time.isPresent() || !date.isPresent()) {
+            return empty();
+        }
+        LocalDateTime dateTime = null;
+        try {
+            dateTime = LocalDateTime.parse(date.get() + "T" + time.get(), ISO_LOCAL_DATE_TIME);
+        }
+        catch (DateTimeParseException e) {
+            logger.warn(
+                    "The '{}' and '{}' fields in node '{}' with values '{}' and '{}' do not make-up a valid timestamp.",
+                    pathToDate, pathToTime, parentNode, date.get(), time.get(), e);
+        }
+        return Optional.ofNullable(dateTime);
+    }
+
+    // TODO add Javadoc and tests
+    public static Optional<LocalDate> asOptionalLocalDate(JsonNode parentNode, String path) {
+
+        return asOptionalLocalDate(parentNode, path, DateTimeFormatter.ISO_LOCAL_DATE);
+    }
+
+    // TODO add Javadoc and tests
+    public static Optional<LocalDate> asOptionalLocalDate(JsonNode parentNode, String path,
+            DateTimeFormatter dateFormat) {
+
+        Optional<String> string = asOptionalString(parentNode, path);
+
+        if (!string.isPresent()) {
+            return empty();
+        }
+
+        LocalDate localDate = null;
+
+        try {
+            localDate = LocalDate.parse(string.get(), dateFormat);
+        }
+        catch (DateTimeParseException e) {
+            logger.warn("The '{}' field in node '{}' with value '{}' isn't a valid date.",
+                    path, parentNode, string.get(), e);
+        }
+
+        return Optional.ofNullable(localDate);
     }
 
     /**

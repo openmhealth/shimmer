@@ -1,0 +1,67 @@
+{
+    "activities": [
+        {
+            "activityId": 17152,
+            "activityParentId": 90013,
+            "activityParentName": "Walk",
+            "calories": 128,
+            "description": "2.0 mph, slow pace",
+            "distance": 3.36,
+            "duration": 3600000,
+            "hasStartTime": true,
+            "isFavorite": false,
+            "lastModified": "2014-06-19T18:52:32.000Z",
+            "logId": 79441095,
+            "name": "Walk",
+            "startDate": "2014-06-19",
+            "startTime": "09:00",
+            "steps": 5000
+        }
+    ],
+    "summary": {
+        "activeScore": -1,
+        "activityCalories": 420,
+        "caloriesBMR": 1221,
+        "caloriesOut": 1848,
+        "distances": [
+            {
+                "activity": "Walk",
+                "distance": 3.36
+            },
+            {
+                "activity": "total",
+                "distance": 7.32
+            },
+            {
+                "activity": "tracker",
+                "distance": 7.32
+            },
+            {
+                "activity": "loggedActivities",
+                "distance": 3.36
+            },
+            {
+                "activity": "veryActive",
+                "distance": 0
+            },
+            {
+                "activity": "moderatelyActive",
+                "distance": 0
+            },
+            {
+                "activity": "lightlyActive",
+                "distance": 5.23
+            },
+            {
+                "activity": "sedentaryActive",
+                "distance": 0
+            }
+        ],
+        "fairlyActiveMinutes": 34,
+        "lightlyActiveMinutes": 132,
+        "marginalCalories": 184,
+        "sedentaryMinutes": 1271,
+        "steps": 10007,
+        "veryActiveMinutes": 3
+    }
+}
