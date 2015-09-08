@@ -44,15 +44,6 @@ dependencyManagement {
     imports {
         mavenBom "org.springframework.boot:spring-boot-dependencies:${springBootVersion}"
     }
-
-    dependencies {
-        dependency("com.microsoft.hsg:hv-jaxb:${healthVaultSdkVersion}") {
-            exclude "log4j:log4j"
-        }
-        dependency("com.microsoft.hsg:hv-sdk:${healthVaultSdkVersion}") {
-            exclude "log4j:log4j"
-        }
-    }
 }
 
 dependencies {
@@ -60,14 +51,11 @@ dependencies {
     compile "commons-io:commons-io:2.4"
     compile "org.apache.httpcomponents:httpclient"
     compile "org.apache.httpcomponents:httpcore:4.3.3"
-    compile "com.microsoft.hsg:hv-jaxb:${healthVaultSdkVersion}"
-    compile "com.microsoft.hsg:hv-sdk:${healthVaultSdkVersion}"
     compile "com.fasterxml.jackson.core:jackson-annotations"
     compile "com.fasterxml.jackson.dataformat:jackson-dataformat-xml"
     compile "com.fasterxml.jackson.datatype:jackson-datatype-jsr310"
     compile "com.fasterxml.jackson.datatype:jackson-datatype-jdk8"
     compile "joda-time:joda-time"             // TODO delete this when shims have been migrated
-    compile "com.jayway.jsonpath:json-path"   // TODO delete this when shims have been migrated
     compile "com.github.fge:json-schema-validator:2.2.6"
     compile "org.mongodb:mongo-java-driver"
     compile "org.openmhealth.schema:omh-schema-sdk:${omhSchemaSdkVersion}"
