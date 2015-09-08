@@ -223,9 +223,9 @@ The currently supported shims are
         * [omh:physical-activity](http://www.openmhealth.org/developers/schemas/#physical-activity)
 * runkeeper
     * activity
-        * [omh:physical-activity](http://www.openmhealth.org/developers/schemas/#physical-activity)
-    * weight  
-        * [omh:body-weight](http://www.openmhealth.org/developers/schemas/#body-weight)
+        * [omh:physical-activity](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_physical-activity)
+    * calories  
+        * [omh:calories-burned](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_calories-burned)
 * withings
     * body 
         * [omh:blood-pressure](http://www.openmhealth.org/developers/schemas/#blood-pressure)
