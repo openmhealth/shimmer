@@ -187,19 +187,17 @@ The following is a nested list in the format
 
 The currently supported shims are
  
-* fitbit
+* fitbit<sup>1</sup>
     * activity
-        * [omh:physical-activity](http://www.openmhealth.org/developers/schemas/#physical-activity)
-    * blood_pressure
-        * [omh:blood-pressure](http://www.openmhealth.org/developers/schemas/#blood-pressure)
-    * blood_glucose
-        * [omh:blood-glucose](http://www.openmhealth.org/developers/schemas/#blood-glucose)
-    * heart
-        * [omh:heart-rate](http://www.openmhealth.org/developers/schemas/#heart-rate)
+        * [omh:physical-activity](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_physical-activity)
     * steps
-        * [omh:step-count](http://www.openmhealth.org/developers/schemas/#step-count)
+        * [omh:step-count](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_step-count)
     * weight
-        * [omh:body-weight](http://www.openmhealth.org/developers/schemas/#body-weight)
+        * [omh:body-weight](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_body-weight)
+    * body_mass_index
+        * [omh:body-mass-index](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_body-mass-index)
+    * sleep
+        * [omh:sleep-duration](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_sleep-duration)
 * healthvault
     * activity 
         * [omh:physical-activity](http://www.openmhealth.org/developers/schemas/#physical-activity)
@@ -236,6 +234,8 @@ The currently supported shims are
         * [omh:step-count](http://www.openmhealth.org/developers/schemas/#step-count)
     * sleep    
         * [omh:sleep-duration](http://www.openmhealth.org/developers/schemas/#sleep-duration)
+
+<sup>1</sup> *The Fitbit API does not provide time zone information for the data points it returns. Furthermore, it is not possible to infer the time zone from any of the information provided. Because OMH schemas do not allow local time, we need to assign a time zone to timestamps. We set the time zone of all timestamps to UTC for consistency, even if the data may not have occured in that time zone. This means that unless the event actually occurred in UTC, the timestamps will be incorrect. Please consider this when working with data normalized into OMH schemas that are retrieved from the Fitbit shim. We will fix this as soon as Fitbit makes changes to their API to provide time zone information.  
 
 You can learn more about these shims and endpoints on the Open mHealth [developer site](http://www.openmhealth.org/developers/getting-started/). 
 
