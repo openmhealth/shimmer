@@ -14,15 +14,17 @@ The shim server API lets your application use a shim to read data from a third-p
 This repository contains a shim server, a shim server UI, and shims for third-party APIs. The currently supported APIs are:
 
 * [Fitbit](http://dev.fitbit.com/)
-* [Microsoft HealthVault](https://developer.healthvault.com/)
+* [Google Fit](https://developers.google.com/fit/rest/) ([console](https://console.developers.google.com/start))
 * [Jawbone UP](https://jawbone.com/up/developer)
+* [Microsoft HealthVault](https://developer.healthvault.com/)
+* [Misfit](https://build.misfit.com/)
 * [RunKeeper](http://developer.runkeeper.com/healthgraph) ([application management portal](http://runkeeper.com/partner))
 * [Withings](http://oauth.withings.com/api)
 
 The above links point to the developer website of each API. You'll need to visit these websites to register your 
 application and obtain authentication credentials for each of the shims you want to enable.  
 
-If any of links are incorrect or out of date, please [submit an issue](https://github.com/openmhealth/omh-shims/issues) to let us know. 
+If any of links are incorrect or out of date, please [submit an issue](https://github.com/openmhealth/shimmer/issues) to let us know. 
 
 Please note that the shim server is meant as a discovery and experimentation tool. It has not been secured and does not
 attempt to protect the data retrieved from third-party APIs.
@@ -68,7 +70,7 @@ Then in a terminal,
 
 If you prefer not to use Docker,  
 
-1. You must have a Java 7 or higher JDK installed. You can use either [OpenJDK](http://openjdk.java.net/install/) or the [Oracle JDK](http://www.oracle.com/technetwork/java/javase/downloads/index.html).
+1. You must have a Java 8 or higher JDK installed. You can use either [OpenJDK](http://openjdk.java.net/install/) or the [Oracle JDK](http://www.oracle.com/technetwork/java/javase/downloads/index.html).
 1. A running [MongoDB](http://docs.mongodb.org/manual/) installation is required.
 1. [Maven](http://maven.apache.org/) is required to build and install Microsoft HealthVault libraries.
 1. You technically don't need to run the shim server UI, but it makes your life easier. If you're building the UI,
@@ -113,7 +115,7 @@ If you don't have Docker installed, download [Docker](https://docs.docker.com/in
 
 Then,
 
-1. Download the latest [release](https://github.com/openmhealth/omh-shims/releases) of this Git repository or clone it. 
+1. Download the latest [release](https://github.com/openmhealth/shimmer/releases) of this Git repository or clone it. 
 1. Navigate to the `docker/source` directory in a terminal.
 1. Run `docker build -t="openmhealth/omh-shim-server" .`
   * This will require about 1.5GB of disk space.  
@@ -197,6 +199,19 @@ The currently supported shims are
         * [omh:body-mass-index](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_body-mass-index)
     * sleep
         * [omh:sleep-duration](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_sleep-duration)
+* googlefit
+    * activity
+        * [omh:physical-activity](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_physical-activity)
+    * body_height
+        * [omh:body-height](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_body-height)
+    * body_weight
+        * [omh:body-weight](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_body-weight)
+    * heart_rate
+        * [omh:heart-rate](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_heart-rate)
+    * step_count
+        * [omh:step-count](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_step-count)
+    * calories_burned
+        * [omh:calories-burned](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_calories-burned)
 * healthvault
     * activity 
         * [omh:physical-activity](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_physical-activity)
@@ -222,6 +237,13 @@ The currently supported shims are
         * [omh:physical-activity](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_physical-activity)
     * heart_rate
         * [omh:heart-rate](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_heart-rate)
+* misfit
+    * steps
+        * [omh:step-count](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_step-count)
+    * sleep
+        * [omh:sleep-duration](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_sleep-duration)
+    * activities
+        * [omh:physical-activity](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_physical-activity)
 * runkeeper
     * activity
         * [omh:physical-activity](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_physical-activity)
@@ -242,26 +264,6 @@ The currently supported shims are
         * [omh:calories-burned](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_calories-burned)
     * sleep    
         * [omh:sleep-duration](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_sleep-duration)
-* misfit
-    * steps
-        * [omh:step-count](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_step-count)
-    * sleep
-        * [omh:sleep-duration](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_sleep-duration)
-    * activities
-        * [omh:physical-activity](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_physical-activity)
-* googlefit
-    * activity
-        * [omh:physical-activity](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_physical-activity)
-    * body_height
-        * [omh:body-height](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_body-height)
-    * body_weight
-        * [omh:body-weight](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_body-weight)
-    * heart_rate
-        * [omh:heart-rate](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_heart-rate)
-    * step_count
-        * [omh:step-count](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_step-count)
-    * calories_burned
-        * [omh:calories-burned](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_calories-burned)
 
 <sup>1</sup> *The Fitbit API does not provide time zone information for the data points it returns. Furthermore, it is not possible to infer the time zone from any of the information provided. Because Open mHealth schemas require timestamps to have a time zone, we need to assign a time zone to timestamps. We set the time zone of all timestamps to UTC for consistency, even if the data may not have occurred in that time zone. This means that unless the event actually occurred in UTC, the timestamps will be incorrect. Please consider this when working with data normalized into OmH schemas that are retrieved from the Fitbit shim. We will fix this as soon as Fitbit makes changes to their API to provide time zone information.*  
 <sup>2</sup> *Uses the daily activity summary by default or when partner access is disabled in the application YAML file and uses intraday activity when partner access is enabled. Intraday activity requests are limited to 24 hours worth of data per request.*
