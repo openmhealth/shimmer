@@ -1,6 +1,10 @@
-## Shimmer and shims 
+# Shimmer [![Build Status](https://travis-ci.org/openmhealth/shimmer.svg?branch=develop)](https://travis-ci.org/openmhealth/shimmer)
 
-### Overview
+Shimmer is an application that makes it easy to pull data from popular third-party APIs, like Runkeeper and Fitbit.
+It converts that data into an [Open mHealth compliant data format](http://www.openmhealth.org/documentation/#/schema-docs/overview),
+letting your application work with a simple, clinically meaningful data format.   
+
+## Concepts
 
 A *shim* is an adapter that reads raw data from a third-party API (e.g. Jawbone, Fitbit) and converts that data into an [Open mHealth compliant data format](http://www.openmhealth.org/documentation/#/schema-docs/overview). It's called a shim
 because it lets you treat third-party data like Open mHealth compliant data when writing your application. 
@@ -25,49 +29,42 @@ application and obtain authentication credentials for each of the shims you want
 
 If any of links are incorrect or out of date, please [submit an issue](https://github.com/openmhealth/shimmer/issues) to let us know. 
 
-Please note that shimmer is meant as a discovery and experimentation tool. It has not been secured and does not
-attempt to protect the data retrieved from third-party APIs.
 
-
-### Installation
+## Installation
 
 There are two ways to build and run Shimmer. 
 
-1. You can run a Docker container that executes a pre-built binary. 
+1. You can run Docker containers that execute pre-built binaries. 
   * This is the fastest way to get up and running and isolates the install from your system.
-1. You can build all the code from source and run it on your host system.
-  * This is a quick way to get up and running if your system already has MongoDB and is prepped to build Java code. 
+1. You can build all the code from source and run it on your host system or in Docker.
 
-#### Option 1. Running a pre-built binary in Docker
+### Option 1. Running Docker images
 
-If you don't have Docker installed, download [Docker](https://docs.docker.com/installation/#installation/) 
- and follow the installation instructions for your platform.
+If you don't have Docker and Docker Compose installed, download [Docker Toolbox](https://www.docker.com/toolbox) 
+ and follow the installation instructions to start a Docker host on your platform. These instructions assume your
+ Docker host is called `dev`, i.e. that `docker-machine status dev` returns `Running`.
 
-Then in a terminal,
+Once you have a Docker host running, in a terminal 
 
-1. If you don't already have a MongoDB container, download one by running
-  * `docker pull mongo:latest`
-  * Note that this will download around 400 MB of Docker images.
-1. If your MongoDB container isn't running, start it by running
-  * `docker run --name some-mongo -d mongo:latest`
-1. Download the shim server image by running
-  * `docker pull openmhealth/omh-shim-server:latest` 
-  * Note that this will download up to 600MB of Docker images. (203MB for Ubuntu, 350MB for the OpenJDK 7 JRE, and 30MB 
-    for the shim server and its dependencies.)
-1. Start the shim server by running
-  * `docker run -e openmhealth.shim.server.callbackUrlBase=http://<your-docker-host>:8083 --link some-mongo:mongo -d -p 8083:8083 'openmhealth/omh-shim-server:latest'`
-1. The server should now be running on the Docker host on default port 8083. You can change the port number in the Docker `run` command.
+1. Clone this Git repository.
+1. Update the Compose configuration file to match your environment. (This step will be simplified once Compose 1.5 is released.)
+  * Run `docker-machine ip dev` to find the Docker host IP address.
+  * Update the `OPENMHEALTH_SHIM_SERVER_CALLBACKURLBASE` property in `docker-compose.yml` to match the IP.
+1. Start the containers by running
+  * `docker-compose up -d`
+  * If you want to see logs and keep the containers in the foreground, omit the `-d`.
+  * This will download about 1GB of Docker images if you don't already have them, the bulk of which are MongoDB and OpenJDK base images. 
 1. Visit `http://<your-docker-host>:8083` in a browser.
 
-#### Option 2. Building from source and running on your host system
+### Option 2. Building from source and running on your host system
 
-If you prefer not to use Docker,  
+If you prefer to build the code yourself,  
 
 1. You must have a Java 8 or higher JDK installed. You can use either [OpenJDK](http://openjdk.java.net/install/) or the [Oracle JDK](http://www.oracle.com/technetwork/java/javase/downloads/index.html).
-1. A running [MongoDB](http://docs.mongodb.org/manual/) installation is required.
-1. You technically don't need to run the shim server UI, but it makes your life easier. If you're building the UI,
-  1. [Node.js](http://nodejs.org/download/) is required.
-  1. [Xcode Command Line Tools](https://developer.apple.com/xcode/) are required if you're on a Mac.
+1. You need a running [MongoDB](http://docs.mongodb.org/manual/) instance.
+1. You technically don't need to run the shimmer console, but it makes your life easier. If you're building the console,
+  1. You need [Node.js](http://nodejs.org/download/).
+  1. You need [Xcode Command Line Tools](https://developer.apple.com/xcode/) if you're on a Mac.
 
 Then,
 
@@ -78,7 +75,7 @@ Then,
   1. `bower install`
   1. `grunt build`
 1. Navigate to the `shim-server/src/main/resources` directory and run
-  1. `ln -s ../../../../shim-server-ui/dist public`
+  1. `ln -s ../../../../shim-server-ui/docker/assets public`
 1. Edit the `application.yaml` file.
   * Check that the `spring:data:mongodb:uri` parameter points to your running MongoDB instance.
   * You might need to change the host to `localhost`, for example.
@@ -86,18 +83,18 @@ Then,
 1. The server should now be running on `localhost` on port 8083. You can change the port number in the `application.yaml` file.
 1. Visit `http://localhost:8083` in a browser.
                            
-### Setting up your credentials
+## Setting up your credentials
 
 You need to obtain authentication credentials, typically an OAuth client ID and client secret, for any shim you'd like to run. 
 These are obtained from the developer websites of the third-party APIs.
 
-Once credentials are obtained for a particular API, navigate to the settings tab of the shim server UI and fill them in. 
+Once credentials are obtained for a particular API, navigate to the settings tab of the Shimmer console and fill them in. 
 
 (If you didn't build the UI, uncomment and replace the corresponding `clientId` and `clientSecret` placeholders in the `application.yaml` file 
 with your new credentials and restart Jetty. If you installed using Docker, you can restart Jetty using `supervisorctl restart jetty`. 
 If you installed manually, terminate your running Gradle process and restart it.)
 
-### Authorising access to a third-party user account from the UI
+## Authorising access to a third-party user account from the UI
 
 The data produced by a third-party API belongs to some user account registered on the third-party system. To allow 
  a shim to read that data, you'll need to initiate an authorization process that lets the account holder grant the shim access to their data.
@@ -110,7 +107,7 @@ To initiate the authorization process from the UI,
 1. Follow the authorization prompts. You should see an `AUTHORIZE` JSON response.
 1. Close the pop-up.
 
-### Authorising access to a third-party user account programmatically
+## Authorising access to a third-party user account programmatically
 
 To initiate the authorization process programmatically,
  
@@ -120,7 +117,7 @@ To initiate the authorization process programmatically,
 1. In the returned JSON response, find the `authorizationUrl` value and redirect your user to this URL. Your user will land on the third-party website where they can login and authorize access to their third-party user account. 
 1. Once authorized, they will be redirected to `http://<host>:8083/authorize/{shim_name}/callback` along with an approval response.
 
-### Reading data using the UI
+## Reading data using the UI
 
 To pull data from the third-party API using the UI,
  
@@ -128,7 +125,7 @@ To pull data from the third-party API using the UI,
 1. Fill in the date range you're interested in.
 1. Press the *Raw* button for raw data, or the *Normalized* button for data that has been converted to an Open mHealth compliant data format. 
 
-### Reading data programmatically
+## Reading data programmatically
 
 To pull data from the third-party API programmatically, make requests in the format
  
@@ -139,7 +136,7 @@ The URL can be broken down as follows
 * The `endPoint` path variable roughly corresponds to the type of data to retrieve. There's a list of these [below](#supported-apis-and-endpoints).
 * The `normalize` parameter controls whether the shim returns data in a raw third-party API format (`false`) or in an Open mHealth compliant format (`true`).  
  
-### Supported APIs and endpoints
+## Supported APIs and endpoints
 
 The following is a nested list in the format  
 
@@ -216,9 +213,9 @@ The currently supported shims are
 
 <sup>1</sup> *The Fitbit API does not provide time zone information for the data points it returns. Furthermore, it is not possible to infer the time zone from any of the information provided. Because Open mHealth schemas require timestamps to have a time zone, we need to assign a time zone to timestamps. We set the time zone of all timestamps to UTC for consistency, even if the data may not have occurred in that time zone. This means that unless the event actually occurred in UTC, the timestamps will be incorrect. Please consider this when working with data normalized into OmH schemas that are retrieved from the Fitbit shim. We will fix this as soon as Fitbit makes changes to their API to provide time zone information.*  
 <sup>2</sup> *Uses the daily activity summary when partner access is disabled (default) and uses intraday activity when partner access is enabled. See the YAML configuration file for details. Intraday activity requests are limited to 24 hours worth of data per request.*
-<sup>3</sup> *Sleep data has not been tested using real data directly from a device. It has been tested with example data provided in the Withings API Documentation*
+<sup>3</sup> *Sleep data has not been tested using real data directly from a device. It has been tested with example data provided in the Withings API documentation.*
 
-### Learn more and contribute
+## Learn more and contribute
 You can learn more about these shims and endpoints in the [documentation section](http://www.openmhealth.org/documentation/#/overview/get-started) of the Open mHealth site. 
 
 The list of supported third-party APIs will grow over time as more shims are added. If you'd like to contribute a shim to work with your API or a third-party API,
