@@ -25,15 +25,15 @@ TODO add architecture
 
 ## Installation
 
-There are two ways to build and run Shimmer. 
+There are two ways to run Shimmer. 
 
 1. You can run Docker containers from pre-built binaries. 
   * This is the fastest way to get up and running and isolates the install from your system.
-1. You can build all the code from source and run it on natively or in Docker.
+1. You can build all the code from source and run it natively or in Docker.
 
 ### Option 1. Running Docker images
 
-If you don't have Docker and [Docker Compose](https://docs.docker.com/compose/) installed, 
+If you don't have Docker and Docker Compose installed, 
 
 1. Download [Docker Toolbox](https://www.docker.com/toolbox) and follow the installation instructions for your platform.
 2. If you don't already have a Docker host, create one by running `docker-machine create --driver virtualbox dev` in a terminal.
@@ -42,7 +42,7 @@ If you don't have Docker and [Docker Compose](https://docs.docker.com/compose/) 
 Once you have a Docker host running, in a terminal 
 
 1. Clone this Git repository.
-1. Update the Compose configuration file to match your environment. (This step will be simplified once Compose 1.5 is released.)
+1. Prepare Compose for your environment. (This step will be simplified once Compose 1.5 is released.)
   * Run `docker-machine ip dev` to find the Docker host IP address.
   * Update the `OPENMHEALTH_SHIM_SERVER_CALLBACKURLBASE` property in `docker-compose.yml` to match the IP.
 1. Start the containers by running
@@ -51,32 +51,25 @@ Once you have a Docker host running, in a terminal
   * This will download about 1GB of Docker images if you don't already have them, the bulk of which are MongoDB and OpenJDK base images. 
 1. Visit `http://<your-docker-host>:8083` in a browser.
 
-### Option 2. Building from source and running on your host system
+### Option 2. Building from source and running natively or in Docker
 
 If you prefer to build the code yourself,  
 
 1. You must have a Java 8 or higher JDK installed. You can use either [OpenJDK](http://openjdk.java.net/install/) or the [Oracle JDK](http://www.oracle.com/technetwork/java/javase/downloads/index.html).
 1. You need a running [MongoDB](http://docs.mongodb.org/manual/) instance.
-1. You technically don't need to run the shimmer console, but it makes your life easier. If you're building the console,
+1. You technically don't need to run the Shimmer console, but it makes your life easier. If you're building the console,
   1. You need [Node.js](http://nodejs.org/download/).
   1. You need [Xcode Command Line Tools](https://developer.apple.com/xcode/) if you're on a Mac.
 
-Then,
-
+If you want to run Shimmer natively,
+ 
 1. Clone this Git repository.
-1. Navigate to the `shim-server-ui` directory in a terminal and run
-  1. `npm install`
-  1. `sudo npm install -g grunt-cli bower`
-  1. `bower install`
-  1. `grunt build`
-1. Navigate to the `shim-server/src/main/resources` directory and run
-  1. `ln -s ../../../../shim-server-ui/docker/assets public`
-1. Edit the `application.yaml` file.
-  * Check that the `spring:data:mongodb:uri` parameter points to your running MongoDB instance.
-  * You might need to change the host to `localhost`, for example.
-1. To build and run the shim server, navigate to the base directory and run `./gradlew shim-server:bootRun`
+1. Run the `./run-natively.sh` script in a terminal.
 1. The server should now be running on `localhost` on port 8083. You can change the port number in the `application.yaml` file.
 1. Visit `http://localhost:8083` in a browser.
+
+If you want to run Shimmer in Docker, 
+TODO
                            
 ## Setting up your credentials
 
