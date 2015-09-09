@@ -25,7 +25,7 @@ application and obtain authentication credentials for each of the shims you want
 
 If any of links are incorrect or out of date, please [submit an issue](https://github.com/openmhealth/shimmer/issues) to let us know. 
 
-Please note that the shim server is meant as a discovery and experimentation tool. It has not been secured and does not
+Please note that shimmer is meant as a discovery and experimentation tool. It has not been secured and does not
 attempt to protect the data retrieved from third-party APIs.
 
 
@@ -124,7 +124,7 @@ To initiate the authorization process programmatically,
 
 To pull data from the third-party API using the UI,
  
-1. Click the nam of the connected third-party API.
+1. Click the name of the connected third-party API.
 1. Fill in the date range you're interested in.
 1. Press the *Raw* button for raw data, or the *Normalized* button for data that has been converted to an Open mHealth compliant data format. 
 
