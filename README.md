@@ -1,48 +1,43 @@
 # Shimmer [![Build Status](https://travis-ci.org/openmhealth/shimmer.svg?branch=develop)](https://travis-ci.org/openmhealth/shimmer)
 
-Shimmer is an application that makes it easy to pull data from popular third-party APIs, like Runkeeper and Fitbit.
-It converts that data into an [Open mHealth compliant data format](http://www.openmhealth.org/documentation/#/schema-docs/overview),
-letting your application work with a simple, clinically meaningful data format.   
+Shimmer is an application that makes it easy to pull health data from popular third-party APIs, like Runkeeper and Fitbit.
+It converts that data into an [Open mHealth compliant format](http://www.openmhealth.org/documentation/#/schema-docs/overview),
+letting your application work with clean and clinically meaningful data, irrespective of its origin.   
+
+We currently support the following APIs
+
+* [Fitbit](https://www.fitbit.com/)
+* [Google Fit](https://developers.google.com/fit/?hl=en)
+* [Jawbone UP](https://jawbone.com/up)
+* [Misfit](http://misfit.com/)
+* [RunKeeper](https://runkeeper.com/index)
+* [Withings](http://www.withings.com/)
+
+And the following APIs are in the works
+
+* [FatSecret](https://www.fatsecret.com/)
+* [iHealth](http://www.ihealthlabs.com/)
+* [Strava](https://www.strava.com/)
 
 ## Concepts
-
-A *shim* is an adapter that reads raw data from a third-party API (e.g. Jawbone, Fitbit) and converts that data into an [Open mHealth compliant data format](http://www.openmhealth.org/documentation/#/schema-docs/overview). It's called a shim
-because it lets you treat third-party data like Open mHealth compliant data when writing your application. 
-To learn more about shims, please visit the [shim section](http://www.openmhealth.org/documentation/#/data-providers/data-provider-api-library) on our site.
- 
-A shim is a library, not an application. To use a shim, it needs to be hosted in a standalone application called a *shim server*. 
-The shim server API lets your application use a shim to read data from a third-party API. This data is available in two formats;
- the raw format produced by the third-party API and the converted Open mHealth compliant format. To make it easier to use the shim
- server, we've provided a *shim server UI* that can trigger authentication flows and make requests.
- 
-This repository contains a shim server, a shim server UI, and shims for third-party APIs. The currently supported APIs are:
-
-* [Fitbit](http://dev.fitbit.com/)
-* [Google Fit](https://developers.google.com/fit/rest/) ([application management portal](https://console.developers.google.com/start))
-* [Jawbone UP](https://jawbone.com/up/developer)
-* [Misfit](https://build.misfit.com/)
-* [RunKeeper](http://developer.runkeeper.com/healthgraph) ([application management portal](http://runkeeper.com/partner))
-* [Withings](http://oauth.withings.com/api)
-
-The above links point to the developer website of each API. You'll need to visit these websites to register your 
-application and obtain authentication credentials for each of the shims you want to enable.  
-
-If any of links are incorrect or out of date, please [submit an issue](https://github.com/openmhealth/shimmer/issues) to let us know. 
-
+    
+TODO add architecture                                  
 
 ## Installation
 
 There are two ways to build and run Shimmer. 
 
-1. You can run Docker containers that execute pre-built binaries. 
+1. You can run Docker containers from pre-built binaries. 
   * This is the fastest way to get up and running and isolates the install from your system.
-1. You can build all the code from source and run it on your host system or in Docker.
+1. You can build all the code from source and run it on natively or in Docker.
 
 ### Option 1. Running Docker images
 
-If you don't have Docker and Docker Compose installed, download [Docker Toolbox](https://www.docker.com/toolbox) 
- and follow the installation instructions to start a Docker host on your platform. These instructions assume your
- Docker host is called `dev`, i.e. that `docker-machine status dev` returns `Running`.
+If you don't have Docker and [Docker Compose](https://docs.docker.com/compose/) installed, 
+
+1. Download [Docker Toolbox](https://www.docker.com/toolbox) and follow the installation instructions for your platform.
+2. If you don't already have a Docker host, create one by running `docker-machine create --driver virtualbox dev` in a terminal.
+  * These instructions assume your Docker host is called `dev`. If it uses a different name, use that name in the steps below.
 
 Once you have a Docker host running, in a terminal 
 
@@ -87,6 +82,18 @@ Then,
 
 You need to obtain authentication credentials, typically an OAuth client ID and client secret, for any shim you'd like to run. 
 These are obtained from the developer websites of the third-party APIs.
+                           
+* [Fitbit](http://dev.fitbit.com/)
+* [Google Fit](https://developers.google.com/fit/rest/) ([application management portal](https://console.developers.google.com/start))
+* [Jawbone UP](https://jawbone.com/up/developer)
+* [Misfit](https://build.misfit.com/)
+* [RunKeeper](http://developer.runkeeper.com/healthgraph) ([application management portal](http://runkeeper.com/partner))
+* [Withings](http://oauth.withings.com/api)
+
+The above links point to the developer website of each API. You'll need to visit these websites to register your 
+application and obtain authentication credentials for each of the shims you want to enable.  
+
+If any of links are incorrect or out of date, please [submit an issue](https://github.com/openmhealth/shimmer/issues) to let us know. 
 
 Once credentials are obtained for a particular API, navigate to the settings tab of the Shimmer console and fill them in. 
 
