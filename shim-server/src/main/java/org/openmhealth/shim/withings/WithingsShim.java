@@ -115,7 +115,7 @@ public class WithingsShim extends OAuth1ShimBase {
         return new ShimDataType[] {
                 WithingsDataType.HEART_RATE, WithingsDataType.BLOOD_PRESSURE, WithingsDataType.SLEEP,
                 WithingsDataType.CALORIES,
-                WithingsDataType.HEIGHT, WithingsDataType.STEPS, WithingsDataType.WEIGHT
+                WithingsDataType.BODY_HEIGHT, WithingsDataType.STEPS, WithingsDataType.BODY_WEIGHT
         };
 
     }
@@ -135,8 +135,8 @@ public class WithingsShim extends OAuth1ShimBase {
 
     public enum WithingsDataType implements ShimDataType {
 
-        WEIGHT("measure", "getmeas", true),
-        HEIGHT("measure", "getmeas", true),
+        BODY_WEIGHT("measure", "getmeas", true),
+        BODY_HEIGHT("measure", "getmeas", true),
         STEPS("v2/measure", "getactivity", false),
         CALORIES("v2/measure", "getactivity", false),
         SLEEP("v2/sleep", "getsummary", false),
@@ -202,10 +202,10 @@ public class WithingsShim extends OAuth1ShimBase {
 
                 switch (withingsDataType) {
 
-                    case WEIGHT:
+                    case BODY_WEIGHT:
                         mapper = new WithingsBodyWeightDataPointMapper();
                         break;
-                    case HEIGHT:
+                    case BODY_HEIGHT:
                         mapper = new WithingsBodyHeightDataPointMapper();
                         break;
                     case STEPS:
