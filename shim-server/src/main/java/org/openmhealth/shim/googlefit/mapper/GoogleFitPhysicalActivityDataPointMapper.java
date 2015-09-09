@@ -29,8 +29,7 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.*;
 
 /**
  * A mapper from Google Fit "merged activity segment" (derived:com.google.activity.segment:com.google.android
- * .gms:merge_activity_segments)
- * endpoint responses to {@link PhysicalActivity} objects.
+ * .gms:merge_activity_segments) endpoint responses to {@link PhysicalActivity} objects.
  *
  * @author Chris Schaefbauer
  * @see <a href="https://developers.google.com/fit/rest/v1/data-types">Google Fit Data Type Documentation</a>
@@ -39,11 +38,12 @@ public class GoogleFitPhysicalActivityDataPointMapper extends GoogleFitDataPoint
 
     protected ImmutableMap<Integer, String> googleFitDataTypes;
     protected ImmutableList<Integer> sleepActivityTypes;
+    protected ImmutableList<Integer> stationaryActivityTypes;
 
     public GoogleFitPhysicalActivityDataPointMapper() {
 
         initializeActivityMap();
-        initializeSleepActivityTypes();
+        initializeActivityTypesToSkip();
     }
 
     /**
@@ -59,8 +59,11 @@ public class GoogleFitPhysicalActivityDataPointMapper extends GoogleFitDataPoint
         JsonNode listValueNode = asRequiredNode(listNode, "value");
         long activityTypeId = asRequiredLong(listValueNode.get(0), "intVal");
 
-        //This means that the activity was actually sleep which should be captured using sleep duration
-        if (sleepActivityTypes.contains((int) activityTypeId)) {
+        // This means that the activity was actually sleep, which should be captured using sleep duration, or
+        // stationary, which should not be captured as it is the absence of activity
+        if (sleepActivityTypes.contains((int) activityTypeId) ||
+                stationaryActivityTypes.contains((int) activityTypeId)) {
+
             return Optional.empty();
         }
 
@@ -77,8 +80,10 @@ public class GoogleFitPhysicalActivityDataPointMapper extends GoogleFitDataPoint
     /**
      * Loads an immutable list with the activity type identifiers that represent different types of sleeping.
      */
-    private void initializeSleepActivityTypes() {
+    private void initializeActivityTypesToSkip() {
+
         sleepActivityTypes = ImmutableList.of(72, 109, 110, 111, 112);
+        stationaryActivityTypes = ImmutableList.of(3);
     }
 
     /**

@@ -28,14 +28,14 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.*;
 
 
 /**
- * A mapper from Fitbit Resource API activities/date responses to {@link PhysicalActivity} objects
+ * A mapper from Fitbit Resource API activities/date responses to {@link PhysicalActivity} objects.
  *
  * @author Chris Schaefbauer
  */
 public class FitbitPhysicalActivityDataPointMapper extends FitbitDataPointMapper<PhysicalActivity> {
 
     /**
-     * Maps a JSON response node from the Fitbit API into a {@link PhysicalActivity} measure
+     * Maps a JSON response node from the Fitbit API into a {@link PhysicalActivity} measure.
      *
      * @param node a JSON node for an individual object in the "activities" array retrieved from the activities/date/
      * Fitbit API endpoint

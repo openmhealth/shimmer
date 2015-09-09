@@ -79,6 +79,17 @@ public class GoogleFitPhysicalActivityDataPointMapperUnitTests
         assertThat(dataPoints.size(), equalTo(0));
     }
 
+    @Test
+    public void asDataPointsShouldNotReturnDataPointsForStationaryActivityTypes() throws IOException {
+
+        ClassPathResource resource =
+                new ClassPathResource("org/openmhealth/shim/googlefit/mapper/googlefit-stationary-activity.json");
+        JsonNode stationaryActivityNode = objectMapper.readTree(resource.getInputStream());
+
+        List<DataPoint<PhysicalActivity>> dataPoints = mapper.asDataPoints(singletonList(stationaryActivityNode));
+        assertThat(dataPoints.size(),equalTo(0));
+    }
+
    /* Helper methods */
 
     @Override
