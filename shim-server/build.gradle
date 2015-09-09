@@ -32,7 +32,7 @@ ext {
     springSecurityOAuthVersion = '2.0.7.RELEASE'
 }
 
-ext['jackson.version'] = '2.6.1'
+ext['jackson.version'] = '2.5.3'
 ext["spring-data-releasetrain.version"] = "Fowler-SR2"
 
 configurations {
