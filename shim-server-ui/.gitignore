@@ -1,7 +1,7 @@
 .idea/
 shim-server-ui.iml
 node_modules
-dist
+docker/assets
 .tmp
 .sass-cache
 app/bower_components
