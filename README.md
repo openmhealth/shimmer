@@ -138,78 +138,42 @@ The URL can be broken down as follows
  
 ## Supported APIs and endpoints
 
-The following is a nested list in the format  
+The following is a table of the currently supported shims, their endpoints, and the Open mHealth compliant data that each endpoint can produce. The values in the `shim` and `endPoint` columns are the values for the parameters of the same names used in [programmatic access](#reading-data-programmatically) of the shimmer API.
 
-* shim name
-   * endpoint name
-      * Open mHealth compliant data the endpoint can produce
+The currently supported shims are:
 
-The currently supported shims are
- 
-* fitbit<sup>1</sup>
-    * activity
-        * [omh:physical-activity](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_physical-activity)
-    * steps
-        * [omh:step-count](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_step-count)
-    * weight
-        * [omh:body-weight](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_body-weight)
-    * body_mass_index
-        * [omh:body-mass-index](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_body-mass-index)
-    * sleep
-        * [omh:sleep-duration](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_sleep-duration)
-* googlefit
-    * activity
-        * [omh:physical-activity](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_physical-activity)
-    * body_height
-        * [omh:body-height](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_body-height)
-    * body_weight
-        * [omh:body-weight](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_body-weight)
-    * heart_rate
-        * [omh:heart-rate](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_heart-rate)
-    * step_count
-        * [omh:step-count](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_step-count)
-    * calories_burned
-        * [omh:calories-burned](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_calories-burned)
-* jawbone
-    * weight
-        * [omh:body-weight](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_body-weight)
-    * body_mass_index
-        * [omh:body-mass-index](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_body-mass-index)
-    * steps
-        * [omh:step-count](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_step-count)
-    * sleep
-        * [omh:sleep-duration](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_sleep-duration)
-    * activity
-        * [omh:physical-activity](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_physical-activity)
-    * heart_rate
-        * [omh:heart-rate](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_heart-rate)
-* misfit
-    * steps
-        * [omh:step-count](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_step-count)
-    * sleep
-        * [omh:sleep-duration](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_sleep-duration)
-    * activities
-        * [omh:physical-activity](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_physical-activity)
-* runkeeper
-    * activity
-        * [omh:physical-activity](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_physical-activity)
-    * calories  
-        * [omh:calories-burned](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_calories-burned)
-* withings
-    * blood_pressure 
-        * [omh:blood-pressure](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_blood-pressure)
-    * body_height
-        * [omh:body-height](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_body-height)
-    * body_weight
-        * [omh:body-weight](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_body-weight)
-    * heart_rate
-        * [omh:heart-rate](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_heart-rate)
-    * steps<sup>2</sup> 
-        * [omh:step-count](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_step-count)
-    * calories<sup>2</sup> 
-        * [omh:calories-burned](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_calories-burned)
-    * sleep<sup>3</sup>    
-        * [omh:sleep-duration](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_sleep-duration)
+| shim         | endPoint          | OMH data produced by endpoint |
+| ------------ | ----------------- | -------------------------- |
+| fitbit<sup>1</sup> | activity    | [omh:physical-activity](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_physical-activity) |
+| fitbit       | steps             | [omh:step-count](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_step-count) |
+| fitbit       | weight            | [omh:body-weight](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_body-weight) |
+| fitbit       | body_mass_index   | [omh:body-mass-index](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_body-mass-index)|
+| fitbit       | sleep             | [omh:sleep-duration](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_sleep-duration) |
+| googlefit    | activity          | [omh:physical-activity](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_physical-activity) |
+| googlefit    | body_height       | [omh:body-height](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_body-height) |
+| googlefit    | body_weight       | [omh:body-weight](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_body-weight) |
+| googlefit    | heart_rate        | [omh:heart-rate](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_heart-rate)
+| googlefit    | step_count        | [omh:step-count](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_step-count)
+| googlefit    | calories_burned   | [omh:calories-burned](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_calories-burned) |
+| jawbone      | activity          | [omh:physical-activity](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_physical-activity) |
+| jawbone      | weight            | [omh:body-weight](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_body-weight)
+| jawbone      | body_mass_index   | [omh:body-mass-index](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_body-mass-index) |
+| jawbone      | steps             | [omh:step-count](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_step-count) |
+| jawbone      | sleep             | [omh:sleep-duration](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_sleep-duration) |
+| jawbone      | heart_rate        | [omh:heart-rate](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_heart-rate) |
+| misift       | activities        | [omh:physical-activity](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_physical-activity) |
+| misift       | steps             | [omh:step-count](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_step-count)
+| misift       | sleep             | [omh:sleep-duration](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_sleep-duration) |
+| runkeeper    | activity          | [omh:physical-activity](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_physical-activity) |
+| runkeeper    | calories          | [omh:calories-burned](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_calories-burned) |
+| withings     | blood_pressure    | [omh:blood-pressure](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_blood-pressure)|
+| withings     | body_height       | [omh:body-height](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_body-height)|
+| withings     | body_weight       | [omh:body-weight](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_body-weight) |
+| withings     | heart_rate        | [omh:heart-rate](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_heart-rate) |
+| withings     | steps<sup>2</sup> | [omh:step-count](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_step-count) |
+| withings     | calories<sup>2</sup> | [omh:calories-burned](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_calories-burned) |
+| withings     | sleep<sup>3</sup> | [omh:sleep-duration](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_sleep-duration) |
+
 
 <sup>1</sup> *The Fitbit API does not provide time zone information for the data points it returns. Furthermore, it is not possible to infer the time zone from any of the information provided. Because Open mHealth schemas require timestamps to have a time zone, we need to assign a time zone to timestamps. We set the time zone of all timestamps to UTC for consistency, even if the data may not have occurred in that time zone. This means that unless the event actually occurred in UTC, the timestamps will be incorrect. Please consider this when working with data normalized into OmH schemas that are retrieved from the Fitbit shim. We will fix this as soon as Fitbit makes changes to their API to provide time zone information.*  
 <sup>2</sup> *Uses the daily activity summary when partner access is disabled (default) and uses intraday activity when partner access is enabled. See the YAML configuration file for details. Intraday activity requests are limited to 24 hours worth of data per request.*
