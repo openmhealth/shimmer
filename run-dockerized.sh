@@ -55,10 +55,10 @@ if echo "$answer" | grep -iq "^y" ;then
 fi
 
 # build the backend
-echo -n "Do you want to rebuild the API endpoint (y/N)? "
+echo -n "Do you want to rebuild the resource server (y/N)? "
 read answer
 if echo "$answer" | grep -iq "^y" ;then
-    echo Building the API endpoint...
+    echo Building the resource server...
     cd ${BASEDIR} #CMD
     ./gradlew build #CMD
 fi

@@ -104,7 +104,7 @@ If any of links are incorrect or out of date, please [submit an issue](https://g
 Once credentials are obtained for a particular API, navigate to the settings tab of the console and fill them in. 
 
 > If you didn't build the console, uncomment and replace the corresponding `clientId` and `clientSecret` placeholders in the `application.yaml` file 
-with your new credentials and rebuild the API endpoint.
+with your new credentials and rebuild.
 
 ## Authorizing access to a third-party user account
 

@@ -1,4 +1,4 @@
-apiendpoint:
+resourceserver:
   build: shim-server/docker
   environment:
     SPRING_PROFILES_ACTIVE: development
@@ -9,9 +9,9 @@ apiendpoint:
 mongo:
   image: mongo
 
-ui:
+console:
   build: shim-server-ui/docker
   ports:
     - "8083:8083"
   links:
-    - apiendpoint:api-endpoint
+    - resourceserver:resource-server

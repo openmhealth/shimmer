@@ -54,8 +54,8 @@ echo -n "Please enter a hostname to override it, or press Enter to keep the defa
 read answer
 trimmed=${answer// /}
 
-# start the endpoint
-echo Starting the API endpoint...
+# start the resource server
+echo Starting the resource server...
 cd ${BASEDIR}
 if [[ ! -z "$trimmed" ]] ;then
     SPRING_DATA_MONGODB_URI="mongodb://${trimmed}:27017/omh_dsu" ./gradlew shim-server:bootRun #CMD
