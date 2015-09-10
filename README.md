@@ -42,6 +42,7 @@ Once you have a Docker host running, in a terminal
 
 1. Clone this Git repository.
 1. Run `eval "$(docker-machine env host)"` to prepare environment variables, *replacing `host` with the name of your Docker host*.
+  * Run `docker-machine ls` to find the name of your Docker host.
 1. Run the `./update-compose-files.sh` script.
   * This step will be removed once Compose 1.5 is released.
 1. Start the containers by running
@@ -69,15 +70,16 @@ If you want to build and run the code natively, in a terminal
 1. Clone this Git repository.
 1. Run the `./run-natively.sh` script and follow the instructions.
 1. When the script blocks with the message `Started Application`, the components are running.
-  1. Press Ctrl-C to stop them.
+  * Press Ctrl-C to stop them.
 1. Visit `http://localhost:8083` in a browser.
 
 If you want to build and run the code in Docker, in a terminal 
  
 1. Clone this Git repository.
 1. Run `eval "$(docker-machine env host)"` to prepare environment variables, *replacing `host` with the name of your Docker host*.
+  * Run `docker-machine ls` to find out the name of your active Docker host.
 1. Run the `./run-dockerized.sh` script and follow the instructions.
-1. The containers should now be running on your Docker host on port 8083.
+  * The containers should now be running on your Docker host and expose port 8083.
 1. Visit `http://<your-docker-host>:8083` in a browser.
 
 > If you can't run the Bash scripts on your system, open them and take a look at the commands they run. The important commands are marked with a "#CMD" comment.
