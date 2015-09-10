@@ -22,6 +22,9 @@ fi
 # check for Docker Compose tooling and update configuration
 . update-compose-files.sh
 
+# remove the symlink which may have been created by running natively earlier
+rm -f ${BASEDIR}/shim-server/src/main/resources/public #CMD
+
 # build the console
 echo -n "Do you want to rebuild the console (y/N)? "
 read answer
@@ -64,11 +67,12 @@ if echo "$answer" | grep -iq "^y" ;then
 fi
 
 # run the containers
+cd ${BASEDIR} #CMD
 echo Building the containers...
 docker-compose -f docker-compose-build.yml build #CMD
 
 echo Starting the containers in the background...
 docker-compose -f docker-compose-build.yml up -d #CMD
 
-echo Done
+echo Done, containers are starting up and may take up to a minute to be ready.
 
