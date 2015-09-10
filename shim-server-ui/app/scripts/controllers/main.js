@@ -246,7 +246,7 @@ angular.module('sandboxConsoleApp')
             var url = API_ROOT_URL + "/data/" + shimKey + "/" + endPoint + "?"
                 + "username=" + record.username
                 + "&dateStart=" + fromDate + "&dateEnd=" + toDate
-                + (doNormalize ? "&normalize=true" : "");
+                + (doNormalize ? "&normalize=true" : "&normalize=false");
 
             console.info("The URL to be used is: ", url);
 
