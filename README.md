@@ -37,11 +37,11 @@ If you don't have Docker and Docker Compose installed,
 
 1. Download [Docker Toolbox](https://www.docker.com/toolbox) and follow the installation instructions for your platform.
 2. If you don't already have a Docker host, create one by running `docker-machine create --driver virtualbox dev` in a terminal.
-  * These instructions assume your Docker host is called `dev`. If it uses a different name, use that name in the steps below.
 
 Once you have a Docker host running, in a terminal 
 
 1. Clone this Git repository.
+1. Run `$(docker-machine env host)` to prepare environment variables, *replacing `host` with the name of your Docker host*.
 1. Run the `./update-compose-files.sh` script.
   * This step will be removed once Compose 1.5 is released.
 1. Start the containers by running
@@ -50,7 +50,7 @@ Once you have a Docker host running, in a terminal
   * This will download about 1GB of Docker images if you don't already have them, the bulk of which are MongoDB and OpenJDK base images. 
 1. Visit `http://<your-docker-host>:8083` in a browser.
 
-### Option 2. Building from source and running natively or in Docker
+### Option 2. Building the code and running it natively or in Docker
 
 If you prefer to build the code yourself,  
 
@@ -70,6 +70,7 @@ If you want to build and run the code natively, in a terminal
 If you want to build and run the code in Docker, in a terminal 
  
 1. Clone this Git repository.
+1. Run `$(docker-machine env host)` to prepare environment variables, *replacing `host` with the name of your Docker host*.
 1. Run the `./run-dockerized.sh` script and follow the instructions.
 1. The server should now be running on your Docker host on port 8083.
 1. Visit `http://<your-docker-host>:8083` in a browser.
