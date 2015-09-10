@@ -99,12 +99,12 @@ Once credentials are obtained for a particular API, navigate to the settings tab
 > If you didn't build the console, uncomment and replace the corresponding `clientId` and `clientSecret` placeholders in the `application.yaml` file 
 with your new credentials and rebuild the API endpoint.
 
-## Authorising access to a third-party user account
+## Authorizing access to a third-party user account
 
 The data produced by a third-party API belongs to some user account registered on the third-party system. To allow 
  a shim to read that data, you'll need to initiate an authorization process that lets the holder of that user account grant the shim access to their data.
 
-### Authorising access to a third-party user account from the console
+### Authorizing access to a third-party user account from the console
 
 To initiate the authorization process from the console,
  
@@ -114,7 +114,7 @@ To initiate the authorization process from the console,
 1. Follow the authorization prompts. You should see an `AUTHORIZE` JSON response.
 1. Close the pop-up.
 
-### Authorising access to a third-party user account programmatically
+### Authorizing access to a third-party user account programmatically
 
 To initiate the authorization process programmatically,
  
