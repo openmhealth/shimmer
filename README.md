@@ -16,6 +16,7 @@ We currently support the following APIs
 And the following APIs are in the works
 
 * [FatSecret](https://www.fatsecret.com/)
+* [Ginsberg](https://www.ginsberg.io/)
 * [iHealth](http://www.ihealthlabs.com/)
 * [Strava](https://www.strava.com/)
 
@@ -47,8 +48,8 @@ If you don't have Docker and Docker Compose installed,
 Once you have a Docker host running, in a terminal 
 
 1. Clone this Git repository.
+1. Run `docker-machine ls` to find the name of your active Docker host.
 1. Run `eval "$(docker-machine env host)"` to prepare environment variables, *replacing `host` with the name of your Docker host*.
-  * Run `docker-machine ls` to find the name of your Docker host.
 1. Run the `./update-compose-files.sh` script.
   * This step will be removed once Compose 1.5 is released.
 1. Start the containers by running
@@ -83,8 +84,8 @@ If you want to build and run the code natively, in a terminal
 If you want to build and run the code in Docker, in a terminal 
  
 1. Clone this Git repository.
+1. Run `docker-machine ls` to find the name of your active Docker host.
 1. Run `eval "$(docker-machine env host)"` to prepare environment variables, *replacing `host` with the name of your Docker host*.
-  * Run `docker-machine ls` to find out the name of your active Docker host.
 1. Run the `./run-dockerized.sh` script and follow the instructions.
   * The containers should now be running on your Docker host and expose port 8083.
   * It can take up to a minute for the containers to start up.
