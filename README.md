@@ -109,7 +109,7 @@ The data produced by a third-party API belongs to some user account registered o
 To initiate the authorization process from the console,
  
 1. Type in an arbitrary user handle. This handle can be anything, it's just your way of referring to third-party API users. 
-1. Press *Find* and the console will show you a *Connect* button for each API whose authentication credentials have been [configured](#setting-up-your-credentials).
+1. Press *Find* and the console will show you a *Connect* button for each API with [configured](#setting-up-your-credentials) authentication credentials.
 1. Click *Connect* and a pop-up will open.
 1. Follow the authorization prompts. You should see an `AUTHORIZE` JSON response.
 1. Close the pop-up.
