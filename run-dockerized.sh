@@ -59,7 +59,7 @@ if echo "$answer" | grep -iq "^y" ;then
     bower install #CMD
 
     echo Building the console...
-    grunt build_docker #CMD
+    grunt build #CMD
 fi
 
 # build the backend

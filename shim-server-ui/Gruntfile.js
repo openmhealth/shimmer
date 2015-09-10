@@ -434,7 +434,7 @@ module.exports = function (grunt) {
         'karma'
     ]);
 
-    grunt.registerTask('build_generic', [
+    grunt.registerTask('build', [
         'clean:dist',
         'bowerInstall',
         'useminPrepare',
@@ -449,15 +449,7 @@ module.exports = function (grunt) {
         'rev',
         'usemin',
         'htmlmin',
-        'replace:css_relative_paths'
-    ]);
-
-    grunt.registerTask('build_docker', [
-        'build_generic'
-    ]);
-
-    grunt.registerTask('build', [
-        'build_generic',
+        'replace:css_relative_paths',
         'replace:api_settings'
     ]);
 
