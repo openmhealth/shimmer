@@ -133,7 +133,49 @@ To initiate the authorization process programmatically,
 1. In the returned JSON response, find the `authorizationUrl` value and redirect your user to this URL. Your user will land on the third-party website where they can login and authorize access to their third-party user account. 
 1. Once authorized, they will be redirected to `http://<host>:8083/authorize/{shim_name}/callback` along with an approval response.
 
-## Reading data using the console
+## Reading data
+
+Each shim produces json data that can be represented either as data *normalized* to OMH schemas or as data that is in the *raw*, native format from the third-party API. 
+
+* *Raw* data will resemble the format specified by each individual API. For example, raw data from Fitbit will be represented in the format coming directly from the Fitbit API. 
+
+* *Normalized* data will be represented according to [OMH schemas](http://www.openmhealth.org/documentation/#/schema-docs/schema-library). The following is an example of what normalized data from shimmer looks like:
+```json
+{
+  "shim": "jawbone",
+  "timeStamp": 1441910619,
+  "body": [
+    {
+      "header": {
+        "id": "243c773b-8936-407e-9c23-270d0ea49cc4",
+        "creation_date_time": "2015-09-10T12:43:39.138-06:00",
+        "acquisition_provenance": {
+          "source_name": "Jawbone UP API",
+          "modality": "sensed",
+          "external_id": "QkfTizSpRdt--VG4XXI2KvvdgHJJeui0",
+          "source_updated_date_time": "2015-09-10T18:43:39Z"
+        },
+        "schema_id": {
+          "namespace": "omh",
+          "name": "step-count",
+          "version": "1.0"
+        }
+      },
+      "body": {
+        "effective_time_frame": {
+          "time_interval": {
+            "start_date_time": "2015-08-06T05:11:09-07:00",
+            "end_date_time": "2015-08-06T23:00:36-06:00"
+          }
+        },
+        "step_count": 7939
+      }
+    }
+  ]
+}
+```
+
+### Reading data using the console
 
 To pull data from the third-party API using the console,
  
@@ -141,9 +183,9 @@ To pull data from the third-party API using the console,
 1. Fill in the date range you're interested in.
 1. Press the *Raw* button for raw data, or the *Normalized* button for data that has been converted to an Open mHealth compliant data format. 
 
-## Reading data programmatically
+### Reading data programmatically
 
-To pull data from the third-party API programmatically, make requests in the format
+To pull data from a third-party API programmatically, make requests in the format
  
 `http://<host>:8083/data/{shim}/{endPoint}?username={userId}&dateStart=yyyy-MM-dd&dateEnd=yyyy-MM-dd&normalize={true|false}`
 
@@ -151,6 +193,8 @@ The URL can be broken down as follows
 * The `shim` and `username` path variables are the same as [above](#authorizing-access-to-a-third-party-user-account).
 * The `endPoint` path variable roughly corresponds to the type of data to retrieve. There's a table of these [below](#supported-apis-and-endpoints).
 * The `normalize` parameter controls whether the shim returns data in a raw third-party API format (`false`) or in an Open mHealth compliant format (`true`).  
+
+*Note: This API will be changing significantly in the near future to provide greater consistency across APIs and ease of use.*
  
 ## Supported APIs and endpoints
 
@@ -161,10 +205,10 @@ The currently supported shims are:
 | shim         | endPoint          | OmH data produced by endpoint |
 | ------------ | ----------------- | -------------------------- |
 | fitbit<sup>1</sup> | activity    | [omh:physical-activity](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_physical-activity) |
-| fitbit       | steps             | [omh:step-count](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_step-count) |
-| fitbit       | weight            | [omh:body-weight](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_body-weight) |
-| fitbit       | body_mass_index   | [omh:body-mass-index](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_body-mass-index)|
-| fitbit       | sleep             | [omh:sleep-duration](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_sleep-duration) |
+| fitbit<sup>1</sup> | steps             | [omh:step-count](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_step-count) |
+| fitbit<sup>1</sup> | weight            | [omh:body-weight](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_body-weight) |
+| fitbit<sup>1</sup> | body_mass_index   | [omh:body-mass-index](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_body-mass-index)|
+| fitbit<sup>1</sup> | sleep             | [omh:sleep-duration](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_sleep-duration) |
 | googlefit    | activity          | [omh:physical-activity](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_physical-activity) |
 | googlefit    | body_height       | [omh:body-height](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_body-height) |
 | googlefit    | body_weight       | [omh:body-weight](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_body-weight) |
