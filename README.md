@@ -55,10 +55,14 @@ Once you have a Docker host running, in a terminal
 If you prefer to build the code yourself,  
 
 1. You must have a Java 8 or higher JDK installed. You can use either [OpenJDK](http://openjdk.java.net/install/) or the [Oracle JDK](http://www.oracle.com/technetwork/java/javase/downloads/index.html).
-1. You need a running [MongoDB](http://docs.mongodb.org/manual/) instance.
-1. You technically don't need to run the Shimmer console, but it makes your life easier. If you're building the console,
+1. You technically don't need to run the console, but it makes your life easier. If you're building the console,
   1. You need [Node.js](http://nodejs.org/download/).
   1. You need [Xcode Command Line Tools](https://developer.apple.com/xcode/) if you're on a Mac.
+1. To run the code natively,
+  1. You need a running [MongoDB](http://docs.mongodb.org/manual/) instance.
+1. To run the code in Docker,
+  1. You need Docker, Docker Compose, and Docker Machine, available in [Docker Toolbox](https://www.docker.com/toolbox).
+  1. You need a running Docker host. If you don't already one, create it by running `docker-machine create --driver virtualbox dev` in a terminal. 
 
 If you want to build and run the code natively, in a terminal
  
