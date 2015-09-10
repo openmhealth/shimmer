@@ -48,7 +48,8 @@ Once you have a Docker host running, in a terminal
 1. Start the containers by running
   * `docker-compose up -d`
   * If you want to see logs and keep the containers in the foreground, omit the `-d`.
-  * This will download about 1GB of Docker images if you don't already have them, the bulk of which are MongoDB and OpenJDK base images. 
+  * This will download about 1GB of Docker images if you don't already have them, the bulk of which are MongoDB, nginx and OpenJDK base images. 
+  * It can take up to a minute for the containers to start up. You can check their progress using `docker-compose logs`.
 1. Visit `http://<your-docker-host>:8083` in a browser.
 
 ### Option 2. Building the code and running it natively or in Docker
@@ -80,6 +81,7 @@ If you want to build and run the code in Docker, in a terminal
   * Run `docker-machine ls` to find out the name of your active Docker host.
 1. Run the `./run-dockerized.sh` script and follow the instructions.
   * The containers should now be running on your Docker host and expose port 8083.
+  * It can take up to a minute for the containers to start up.
 1. Visit `http://<your-docker-host>:8083` in a browser.
 
 > If you can't run the Bash scripts on your system, open them and take a look at the commands they run. The important commands are marked with a "#CMD" comment.
