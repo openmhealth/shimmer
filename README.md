@@ -42,9 +42,8 @@ If you don't have Docker and Docker Compose installed,
 Once you have a Docker host running, in a terminal 
 
 1. Clone this Git repository.
-1. Prepare Compose for your environment. (This step will be simplified once Compose 1.5 is released.)
-  * Run `docker-machine ip dev` to find the Docker host IP address.
-  * Update the `OPENMHEALTH_SHIM_SERVER_CALLBACKURLBASE` property in `docker-compose.yml` to match the IP.
+1. Run the `./update-compose-files.sh` script.
+  * This step will be removed once Compose 1.5 is released.
 1. Start the containers by running
   * `docker-compose up -d`
   * If you want to see logs and keep the containers in the foreground, omit the `-d`.
@@ -61,20 +60,22 @@ If you prefer to build the code yourself,
   1. You need [Node.js](http://nodejs.org/download/).
   1. You need [Xcode Command Line Tools](https://developer.apple.com/xcode/) if you're on a Mac.
 
-If you want to build and run the code natively,
+If you want to build and run the code natively, in a terminal
  
 1. Clone this Git repository.
-1. Run the `./run-natively.sh` script in a terminal and follow the instructions
+1. Run the `./run-natively.sh` script and follow the instructions.
 1. The server should now be running on `localhost` on port 8083.
 1. Visit `http://localhost:8083` in a browser.
 
-If you want to build and run the code in Docker, 
+If you want to build and run the code in Docker, in a terminal 
  
 1. Clone this Git repository.
-1. Run the `./run-dockerized.sh` script in a terminal and follow the instructions.
+1. Run the `./run-dockerized.sh` script and follow the instructions.
 1. The server should now be running on your Docker host on port 8083.
 1. Visit `http://<your-docker-host>:8083` in a browser.
-                           
+
+> If you can't run the Bash scripts on your system, open them and take a look at the commands they run. The important commands are marked with a "#CMD" comment.
+
 ## Setting up your credentials
 
 You need to obtain client credentials for any shim you'd like to run.
