@@ -1,5 +1,5 @@
 # Shimmer [![Build Status](https://travis-ci.org/openmhealth/shimmer.svg?branch=develop)](https://travis-ci.org/openmhealth/shimmer)
-
+U
 Shimmer is an application that makes it easy to pull health data from popular third-party APIs, like Runkeeper and Fitbit.
 It converts that data into an [Open mHealth compliant format](http://www.openmhealth.org/documentation/#/schema-docs/overview),
 letting your application work with clean and clinically meaningful data, irrespective of its origin.   
@@ -90,19 +90,19 @@ If any of links are incorrect or out of date, please [submit an issue](https://g
 
 Once credentials are obtained for a particular API, navigate to the settings tab of the Shimmer console and fill them in. 
 
-(If you didn't build the UI, uncomment and replace the corresponding `clientId` and `clientSecret` placeholders in the `application.yaml` file 
+(If you didn't build the console, uncomment and replace the corresponding `clientId` and `clientSecret` placeholders in the `application.yaml` file 
 with your new credentials and restart Jetty. If you installed using Docker, you can restart Jetty using `supervisorctl restart jetty`. 
 If you installed manually, terminate your running Gradle process and restart it.)
 
-## Authorising access to a third-party user account from the UI
+## Authorising access to a third-party user account from the console
 
 The data produced by a third-party API belongs to some user account registered on the third-party system. To allow 
  a shim to read that data, you'll need to initiate an authorization process that lets the account holder grant the shim access to their data.
 
-To initiate the authorization process from the UI,
+To initiate the authorization process from the console,
  
 1. Type in an arbitrary user handle. This handle can be anything, it's just your way of referring to third-party API users. 
-1. Press *Find* and the UI will show you a *Connect* button for each API whose authentication credentials have been [configured](#setting-up-your-credentials).
+1. Press *Find* and the console will show you a *Connect* button for each API whose authentication credentials have been [configured](#setting-up-your-credentials).
 1. Click *Connect* and a pop-up will open.
 1. Follow the authorization prompts. You should see an `AUTHORIZE` JSON response.
 1. Close the pop-up.
@@ -117,9 +117,9 @@ To initiate the authorization process programmatically,
 1. In the returned JSON response, find the `authorizationUrl` value and redirect your user to this URL. Your user will land on the third-party website where they can login and authorize access to their third-party user account. 
 1. Once authorized, they will be redirected to `http://<host>:8083/authorize/{shim_name}/callback` along with an approval response.
 
-## Reading data using the UI
+## Reading data using the console
 
-To pull data from the third-party API using the UI,
+To pull data from the third-party API using the console,
  
 1. Click the name of the connected third-party API.
 1. Fill in the date range you're interested in.
