@@ -20,8 +20,8 @@ And the following APIs are in the works
 * [iHealth](http://www.ihealthlabs.com/)
 * [Strava](https://www.strava.com/)
 
-## Concepts
-
+## Concepts 
+## TODO review
 Shimmer is made up of a shim-server, individual shims, and a console that provides a GUI that guides user interactions with shimmer.
 
 A *shim* is an adapter that reads raw data from a third-party API (e.g., Jawbone, Fitbit) and converts that data into an Open mHealth compliant data format. It's called a shim because it lets you treat third-party data like Open mHealth compliant data when writing your application. Each shim is specific to a single third-party API and handles the process of authorizing, requesting data, and mapping data for that API. 
@@ -141,44 +141,39 @@ To initiate the authorization process programmatically,
 1. Once authorized, they will be redirected to `http://<host>:8083/authorize/{shim_name}/callback` along with an approval response.
 
 ## Reading data
+## TODO write disclaimer
 
-Each shim produces json data that can be represented either as data *normalized* to OMH schemas or as data that is in the *raw*, native format from the third-party API. 
+Each shim produces json data that can be represented either as data *normalized* to Open mHealth schemas or as data that is in the *raw*, native format from the third-party API. 
 
 * *Raw* data will resemble the format specified by each individual API. For example, raw data from Fitbit will be represented in the format coming directly from the Fitbit API. 
 
-* *Normalized* data will be represented according to [OMH schemas](http://www.openmhealth.org/documentation/#/schema-docs/schema-library). The following is an example of what normalized data from shimmer looks like:
+* *Normalized* data will be represented according to [Open mHealth schemas](http://www.openmhealth.org/documentation/#/schema-docs/schema-library). The following is an example of what normalized data looks like:
 ```json
 {
-  "shim": "jawbone",
-  "timeStamp": 1441910619,
-  "body": [
-    {
-      "header": {
+    "header": {
         "id": "243c773b-8936-407e-9c23-270d0ea49cc4",
         "creation_date_time": "2015-09-10T12:43:39.138-06:00",
         "acquisition_provenance": {
-          "source_name": "Jawbone UP API",
-          "modality": "sensed",
-          "external_id": "QkfTizSpRdt--VG4XXI2KvvdgHJJeui0",
-          "source_updated_date_time": "2015-09-10T18:43:39Z"
+            "source_name": "Jawbone UP API",
+            "modality": "sensed",
+            "external_id": "QkfTizSpRdt--VG4XXI2KvvdgHJJeui0",
+            "source_updated_date_time": "2015-09-10T18:43:39Z"
         },
         "schema_id": {
-          "namespace": "omh",
-          "name": "step-count",
-          "version": "1.0"
+            "namespace": "omh",
+            "name": "step-count",
+            "version": "1.0"
         }
-      },
-      "body": {
+    },
+    "body": {
         "effective_time_frame": {
-          "time_interval": {
-            "start_date_time": "2015-08-06T05:11:09-07:00",
-            "end_date_time": "2015-08-06T23:00:36-06:00"
-          }
+            "time_interval": {
+                "start_date_time": "2015-08-06T05:11:09-07:00",
+                "end_date_time": "2015-08-06T23:00:36-06:00"
+            }
         },
         "step_count": 7939
-      }
     }
-  ]
 }
 ```
 
