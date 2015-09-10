@@ -62,7 +62,7 @@ If you prefer to build the code yourself,
   1. You need a running [MongoDB](http://docs.mongodb.org/manual/) instance.
 1. To run the code in Docker,
   1. You need Docker, Docker Compose, and Docker Machine, available in [Docker Toolbox](https://www.docker.com/toolbox).
-  1. You need a running Docker host. If you don't already one, create it by running `docker-machine create --driver virtualbox dev` in a terminal. 
+  1. You need a running Docker host. If you don't already have one, create it by running `docker-machine create --driver virtualbox dev` in a terminal. 
 
 If you want to build and run the code natively, in a terminal
  
