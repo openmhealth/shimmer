@@ -61,20 +61,27 @@ If you prefer to build the code yourself,
   1. You need [Node.js](http://nodejs.org/download/).
   1. You need [Xcode Command Line Tools](https://developer.apple.com/xcode/) if you're on a Mac.
 
-If you want to run Shimmer natively,
+If you want to build and run the code natively,
  
 1. Clone this Git repository.
-1. Run the `./run-natively.sh` script in a terminal.
-1. The server should now be running on `localhost` on port 8083. You can change the port number in the `application.yaml` file.
+1. Run the `./run-natively.sh` script in a terminal and follow the instructions
+1. The server should now be running on `localhost` on port 8083.
 1. Visit `http://localhost:8083` in a browser.
 
-If you want to run Shimmer in Docker, 
-TODO
+If you want to build and run the code in Docker, 
+ 
+1. Clone this Git repository.
+1. Run the `./run-dockerized.sh` script in a terminal and follow the instructions.
+1. The server should now be running on your Docker host on port 8083.
+1. Visit `http://<your-docker-host>:8083` in a browser.
                            
 ## Setting up your credentials
 
-You need to obtain authentication credentials, typically an OAuth client ID and client secret, for any shim you'd like to run. 
-These are obtained from the developer websites of the third-party APIs.
+You need to obtain client credentials for any shim you'd like to run.
+You can get credentials from the developer website of the corresponding third-party API, and
+typically consist of an OAuth client ID and client secret. The following links point to the developer
+website of each API. Visit these sites to register your application and obtain authentication 
+credentials for each of the shims you want to enable.  
                            
 * [Fitbit](http://dev.fitbit.com/)
 * [Google Fit](https://developers.google.com/fit/rest/) ([application management portal](https://console.developers.google.com/start))
@@ -83,21 +90,17 @@ These are obtained from the developer websites of the third-party APIs.
 * [RunKeeper](http://developer.runkeeper.com/healthgraph) ([application management portal](http://runkeeper.com/partner))
 * [Withings](http://oauth.withings.com/api)
 
-The above links point to the developer website of each API. You'll need to visit these websites to register your 
-application and obtain authentication credentials for each of the shims you want to enable.  
-
 If any of links are incorrect or out of date, please [submit an issue](https://github.com/openmhealth/shimmer/issues) to let us know. 
 
-Once credentials are obtained for a particular API, navigate to the settings tab of the Shimmer console and fill them in. 
+Once credentials are obtained for a particular API, navigate to the settings tab of the console and fill them in. 
 
 (If you didn't build the console, uncomment and replace the corresponding `clientId` and `clientSecret` placeholders in the `application.yaml` file 
-with your new credentials and restart Jetty. If you installed using Docker, you can restart Jetty using `supervisorctl restart jetty`. 
-If you installed manually, terminate your running Gradle process and restart it.)
+with your new credentials and rebuild the API endpoint.)
 
 ## Authorising access to a third-party user account from the console
 
 The data produced by a third-party API belongs to some user account registered on the third-party system. To allow 
- a shim to read that data, you'll need to initiate an authorization process that lets the account holder grant the shim access to their data.
+ a shim to read that data, you'll need to initiate an authorization process that lets the holder of that user account grant the shim access to their data.
 
 To initiate the authorization process from the console,
  
