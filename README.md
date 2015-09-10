@@ -1,5 +1,5 @@
 # Shimmer [![Build Status](https://travis-ci.org/openmhealth/shimmer.svg?branch=develop)](https://travis-ci.org/openmhealth/shimmer)
-U
+
 Shimmer is an application that makes it easy to pull health data from popular third-party APIs, like Runkeeper and Fitbit.
 It converts that data into an [Open mHealth compliant format](http://www.openmhealth.org/documentation/#/schema-docs/overview),
 letting your application work with clean and clinically meaningful data, irrespective of its origin.   
@@ -97,10 +97,12 @@ Once credentials are obtained for a particular API, navigate to the settings tab
 (If you didn't build the console, uncomment and replace the corresponding `clientId` and `clientSecret` placeholders in the `application.yaml` file 
 with your new credentials and rebuild the API endpoint.)
 
-## Authorising access to a third-party user account from the console
+## Authorising access to a third-party user account
 
 The data produced by a third-party API belongs to some user account registered on the third-party system. To allow 
  a shim to read that data, you'll need to initiate an authorization process that lets the holder of that user account grant the shim access to their data.
+
+### Authorising access to a third-party user account from the console
 
 To initiate the authorization process from the console,
  
@@ -110,7 +112,7 @@ To initiate the authorization process from the console,
 1. Follow the authorization prompts. You should see an `AUTHORIZE` JSON response.
 1. Close the pop-up.
 
-## Authorising access to a third-party user account programmatically
+### Authorising access to a third-party user account programmatically
 
 To initiate the authorization process programmatically,
  
@@ -136,7 +138,7 @@ To pull data from the third-party API programmatically, make requests in the for
 
 The URL can be broken down as follows
 * The `shim` and `username` path variables are the same as [above](#authorizing-access-to-a-third-party-user-account).
-* The `endPoint` path variable roughly corresponds to the type of data to retrieve. There's a list of these [below](#supported-apis-and-endpoints).
+* The `endPoint` path variable roughly corresponds to the type of data to retrieve. There's a table of these [below](#supported-apis-and-endpoints).
 * The `normalize` parameter controls whether the shim returns data in a raw third-party API format (`false`) or in an Open mHealth compliant format (`true`).  
  
 ## Supported APIs and endpoints
@@ -145,7 +147,7 @@ The following is a table of the currently supported shims, their endpoints, and 
 
 The currently supported shims are:
 
-| shim         | endPoint          | OMH data produced by endpoint |
+| shim         | endPoint          | OmH data produced by endpoint |
 | ------------ | ----------------- | -------------------------- |
 | fitbit<sup>1</sup> | activity    | [omh:physical-activity](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_physical-activity) |
 | fitbit       | steps             | [omh:step-count](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_step-count) |
