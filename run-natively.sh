@@ -7,20 +7,22 @@ isNpmPackageInstalled() {
 }
 
 # check dependencies
-if [[ -x "npm" ]]; then
+if ! hash "npm" 2>/dev/null;
+then
     echo "npm can't be found"
     exit 1
 fi
 
-echo -n "Do you want to build the console (y/n)? "
+# build the console
+echo -n "Do you want to rebuild the console (y/N)? "
 read answer
 if echo "$answer" | grep -iq "^y" ;then
-    cd ${BASEDIR}/shim-server-ui
+    cd ${BASEDIR}/shim-server-ui #CMD
 
     if ! isNpmPackageInstalled grunt-cli
     then
         echo Installing Grunt, you may be asked for your password to run sudo...
-        sudo npm install -g grunt-cli
+        sudo npm install -g grunt-cli #CMD
     else
         echo Grunt is already installed, skipping...
     fi
@@ -28,34 +30,37 @@ if echo "$answer" | grep -iq "^y" ;then
     if ! isNpmPackageInstalled bower
     then
         echo Installing Bower, you may be asked for your password to run sudo...
-        sudo npm install -g bower
+        sudo npm install -g bower #CMD
     else
         echo Bower is already installed, skipping...
     fi
 
     echo Installing npm dependencies...
-    npm install
+    npm install #CMD
 
     echo Installing Bower dependencies...
-    bower install
+    bower install #CMD
 
-    echo Building console...
-    grunt build
+    echo Building the console...
+    grunt build #CMD
 
-    cd ${BASEDIR}/shim-server/src/main/resources
+    cd ${BASEDIR}/shim-server/src/main/resources #CMD
     ln -sfh ../../../../shim-server-ui/docker/assets public
+    #CMD create a symlink called shim-server/src/main/resources/public to the Grunt output directory
 fi
 
-echo -n "Please enter your MongoDB hostname (defaults to mongo)? "
+echo "The MongoDB hostname defaults to the setting in application.yaml, initially mongo."
+echo -n "Please enter a hostname to override it, or press Enter to keep the default? "
 read answer
 trimmed=${answer// /}
-if [[ ! -z "$trimmed" ]] ;then
-    cd ${BASEDIR}/shim-server/src/main/resources
-    sed -i ".bak" -e "s,.*uri: mongodb.*,      uri: mongodb://${answer}:27017/omh_dsu,g" application.yaml
-fi
 
-echo Starting the Shimmer API endpoint
+# start the endpoint
+echo Starting the API endpoint...
 cd ${BASEDIR}
-./gradlew shim-server:bootRun
+if [[ ! -z "$trimmed" ]] ;then
+    SPRING_DATA_MONGODB_URI="mongodb://${trimmed}:27017/omh_dsu" ./gradlew shim-server:bootRun #CMD
+    else
+    ./gradlew shim-server:bootRun #CMD
+fi
 
 
