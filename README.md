@@ -254,9 +254,13 @@ The currently supported shims are:
 
 <sup>3</sup> *Sleep data has not been tested using real data directly from a device. It has been tested with example data provided in the Withings API documentation.*
 
-## Learning more and contributing
+### Contributing
 
 The list of supported third-party APIs will grow over time as more shims are added. If you'd like to contribute a shim to work with your API or a third-party API,
-send us a [pull request](https://github.com/openmhealth/shimmer/pulls). 
 
-
+1. [Open an issue](https://github.com/openmhealth/shimmer/issues) to let us know what you're going to work on.
+  1. This lets us give you feedback early and lets us put you in touch with people who can help.
+2. Fork this repository.
+3. Create your feature branch from the `develop` branch.
+4. Commit and push your changes to your fork.
+5. Create a pull request.
