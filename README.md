@@ -20,23 +20,25 @@ And the following APIs are in the works
 * [iHealth](http://www.ihealthlabs.com/)
 * [Strava](https://www.strava.com/)
 
+This README should have everything you need to get started. If you have any questions, just [open an issue](https://github.com/openmhealth/shimmer/issues).
+
 ## Contents
 - [Overview](#overview)
 	- [Shims](#shims)
 	- [Resource server](#resource-server)
 	- [Console](#console)
-- [Installation](#)
-	- [Option 1. Download and run Docker images](#)
-	- [Option 2. Build the code and run it natively or in Docker](#)
-- [Setting up your credentials](#)
-- [Authorizing access to a third-party user account](#)
-	- [Authorize access from the console](#)
-	- [Authorize access programmatically](#)
-- [Reading data](#)
-	- [Read data using the console](#)
-	- [Read data programmatically](#)
-- [Supported APIs and endpoints](#)
-- [Learning more and contributing](#)
+- [Installation](#installation)
+	- [Option 1. Download and run Docker images](#option-1-download-and-run-docker-images)
+	- [Option 2. Build the code and run it natively or in Docker](#option-2-build-the-code-and-run-it-natively-or-in-docker)
+- [Setting up your credentials](#setting-up-your-credentials)
+- [Authorizing access to a third-party user account](#authorizing-access-to-a-thirdparty-user-account)
+	- [Authorize access from the console](#authorize-access-from-the-console)
+	- [Authorize access programmatically](#authorize-access-programmatically)
+- [Reading data](#reading-data)
+	- [Read data using the console](#read-data-using-the-console)
+	- [Read data programmatically](#read-data-programmatically)
+- [Supported APIs and endpoints](#supported-APIs-and-endpoints)
+- [Learning more and contributing](#learning-more-and-contributing)
 
 ## Overview 
 Shimmer is made up of different components.
