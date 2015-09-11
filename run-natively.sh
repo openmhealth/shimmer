@@ -49,7 +49,7 @@ if echo "$answer" | grep -iq "^y" ;then
     #CMD create a symlink called shim-server/src/main/resources/public to the Grunt output directory
 fi
 
-echo "The MongoDB hostname defaults to the setting in application.yaml, initially mongo."
+echo "The MongoDB hostname defaults to the setting in application.yaml. Initially the host name is 'mongo'."
 echo -n "Please enter a hostname to override it, or press Enter to keep the default? "
 read answer
 trimmed=${answer// /}
