@@ -21,10 +21,10 @@ And the following APIs are in the works
 * [Strava](https://www.strava.com/)
 
 ## Contents
-- [Overview](#)
-	- [Shims](#)
-	- [Resource server](#)
-	- [Console](#)
+- [Overview](#overview)
+	- [Shims](#shims)
+	- [Resource server](#resource-server)
+	- [Console](#console)
 - [Installation](#)
 	- [Option 1. Download and run Docker images](#)
 	- [Option 2. Build the code and run it natively or in Docker](#)
