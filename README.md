@@ -41,7 +41,7 @@ There are two ways to install Shimmer.
 
 If you don't have Docker and Docker Compose installed, download [Docker Toolbox](https://www.docker.com/toolbox) and follow the installation instructions for your platform.
 
-Once you have a running Docker hos, in a terminal 
+Once you have a running Docker host, in a terminal 
 
 1. Clone this Git repository.
 1. Run `docker-machine ls` to find the name and IP address of your active Docker host.
