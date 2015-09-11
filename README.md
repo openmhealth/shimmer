@@ -21,14 +21,18 @@ And the following APIs are in the works
 * [Strava](https://www.strava.com/)
 
 ## Concepts 
-## TODO review
-Shimmer is made up of a shim-server, individual shims, and a console that provides a GUI that guides user interactions with shimmer.
+Shimmer is made up of different components.
 
-A *shim* is an adapter that reads raw data from a third-party API (e.g., Jawbone, Fitbit) and converts that data into an Open mHealth compliant data format. It's called a shim because it lets you treat third-party data like Open mHealth compliant data when writing your application. Each shim is specific to a single third-party API and handles the process of authorizing, requesting data, and mapping data for that API. 
+### Shims
+A *shim* is a library that can communicate with a specific third-party API, e.g. Withings. It handles the process of authenticating with the API, requesting data from it, and mapping that data into an Open mHealth compliant data format. 
 
-Shims generate *data points*, which are self-contained pieces of data that not only contain the relevant health data of interest, but also include header information such as date of creation, acquisition provenance, and data source. This meta information helps describe the data and where it came from.
+A shim generates *data points*, which are self-contained pieces of data that not only contain the health data of interest, but also include header information such as date of creation, acquisition provenance, and data source. This metadata helps describe the data and where it came from. The library is called a shim because such clean and clinically significant data in not provided natively by the third-party API.
 
-A shim is a library, not an application. To use a shim, it needs to be hosted in the *shim server*. The shim server API lets your application use a shim to read data from a third-party API. This data is available in two formats; the raw format produced by the third-party API and a format normalized to Open mHealth schemas. To make it easier to use the shim server, we've provided a shim server UI that can trigger authentication flows and make requests.    
+### Resource server
+The *resource server* exposes an API to retrieve data points. The server handles API requests by delegating them to the correct shim. As more and more shims are developed and added to the resource server, it becomes capable of providing data points from more and more third-party APIs. The resource server also manages third-party access tokens on behalf of shims.
+
+### Console
+The *console* provides a simple web interface that helps users interact with the resource server. It can set configuration parameters, trigger authentication flows, and request data using date pickers and drop downs.
 
 ## Installation
 
