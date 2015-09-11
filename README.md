@@ -153,17 +153,14 @@ To initiate the authorization process programmatically,
 1. Make a GET request to `http://<host>:8083/authorize/{shim}?username={userId}`
   * The `shim` path parameter should be one of the names listed [below](#supported-apis-and-endpoints), e.g. `fitbit`. 
   * The `username` query parameter can be set to any unique identifier you'd like to use to identify the user. 
-1. In the returned JSON response, find the `authorizationUrl` value and redirect your user to this URL. Your user will land on the third-party website where they can login and authorize access to their third-party user account. 
+1. Find the `authorizationUrl` value in the returned JSON response and redirect your user to this URL. Your user will land on the third-party website where they can login and authorize access to their third-party user account. 
 1. Once authorized, they will be redirected to `http://<host>:8083/authorize/{shim_name}/callback` along with an approval response.
 
 ## Reading data
-## TODO write disclaimer
+A shim can produce JSON data that is either *normalized* to Open mHealth schemas or in the *raw* format produced by the third-party API. Raw data is passed through from the third-party API. Normalized data conforms to [Open mHealth schemas](http://www.openmhealth.org/documentation/#/schema-docs/schema-library).
 
-Each shim produces json data that can be represented either as data *normalized* to Open mHealth schemas or as data that is in the *raw*, native format from the third-party API. 
+The following is an example of a normalized step count data point retrieved from Jawbone:
 
-* *Raw* data will resemble the format specified by each individual API. For example, raw data from Fitbit will be represented in the format coming directly from the Fitbit API. 
-
-* *Normalized* data will be represented according to [Open mHealth schemas](http://www.openmhealth.org/documentation/#/schema-docs/schema-library). The following is an example of what normalized data looks like:
 ```json
 {
     "header": {
@@ -194,7 +191,7 @@ Each shim produces json data that can be represented either as data *normalized*
 
 ### Read data using the console
 
-To pull data from the third-party API using the console,
+To pull data from a third-party API using the console,
  
 1. Click the name of the connected third-party API.
 1. Fill in the date range you're interested in.
@@ -208,14 +205,14 @@ To pull data from a third-party API programmatically, make requests in the forma
 
 The URL can be broken down as follows
 * The `shim` and `username` path variables are the same as [above](#authorizing-access-to-a-third-party-user-account).
-* The `endPoint` path variable roughly corresponds to the type of data to retrieve. There's a table of these [below](#supported-apis-and-endpoints).
+* The `endPoint` path variable corresponds to the type of data to retrieve. There's a table of these [below](#supported-apis-and-endpoints).
 * The `normalize` parameter controls whether the shim returns data in a raw third-party API format (`false`) or in an Open mHealth compliant format (`true`).  
 
-*Note: This API will be changing significantly in the near future to provide greater consistency across APIs and ease of use.*
+> N.B. This API will be changing significantly in the near future to provide greater consistency across Open mHealth applications and to improve expressivity and ease of use. The data points it returns will not be affected, only the URLs used to request data and perhaps some book-keeping information at the top level of the response.
  
 ## Supported APIs and endpoints
 
-The following is a table of the currently supported shims, their endpoints, and the Open mHealth compliant data that each endpoint can produce. The values in the `shim` and `endPoint` columns are the values for the parameters of the same names used in [programmatic access](#reading-data-programmatically) of the shimmer API.
+The following is a table of the currently supported shims, their endpoints, and the Open mHealth compliant data that each endpoint can produce. The values in the `shim` and `endPoint` columns are the values for the parameters of the same names used in [programmatic access](#reading-data-programmatically) of the API.
 
 The currently supported shims are:
 
