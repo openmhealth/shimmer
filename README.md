@@ -20,7 +20,25 @@ And the following APIs are in the works
 * [iHealth](http://www.ihealthlabs.com/)
 * [Strava](https://www.strava.com/)
 
-## Concepts 
+## Contents
+- [Overview](#)
+	- [Shims](#)
+	- [Resource server](#)
+	- [Console](#)
+- [Installation](#)
+	- [Option 1. Download and run Docker images](#)
+	- [Option 2. Build the code and run it natively or in Docker](#)
+- [Setting up your credentials](#)
+- [Authorizing access to a third-party user account](#)
+	- [Authorize access from the console](#)
+	- [Authorize access programmatically](#)
+- [Reading data](#)
+	- [Read data using the console](#)
+	- [Read data programmatically](#)
+- [Supported APIs and endpoints](#)
+- [Learning more and contributing](#)
+
+## Overview 
 Shimmer is made up of different components.
 
 ### Shims
@@ -120,7 +138,7 @@ with your new credentials and rebuild.
 The data produced by a third-party API belongs to some user account registered on the third-party system. To allow 
  a shim to read that data, you'll need to initiate an authorization process that lets the holder of that user account grant the shim access to their data.
 
-### Authorize access to a third-party user account from the console
+### Authorize access from the console
 
 To initiate the authorization process from the console,
  
@@ -130,7 +148,7 @@ To initiate the authorization process from the console,
 1. Follow the authorization prompts. You should see an `AUTHORIZE` JSON response.
 1. Close the pop-up.
 
-### Authorize access to a third-party user account programmatically
+### Authorize access programmatically
 
 To initiate the authorization process programmatically,
  
