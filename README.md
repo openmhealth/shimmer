@@ -1,8 +1,7 @@
 # Shimmer [![Build Status](https://travis-ci.org/openmhealth/shimmer.svg?branch=develop)](https://travis-ci.org/openmhealth/shimmer)
 
-Shimmer is an application that makes it easy to pull health data from popular third-party APIs, like Runkeeper and Fitbit.
-It converts that data into an [Open mHealth compliant format](http://www.openmhealth.org/documentation/#/schema-docs/overview),
-letting your application work with clean and clinically meaningful data, irrespective of its origin.   
+Shimmer is an application that makes it easy to pull health data from popular third-party APIs like Runkeeper and Fitbit.
+It converts that data into an [Open mHealth](http://www.openmhealth.org) compliant format, letting your application work with clean and clinically meaningful data.   
 
 We currently support the following APIs
 
@@ -20,15 +19,39 @@ And the following APIs are in the works
 * [iHealth](http://www.ihealthlabs.com/)
 * [Strava](https://www.strava.com/)
 
-## Concepts 
-## TODO review
-Shimmer is made up of a shim-server, individual shims, and a console that provides a GUI that guides user interactions with shimmer.
+This README should have everything you need to get started. If you have any questions, feel free to [open an issue](https://github.com/openmhealth/shimmer/issues), [email us](mailto://admin@openmhealth.org), [post on our form](https://groups.google.com/forum/#!forum/omh-developers), or [visit our website](http://www.openmhealth.org/documentation/#/data-providers/get-started).
 
-A *shim* is an adapter that reads raw data from a third-party API (e.g., Jawbone, Fitbit) and converts that data into an Open mHealth compliant data format. It's called a shim because it lets you treat third-party data like Open mHealth compliant data when writing your application. Each shim is specific to a single third-party API and handles the process of authorizing, requesting data, and mapping data for that API. 
+## Contents
+- [Overview](#overview)
+	- [Shims](#shims)
+	- [Resource server](#resource-server)
+	- [Console](#console)
+- [Installation](#installation)
+	- [Option 1. Download and run Docker images](#option-1-download-and-run-docker-images)
+	- [Option 2. Build the code and run it natively or in Docker](#option-2-build-the-code-and-run-it-natively-or-in-docker)
+- [Setting up your credentials](#setting-up-your-credentials)
+- [Authorizing access to a third-party user account](#authorizing-access-to-a-third-party-user-account)
+	- [Authorize access from the console](#authorize-access-from-the-console)
+	- [Authorize access programmatically](#authorize-access-programmatically)
+- [Reading data](#reading-data)
+	- [Read data using the console](#read-data-using-the-console)
+	- [Read data programmatically](#read-data-programmatically)
+- [Supported APIs and endpoints](#supported-apis-and-endpoints)
+- [Contributing](#contributing)
 
-Shims generate *data points*, which are self-contained pieces of data that not only contain the relevant health data of interest, but also include header information such as date of creation, acquisition provenance, and data source. This meta information helps describe the data and where it came from.
+## Overview 
+Shimmer is made up of different components - individual shims, a resource server, and a console - which are each described below.
 
-A shim is a library, not an application. To use a shim, it needs to be hosted in the *shim server*. The shim server API lets your application use a shim to read data from a third-party API. This data is available in two formats; the raw format produced by the third-party API and a format normalized to Open mHealth schemas. To make it easier to use the shim server, we've provided a shim server UI that can trigger authentication flows and make requests.    
+### Shims
+A *shim* is a library that can communicate with a specific third-party API, e.g. Withings. It handles the process of authenticating with the API, requesting data from it, and mapping that data into an Open mHealth compliant data format. 
+
+A shim generates *data points*, which are self-contained pieces of data that not only contain the health data of interest, but also include header information such as date of creation, acquisition provenance, and data source. This metadata helps describe the data and where it came from. The library is called a shim because such clean and clinically significant data in not provided natively by the third-party API.
+
+### Resource server
+The *resource server* exposes an API to retrieve data points. The server handles API requests by delegating them to the correct shim. As more and more shims are developed and added to the resource server, it becomes capable of providing data points from more and more third-party APIs. The resource server also manages third-party access tokens on behalf of shims.
+
+### Console
+The *console* provides a simple web interface that helps users interact with the resource server. It can set configuration parameters, trigger authentication flows, and request data using date pickers and drop downs.
 
 ## Installation
 
@@ -39,7 +62,7 @@ There are two ways to install Shimmer.
 
 ### Option 1. Download and run Docker images
 
-If you don't have Docker and Docker Compose installed, download [Docker Toolbox](https://www.docker.com/toolbox) and follow the installation instructions for your platform.
+If you don't have Docker, Docker Compose, and Docker Machine installed, download [Docker Toolbox](https://www.docker.com/toolbox) and follow the installation instructions for your platform.
 
 Once you have a running Docker host, in a terminal 
 
@@ -67,7 +90,7 @@ If you prefer to build the code yourself,
   1. You need a running [MongoDB](http://docs.mongodb.org/manual/) instance.
 1. To run the code in Docker,
   1. You need Docker, Docker Compose, and Docker Machine, available in [Docker Toolbox](https://www.docker.com/toolbox).
-  1. You need a running Docker host. If you don't already have one, create it by running `docker-machine create --driver virtualbox dev` in a terminal. 
+  1. You need a running Docker host.
 
 If you want to build and run the code natively, in a terminal
  
@@ -91,11 +114,7 @@ If you want to build and run the code in Docker, in a terminal
 
 ## Setting up your credentials
 
-You need to obtain client credentials for any shim you'd like to run.
-You can get credentials from the developer website of the corresponding third-party API, and
-typically consist of an OAuth client ID and client secret. The following links point to the developer
-website of each API. Visit these sites to register your application and obtain authentication 
-credentials for each of the shims you want to enable.  
+You need to obtain client credentials for any shim you'd like to use. These credentials are typically an OAuth client ID and client secret, and you can generate them from the developer website of the third-party API. Visit the following links to register your application and obtain authentication credentials for each of the shims you want to use.  
 
 * [Fitbit](http://dev.fitbit.com/)
 * [Google Fit](https://developers.google.com/fit/rest/) ([application management portal](https://console.developers.google.com/start))
@@ -104,7 +123,7 @@ credentials for each of the shims you want to enable.
 * [RunKeeper](http://developer.runkeeper.com/healthgraph) ([application management portal](http://runkeeper.com/partner))
 * [Withings](http://oauth.withings.com/api)
 
-If any of links are incorrect or out of date, please [submit an issue](https://github.com/openmhealth/shimmer/issues) to let us know. 
+If any of the links are incorrect or out of date, please [submit an issue](https://github.com/openmhealth/shimmer/issues) to let us know. 
 
 Once credentials are obtained for a particular API, navigate to the settings tab of the console and fill them in. 
 
@@ -114,9 +133,9 @@ with your new credentials and rebuild.
 ## Authorizing access to a third-party user account
 
 The data produced by a third-party API belongs to some user account registered on the third-party system. To allow 
- a shim to read that data, you'll need to initiate an authorization process that lets the holder of that user account grant the shim access to their data.
+ a shim to read that data, you'll need to initiate an authorization process. This process lets the user account holder explicitly grant the shim access to their data.
 
-### Authorize access to a third-party user account from the console
+### Authorize access from the console
 
 To initiate the authorization process from the console,
  
@@ -126,24 +145,21 @@ To initiate the authorization process from the console,
 1. Follow the authorization prompts. You should see an `AUTHORIZE` JSON response.
 1. Close the pop-up.
 
-### Authorize access to a third-party user account programmatically
+### Authorize access programmatically
 
 To initiate the authorization process programmatically,
  
 1. Make a GET request to `http://<host>:8083/authorize/{shim}?username={userId}`
   * The `shim` path parameter should be one of the names listed [below](#supported-apis-and-endpoints), e.g. `fitbit`. 
   * The `username` query parameter can be set to any unique identifier you'd like to use to identify the user. 
-1. In the returned JSON response, find the `authorizationUrl` value and redirect your user to this URL. Your user will land on the third-party website where they can login and authorize access to their third-party user account. 
+1. Find the `authorizationUrl` value in the returned JSON response and redirect your user to this URL. Your user will land on the third-party website where they can login and authorize access to their third-party user account. 
 1. Once authorized, they will be redirected to `http://<host>:8083/authorize/{shim_name}/callback` along with an approval response.
 
 ## Reading data
-## TODO write disclaimer
+A shim can produce JSON data that is either *normalized* to Open mHealth schemas or in the *raw* format produced by the third-party API. Raw data is passed through from the third-party API. Normalized data conforms to [Open mHealth schemas](http://www.openmhealth.org/documentation/#/schema-docs/schema-library).
 
-Each shim produces json data that can be represented either as data *normalized* to Open mHealth schemas or as data that is in the *raw*, native format from the third-party API. 
+The following is an example of a normalized step count data point retrieved from Jawbone:
 
-* *Raw* data will resemble the format specified by each individual API. For example, raw data from Fitbit will be represented in the format coming directly from the Fitbit API. 
-
-* *Normalized* data will be represented according to [Open mHealth schemas](http://www.openmhealth.org/documentation/#/schema-docs/schema-library). The following is an example of what normalized data looks like:
 ```json
 {
     "header": {
@@ -174,7 +190,7 @@ Each shim produces json data that can be represented either as data *normalized*
 
 ### Read data using the console
 
-To pull data from the third-party API using the console,
+To pull data from a third-party API using the console,
  
 1. Click the name of the connected third-party API.
 1. Fill in the date range you're interested in.
@@ -188,14 +204,14 @@ To pull data from a third-party API programmatically, make requests in the forma
 
 The URL can be broken down as follows
 * The `shim` and `username` path variables are the same as [above](#authorizing-access-to-a-third-party-user-account).
-* The `endPoint` path variable roughly corresponds to the type of data to retrieve. There's a table of these [below](#supported-apis-and-endpoints).
+* The `endPoint` path variable corresponds to the type of data to retrieve. There's a table of these [below](#supported-apis-and-endpoints).
 * The `normalize` parameter controls whether the shim returns data in a raw third-party API format (`false`) or in an Open mHealth compliant format (`true`).  
 
-*Note: This API will be changing significantly in the near future to provide greater consistency across APIs and ease of use.*
+> N.B. This API will be changing significantly in the near future to provide greater consistency across Open mHealth applications and to improve expressivity and ease of use. The data points it returns will not be affected, only the URLs used to request data and perhaps some book-keeping information at the top level of the response.
  
 ## Supported APIs and endpoints
 
-The following is a table of the currently supported shims, their endpoints, and the Open mHealth compliant data that each endpoint can produce. The values in the `shim` and `endPoint` columns are the values for the parameters of the same names used in [programmatic access](#reading-data-programmatically) of the shimmer API.
+The following is a table of the currently supported shims, their endpoints, and the Open mHealth compliant data that each endpoint can produce. The values in the `shim` and `endPoint` columns are the values for the parameters of the same names used in [programmatic access](#reading-data-programmatically) of the API.
 
 The currently supported shims are:
 
@@ -238,11 +254,13 @@ The currently supported shims are:
 
 <sup>3</sup> *Sleep data has not been tested using real data directly from a device. It has been tested with example data provided in the Withings API documentation.*
 
-## Learning more and contributing
-You can learn more about these shims and endpoints in the [documentation section](http://www.openmhealth.org/documentation/#/overview/get-started) of the Open mHealth site. 
+### Contributing
 
-The list of supported third-party APIs will grow over time as more shims are added. If you'd like to contribute a shim to work with your API or a third-party API,
-send us a [pull request](https://github.com/openmhealth/shimmer/pulls). If you need any help, feel free to
-reach out on [admin@openmhealth.org](mailto://admin@openmhealth.org) or on the Open mHealth [developer group](https://groups.google.com/forum/#!forum/omh-developers).
+The list of supported third-party APIs will grow over time as more shims are added. If you'd like to contribute a shim to work with your API or a third-party API, or contribute any other code,
 
-
+1. [Open an issue](https://github.com/openmhealth/shimmer/issues) to let us know what you're going to work on.
+  1. This lets us give you feedback early and lets us put you in touch with people who can help.
+2. Fork this repository.
+3. Create your feature branch from the `develop` branch.
+4. Commit and push your changes to your fork.
+5. Create a pull request.
