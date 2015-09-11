@@ -1,8 +1,8 @@
 # Shimmer [![Build Status](https://travis-ci.org/openmhealth/shimmer.svg?branch=develop)](https://travis-ci.org/openmhealth/shimmer)
 
-Shimmer is an application that makes it easy to pull health data from popular third-party APIs, like Runkeeper and Fitbit.
+Shimmer is an application that makes it easy to pull health data from popular third-party APIs like Runkeeper and Fitbit.
 It converts that data into an [Open mHealth compliant format](http://www.openmhealth.org/documentation/#/schema-docs/overview),
-letting your application work with clean and clinically meaningful data, irrespective of its origin.   
+letting your application work with clean and clinically meaningful data.   
 
 We currently support the following APIs
 
@@ -115,11 +115,7 @@ If you want to build and run the code in Docker, in a terminal
 
 ## Setting up your credentials
 
-You need to obtain client credentials for any shim you'd like to run.
-You can get credentials from the developer website of the corresponding third-party API, and
-typically consist of an OAuth client ID and client secret. The following links point to the developer
-website of each API. Visit these sites to register your application and obtain authentication 
-credentials for each of the shims you want to enable.  
+You need to obtain client credentials for any shim you'd like to use. These credentials are typically an OAuth client ID and client secret, and you can generate them from the developer website of the third-party API. Visit the following links to register your application and obtain authentication credentials for each of the shims you want to use.  
 
 * [Fitbit](http://dev.fitbit.com/)
 * [Google Fit](https://developers.google.com/fit/rest/) ([application management portal](https://console.developers.google.com/start))
@@ -128,7 +124,7 @@ credentials for each of the shims you want to enable.
 * [RunKeeper](http://developer.runkeeper.com/healthgraph) ([application management portal](http://runkeeper.com/partner))
 * [Withings](http://oauth.withings.com/api)
 
-If any of links are incorrect or out of date, please [submit an issue](https://github.com/openmhealth/shimmer/issues) to let us know. 
+If any of the links are incorrect or out of date, please [submit an issue](https://github.com/openmhealth/shimmer/issues) to let us know. 
 
 Once credentials are obtained for a particular API, navigate to the settings tab of the console and fill them in. 
 
@@ -138,7 +134,7 @@ with your new credentials and rebuild.
 ## Authorizing access to a third-party user account
 
 The data produced by a third-party API belongs to some user account registered on the third-party system. To allow 
- a shim to read that data, you'll need to initiate an authorization process that lets the holder of that user account grant the shim access to their data.
+ a shim to read that data, you'll need to initiate an authorization process. This process lets the user account holder explicitly grant the shim access to their data.
 
 ### Authorize access from the console
 
