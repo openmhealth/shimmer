@@ -55,7 +55,7 @@ Once you have a running Docker hos, in a terminal
   * It can take up to a minute for the containers to start up. You can check their progress using `docker-compose logs` if you started with `-d`.
 1. Visit `http://<your-docker-host-ip>:8083` in a browser.
 
-### Option 2. Building the code and running it natively or in Docker
+### Option 2. Build the code and run it natively or in Docker
 
 If you prefer to build the code yourself,  
 
@@ -116,7 +116,7 @@ with your new credentials and rebuild.
 The data produced by a third-party API belongs to some user account registered on the third-party system. To allow 
  a shim to read that data, you'll need to initiate an authorization process that lets the holder of that user account grant the shim access to their data.
 
-### Authorizing access to a third-party user account from the console
+### Authorize access to a third-party user account from the console
 
 To initiate the authorization process from the console,
  
@@ -126,7 +126,7 @@ To initiate the authorization process from the console,
 1. Follow the authorization prompts. You should see an `AUTHORIZE` JSON response.
 1. Close the pop-up.
 
-### Authorizing access to a third-party user account programmatically
+### Authorize access to a third-party user account programmatically
 
 To initiate the authorization process programmatically,
  
@@ -172,7 +172,7 @@ Each shim produces json data that can be represented either as data *normalized*
 }
 ```
 
-### Reading data using the console
+### Read data using the console
 
 To pull data from the third-party API using the console,
  
@@ -180,7 +180,7 @@ To pull data from the third-party API using the console,
 1. Fill in the date range you're interested in.
 1. Press the *Raw* button for raw data, or the *Normalized* button for data that has been converted to an Open mHealth compliant data format. 
 
-### Reading data programmatically
+### Read data programmatically
 
 To pull data from a third-party API programmatically, make requests in the format
  
@@ -238,11 +238,11 @@ The currently supported shims are:
 
 <sup>3</sup> *Sleep data has not been tested using real data directly from a device. It has been tested with example data provided in the Withings API documentation.*
 
-## Learn more and contribute
+## Learning more and contributing
 You can learn more about these shims and endpoints in the [documentation section](http://www.openmhealth.org/documentation/#/overview/get-started) of the Open mHealth site. 
 
 The list of supported third-party APIs will grow over time as more shims are added. If you'd like to contribute a shim to work with your API or a third-party API,
 send us a [pull request](https://github.com/openmhealth/shimmer/pulls). If you need any help, feel free to
 reach out on [admin@openmhealth.org](mailto://admin@openmhealth.org) or on the Open mHealth [developer group](https://groups.google.com/forum/#!forum/omh-developers).
-      
+
 
