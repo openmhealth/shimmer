@@ -1,8 +1,7 @@
 # Shimmer [![Build Status](https://travis-ci.org/openmhealth/shimmer.svg?branch=develop)](https://travis-ci.org/openmhealth/shimmer)
 
 Shimmer is an application that makes it easy to pull health data from popular third-party APIs like Runkeeper and Fitbit.
-It converts that data into an [Open mHealth compliant format](http://www.openmhealth.org/documentation/#/schema-docs/overview),
-letting your application work with clean and clinically meaningful data.   
+It converts that data into an [Open mHealth](http://www.openmhealth.org) compliant format, letting your application work with clean and clinically meaningful data.   
 
 We currently support the following APIs
 
@@ -20,7 +19,7 @@ And the following APIs are in the works
 * [iHealth](http://www.ihealthlabs.com/)
 * [Strava](https://www.strava.com/)
 
-This README should have everything you need to get started. If you have any questions, just [open an issue](https://github.com/openmhealth/shimmer/issues).
+This README should have everything you need to get started. If you have any questions, feel free to [open an issue](https://github.com/openmhealth/shimmer/issues), [email us](mailto://admin@openmhealth.org), [post on our form](https://groups.google.com/forum/#!forum/omh-developers), or [visit our website](http://www.openmhealth.org/documentation/#/data-providers/get-started).
 
 ## Contents
 - [Overview](#overview)
@@ -38,7 +37,7 @@ This README should have everything you need to get started. If you have any ques
 	- [Read data using the console](#read-data-using-the-console)
 	- [Read data programmatically](#read-data-programmatically)
 - [Supported APIs and endpoints](#supported-apis-and-endpoints)
-- [Learning more and contributing](#learning-more-and-contributing)
+- [Contributing](#contributing)
 
 ## Overview 
 Shimmer is made up of different components.
@@ -256,10 +255,8 @@ The currently supported shims are:
 <sup>3</sup> *Sleep data has not been tested using real data directly from a device. It has been tested with example data provided in the Withings API documentation.*
 
 ## Learning more and contributing
-You can learn more about these shims and endpoints in the [documentation section](http://www.openmhealth.org/documentation/#/overview/get-started) of the Open mHealth site. 
 
 The list of supported third-party APIs will grow over time as more shims are added. If you'd like to contribute a shim to work with your API or a third-party API,
-send us a [pull request](https://github.com/openmhealth/shimmer/pulls). If you need any help, feel free to
-reach out on [admin@openmhealth.org](mailto://admin@openmhealth.org) or on the Open mHealth [developer group](https://groups.google.com/forum/#!forum/omh-developers).
+send us a [pull request](https://github.com/openmhealth/shimmer/pulls). 
 
 
