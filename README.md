@@ -32,32 +32,28 @@ A shim is a library, not an application. To use a shim, it needs to be hosted in
 
 ## Installation
 
-There are two ways to run Shimmer. 
+There are two ways to install Shimmer. 
 
-1. You can run Docker containers from pre-built binaries. 
-  * This is the fastest way to get up and running and isolates the install from your system.
+1. You can download and run pre-built Docker images. 
 1. You can build all the code from source and run it natively or in Docker.
 
-### Option 1. Running Docker images
+### Option 1. Download and run Docker images
 
-If you don't have Docker and Docker Compose installed, 
+If you don't have Docker and Docker Compose installed, download [Docker Toolbox](https://www.docker.com/toolbox) and follow the installation instructions for your platform.
 
-1. Download [Docker Toolbox](https://www.docker.com/toolbox) and follow the installation instructions for your platform.
-2. If you don't already have a Docker host, create one by running `docker-machine create --driver virtualbox dev` in a terminal.
-
-Once you have a Docker host running, in a terminal 
+Once you have a running Docker hos, in a terminal 
 
 1. Clone this Git repository.
-1. Run `docker-machine ls` to find the name of your active Docker host.
+1. Run `docker-machine ls` to find the name and IP address of your active Docker host.
 1. Run `eval "$(docker-machine env host)"` to prepare environment variables, *replacing `host` with the name of your Docker host*.
 1. Run the `./update-compose-files.sh` script.
-  * This step will be removed once Compose 1.5 is released.
-1. Start the containers by running
+  * This step should be removed once Compose 1.5 is released.
+1. Download and start the containers by running
   * `docker-compose up -d`
   * If you want to see logs and keep the containers in the foreground, omit the `-d`.
-  * This will download about 1GB of Docker images if you don't already have them, the bulk of which are MongoDB, nginx and OpenJDK base images. 
-  * It can take up to a minute for the containers to start up. You can check their progress using `docker-compose logs`.
-1. Visit `http://<your-docker-host>:8083` in a browser.
+  * This will download up to 1 GB of Docker images if you don't already have them, the bulk of which are MongoDB, nginx and OpenJDK base images. 
+  * It can take up to a minute for the containers to start up. You can check their progress using `docker-compose logs` if you started with `-d`.
+1. Visit `http://<your-docker-host-ip>:8083` in a browser.
 
 ### Option 2. Building the code and running it natively or in Docker
 
@@ -100,7 +96,7 @@ You can get credentials from the developer website of the corresponding third-pa
 typically consist of an OAuth client ID and client secret. The following links point to the developer
 website of each API. Visit these sites to register your application and obtain authentication 
 credentials for each of the shims you want to enable.  
-                           
+
 * [Fitbit](http://dev.fitbit.com/)
 * [Google Fit](https://developers.google.com/fit/rest/) ([application management portal](https://console.developers.google.com/start))
 * [Jawbone UP](https://jawbone.com/up/developer)
@@ -156,7 +152,6 @@ Each shim produces json data that can be represented either as data *normalized*
         "acquisition_provenance": {
             "source_name": "Jawbone UP API",
             "modality": "sensed",
-            "external_id": "QkfTizSpRdt--VG4XXI2KvvdgHJJeui0",
             "source_updated_date_time": "2015-09-10T18:43:39Z"
         },
         "schema_id": {
