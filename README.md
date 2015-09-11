@@ -256,7 +256,7 @@ The currently supported shims are:
 
 ### Contributing
 
-The list of supported third-party APIs will grow over time as more shims are added. If you'd like to contribute a shim to work with your API or a third-party API,
+The list of supported third-party APIs will grow over time as more shims are added. If you'd like to contribute a shim to work with your API or a third-party API, or contribute any other code,
 
 1. [Open an issue](https://github.com/openmhealth/shimmer/issues) to let us know what you're going to work on.
   1. This lets us give you feedback early and lets us put you in touch with people who can help.
