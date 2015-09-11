@@ -1,11 +1,11 @@
 /*
- * Copyright 2014 Open mHealth
+ * Copyright 2015 Open mHealth
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * 	http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -41,7 +41,7 @@ import java.util.Map;
  *
  * @author Danilo Bonilla
  */
-public abstract class OAuth2ShimBase implements Shim, OAuth2Shim {
+public abstract class OAuth2ShimBase extends ShimBase implements OAuth2Shim {
 
     private AuthorizationRequestParametersRepo authorizationRequestParametersRepo;
 
@@ -49,16 +49,15 @@ public abstract class OAuth2ShimBase implements Shim, OAuth2Shim {
 
     protected ShimServerConfig shimServerConfig;
 
-    protected OAuth2ShimBase(AuthorizationRequestParametersRepo authorizationRequestParametersRepo,
+    protected OAuth2ShimBase(ApplicationAccessParametersRepo applicationParametersRepo,
+                             AuthorizationRequestParametersRepo authorizationRequestParametersRepo,
                              AccessParametersRepo accessParametersRepo,
                              ShimServerConfig shimServerConfig) {
+        super(applicationParametersRepo);
         this.authorizationRequestParametersRepo = authorizationRequestParametersRepo;
         this.accessParametersRepo = accessParametersRepo;
         this.shimServerConfig = shimServerConfig;
     }
-
-    protected abstract AuthorizationRequestParameters getAuthorizationRequestParameters(
-        final String username, final UserRedirectRequiredException exception);
 
     protected abstract ResponseEntity<ShimDataResponse> getData(
         OAuth2RestOperations restTemplate, ShimDataRequest shimDataRequest) throws ShimException;
@@ -88,9 +87,10 @@ public abstract class OAuth2ShimBase implements Shim, OAuth2Shim {
              * Build an authorization request from the exception
              * parameters. We also serialize spring's accessTokenRequest.
              */
-            AuthorizationRequestParameters authRequestParams =
-                getAuthorizationRequestParameters(username, e);
-
+            AuthorizationRequestParameters authRequestParams = new AuthorizationRequestParameters();
+            authRequestParams.setRedirectUri(e.getRedirectUri());
+            authRequestParams.setStateKey(e.getStateKey());
+            authRequestParams.setAuthorizationUrl(getAuthorizationUrl(e));
             authRequestParams.setSerializedRequest(SerializationUtils.serialize(accessTokenRequest));
             authRequestParams.setStateKey(stateKey);
 
@@ -99,17 +99,35 @@ public abstract class OAuth2ShimBase implements Shim, OAuth2Shim {
         }
     }
 
+    protected abstract String getAuthorizationUrl(UserRedirectRequiredException exception);
+
     public OAuth2ProtectedResourceDetails getResource() {
+        ApplicationAccessParameters parameters = findApplicationAccessParameters();
         AuthorizationCodeResourceDetails resource = new AuthorizationCodeResourceDetails();
         resource.setAccessTokenUri(getBaseTokenUrl());
         resource.setUserAuthorizationUri(getBaseAuthorizeUrl());
-        resource.setClientId(getClientId());
+        resource.setClientId(parameters.getClientId());
         resource.setScope(getScopes());
-        resource.setClientSecret(getClientSecret());
+        resource.setClientSecret(parameters.getClientSecret());
         resource.setTokenName("access_token");
         resource.setGrantType("authorization_code");
         resource.setUseCurrentUri(true);
         return resource;
+    }
+
+
+    /**
+     * Request parameters to be used when 'triggering'
+     * spring oauth2. This should be the equivalent
+     * of a ping to the external data provider.
+     *
+     * @return - The Shim data request to use for trigger.
+     */
+    protected ShimDataRequest getTriggerDataRequest() {
+        ShimDataRequest shimDataRequest = new ShimDataRequest();
+        shimDataRequest.setDataTypeKey(getShimDataTypes()[0].toString());
+        shimDataRequest.setNumToReturn(1l);
+        return shimDataRequest;
     }
 
     @Override

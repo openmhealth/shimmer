@@ -22,7 +22,7 @@ import java.util.Calendar;
  * Wrapper for responses received from shims.
  * <p/>
  * todo: expand to include original parameters
- *
+ * TODO there's no pagination information, how does a caller know how to proceed?
  * @author Danilo Bonilla
  */
 public class ShimDataResponse {
@@ -41,6 +41,7 @@ public class ShimDataResponse {
         this.shim = shim;
     }
 
+    // TODO in seconds since the epoch? needs to be documented
     public Long getTimeStamp() {
         return timeStamp;
     }
@@ -61,6 +62,7 @@ public class ShimDataResponse {
         ShimDataResponse response = new ShimDataResponse();
         response.setShim(shimKey);
         response.setBody(null);
+
         response.setTimeStamp(
             Calendar.getInstance().getTimeInMillis() / 1000);
         return response;

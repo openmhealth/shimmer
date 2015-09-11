@@ -1,3 +1,19 @@
+/*
+ * Copyright 2015 Open mHealth
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.openmhealth.shim;
 
 import oauth.signpost.OAuth;
@@ -6,17 +22,13 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.impl.client.HttpClients;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
-import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.net.URL;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -24,7 +36,7 @@ import java.util.Map;
  *
  * @author Danilo Bonilla
  */
-public abstract class OAuth1ShimBase implements Shim, OAuth1Shim {
+public abstract class OAuth1ShimBase extends ShimBase implements OAuth1Shim {
 
     protected HttpClient httpClient = HttpClients.createDefault();
 
@@ -32,8 +44,10 @@ public abstract class OAuth1ShimBase implements Shim, OAuth1Shim {
 
     private ShimServerConfig shimServerConfig;
 
-    protected OAuth1ShimBase(AuthorizationRequestParametersRepo authorizationRequestParametersRepo,
+    protected OAuth1ShimBase(ApplicationAccessParametersRepo applicationParametersRepo, 
+                             AuthorizationRequestParametersRepo authorizationRequestParametersRepo,
                              ShimServerConfig shimServerConfig) {
+        super(applicationParametersRepo);
         this.authorizationRequestParametersRepo = authorizationRequestParametersRepo;
         this.shimServerConfig = shimServerConfig;
     }
@@ -81,7 +95,6 @@ public abstract class OAuth1ShimBase implements Shim, OAuth1Shim {
             parameters.setUsername(username);
             parameters.setRedirectUri(callbackUrl);
             parameters.setStateKey(stateKey);
-            parameters.setHttpMethod(HttpMethod.GET);
             parameters.setAuthorizationUrl(authorizeUrl.toString());
             parameters.setRequestParams(tokenParameters);
 
@@ -147,9 +160,10 @@ public abstract class OAuth1ShimBase implements Shim, OAuth1Shim {
             throw new ShimException("Access token could not be retrieved");
         }
 
+        ApplicationAccessParameters parameters = findApplicationAccessParameters();
         AccessParameters accessParameters = new AccessParameters();
-        accessParameters.setClientId(getClientId());
-        accessParameters.setClientSecret(getClientSecret());
+        accessParameters.setClientId(parameters.getClientId());
+        accessParameters.setClientSecret(parameters.getClientSecret());
         accessParameters.setStateKey(stateKey);
         accessParameters.setUsername(authParams.getUsername());
         accessParameters.setAccessToken(accessToken);
@@ -172,10 +186,11 @@ public abstract class OAuth1ShimBase implements Shim, OAuth1Shim {
                                                String token,
                                                String tokenSecret,
                                                Map<String, String> oauthParams) throws ShimException {
+        ApplicationAccessParameters parameters = findApplicationAccessParameters();
         return OAuth1Utils.getSignedRequest(
             unsignedUrl,
-            getClientId(),
-            getClientSecret(),
+            parameters.getClientId(),
+            parameters.getClientSecret(),
             token, tokenSecret, oauthParams);
     }
 
@@ -184,10 +199,11 @@ public abstract class OAuth1ShimBase implements Shim, OAuth1Shim {
                           String tokenSecret,
                           Map<String, String> oauthParams)
         throws ShimException {
+        ApplicationAccessParameters parameters = findApplicationAccessParameters();
         return OAuth1Utils.buildSignedUrl(
             unsignedUrl,
-            getClientId(),
-            getClientSecret(),
+            parameters.getClientId(),
+            parameters.getClientSecret(),
             token, tokenSecret, oauthParams);
     }
 

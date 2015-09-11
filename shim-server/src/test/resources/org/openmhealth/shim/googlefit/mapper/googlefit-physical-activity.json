@@ -1,0 +1,44 @@
+{
+    "minStartTimeNs": "1420099200000000000",
+    "maxEndTimeNs": "1436277600000000000",
+    "dataSourceId": "derived:com.google.activity.segment:com.google.android.gms:merge_activity_segments",
+    "point": [
+        {
+            "startTimeNanos": "1420150917000000000",
+            "endTimeNanos": "1420154989000000000",
+            "dataTypeName": "com.google.activity.segment",
+            "originDataSourceId": "derived:com.google.activity.segment:com.strava:session_activity_segment",
+            "value": [
+                {
+                    "intVal": 7
+                }
+            ],
+            "modifiedTimeMillis": "1423270946348"
+        },
+        {
+            "startTimeNanos": "1420417649151000000",
+            "endTimeNanos": "1420417841151000000",
+            "dataTypeName": "com.google.activity.segment",
+            "originDataSourceId": "derived:com.google.activity.segment:com.mapmyrun.android2:session_activity_segment",
+            "value": [
+                {
+                    "intVal": 9
+                }
+            ],
+            "modifiedTimeMillis": "1420417997203"
+        },
+        {
+            "startTimeNanos": "1436275800000000000",
+            "endTimeNanos": "1436277600000000000",
+            "dataTypeName": "com.google.activity.segment",
+            "originDataSourceId": "raw:com.google.activity.segment:com.google.android.apps.fitness:user_input",
+            "value": [
+                {
+                    "intVal": 8
+                }
+            ],
+            "modifiedTimeMillis": "1436325507606"
+        }
+
+    ]
+}

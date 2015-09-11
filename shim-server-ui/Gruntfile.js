@@ -27,7 +27,7 @@ module.exports = function (grunt) {
         yeoman: {
             // configurable paths
             app: require('./bower.json').appPath || 'app',
-            dist: 'dist'
+            dist: 'docker/assets'
         },
 
         // Watches files for changes and runs tasks based on the changed files
@@ -334,7 +334,7 @@ module.exports = function (grunt) {
         replace: {
             css_relative_paths: {
                 overwrite: true, // overwrite matched source files
-                src: ['dist/styles/*.vendor.css','dist/styles/*.main.css'],
+                src: ['<%= yeoman.dist %>/styles/*.vendor.css', '<%= yeoman.dist %>/styles/*.main.css'],
                 replacements: [
                     {
                         from: '/bower_components/bootstrap/dist/fonts',
@@ -344,7 +344,7 @@ module.exports = function (grunt) {
             },
             api_settings: {
                 overwrite: true, // overwrite matched source files
-                src: ['dist/scripts/*.scripts.js'],
+                src: ['<%= yeoman.dist %>/scripts/*.scripts.js'],
                 replacements: [
                     {from: '"/omh-shims-api";', to: '"";'}
                 ]
