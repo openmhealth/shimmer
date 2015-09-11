@@ -40,7 +40,7 @@ This README should have everything you need to get started. If you have any ques
 - [Contributing](#contributing)
 
 ## Overview 
-Shimmer is made up of different components.
+Shimmer is made up of different components - individual shims, a resource server, and a console - which are each described below.
 
 ### Shims
 A *shim* is a library that can communicate with a specific third-party API, e.g. Withings. It handles the process of authenticating with the API, requesting data from it, and mapping that data into an Open mHealth compliant data format. 
