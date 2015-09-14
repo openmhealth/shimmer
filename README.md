@@ -62,7 +62,7 @@ There are two ways to install Shimmer.
 
 ### Option 1. Download and run Docker images
 
-If you don't have Docker, Docker Compose, and Docker Machine installed, download [Docker Toolbox](https://www.docker.com/toolbox) and follow the installation instructions for your platform.
+If you don't have Docker, Docker Compose, and Docker Machine installed, download [Docker Toolbox](https://www.docker.com/toolbox) and follow the installation instructions for your platform. If you don't have a running Docker machine, follow these instructions to [deploy one locally](https://docs.docker.com/machine/get-started/), or these instructions to [deploy to the cloud](https://docs.docker.com/machine/get-started-cloud/) on any of these [cloud platforms](https://docs.docker.com/machine/drivers/). 
 
 Once you have a running Docker host, in a terminal 
 
@@ -90,7 +90,7 @@ If you prefer to build the code yourself,
   1. You need a running [MongoDB](http://docs.mongodb.org/manual/) instance.
 1. To run the code in Docker,
   1. You need Docker, Docker Compose, and Docker Machine, available in [Docker Toolbox](https://www.docker.com/toolbox).
-  1. You need a running Docker host.
+  1. You need a running Docker host. If you don't have a running Docker host, follow these instructions to [deploy one locally](https://docs.docker.com/machine/get-started/), or these instructions to [deploy to the cloud](https://docs.docker.com/machine/get-started-cloud/) on any of these [cloud platforms](https://docs.docker.com/machine/drivers/). 
 
 If you want to build and run the code natively, in a terminal
  
