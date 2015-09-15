@@ -50,7 +50,7 @@ RUN bower install --allow-root
 RUN grunt build
 
 # build the backend
-WORKDIR /root/omh-shims/shim-server
+WORKDIR /root/omh-shims/shim-server-ui
 RUN ln -s dist ../shim-server/src/main/resources/public && mvn compile
 EXPOSE 8083
 

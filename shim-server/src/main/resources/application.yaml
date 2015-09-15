@@ -18,7 +18,7 @@ security:
   basic:
     enabled: false
 logging:
-  file: omh-shims.log
+  path: /var/log/ohmage-shim/
 
 openmhealth:
   shim:
