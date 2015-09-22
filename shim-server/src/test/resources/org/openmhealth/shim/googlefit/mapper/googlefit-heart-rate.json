@@ -1,0 +1,31 @@
+{
+    "minStartTimeNs": "1420099200000000000",
+    "maxEndTimeNs": "1425110400000000000",
+    "dataSourceId": "derived:com.google.heart_rate.bpm:com.google.android.gms:merge_heart_rate_bpm",
+    "point": [
+        {
+            "startTimeNanos": "1422632268186000000",
+            "endTimeNanos": "1422632268186000000",
+            "dataTypeName": "com.google.heart_rate.bpm",
+            "originDataSourceId": "raw:com.google.heart_rate.bpm:com.azumio.instantheartrate.full:",
+            "value": [
+                {
+                    "fpVal": 54
+                }
+            ],
+            "modifiedTimeMillis": "1423721121864"
+        },
+        {
+            "startTimeNanos": "1436538872914000000",
+            "endTimeNanos": "1436538873915000000",
+            "dataTypeName": "com.google.heart_rate.bpm",
+            "originDataSourceId": "raw:com.google.heart_rate.bpm:si.modula.android.instantheartrate:",
+            "value": [
+                {
+                    "fpVal": 58.0
+                }
+            ],
+            "modifiedTimeMillis": "1436539405395"
+        }
+    ]
+}

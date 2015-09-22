@@ -1,0 +1,51 @@
+{
+    "body": {
+        "activities": [
+            {
+                "calories": 139,
+                "date": "2015-06-18",
+                "distance": 2563,
+                "elevation": 0,
+                "intense": 0,
+                "moderate": 540,
+                "soft": 780,
+                "steps": 2934,
+                "timezone": "America/Los_Angeles"
+            },
+            {
+                "calories": 130,
+                "date": "2015-06-19",
+                "distance": 2387,
+                "elevation": 0,
+                "intense": 120,
+                "moderate": 420,
+                "soft": 600,
+                "steps": 2600,
+                "timezone": "America/Los_Angeles"
+            },
+            {
+                "calories": 241,
+                "date": "2015-06-20",
+                "distance": 4754,
+                "elevation": 0,
+                "intense": 0,
+                "moderate": 1140,
+                "soft": 1980,
+                "steps": 5458,
+                "timezone": "America/Los_Angeles"
+            },
+            {
+                "calories": 99,
+                "date": "2015-02-21",
+                "distance": 1666,
+                "elevation": 0,
+                "intense": 60,
+                "moderate": 300,
+                "soft": 480,
+                "steps": 1798,
+                "timezone": "America/Los_Angeles"
+            }
+        ]
+    },
+    "status": 0
+}

@@ -87,9 +87,9 @@ bintray {
         name = 'omh-shim-sdk'
         userOrg = 'openmhealth'
         desc = 'A library containing Java classes that help you build Open mHealth shims.'
-        websiteUrl = 'https://github.com/openmhealth/omh-shims'
-        issueTrackerUrl = 'https://github.com/openmhealth/omh-shims/issues'
-        vcsUrl = 'https://github.com/openmhealth/omh-shims.git'
+        websiteUrl = 'https://github.com/openmhealth/shimmer'
+        issueTrackerUrl = 'https://github.com/openmhealth/shimmer/issues'
+        vcsUrl = 'https://github.com/openmhealth/shimmer.git'
         licenses = ['Apache-2.0']
         labels = ['shims']
         publicDownloadNumbers = true

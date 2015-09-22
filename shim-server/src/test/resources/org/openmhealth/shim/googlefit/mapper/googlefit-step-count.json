@@ -1,0 +1,55 @@
+{
+    "minStartTimeNs": "1420099200000000000",
+    "maxEndTimeNs": "1436566038006058105",
+    "dataSourceId": "derived:com.google.step_count.delta:com.google.android.gms:merge_step_deltas",
+    "point": [
+        {
+            "startTimeNanos": "1422917379811000000",
+            "endTimeNanos": "1422919520811000000",
+            "dataTypeName": "com.google.step_count.delta",
+            "originDataSourceId": "derived:com.google.step_count.delta:com.nike.plusgps:",
+            "value": [
+                {
+                    "intVal": 4146
+                }
+            ],
+            "modifiedTimeMillis": "1422919826297"
+        },
+        {
+            "startTimeNanos": "1436558400000000000",
+            "endTimeNanos": "1436560200000000000",
+            "dataTypeName": "com.google.step_count.delta",
+            "originDataSourceId": "raw:com.google.step_count.delta:com.google.android.apps.fitness:user_input",
+            "value": [
+                {
+                    "intVal": 0
+                }
+            ],
+            "modifiedTimeMillis": "1436564377147"
+        },
+        {
+            "startTimeNanos": "1436565497687316406",
+            "endTimeNanos": "1436565557687316406",
+            "dataTypeName": "com.google.step_count.delta",
+            "originDataSourceId": "derived:com.google.step_count.cumulative:com.google.android.gms:samsung:Galaxy Nexus:32b1bd9e:soft_step_counter",
+            "value": [
+                {
+                    "intVal": 17
+                }
+            ],
+            "modifiedTimeMillis": "1436593407066"
+        },
+        {
+            "startTimeNanos": "1436565921162000000",
+            "endTimeNanos": "1436566038006058105",
+            "dataTypeName": "com.google.step_count.delta",
+            "originDataSourceId": "raw:com.google.step_count.delta:com.google.android.apps.fitness:user_input",
+            "value": [
+                {
+                    "intVal": 184
+                }
+            ],
+            "modifiedTimeMillis": "1436593407066"
+        }
+    ]
+}

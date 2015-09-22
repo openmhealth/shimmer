@@ -71,7 +71,7 @@ public class ShimDataRequest {
      * from the external data provider, otherwise
      * returns raw data.
      */
-    private boolean normalize = false;
+    private boolean normalize = true;
 
     public ShimDataRequest() {
     }

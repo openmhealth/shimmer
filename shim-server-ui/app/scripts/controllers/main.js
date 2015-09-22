@@ -36,8 +36,7 @@ angular.module('sandboxConsoleApp')
          * components within the UI's templates
          */
         $scope.getHtmlId = function(username){
-            var cleanUsername = username.replace(/\W+/g, "_");
-            return cleanUsername;
+            return username.replace(/\W+/g, "_");
         };
 
         /**
@@ -247,7 +246,7 @@ angular.module('sandboxConsoleApp')
             var url = API_ROOT_URL + "/data/" + shimKey + "/" + endPoint + "?"
                 + "username=" + record.username
                 + "&dateStart=" + fromDate + "&dateEnd=" + toDate
-                + (doNormalize ? "&normalize=true" : "");
+                + (doNormalize ? "&normalize=true" : "&normalize=false");
 
             console.info("The URL to be used is: ", url);
 

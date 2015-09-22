@@ -1,11 +1,11 @@
 /*
- * Copyright 2014 Open mHealth
+ * Copyright 2015 Open mHealth
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * 	http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -42,6 +42,7 @@ import java.util.*;
 import static java.time.ZoneOffset.UTC;
 import static java.util.Collections.singletonList;
 import static org.openmhealth.schema.configuration.JacksonConfiguration.newObjectMapper;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 
@@ -88,7 +89,7 @@ public class Application extends WebSecurityConfigurerAdapter {
      *
      * @return list of shims + endpoints in a map.
      */
-    @RequestMapping("registry")
+    @RequestMapping(value = "registry", produces = APPLICATION_JSON_VALUE)
     public List<Map<String, Object>> shimList(@RequestParam(value = "available", defaultValue = "") String available)
             throws ShimException {
 
@@ -121,7 +122,7 @@ public class Application extends WebSecurityConfigurerAdapter {
      *
      * @return list of shims + endpoints in a map.
      */
-    @RequestMapping(value = "shim/{shim}/config", method = {GET, PUT, POST})
+    @RequestMapping(value = "shim/{shim}/config", method = {GET, PUT, POST}, produces = APPLICATION_JSON_VALUE)
     public List<String> updateShimConfig(
             @PathVariable("shim") String shimKey,
             @RequestParam("clientId") String clientId,
@@ -148,7 +149,7 @@ public class Application extends WebSecurityConfigurerAdapter {
      * @param username username fragment to search.
      * @return List of access parameters.
      */
-    @RequestMapping("authorizations")
+    @RequestMapping(value = "authorizations", produces = APPLICATION_JSON_VALUE)
     public List<Map<String, Object>> authorizations(@RequestParam(value = "username") String username)
             throws ShimException {
 
@@ -180,7 +181,7 @@ public class Application extends WebSecurityConfigurerAdapter {
      * @param shim The shim registry key of the shim we're approving
      * @return AuthorizationRequest parameters, including a boolean flag if already authorized.
      */
-    @RequestMapping("/authorize/{shim}")
+    @RequestMapping(value = "/authorize/{shim}", produces = APPLICATION_JSON_VALUE)
     public AuthorizationRequestParameters authorize(
             @RequestParam(value = "username") String username,
             @RequestParam(value = "client_redirect_url", defaultValue = REDIRECT_OOB) String clientRedirectUrl,
@@ -206,7 +207,7 @@ public class Application extends WebSecurityConfigurerAdapter {
      * @param shim The shim registry key of the shim authorization we're removing.
      * @return Simple response message.
      */
-    @RequestMapping(value = "/de-authorize/{shim}", method = DELETE)
+    @RequestMapping(value = "/de-authorize/{shim}", method = DELETE, produces = APPLICATION_JSON_VALUE)
     public List<String> removeAuthorization(
             @RequestParam(value = "username") String username,
             @PathVariable("shim") String shim)
@@ -225,7 +226,7 @@ public class Application extends WebSecurityConfigurerAdapter {
      * @param servletRequest Request posted by the external data provider.
      * @return AuthorizationResponse object with details and result: authorize, error, or denied.
      */
-    @RequestMapping(value = "/authorize/{shim}/callback", method = {POST, GET})
+    @RequestMapping(value = "/authorize/{shim}/callback", method = {POST, GET}, produces = APPLICATION_JSON_VALUE)
     public AuthorizationResponse approve(
             @PathVariable("shim") String shim,
             HttpServletRequest servletRequest,
@@ -276,7 +277,7 @@ public class Application extends WebSecurityConfigurerAdapter {
      * todo: finish javadoc!
      * @return The shim data response wrapper with data from the shim.
      */
-    @RequestMapping(value = "/data/{shim}/{dataType}")
+    @RequestMapping(value = "/data/{shim}/{dataType}", produces = APPLICATION_JSON_VALUE)
     public ShimDataResponse data(
             @RequestParam(value = "username") String username,
             @PathVariable("shim") String shim,

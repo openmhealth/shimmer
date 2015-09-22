@@ -10,7 +10,7 @@ spring:
       uri: mongodb://mongo:27017/omh_dsu
   jackson:
     serialization:
-      INDENT_OUTPUT: true
+      indent_output: true
 server:
   port: 8083
 security:
@@ -44,6 +44,7 @@ openmhealth:
     #  clientId: [YOUR_CLIENT_ID]
     #  clientSecret: [YOUR_CLIENT_SECRET]
     #withings:
+    #  partner_access: true
     #  clientId: [YOUR_CLIENT_ID]
     #  clientSecret: [YOUR_CLIENT_SECRET]
     #healthvault:

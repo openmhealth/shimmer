@@ -1,11 +1,11 @@
 /*
- * Copyright 2014 Open mHealth
+ * Copyright 2015 Open mHealth
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * 	http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,8 +18,9 @@ package org.openmhealth.shim.runkeeper;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.openmhealth.shim.*;
-import org.openmhealth.shim.runkeeper.mapper.RunKeeperDataPointMapper;
-import org.openmhealth.shim.runkeeper.mapper.RunKeeperPhysicalActivityDataPointMapper;
+import org.openmhealth.shim.runkeeper.mapper.RunkeeperCaloriesBurnedDataPointMapper;
+import org.openmhealth.shim.runkeeper.mapper.RunkeeperDataPointMapper;
+import org.openmhealth.shim.runkeeper.mapper.RunkeeperPhysicalActivityDataPointMapper;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -51,10 +52,10 @@ import static org.springframework.http.ResponseEntity.ok;
 /**
  * @author Danilo Bonilla
  * @author Emerson Farrugia
+ * @author Chris Schaefbauer
  */
 @Component
 @ConfigurationProperties(prefix = "openmhealth.shim.runkeeper")
-// TODO rename to RunKeeperShim
 public class RunkeeperShim extends OAuth2ShimBase {
 
     private static final Logger logger = getLogger(RunkeeperShim.class);
@@ -119,7 +120,8 @@ public class RunkeeperShim extends OAuth2ShimBase {
     // TODO remove this structure once endpoints are figured out
     public enum RunkeeperDataType implements ShimDataType {
 
-        ACTIVITY("application/vnd.com.runkeeper.FitnessActivityFeed+json", "fitnessActivities");
+        ACTIVITY("application/vnd.com.runkeeper.FitnessActivityFeed+json", "fitnessActivities"),
+        CALORIES("application/vnd.com.runkeeper.FitnessActivityFeed+json", "fitnessActivities");
 
         private String dataTypeHeader;
         private String endPointUrl;
@@ -191,8 +193,17 @@ public class RunkeeperShim extends OAuth2ShimBase {
         }
 
         if (shimDataRequest.getNormalize()) {
-
-            RunKeeperDataPointMapper<?> dataPointMapper = new RunKeeperPhysicalActivityDataPointMapper();
+            RunkeeperDataPointMapper<?> dataPointMapper;
+            switch(runkeeperDataType){
+                case ACTIVITY:
+                    dataPointMapper = new RunkeeperPhysicalActivityDataPointMapper();
+                    break;
+                case CALORIES:
+                    dataPointMapper = new RunkeeperCaloriesBurnedDataPointMapper();
+                    break;
+                default:
+                    throw new UnsupportedOperationException();
+            }
 
             return ok().body(ShimDataResponse.result(SHIM_KEY,
                     dataPointMapper.asDataPoints(singletonList(responseEntity.getBody()))));

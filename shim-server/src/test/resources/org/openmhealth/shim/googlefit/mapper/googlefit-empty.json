@@ -1,0 +1,5 @@
+{
+  "minStartTimeNs": "1426367600000000000",
+  "maxEndTimeNs": "1426886000000000000",
+  "dataSourceId": "derived:com.google.step_count.delta:com.google.android.gms:estimated_steps"
+}

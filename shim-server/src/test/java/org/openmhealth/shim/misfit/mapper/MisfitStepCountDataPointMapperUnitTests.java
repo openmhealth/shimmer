@@ -1,6 +1,7 @@
 package org.openmhealth.shim.misfit.mapper;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import org.hamcrest.Matchers;
 import org.openmhealth.schema.domain.omh.*;
 import org.openmhealth.shim.common.mapper.DataPointMapperUnitTests;
 import org.springframework.core.io.ClassPathResource;
@@ -72,5 +73,16 @@ public class MisfitStepCountDataPointMapperUnitTests extends DataPointMapperUnit
 
         assertThat(acquisitionProvenance, notNullValue());
         assertThat(acquisitionProvenance.getSourceName(), equalTo(RESOURCE_API_SOURCE_NAME));
+    }
+
+    @Test
+    public void asDataPointsShouldReturnEmptyListIfEmptyResponse() throws IOException {
+
+        JsonNode emptyNode = objectMapper.readTree("{\n" +
+                "    \"summary\": []\n" +
+                "}");
+        List<DataPoint<StepCount>> dataPoints = mapper.asDataPoints(singletonList(emptyNode));
+
+        assertThat(dataPoints.size(), Matchers.equalTo(0));
     }
 }

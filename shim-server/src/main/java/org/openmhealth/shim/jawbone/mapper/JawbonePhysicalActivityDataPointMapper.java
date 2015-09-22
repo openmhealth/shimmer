@@ -1,7 +1,22 @@
+/*
+ * Copyright 2015 Open mHealth
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.openmhealth.shim.jawbone.mapper;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import org.openmhealth.schema.domain.omh.DataPoint;
 import org.openmhealth.schema.domain.omh.DurationUnitValue;
 import org.openmhealth.schema.domain.omh.LengthUnitValue;
 import org.openmhealth.schema.domain.omh.PhysicalActivity;
@@ -30,6 +45,8 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.*;
  *
  * @author Emerson Farrugia
  * @author Danilo Bonilla
+ * @author Chris Schaefbauer
+ *
  * @see <a href="https://jawbone.com/up/developer/endpoints/workouts">API documentation</a>
  */
 public class JawbonePhysicalActivityDataPointMapper extends JawboneDataPointMapper<PhysicalActivity> {
@@ -72,8 +89,7 @@ public class JawbonePhysicalActivityDataPointMapper extends JawboneDataPointMapp
     }
 
     @Override
-    public Optional<DataPoint<PhysicalActivity>> asDataPoint(JsonNode workoutNode) {
-
+    protected Optional<PhysicalActivity> getMeasure(JsonNode workoutNode) {
         checkNotNull(workoutNode);
 
         // assume that the title and workout type are optional since the documentation isn't clear
@@ -93,31 +109,20 @@ public class JawbonePhysicalActivityDataPointMapper extends JawboneDataPointMapp
 
         if (endTimestamp.isPresent() && durationInSec.isPresent() && timeZoneId.isPresent()) {
             DurationUnitValue durationUnitValue = new DurationUnitValue(SECOND, durationInSec.get());
-            OffsetDateTime endDateTime = ofInstant(ofEpochSecond(endTimestamp.get()), timeZoneId.get());
-
+            OffsetDateTime endDateTime = ofInstant(ofEpochSecond(endTimestamp.get()),
+                    JawboneDataPointMapper.getTimeZoneForTimestamp(workoutNode, endTimestamp.get()));
             builder.setEffectiveTimeFrame(ofEndDateTimeAndDuration(endDateTime, durationUnitValue));
         }
 
         asOptionalInteger(workoutNode, "details.intensity")
                 .ifPresent(intensity -> builder.setReportedActivityIntensity(asSelfReportedIntensity(intensity)));
 
-        PhysicalActivity measure = builder.build();
-
-        Optional<String> externalId = asOptionalString(workoutNode, "xid");
-
-        // steps are only returned if the user was wearing the UP band, i.e. that the data was sensed
-        Optional<Integer> steps = asOptionalInteger(workoutNode, "details.steps");
-
-        Boolean sensed = null;
-        if (steps.isPresent() && steps.get() > 0) {
-            sensed = true;
-        }
-
-        return Optional.of(newDataPoint(measure, RESOURCE_API_SOURCE_NAME, externalId.orElse(null), sensed));
+        return Optional.of(builder.build());
     }
 
     /**
      * TODO confirm that we want to make titles trump types
+     *
      * @param title the title of the workout, if any
      * @param workoutType the type of the workout, if specified
      * @return the name of the activity
@@ -159,5 +164,15 @@ public class JawbonePhysicalActivityDataPointMapper extends JawboneDataPointMapp
             default:
                 throw new IllegalArgumentException(format("The intensity value '%d' isn't supported.", intensityValue));
         }
+    }
+
+    @Override
+    protected boolean isSensed(JsonNode workoutNode) {
+
+        Optional<Integer> steps = asOptionalInteger(workoutNode, "details.steps");
+
+        // Jawbone API documentation states that steps is only included if the activity was sensed
+        // by a Jawbone wearable device
+        return steps.isPresent() && steps.get() > 0;
     }
 }

@@ -3,7 +3,6 @@ subprojects {
     apply plugin: 'java'
 
     repositories {
-        mavenLocal()
         jcenter()
     }
 
@@ -11,8 +10,8 @@ subprojects {
 
     ext {
         javaVersion = 1.8
-        shimServerVersion = '0.2.3'
-        omhSchemaSdkVersion = '1.0.1'
+        shimmerVersion = '0.3.0'
+        omhSchemaSdkVersion = '1.0.3'
     }
 
     sourceCompatibility = javaVersion
@@ -24,5 +23,5 @@ subprojects {
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '2.4'
+    gradleVersion = '2.6'
 }

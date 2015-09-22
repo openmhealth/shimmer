@@ -1,0 +1,26 @@
+{
+    "status": 0,
+    "body": {
+        "series": [
+            {
+                "id": 16616514,
+                "timezone": "Europe/Paris",
+                "model": 32,
+                "startdate": 1410521659,
+                "enddate": 1410542577,
+                "date": "2014-09-11",
+                "data": {
+                    "wakeupduration": 1800,
+                    "lightsleepduration": 18540,
+                    "deepsleepduration": 8460,
+                    "remsleepduration": 10460,
+                    "durationtosleep": 420,
+                    "durationtowakeup": 360,
+                    "wakeupcount": 3
+                },
+                "modified": 1412087110
+            }
+        ],
+        "more": false
+    }
+}
