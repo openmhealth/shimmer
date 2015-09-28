@@ -94,7 +94,7 @@ public class IHealthBloodPressureDataPointMapperUnitTests extends IHealthDataPoi
         assertThat(dataPoints.get(1).getBody(), equalTo(expectedBloodPressure));
 
         DataPointHeader testHeader = dataPoints.get(1).getHeader();
-        
+
         assertThat(testHeader.getAcquisitionProvenance().getModality(), equalTo(SELF_REPORTED));
 
     }

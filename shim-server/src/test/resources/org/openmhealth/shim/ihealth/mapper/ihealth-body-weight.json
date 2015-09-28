@@ -1,0 +1,41 @@
+{
+    "CurrentRecordCount": 4,
+    "NextPageUrl": "",
+    "PageLength": 50,
+    "PageNumber": 1,
+    "PrevPageUrl": "",
+    "RecordCount": 2,
+    "WeightDataList": [
+        {
+            "BMI": 22.56052563257619,
+            "BoneValue": 0,
+            "DCI": 2035.774872767189,
+            "DataID": "5fe5893c418b48cd8da7954f8b6c2f36",
+            "DataSource": "FromDevice",
+            "FatValue": 10,
+            "LastChangeTime": 1442520257,
+            "MDate": 1442491449,
+            "MuscaleValue": 0,
+            "Note": "",
+            "TimeZone": "-0800",
+            "WaterValue": 25,
+            "WeightValue": 77.5643875134944
+        },
+        {
+            "BMI": 22.56052398681641,
+            "BoneValue": 0,
+            "DCI": 0,
+            "DataID": "b702a3a5e998f2fca268df6daaa69871",
+            "DataSource": "Manual",
+            "FatValue": 0,
+            "LastChangeTime": 1442520480,
+            "MDate": 1442498877,
+            "MuscaleValue": 0,
+            "Note": "Weight so good, look at me now",
+            "TimeZone": "-0600",
+            "WaterValue": 0,
+            "WeightValue": 77.56438446044922
+        }
+    ],
+    "WeightUnit": 0
+}

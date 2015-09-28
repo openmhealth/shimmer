@@ -27,7 +27,7 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asRequir
 /**
  * @author Chris Schaefbauer
  */
-public class IHealthBloodPressureDataPointMapper extends IHealthDataPointMapper<BloodPressure>{
+public class IHealthBloodPressureDataPointMapper extends IHealthDataPointMapper<BloodPressure> {
 
     static final double KPA_TO_MMHG_CONVERSION_RATE = 7.500617;
 
@@ -45,25 +45,26 @@ public class IHealthBloodPressureDataPointMapper extends IHealthDataPointMapper<
         BloodPressureUnitType bloodPressureUnitType = BloodPressureUnitType.fromIntegerValue(bloodPressureUnit);
 
         double systolicValue = getBloodPressureValueInMmHg(asRequiredDouble(listNode, "HP"), bloodPressureUnitType);
-        SystolicBloodPressure systolicBloodPressure = new SystolicBloodPressure(BloodPressureUnit.MM_OF_MERCURY,systolicValue);
+        SystolicBloodPressure systolicBloodPressure =
+                new SystolicBloodPressure(BloodPressureUnit.MM_OF_MERCURY, systolicValue);
 
-        double diastolicValue = getBloodPressureValueInMmHg(asRequiredDouble(listNode,"LP"), bloodPressureUnitType);
-        DiastolicBloodPressure diastolicBloodPressure = new DiastolicBloodPressure(BloodPressureUnit.MM_OF_MERCURY,diastolicValue);
+        double diastolicValue = getBloodPressureValueInMmHg(asRequiredDouble(listNode, "LP"), bloodPressureUnitType);
+        DiastolicBloodPressure diastolicBloodPressure =
+                new DiastolicBloodPressure(BloodPressureUnit.MM_OF_MERCURY, diastolicValue);
 
+        BloodPressure.Builder bloodPressureBuilder =
+                new BloodPressure.Builder(systolicBloodPressure, diastolicBloodPressure);
 
-        BloodPressure.Builder bloodPressureBuilder = new BloodPressure.Builder(systolicBloodPressure, diastolicBloodPressure);
-
-
-        setEffectiveTimeFrameIfExists(listNode,bloodPressureBuilder);
-        setUserNoteIfExists(listNode,bloodPressureBuilder);
+        setEffectiveTimeFrameIfExists(listNode, bloodPressureBuilder);
+        setUserNoteIfExists(listNode, bloodPressureBuilder);
 
         BloodPressure bloodPressure = bloodPressureBuilder.build();
-        return Optional.of(new DataPoint<>(createDataPointHeader(listNode,bloodPressure), bloodPressure));
+        return Optional.of(new DataPoint<>(createDataPointHeader(listNode, bloodPressure), bloodPressure));
     }
 
     protected double getBloodPressureValueInMmHg(double rawBpValue, BloodPressureUnitType bloodPressureUnit) {
 
-        switch(bloodPressureUnit){
+        switch ( bloodPressureUnit ) {
             case mmHg:
                 return rawBpValue;
             case KPa:
@@ -84,13 +85,15 @@ public class IHealthBloodPressureDataPointMapper extends IHealthDataPointMapper<
             this.value = value;
         }
 
-        protected int getValue(){
+        protected int getValue() {
             return value;
         }
 
         public static BloodPressureUnitType fromIntegerValue(int bpIntValue) {
-            for (BloodPressureUnitType type : values() ){
-                if (type.getValue() == bpIntValue) return type;
+            for (BloodPressureUnitType type : values()) {
+                if (type.getValue() == bpIntValue) {
+                    return type;
+                }
             }
             throw new UnsupportedOperationException();
         }

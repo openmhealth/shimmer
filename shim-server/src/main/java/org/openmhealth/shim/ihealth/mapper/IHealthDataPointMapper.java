@@ -85,13 +85,13 @@ public abstract class IHealthDataPointMapper<T> implements DataPointMapper<T, Js
         return dataPointHeader;
     }
 
-    protected void setEffectiveTimeFrameIfExists(JsonNode listNode, Measure.Builder builder){
+    protected void setEffectiveTimeFrameIfExists(JsonNode listNode, Measure.Builder builder) {
 
         Optional<Long> optionalOffsetDateTime = asOptionalLong(listNode, "MDate");
 
-        if(optionalOffsetDateTime.isPresent()){
+        if (optionalOffsetDateTime.isPresent()) {
 
-            asOptionalString(listNode,"TimeZone").ifPresent(timezoneOffsetString -> builder
+            asOptionalString(listNode, "TimeZone").ifPresent(timezoneOffsetString -> builder
                     .setEffectiveTimeFrame(
                             OffsetDateTime.ofInstant(
                                     Instant.ofEpochSecond(optionalOffsetDateTime.get()),
@@ -100,11 +100,11 @@ public abstract class IHealthDataPointMapper<T> implements DataPointMapper<T, Js
         }
     }
 
-    protected void setUserNoteIfExists(JsonNode listNode, Measure.Builder builder){
+    protected void setUserNoteIfExists(JsonNode listNode, Measure.Builder builder) {
 
         Optional<String> note = asOptionalString(listNode, "Note");
 
-        if(note.isPresent() && !note.get().isEmpty()){
+        if (note.isPresent() && !note.get().isEmpty()) {
 
             builder.setUserNotes(note.get());
         }
