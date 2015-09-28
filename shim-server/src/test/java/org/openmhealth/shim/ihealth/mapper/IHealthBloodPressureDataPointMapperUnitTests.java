@@ -18,7 +18,6 @@ package org.openmhealth.shim.ihealth.mapper;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.openmhealth.schema.domain.omh.*;
-import org.openmhealth.shim.common.mapper.DataPointMapperUnitTests;
 import org.springframework.core.io.ClassPathResource;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -31,13 +30,14 @@ import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.openmhealth.shim.ihealth.mapper.IHealthBloodPressureDataPointMapper.*;
+import static org.openmhealth.schema.domain.omh.DataPointModality.*;
+import static org.openmhealth.shim.ihealth.mapper.IHealthBloodPressureDataPointMapper.BloodPressureUnitType;
 
 
 /**
  * @author Chris Schaefbauer
  */
-public class IHealthBloodPressureDataPointMapperUnitTests extends DataPointMapperUnitTests {
+public class IHealthBloodPressureDataPointMapperUnitTests extends IHealthDataPointMapperUnitTests {
 
     private JsonNode responseNode;
     private IHealthBloodPressureDataPointMapper mapper = new IHealthBloodPressureDataPointMapper();
@@ -49,6 +49,8 @@ public class IHealthBloodPressureDataPointMapperUnitTests extends DataPointMappe
                 new ClassPathResource("org/openmhealth/shim/ihealth/mapper/ihealth-blood-pressure.json");
         responseNode = objectMapper.readTree(resource.getInputStream());
     }
+
+    // TODO: Test/handle datapoints that have zero values for BP (awaiting response from iHealth)
 
     @Test
     public void asDataPointsShouldReturnCorrectNumberOfDataPoints() {
@@ -72,14 +74,8 @@ public class IHealthBloodPressureDataPointMapperUnitTests extends DataPointMappe
 
         DataPointHeader testHeader = dataPoints.get(0).getHeader();
 
-        assertThat(testHeader.getBodySchemaId(), equalTo(BloodPressure.SCHEMA_ID));
-        assertThat(testHeader.getAcquisitionProvenance().getModality(), equalTo(DataPointModality.SENSED));
-        assertThat(testHeader.getAcquisitionProvenance().getSourceName(),
-                equalTo(IHealthDataPointMapper.RESOURCE_API_SOURCE_NAME));
-        assertThat(testHeader.getAcquisitionProvenance().getAdditionalProperties().get("external_id"), equalTo(
-                "c62b84d9d4b7480a8ff2aef1465aa454"));
-        assertThat(testHeader.getAcquisitionProvenance().getAdditionalProperties().get("source_updated_date_time"),
-                equalTo(OffsetDateTime.parse("2015-09-17T20:04:30Z")));
+        testDataPointHeader(testHeader, BloodPressure.SCHEMA_ID, SENSED, "c62b84d9d4b7480a8ff2aef1465aa454",
+                OffsetDateTime.parse("2015-09-17T20:04:30Z"));
 
     }
 
@@ -98,8 +94,8 @@ public class IHealthBloodPressureDataPointMapperUnitTests extends DataPointMappe
         assertThat(dataPoints.get(1).getBody(), equalTo(expectedBloodPressure));
 
         DataPointHeader testHeader = dataPoints.get(1).getHeader();
-
-        assertThat(testHeader.getAcquisitionProvenance().getModality(), equalTo(DataPointModality.SELF_REPORTED));
+        
+        assertThat(testHeader.getAcquisitionProvenance().getModality(), equalTo(SELF_REPORTED));
 
     }
 
@@ -108,8 +104,8 @@ public class IHealthBloodPressureDataPointMapperUnitTests extends DataPointMappe
 
         List<DataPoint<BloodPressure>> dataPoints = mapper.asDataPoints(singletonList(responseNode));
 
-        assertThat(dataPoints.get(0).getBody().getUserNotes(),nullValue());
-        assertThat(dataPoints.get(1).getBody().getUserNotes(),equalTo("BP on the up and up."));
+        assertThat(dataPoints.get(0).getBody().getUserNotes(), nullValue());
+        assertThat(dataPoints.get(1).getBody().getUserNotes(), equalTo("BP on the up and up."));
     }
 
 
@@ -125,9 +121,9 @@ public class IHealthBloodPressureDataPointMapperUnitTests extends DataPointMappe
     }
 
     @Test(expectedExceptions = UnsupportedOperationException.class)
-    public void getBloodPressureValueShouldThrowExceptionForInvalidEnum(){
+    public void getBloodPressureValueShouldThrowExceptionForInvalidEnum() {
 
-        mapper.getBloodPressureValueInMmHg(12,BloodPressureUnitType.fromIntegerValue(12));
+        mapper.getBloodPressureValueInMmHg(12, BloodPressureUnitType.fromIntegerValue(12));
     }
 
 
