@@ -42,7 +42,7 @@ public class IHealthBloodPressureDataPointMapper extends IHealthDataPointMapper<
     @Override
     protected Optional<DataPoint<BloodPressure>> asDataPoint(JsonNode listNode, int bloodPressureUnit) {
 
-        BloodPressureUnitType bloodPressureUnitType = BloodPressureUnitType.fromIntegerValue(bloodPressureUnit);
+        IHealthBloodPressureUnit bloodPressureUnitType = IHealthBloodPressureUnit.fromIntegerValue(bloodPressureUnit);
 
         double systolicValue = getBloodPressureValueInMmHg(asRequiredDouble(listNode, "HP"), bloodPressureUnitType);
         SystolicBloodPressure systolicBloodPressure =
@@ -62,7 +62,7 @@ public class IHealthBloodPressureDataPointMapper extends IHealthDataPointMapper<
         return Optional.of(new DataPoint<>(createDataPointHeader(listNode, bloodPressure), bloodPressure));
     }
 
-    protected double getBloodPressureValueInMmHg(double rawBpValue, BloodPressureUnitType bloodPressureUnit) {
+    protected double getBloodPressureValueInMmHg(double rawBpValue, IHealthBloodPressureUnit bloodPressureUnit) {
 
         switch ( bloodPressureUnit ) {
             case mmHg:
@@ -74,14 +74,14 @@ public class IHealthBloodPressureDataPointMapper extends IHealthDataPointMapper<
         }
     }
 
-    protected enum BloodPressureUnitType {
+    protected enum IHealthBloodPressureUnit {
 
         mmHg(0),
         KPa(1);
 
         private int value;
 
-        BloodPressureUnitType(int value) {
+        IHealthBloodPressureUnit(int value) {
             this.value = value;
         }
 
@@ -89,12 +89,14 @@ public class IHealthBloodPressureDataPointMapper extends IHealthDataPointMapper<
             return value;
         }
 
-        public static BloodPressureUnitType fromIntegerValue(int bpIntValue) {
-            for (BloodPressureUnitType type : values()) {
+        public static IHealthBloodPressureUnit fromIntegerValue(int bpIntValue) {
+
+            for (IHealthBloodPressureUnit type : values()) {
                 if (type.getValue() == bpIntValue) {
                     return type;
                 }
             }
+
             throw new UnsupportedOperationException();
         }
     }

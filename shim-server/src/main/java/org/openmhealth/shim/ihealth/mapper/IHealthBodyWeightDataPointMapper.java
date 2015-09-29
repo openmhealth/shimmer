@@ -48,7 +48,7 @@ public class IHealthBodyWeightDataPointMapper extends IHealthDataPointMapper<Bod
     @Override
     protected Optional<DataPoint<BodyWeight>> asDataPoint(JsonNode listNode, int measureUnit) {
 
-        BodyWeightUnitType bodyWeightUnitType = BodyWeightUnitType.fromIntegerValue(measureUnit);
+        IHealthBodyWeightUnit bodyWeightUnitType = IHealthBodyWeightUnit.fromIntegerValue(measureUnit);
         MassUnit bodyWeightUnit = bodyWeightUnitType.getOmhUnit();
 
         double bodyWeightValue = getBodyWeightValueForUnitType(listNode, bodyWeightUnitType);
@@ -70,18 +70,18 @@ public class IHealthBodyWeightDataPointMapper extends IHealthDataPointMapper<Bod
     }
 
     protected double getBodyWeightValueForUnitType(JsonNode listNode,
-            BodyWeightUnitType bodyWeightUnitType) {
+            IHealthBodyWeightUnit bodyWeightUnitType) {
 
         Double weightValueFromApi = asRequiredDouble(listNode, "WeightValue");
         return getBodyWeightValueForUnitType(weightValueFromApi, bodyWeightUnitType);
     }
 
-    protected double getBodyWeightValueForUnitType(double bodyWeightValue, BodyWeightUnitType bodyWeightUnitType) {
+    protected double getBodyWeightValueForUnitType(double bodyWeightValue, IHealthBodyWeightUnit bodyWeightUnitType) {
 
         return bodyWeightValue * bodyWeightUnitType.getConversionFactorToOmh();
     }
 
-    enum BodyWeightUnitType {
+    enum IHealthBodyWeightUnit {
 
         /*
             The conversion factor handles conversions from unsupported mass units (currently the 'Stone' unit) to omh
@@ -100,7 +100,7 @@ public class IHealthBodyWeightDataPointMapper extends IHealthDataPointMapper<Bod
         private final double conversionFactorToOmh;
         private int magicNumber;
 
-        BodyWeightUnitType(int magicNumber, MassUnit omhUnit, double conversionFactor) {
+        IHealthBodyWeightUnit(int magicNumber, MassUnit omhUnit, double conversionFactor) {
             this.omhUnit = omhUnit;
             this.conversionFactorToOmh = conversionFactor;
             this.magicNumber = magicNumber;
@@ -114,9 +114,9 @@ public class IHealthBodyWeightDataPointMapper extends IHealthDataPointMapper<Bod
             return conversionFactorToOmh;
         }
 
-        public static BodyWeightUnitType fromIntegerValue(int unitValueFromApi) {
+        public static IHealthBodyWeightUnit fromIntegerValue(int unitValueFromApi) {
 
-            for (BodyWeightUnitType type : values()) {
+            for (IHealthBodyWeightUnit type : values()) {
                 if (type.magicNumber == unitValueFromApi) {
                     return type;
                 }

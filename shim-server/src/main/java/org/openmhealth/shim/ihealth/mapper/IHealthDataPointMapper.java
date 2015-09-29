@@ -52,11 +52,10 @@ public abstract class IHealthDataPointMapper<T> implements DataPointMapper<T, Js
 
         for (JsonNode listNode : asRequiredNode(responseNode, getListNodeName())) {
 
-            asDataPoint(listNode, measureUnit).ifPresent(dp -> dataPoints.add(dp));
+            asDataPoint(listNode, measureUnit).ifPresent(dataPoints::add);
         }
 
         return dataPoints;
-        //        return Collections.singletonList(asDataPoint(responseNode,measureUnit));
     }
 
     protected DataPointHeader createDataPointHeader(JsonNode listNode, Measure measure) {

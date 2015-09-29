@@ -31,7 +31,7 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.openmhealth.schema.domain.omh.DataPointModality.*;
-import static org.openmhealth.shim.ihealth.mapper.IHealthBloodPressureDataPointMapper.BloodPressureUnitType;
+import static org.openmhealth.shim.ihealth.mapper.IHealthBloodPressureDataPointMapper.IHealthBloodPressureUnit;
 
 
 /**
@@ -112,10 +112,10 @@ public class IHealthBloodPressureDataPointMapperUnitTests extends IHealthDataPoi
     @Test
     public void getBloodPressureValueInMmHgReturnsCorrectValueForMmHgUnit() {
 
-        double bpValueFromMmHg = mapper.getBloodPressureValueInMmHg(120, BloodPressureUnitType.mmHg);
+        double bpValueFromMmHg = mapper.getBloodPressureValueInMmHg(120, IHealthBloodPressureUnit.mmHg);
         assertThat(bpValueFromMmHg, equalTo(120.0));
 
-        double bpValueFromKpa = mapper.getBloodPressureValueInMmHg(16, BloodPressureUnitType.KPa);
+        double bpValueFromKpa = mapper.getBloodPressureValueInMmHg(16, IHealthBloodPressureUnit.KPa);
         assertThat(bpValueFromKpa, equalTo(120.009872));
 
     }
@@ -123,7 +123,7 @@ public class IHealthBloodPressureDataPointMapperUnitTests extends IHealthDataPoi
     @Test(expectedExceptions = UnsupportedOperationException.class)
     public void getBloodPressureValueShouldThrowExceptionForInvalidEnum() {
 
-        mapper.getBloodPressureValueInMmHg(12, BloodPressureUnitType.fromIntegerValue(12));
+        mapper.getBloodPressureValueInMmHg(12, IHealthBloodPressureUnit.fromIntegerValue(12));
     }
 
 

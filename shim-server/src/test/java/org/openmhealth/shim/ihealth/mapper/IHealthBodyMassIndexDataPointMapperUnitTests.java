@@ -102,7 +102,7 @@ public class IHealthBodyMassIndexDataPointMapperUnitTests extends IHealthDataPoi
     public void asDataPointsShouldReturnNoDataPointsWhenWeightListIsEmpty() throws IOException {
 
         ClassPathResource resource =
-                new ClassPathResource("org/openmhealth/shim/ihealth/mapper/ihealth-empty-body-weight-list.json");
+                new ClassPathResource("org/openmhealth/shim/ihealth/mapper/ihealth-body-weight-empty-list.json");
         JsonNode emptyListNode = objectMapper.readTree(resource.getInputStream());
 
         List<DataPoint<BodyMassIndex>> dataPoints = mapper.asDataPoints(singletonList(emptyListNode));
