@@ -39,8 +39,8 @@ public class IHealthBloodGlucoseDataPointMapper extends IHealthDataPointMapper<B
     }
 
     @Override
-    protected String getUnitPropertyNameForMeasure() {
-        return "BGUnit";
+    protected Optional<String> getUnitPropertyNameForMeasure() {
+        return Optional.of("BGUnit");
     }
 
     public IHealthBloodGlucoseDataPointMapper() {
@@ -49,7 +49,7 @@ public class IHealthBloodGlucoseDataPointMapper extends IHealthDataPointMapper<B
     }
 
     @Override
-    protected Optional<DataPoint<BloodGlucose>> asDataPoint(JsonNode listNode, int measureUnit) {
+    protected Optional<DataPoint<BloodGlucose>> asDataPoint(JsonNode listNode, Integer measureUnit) {
 
         double bloodGlucoseValue = asRequiredDouble(listNode, "BG");
         if (bloodGlucoseValue == 0) {

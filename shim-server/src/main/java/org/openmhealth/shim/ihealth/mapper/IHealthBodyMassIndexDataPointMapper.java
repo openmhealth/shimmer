@@ -38,12 +38,12 @@ public class IHealthBodyMassIndexDataPointMapper extends IHealthDataPointMapper<
     }
 
     @Override
-    protected String getUnitPropertyNameForMeasure() {
-        return "WeightUnit";
+    protected Optional<String> getUnitPropertyNameForMeasure() {
+        return Optional.of("WeightUnit");
     }
 
     @Override
-    protected Optional<DataPoint<BodyMassIndex>> asDataPoint(JsonNode listNode, int measureUnit) {
+    protected Optional<DataPoint<BodyMassIndex>> asDataPoint(JsonNode listNode, Integer measureUnit) {
 
         Double bmiValue = asRequiredDouble(listNode, "BMI");
 

@@ -41,12 +41,12 @@ public class IHealthBodyWeightDataPointMapper extends IHealthDataPointMapper<Bod
     }
 
     @Override
-    protected String getUnitPropertyNameForMeasure() {
-        return "WeightUnit";
+    protected Optional<String> getUnitPropertyNameForMeasure() {
+        return Optional.of("WeightUnit");
     }
 
     @Override
-    protected Optional<DataPoint<BodyWeight>> asDataPoint(JsonNode listNode, int measureUnit) {
+    protected Optional<DataPoint<BodyWeight>> asDataPoint(JsonNode listNode, Integer measureUnit) {
 
         IHealthBodyWeightUnit bodyWeightUnitType = IHealthBodyWeightUnit.fromIntegerValue(measureUnit);
         MassUnit bodyWeightUnit = bodyWeightUnitType.getOmhUnit();

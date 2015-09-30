@@ -37,10 +37,10 @@ public class IHealthBloodPressureDataPointMapper extends IHealthDataPointMapper<
     }
 
     @Override
-    protected String getUnitPropertyNameForMeasure() { return "BPUnit"; }
+    protected Optional<String> getUnitPropertyNameForMeasure() { return Optional.of("BPUnit"); }
 
     @Override
-    protected Optional<DataPoint<BloodPressure>> asDataPoint(JsonNode listNode, int bloodPressureUnit) {
+    protected Optional<DataPoint<BloodPressure>> asDataPoint(JsonNode listNode, Integer bloodPressureUnit) {
 
         IHealthBloodPressureUnit bloodPressureUnitType = IHealthBloodPressureUnit.fromIntegerValue(bloodPressureUnit);
 
