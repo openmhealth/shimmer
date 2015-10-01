@@ -25,13 +25,15 @@ openmhealth:
       callbackUrlBase: http://localhost:8083
 
     #NOTE: Un-comment and fill in with your credentials if you're not using the UI
+    ihealth:
+      sportSC: "4627a40e37104fb98af95c91ae4201e0"
+      sportSV: "c343378aba1545bbb5daa0ada0c3f6bd"
     #fitbit:
     #  clientId: [YOUR_CLIENT_ID]
     #  clientSecret: [YOUR_CLIENT_SECRET]
     #fatsecret:
     #  clientId: [YOUR_CLIENT_ID]
     #  clientSecret: [YOUR_CLIENT_SECRET]
-    #ihealth:
     #  clientId: [YOUR_CLIENT_ID]
     #  clientSecret: [YOUR_CLIENT_SECRET]
     #jawbone:
