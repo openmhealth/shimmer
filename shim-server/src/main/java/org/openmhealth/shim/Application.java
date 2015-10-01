@@ -269,10 +269,10 @@ public class Application extends WebSecurityConfigurerAdapter {
                 return null;
             }
 
-            String authorizationStatusURL = AUTH_SUCCESS_URL;
-            if(response.getAccessParameters().getAccessToken()==null){
+            String authorizationStatusURL = AUTH_FAILURE_URL;
+            if(response.getType().equals(AuthorizationResponse.Type.AUTHORIZED)){
 
-                authorizationStatusURL = AUTH_FAILURE_URL;
+                authorizationStatusURL = AUTH_SUCCESS_URL;
             }
 
             try{
