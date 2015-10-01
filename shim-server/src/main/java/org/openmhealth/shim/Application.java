@@ -56,7 +56,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.*;
 @RestController
 public class Application extends WebSecurityConfigurerAdapter {
 
-    private static final String AUTH_COMPLETE_URL = "/authorizationComplete";
+    private static final String AUTH_COMPLETE_URL = "/#authorizationComplete";
     @Autowired
     private AccessParametersRepo accessParametersRepo;
 
