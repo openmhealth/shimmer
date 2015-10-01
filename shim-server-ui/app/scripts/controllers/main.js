@@ -4,6 +4,11 @@
  * Simple UI for managing shim data on the shim server.
  */
 angular.module('sandboxConsoleApp')
+    .controller('AuthorizationCompleteCtrl', ['$scope', '$http', '$window', '$timeout', function ($scope, $http, $window, $timeout) {
+        $timeout(function() {
+            $window.close();
+        }, 3000);
+    }])
     .controller('MainCtrl', ['$scope', '$http', '$window', function ($scope, $http, $window) {
 
         var API_ROOT_URL = "/omh-shims-api";

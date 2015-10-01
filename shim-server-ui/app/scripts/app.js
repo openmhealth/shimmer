@@ -14,6 +14,10 @@ angular
                 templateUrl: 'views/main.html',
                 controller: 'MainCtrl'
             })
+            .when('/authorizationComplete', {
+                templateUrl: 'views/authorizationComplete.html',
+                controller: 'AuthorizationCompleteCtrl'
+            })
             .otherwise({
                 redirectTo: '/'
             });
