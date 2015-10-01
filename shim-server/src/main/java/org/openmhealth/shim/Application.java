@@ -56,6 +56,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.*;
 @RestController
 public class Application extends WebSecurityConfigurerAdapter {
 
+    private static final String AUTH_COMPLETE_URL = "/authorizationComplete";
     @Autowired
     private AccessParametersRepo accessParametersRepo;
 
@@ -266,6 +267,15 @@ public class Application extends WebSecurityConfigurerAdapter {
                 }
                 return null;
             }
+
+            try{
+                servletResponse.sendRedirect(AUTH_COMPLETE_URL);
+            }
+            catch (IOException e) {
+                e.printStackTrace();
+                throw new ShimException("Error occurred in redirecting to completion URL");
+            }
+
             return response;
         }
     }
