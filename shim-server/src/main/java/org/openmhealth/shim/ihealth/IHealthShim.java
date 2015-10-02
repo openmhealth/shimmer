@@ -262,6 +262,9 @@ public class IHealthShim extends OAuth2ShimBase {
                 case BODY_MASS_INDEX:
                     mapper = new IHealthBloodPressureDataPointMapper();
                     break;
+                case HEART_RATE:
+                    mapper = new IHealthHeartRateDataPointMapper();
+                    break;
                 default:
                     throw new UnsupportedOperationException();
             }
