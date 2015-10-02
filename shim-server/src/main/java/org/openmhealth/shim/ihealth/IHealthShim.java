@@ -10,7 +10,6 @@ import org.openmhealth.shim.*;
 import org.openmhealth.shim.ihealth.mapper.*;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.http.HttpHeaders;
@@ -116,20 +115,30 @@ public class IHealthShim extends OAuth2ShimBase {
         };
     }
 
-    @Value("${openmhealth.shim.ihealth.sportSC}")
-    public String sportSC;
-    @Value("${openmhealth.shim.ihealth.sportSV}")
-    public String sportSV;
-    @Value("${openmhealth.shim.ihealth.bloodPressureSC}")
-    public String bloodPressureSC;
-    @Value("${openmhealth.shim.ihealth.bloodPressureSV}")
-    public String bloodPressureSV;
-    @Value("${openmhealth.shim.ihealth.spo2SC}")
-    public String spo2SC;
-    @Value("${openmhealth.shim.ihealth.spo2SV}")
-    public String spo2SV;
+//    @Value("${openmhealth.shim.ihealth.sportSC}")
+//    public String sportSC;
+//    @Value("${openmhealth.shim.ihealth.sportSV}")
+//    public String sportSV;
+//    @Value("${openmhealth.shim.ihealth.bloodPressureSC}")
+//    public String bloodPressureSC;
+//    @Value("${openmhealth.shim.ihealth.bloodPressureSV}")
+//    public String bloodPressureSV;
+//    @Value("${openmhealth.shim.ihealth.spo2SC}")
+//    public String spo2SC;
+//    @Value("${openmhealth.shim.ihealth.spo2SV}")
+//    public String spo2SV;
 
-    public Map<String,String> serialValues;
+    Map<String,String> serialValues;
+
+    public Map<String,String> getSerialValues(){
+
+        return serialValues;
+    }
+
+    public void setSerialValues(Map<String,String> serialValues){
+
+        this.serialValues = serialValues;
+    }
 
     public enum IHealthDataTypes implements ShimDataType {
 
@@ -177,22 +186,20 @@ public class IHealthShim extends OAuth2ShimBase {
                 now.plusDays(1) : shimDataRequest.getEndDateTime();
 
 
-
-
         List<String> scValues = getScValues(dataType);
         List<String> svValues = getSvValues(dataType);
 
         List<JsonNode> responseEntities = Lists.newArrayList();
+
         int i=0;
         for(String endPoint : dataType.getEndPoint()){
             UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromUriString(API_URL);
 
             String userId = "uk";
             if(shimDataRequest.getAccessParameters()!=null){
+
                 OAuth2AccessToken token = SerializationUtils.deserialize(shimDataRequest.getAccessParameters().getSerializedToken());;
                 userId = Preconditions.checkNotNull((String) token.getAdditionalInformation().get("UserID"));
-                //            uriBuilder.path("user")
-                //                    .path(userId);
                 uriBuilder.queryParam("access_token", token.getValue());
             }
 
@@ -222,23 +229,6 @@ public class IHealthShim extends OAuth2ShimBase {
 
         }
 
-
-
-
-//        String urlRequest = API_URL + "/user/" + userId + "/" + dataType.getEndPoint() + ".json?";
-//
-//        urlRequest += "&start_time=" + startDate.toEpochSecond();
-//        urlRequest += "&end_time=" + endDate.toEpochSecond();
-//        urlRequest += "&client_id=" + restTemplate.getResource().getClientId();
-//        urlRequest += "&client_secret=" + restTemplate.getResource().getClientSecret();
-//        urlRequest += "&access_token=" + token.getValue();
-//        urlRequest += "&locale=default";
-
-
-
-
-        //ObjectMapper objectMapper = new ObjectMapper();
-
         if (shimDataRequest.getNormalize()) {
             //                SimpleModule module = new SimpleModule();
             //                module.addDeserializer(ShimDataResponse.class, dataType.getNormalizer());
@@ -260,7 +250,7 @@ public class IHealthShim extends OAuth2ShimBase {
                     mapper = new IHealthBodyWeightDataPointMapper();
                     break;
                 case BODY_MASS_INDEX:
-                    mapper = new IHealthBloodPressureDataPointMapper();
+                    mapper = new IHealthBodyMassIndexDataPointMapper();
                     break;
                 case HEART_RATE:
                     mapper = new IHealthHeartRateDataPointMapper();
@@ -269,12 +259,8 @@ public class IHealthShim extends OAuth2ShimBase {
                     throw new UnsupportedOperationException();
             }
 
-
             return ResponseEntity.ok().body(
                     ShimDataResponse.result(SHIM_KEY, mapper.asDataPoints(responseEntities)));
-            //                return new ResponseEntity<>(
-            //                    objectMapper.readValue(responseEntity.getBody(), ShimDataResponse.class),
-            // HttpStatus.OK);
         }
         else {
 
@@ -286,9 +272,17 @@ public class IHealthShim extends OAuth2ShimBase {
 
         switch(dataType){
             case PHYSICAL_ACTIVITY:
-                return singletonList(sportSC);
+                return singletonList(serialValues.get("sportSC"));
+            case BODY_WEIGHT:
+                return singletonList(serialValues.get("weightSC"));
+            case BODY_MASS_INDEX:
+                return singletonList(serialValues.get("weightSC")); // body mass index comes from the weight endpoint
+            case BLOOD_PRESSURE:
+                return singletonList(serialValues.get("bloodPressureSC"));
+            case BLOOD_GLUCOSE:
+                return singletonList(serialValues.get("bloodGlucoseSC"));
             case HEART_RATE:
-                return Lists.newArrayList(bloodPressureSC, spo2SC);
+                return Lists.newArrayList(serialValues.get("bloodPressureSC"), serialValues.get("spo2SC"));
             default:
                 throw new UnsupportedOperationException();
         }
@@ -297,11 +291,18 @@ public class IHealthShim extends OAuth2ShimBase {
     private List<String> getSvValues(IHealthDataTypes dataType) {
 
         switch (dataType){
-
             case PHYSICAL_ACTIVITY:
-                return singletonList(sportSV);
+                return singletonList(serialValues.get("sportSV"));
+            case BODY_WEIGHT:
+                return singletonList(serialValues.get("weightSV"));
+            case BODY_MASS_INDEX:
+                return singletonList(serialValues.get("weightSV")); // body mass index comes from the weight endpoint
+            case BLOOD_PRESSURE:
+                return singletonList(serialValues.get("bloodPressureSV"));
+            case BLOOD_GLUCOSE:
+                return singletonList(serialValues.get("bloodGlucoseSV"));
             case HEART_RATE:
-                return Lists.newArrayList(bloodPressureSV, spo2SV);
+                return Lists.newArrayList(serialValues.get("bloodPressureSV"), serialValues.get("spo2SV"));
             default:
                 throw new UnsupportedOperationException();
         }

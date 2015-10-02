@@ -26,12 +26,18 @@ openmhealth:
 
     #NOTE: Un-comment and fill in with your credentials if you're not using the UI
     ihealth:
-      sportSC: "4627a40e37104fb98af95c91ae4201e0"
-      sportSV: "c343378aba1545bbb5daa0ada0c3f6bd"
-      bloodPressureSC: "4627a40e37104fb98af95c91ae4201e0"
-      bloodPressureSV: "3ffcde7a7c6444e79bd4307c117041f8"
-      spo2SC: "4627a40e37104fb98af95c91ae4201e0"
-      spo2SV: "3ab71cace61245bc8b2af4f90f329be6"
+      serialValues:
+        sportSC: "4627a40e37104fb98af95c91ae4201e0"
+        sportSV: "c343378aba1545bbb5daa0ada0c3f6bd"
+        bloodPressureSC: "4627a40e37104fb98af95c91ae4201e0"
+        bloodPressureSV: "3ffcde7a7c6444e79bd4307c117041f8"
+        spo2SC: "4627a40e37104fb98af95c91ae4201e0"
+        spo2SV: "3ab71cace61245bc8b2af4f90f329be6"
+        weightSC: "4627a40e37104fb98af95c91ae4201e0"
+        weightSV: "24cbdf8952c44ae1a92939132beedb47"
+        bloodGlucoseSC: "4627a40e37104fb98af95c91ae4201e0"
+        bloodGlucoseSV: "cd44c9fd42444b729757b69e88be2eb7"
+
     #fitbit:
     #  clientId: [YOUR_CLIENT_ID]
     #  clientSecret: [YOUR_CLIENT_SECRET]
