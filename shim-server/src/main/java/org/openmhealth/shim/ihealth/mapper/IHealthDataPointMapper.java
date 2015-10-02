@@ -18,7 +18,10 @@ package org.openmhealth.shim.ihealth.mapper;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.Lists;
-import org.openmhealth.schema.domain.omh.*;
+import org.openmhealth.schema.domain.omh.DataPoint;
+import org.openmhealth.schema.domain.omh.DataPointAcquisitionProvenance;
+import org.openmhealth.schema.domain.omh.DataPointHeader;
+import org.openmhealth.schema.domain.omh.Measure;
 import org.openmhealth.shim.common.mapper.DataPointMapper;
 
 import java.time.Instant;
@@ -28,7 +31,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.openmhealth.schema.domain.omh.DataPointModality.*;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static org.openmhealth.schema.domain.omh.DataPointModality.SELF_REPORTED;
+import static org.openmhealth.schema.domain.omh.DataPointModality.SENSED;
 import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.*;
 
 
@@ -44,21 +49,23 @@ public abstract class IHealthDataPointMapper<T> implements DataPointMapper<T, Js
     @Override
     public List<DataPoint<T>> asDataPoints(List<JsonNode> responseNodes) {
 
+        // all mapped iHealth responses only require a single endpoint response
+        checkNotNull(responseNodes);
+        checkNotNull(responseNodes.size() == 1, "A single response node is allowed per call.");
+
+        JsonNode responseNode = responseNodes.get(0);
+
+        Integer measureUnitMagicNumber = null;
+
+        if (getMeasureUnitNodeName().isPresent()) {
+            measureUnitMagicNumber = asRequiredInteger(responseNode, getMeasureUnitNodeName().get());
+        }
+
         List<DataPoint<T>> dataPoints = Lists.newArrayList();
 
-        for (int i = 0; i < responseNodes.size(); i++) {
+        for (JsonNode listEntryNode : asRequiredNode(responseNode, getListNodeName())) {
 
-            JsonNode responseNode = responseNodes.get(i);
-            Optional<Integer> measureUnit = Optional.empty();
-            if (getUnitPropertyNameForMeasure().isPresent()) {
-
-                measureUnit = asOptionalInteger(responseNode, getUnitPropertyNameForMeasure().get());
-            }
-
-            for (JsonNode listNode : asRequiredNode(responseNode, getListNodeNames().get(i))) {
-
-                asDataPoint(listNode, measureUnit.orElse(null)).ifPresent(dataPoints::add);
-            }
+            asDataPoint(listEntryNode, measureUnitMagicNumber).ifPresent(dataPoints::add);
         }
 
         return dataPoints;
@@ -127,9 +134,10 @@ public abstract class IHealthDataPointMapper<T> implements DataPointMapper<T, Js
         }
     }
 
-    protected abstract List<String> getListNodeNames();
+    // TODO add Javadoc
+    protected abstract String getListNodeName();
 
-    protected abstract Optional<String> getUnitPropertyNameForMeasure();
+    protected abstract Optional<String> getMeasureUnitNodeName();
 
-    protected abstract Optional<DataPoint<T>> asDataPoint(JsonNode jsonNode, Integer measureUnit);
+    protected abstract Optional<DataPoint<T>> asDataPoint(JsonNode listEntryNode, Integer measureUnitMagicNumber);
 }

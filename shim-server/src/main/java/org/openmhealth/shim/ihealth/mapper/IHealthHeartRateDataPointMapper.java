@@ -17,11 +17,9 @@
 package org.openmhealth.shim.ihealth.mapper;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.google.common.collect.Lists;
 import org.openmhealth.schema.domain.omh.DataPoint;
 import org.openmhealth.schema.domain.omh.HeartRate;
 
-import java.util.List;
 import java.util.Optional;
 
 import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asRequiredDouble;
@@ -30,27 +28,20 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asRequir
 /**
  * @author Chris Schaefbauer
  */
-public class IHealthHeartRateDataPointMapper extends IHealthDataPointMapper<HeartRate>{
-
-
-    @Override
-    protected List<String> getListNodeNames() {
-
-        return Lists.newArrayList("BPDataList","BODataList");
-    }
+public abstract class IHealthHeartRateDataPointMapper extends IHealthDataPointMapper<HeartRate> {
 
     @Override
-    protected Optional<String> getUnitPropertyNameForMeasure() {
+    protected Optional<String> getMeasureUnitNodeName() {
         return Optional.empty();
     }
 
     @Override
-    protected Optional<DataPoint<HeartRate>> asDataPoint(JsonNode listNode, Integer measureUnit) {
+    protected Optional<DataPoint<HeartRate>> asDataPoint(JsonNode listNode, Integer measureUnitMagicNumber) {
 
-        double heartRateValue = asRequiredDouble(listNode,"HR");
+        double heartRateValue = asRequiredDouble(listNode, "HR");
         HeartRate.Builder heartRateBuilder = new HeartRate.Builder(heartRateValue);
-        setEffectiveTimeFrameIfExists(listNode,heartRateBuilder);
+        setEffectiveTimeFrameIfExists(listNode, heartRateBuilder);
         HeartRate heartRate = heartRateBuilder.build();
-        return Optional.of(new DataPoint<>(createDataPointHeader(listNode,heartRate),heartRate));
+        return Optional.of(new DataPoint<>(createDataPointHeader(listNode, heartRate), heartRate));
     }
 }

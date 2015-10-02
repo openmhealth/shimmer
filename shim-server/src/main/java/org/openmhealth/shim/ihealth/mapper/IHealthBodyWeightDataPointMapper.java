@@ -22,10 +22,8 @@ import org.openmhealth.schema.domain.omh.DataPoint;
 import org.openmhealth.schema.domain.omh.MassUnit;
 import org.openmhealth.schema.domain.omh.MassUnitValue;
 
-import java.util.List;
 import java.util.Optional;
 
-import static java.util.Collections.singletonList;
 import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asRequiredDouble;
 
 
@@ -38,19 +36,19 @@ public class IHealthBodyWeightDataPointMapper extends IHealthDataPointMapper<Bod
     private static final double STONE_TO_KG_FACTOR = 6.3503;
 
     @Override
-    protected List<String> getListNodeNames() {
-        return singletonList("WeightDataList");
+    protected String getListNodeName() {
+        return "WeightDataList";
     }
 
     @Override
-    protected Optional<String> getUnitPropertyNameForMeasure() {
+    protected Optional<String> getMeasureUnitNodeName() {
         return Optional.of("WeightUnit");
     }
 
     @Override
-    protected Optional<DataPoint<BodyWeight>> asDataPoint(JsonNode listNode, Integer measureUnit) {
+    protected Optional<DataPoint<BodyWeight>> asDataPoint(JsonNode listNode, Integer measureUnitMagicNumber) {
 
-        IHealthBodyWeightUnit bodyWeightUnitType = IHealthBodyWeightUnit.fromIntegerValue(measureUnit);
+        IHealthBodyWeightUnit bodyWeightUnitType = IHealthBodyWeightUnit.fromIntegerValue(measureUnitMagicNumber);
         MassUnit bodyWeightUnit = bodyWeightUnitType.getOmhUnit();
 
         double bodyWeightValue = getBodyWeightValueForUnitType(listNode, bodyWeightUnitType);

@@ -21,10 +21,8 @@ import org.openmhealth.schema.domain.omh.BodyMassIndex;
 import org.openmhealth.schema.domain.omh.DataPoint;
 import org.openmhealth.schema.domain.omh.TypedUnitValue;
 
-import java.util.List;
 import java.util.Optional;
 
-import static java.util.Collections.singletonList;
 import static org.openmhealth.schema.domain.omh.BodyMassIndexUnit.KILOGRAMS_PER_SQUARE_METER;
 import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asRequiredDouble;
 
@@ -32,35 +30,35 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asRequir
 /**
  * @author Chris Schaefbauer
  */
-public class IHealthBodyMassIndexDataPointMapper extends IHealthDataPointMapper<BodyMassIndex>{
+public class IHealthBodyMassIndexDataPointMapper extends IHealthDataPointMapper<BodyMassIndex> {
 
     @Override
-    protected List<String> getListNodeNames() {
-        return singletonList("WeightDataList");
+    protected String getListNodeName() {
+        return "WeightDataList";
     }
 
     @Override
-    protected Optional<String> getUnitPropertyNameForMeasure() {
+    protected Optional<String> getMeasureUnitNodeName() {
         return Optional.of("WeightUnit");
     }
 
     @Override
-    protected Optional<DataPoint<BodyMassIndex>> asDataPoint(JsonNode listNode, Integer measureUnit) {
+    protected Optional<DataPoint<BodyMassIndex>> asDataPoint(JsonNode listNode, Integer measureUnitMagicNumber) {
 
         Double bmiValue = asRequiredDouble(listNode, "BMI");
 
-        if(bmiValue == 0){
+        if (bmiValue == 0) {
             return Optional.empty();
         }
 
-        BodyMassIndex.Builder bodyMassIndexBuilder = new BodyMassIndex.Builder(new TypedUnitValue<>(KILOGRAMS_PER_SQUARE_METER,
-                bmiValue));
+        BodyMassIndex.Builder bodyMassIndexBuilder =
+                new BodyMassIndex.Builder(new TypedUnitValue<>(KILOGRAMS_PER_SQUARE_METER, bmiValue));
 
-        setEffectiveTimeFrameIfExists(listNode,bodyMassIndexBuilder);
-        setUserNoteIfExists(listNode,bodyMassIndexBuilder);
+        setEffectiveTimeFrameIfExists(listNode, bodyMassIndexBuilder);
+        setUserNoteIfExists(listNode, bodyMassIndexBuilder);
 
         BodyMassIndex bodyMassIndex = bodyMassIndexBuilder.build();
-        return Optional.of(new DataPoint<>(createDataPointHeader(listNode,bodyMassIndex),bodyMassIndex));
+        return Optional.of(new DataPoint<>(createDataPointHeader(listNode, bodyMassIndex), bodyMassIndex));
 
     }
 }

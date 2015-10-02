@@ -25,10 +25,8 @@ import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
-import java.util.List;
 import java.util.Optional;
 
-import static java.util.Collections.singletonList;
 import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.*;
 
 
@@ -38,19 +36,18 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.*;
 public class IHealthPhysicalActivityDataPointMapper extends IHealthDataPointMapper<PhysicalActivity> {
 
     @Override
-    protected List<String> getListNodeNames() {
-
-        return singletonList("SPORTDataList");
+    protected String getListNodeName() {
+        return "SPORTDataList";
     }
 
     @Override
-    protected Optional<String> getUnitPropertyNameForMeasure() {
+    protected Optional<String> getMeasureUnitNodeName() {
 
         return Optional.empty();
     }
 
     @Override
-    protected Optional<DataPoint<PhysicalActivity>> asDataPoint(JsonNode listNode, Integer measureUnit) {
+    protected Optional<DataPoint<PhysicalActivity>> asDataPoint(JsonNode listNode, Integer measureUnitMagicNumber) {
 
         String activityName = asRequiredString(listNode, "SportName");
 
