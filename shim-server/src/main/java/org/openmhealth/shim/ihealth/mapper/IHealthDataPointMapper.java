@@ -44,19 +44,21 @@ public abstract class IHealthDataPointMapper<T> implements DataPointMapper<T, Js
     @Override
     public List<DataPoint<T>> asDataPoints(List<JsonNode> responseNodes) {
 
-        JsonNode responseNode = responseNodes.get(0);
-
         List<DataPoint<T>> dataPoints = Lists.newArrayList();
 
-        Optional<Integer> measureUnit = Optional.empty();
-        if(getUnitPropertyNameForMeasure().isPresent()){
+        for (int i = 0; i < responseNodes.size(); i++) {
 
-            measureUnit = asOptionalInteger(responseNode, getUnitPropertyNameForMeasure().get());
-        }
+            JsonNode responseNode = responseNodes.get(i);
+            Optional<Integer> measureUnit = Optional.empty();
+            if (getUnitPropertyNameForMeasure().isPresent()) {
 
-        for (JsonNode listNode : asRequiredNode(responseNode, getListNodeName())) {
+                measureUnit = asOptionalInteger(responseNode, getUnitPropertyNameForMeasure().get());
+            }
 
-            asDataPoint(listNode, measureUnit.orElse(null)).ifPresent(dataPoints::add);
+            for (JsonNode listNode : asRequiredNode(responseNode, getListNodeNames().get(i))) {
+
+                asDataPoint(listNode, measureUnit.orElse(null)).ifPresent(dataPoints::add);
+            }
         }
 
         return dataPoints;
@@ -125,7 +127,7 @@ public abstract class IHealthDataPointMapper<T> implements DataPointMapper<T, Js
         }
     }
 
-    protected abstract String getListNodeName();
+    protected abstract List<String> getListNodeNames();
 
     protected abstract Optional<String> getUnitPropertyNameForMeasure();
 

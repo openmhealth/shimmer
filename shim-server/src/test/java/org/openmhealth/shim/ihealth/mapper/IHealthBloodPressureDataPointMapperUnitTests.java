@@ -87,7 +87,7 @@ public class IHealthBloodPressureDataPointMapperUnitTests extends IHealthDataPoi
         BloodPressure expectedBloodPressure = new BloodPressure.Builder(
                 new SystolicBloodPressure(BloodPressureUnit.MM_OF_MERCURY, 130),
                 new DiastolicBloodPressure(BloodPressureUnit.MM_OF_MERCURY, 95))
-                .setEffectiveTimeFrame(OffsetDateTime.parse("2015-09-25T08:03:57-06:00"))
+                .setEffectiveTimeFrame(OffsetDateTime.parse("2015-09-17T08:07:45-06:00"))
                 .setUserNotes("BP on the up and up.")
                 .build();
 

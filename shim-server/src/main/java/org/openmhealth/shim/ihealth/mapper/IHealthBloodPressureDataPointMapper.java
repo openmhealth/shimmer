@@ -19,8 +19,10 @@ package org.openmhealth.shim.ihealth.mapper;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.openmhealth.schema.domain.omh.*;
 
+import java.util.List;
 import java.util.Optional;
 
+import static java.util.Collections.singletonList;
 import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asRequiredDouble;
 
 
@@ -32,8 +34,8 @@ public class IHealthBloodPressureDataPointMapper extends IHealthDataPointMapper<
     static final double KPA_TO_MMHG_CONVERSION_RATE = 7.500617;
 
     @Override
-    protected String getListNodeName() {
-        return "BPDataList";
+    protected List<String> getListNodeNames() {
+        return singletonList("BPDataList");
     }
 
     @Override

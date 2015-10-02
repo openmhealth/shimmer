@@ -22,8 +22,10 @@ import org.openmhealth.schema.domain.omh.DataPoint;
 import org.openmhealth.schema.domain.omh.MassUnit;
 import org.openmhealth.schema.domain.omh.MassUnitValue;
 
+import java.util.List;
 import java.util.Optional;
 
+import static java.util.Collections.singletonList;
 import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asRequiredDouble;
 
 
@@ -36,8 +38,8 @@ public class IHealthBodyWeightDataPointMapper extends IHealthDataPointMapper<Bod
     private static final double STONE_TO_KG_FACTOR = 6.3503;
 
     @Override
-    protected String getListNodeName() {
-        return "WeightDataList";
+    protected List<String> getListNodeNames() {
+        return singletonList("WeightDataList");
     }
 
     @Override

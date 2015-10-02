@@ -3,7 +3,7 @@
         {
             "BPL": 3,
             "DataID": "c62b84d9d4b7480a8ff2aef1465aa454",
-            "DataSource": "Manual",
+            "DataSource": "FromDevice",
             "HP": 120,
             "HR": 100,
             "IsArr": -1,
@@ -27,21 +27,6 @@
             "Lat": 0,
             "Lon": 0,
             "MDate": 1442498865,
-            "Note": "",
-            "TimeZone": "-0600"
-        },
-        {
-            "BPL": 3,
-            "DataID": "8695fe79edfdcd9613d8e7509376bd5b",
-            "DataSource": "Manual",
-            "HP": 120,
-            "HR": 100,
-            "IsArr": 0,
-            "LP": 90,
-            "LastChangeTime": 1443044787,
-            "Lat": 0,
-            "Lon": 0,
-            "MDate": 1443023187,
             "Note": "",
             "TimeZone": "-0600"
         }

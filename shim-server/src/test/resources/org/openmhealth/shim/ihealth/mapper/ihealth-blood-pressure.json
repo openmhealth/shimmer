@@ -17,16 +17,16 @@
         },
         {
             "BPL": 3,
-            "DataID": "47262ccffec747a4b21befb04b322424",
+            "DataID": "d6c08fb0bde6dc50db5c5f305a76c455",
             "DataSource": "Manual",
             "HP": 130,
-            "HR": 75,
-            "IsArr": -1,
+            "HR": 100,
+            "IsArr": 0,
             "LP": 95,
-            "LastChangeTime": 1443211477,
-            "Lat": -1,
-            "Lon": -1,
-            "MDate": 1443189837,
+            "LastChangeTime": 1442520465,
+            "Lat": 0,
+            "Lon": 0,
+            "MDate": 1442498865,
             "Note": "BP on the up and up.",
             "TimeZone": "-0600"
         }
@@ -37,5 +37,5 @@
     "PageLength": 50,
     "PageNumber": 1,
     "PrevPageUrl": "",
-    "RecordCount": 2
+    "RecordCount": 5
 }

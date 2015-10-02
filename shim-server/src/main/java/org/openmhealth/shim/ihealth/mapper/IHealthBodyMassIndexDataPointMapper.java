@@ -21,8 +21,10 @@ import org.openmhealth.schema.domain.omh.BodyMassIndex;
 import org.openmhealth.schema.domain.omh.DataPoint;
 import org.openmhealth.schema.domain.omh.TypedUnitValue;
 
+import java.util.List;
 import java.util.Optional;
 
+import static java.util.Collections.singletonList;
 import static org.openmhealth.schema.domain.omh.BodyMassIndexUnit.KILOGRAMS_PER_SQUARE_METER;
 import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asRequiredDouble;
 
@@ -33,8 +35,8 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asRequir
 public class IHealthBodyMassIndexDataPointMapper extends IHealthDataPointMapper<BodyMassIndex>{
 
     @Override
-    protected String getListNodeName() {
-        return "WeightDataList";
+    protected List<String> getListNodeNames() {
+        return singletonList("WeightDataList");
     }
 
     @Override

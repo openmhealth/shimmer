@@ -3,7 +3,7 @@
         {
             "BO": 99,
             "DataID": "d7fb9db14b0fc3e8e1635720c28bda64",
-            "DataSource": "Manual",
+            "DataSource": "FromDevice",
             "HR": 80,
             "LastChangeTime": 1443044760,
             "Lat": 0,

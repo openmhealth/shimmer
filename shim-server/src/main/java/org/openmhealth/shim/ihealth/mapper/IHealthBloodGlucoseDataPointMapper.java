@@ -20,8 +20,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.ImmutableMap;
 import org.openmhealth.schema.domain.omh.*;
 
+import java.util.List;
 import java.util.Optional;
 
+import static java.util.Collections.singletonList;
 import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asOptionalString;
 import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asRequiredDouble;
 
@@ -34,8 +36,8 @@ public class IHealthBloodGlucoseDataPointMapper extends IHealthDataPointMapper<B
     protected static ImmutableMap<String, TemporalRelationshipToMeal> iHealthBloodGlucoseRelationshipToMeal;
 
     @Override
-    protected String getListNodeName() {
-        return "BGDataList";
+    protected List<String> getListNodeNames() {
+        return singletonList("BGDataList");
     }
 
     @Override
@@ -62,7 +64,6 @@ public class IHealthBloodGlucoseDataPointMapper extends IHealthDataPointMapper<B
 
         BloodGlucose.Builder bloodGlucoseBuilder =
                 new BloodGlucose.Builder(new TypedUnitValue<>(bloodGlucoseUnit, bloodGlucoseValue));
-
 
         Optional<String> dinnerSituation = asOptionalString(listNode, "DinnerSituation");
 
