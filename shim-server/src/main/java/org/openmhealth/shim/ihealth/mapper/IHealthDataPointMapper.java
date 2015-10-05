@@ -106,7 +106,7 @@ public abstract class IHealthDataPointMapper<T> implements DataPointMapper<T, Js
 
             Optional<String> timeZoneString = asOptionalString(listNode, "TimeZone");
 
-            if( timeZoneString.isPresent()){
+            if (timeZoneString.isPresent()) {
 
                 OffsetDateTime offsetDateTimeCorrectOffset =
                         getDateTimeWithCorrectOffset(optionalOffsetDateTime.get(), timeZoneString.get());

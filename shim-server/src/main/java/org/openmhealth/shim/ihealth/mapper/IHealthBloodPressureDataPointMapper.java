@@ -30,6 +30,8 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asRequir
 public class IHealthBloodPressureDataPointMapper extends IHealthDataPointMapper<BloodPressure> {
 
     static final double KPA_TO_MMHG_CONVERSION_RATE = 7.500617;
+    static final int MMHG_UNIT_MAGIC_NUMBER = 0;
+    static final int KPA_UNIT_MAGIC_NUMBER = 1;
 
     @Override
     protected String getListNodeName() {
@@ -44,13 +46,11 @@ public class IHealthBloodPressureDataPointMapper extends IHealthDataPointMapper<
     @Override
     protected Optional<DataPoint<BloodPressure>> asDataPoint(JsonNode listNode, Integer bloodPressureUnit) {
 
-        IHealthBloodPressureUnit bloodPressureUnitType = IHealthBloodPressureUnit.fromIntegerValue(bloodPressureUnit);
-
-        double systolicValue = getBloodPressureValueInMmHg(asRequiredDouble(listNode, "HP"), bloodPressureUnitType);
+        double systolicValue = getBloodPressureValueInMmHg(asRequiredDouble(listNode, "HP"), bloodPressureUnit);
         SystolicBloodPressure systolicBloodPressure =
                 new SystolicBloodPressure(BloodPressureUnit.MM_OF_MERCURY, systolicValue);
 
-        double diastolicValue = getBloodPressureValueInMmHg(asRequiredDouble(listNode, "LP"), bloodPressureUnitType);
+        double diastolicValue = getBloodPressureValueInMmHg(asRequiredDouble(listNode, "LP"), bloodPressureUnit);
         DiastolicBloodPressure diastolicBloodPressure =
                 new DiastolicBloodPressure(BloodPressureUnit.MM_OF_MERCURY, diastolicValue);
 
@@ -64,44 +64,16 @@ public class IHealthBloodPressureDataPointMapper extends IHealthDataPointMapper<
         return Optional.of(new DataPoint<>(createDataPointHeader(listNode, bloodPressure), bloodPressure));
     }
 
-    protected double getBloodPressureValueInMmHg(double rawBpValue, IHealthBloodPressureUnit bloodPressureUnit) {
+    protected double getBloodPressureValueInMmHg(double rawBpValue, Integer bloodPressureUnit) {
 
         switch ( bloodPressureUnit ) {
-            case mmHg:
+            case MMHG_UNIT_MAGIC_NUMBER:
                 return rawBpValue;
-            case KPa:
+            case KPA_UNIT_MAGIC_NUMBER:
                 return rawBpValue * KPA_TO_MMHG_CONVERSION_RATE;
             default:
                 throw new UnsupportedOperationException();
         }
     }
-
-    protected enum IHealthBloodPressureUnit {
-
-        mmHg(0),
-        KPa(1);
-
-        private int value;
-
-        IHealthBloodPressureUnit(int value) {
-            this.value = value;
-        }
-
-        protected int getValue() {
-            return value;
-        }
-
-        public static IHealthBloodPressureUnit fromIntegerValue(int bpIntValue) {
-
-            for (IHealthBloodPressureUnit type : values()) {
-                if (type.getValue() == bpIntValue) {
-                    return type;
-                }
-            }
-
-            throw new UnsupportedOperationException();
-        }
-    }
-
 
 }

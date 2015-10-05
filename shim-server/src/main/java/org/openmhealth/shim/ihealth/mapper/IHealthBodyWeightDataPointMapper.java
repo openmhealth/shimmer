@@ -61,8 +61,8 @@ public class IHealthBodyWeightDataPointMapper extends IHealthDataPointMapper<Bod
         BodyWeight.Builder bodyWeightBuilder =
                 new BodyWeight.Builder(new MassUnitValue(bodyWeightUnit, bodyWeightValue));
 
-        setEffectiveTimeFrameIfExists(listNode,bodyWeightBuilder);
-        setUserNoteIfExists(listNode,bodyWeightBuilder);
+        setEffectiveTimeFrameIfExists(listNode, bodyWeightBuilder);
+        setUserNoteIfExists(listNode, bodyWeightBuilder);
 
         BodyWeight bodyWeight = bodyWeightBuilder.build();
 
