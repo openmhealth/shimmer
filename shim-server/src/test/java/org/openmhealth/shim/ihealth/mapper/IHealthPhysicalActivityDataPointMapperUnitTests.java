@@ -48,34 +48,36 @@ public class IHealthPhysicalActivityDataPointMapperUnitTests extends IHealthData
     @BeforeTest
     public void initializeResponseNode() throws IOException {
 
-        ClassPathResource resource = new ClassPathResource("/org/openmhealth/shim/ihealth/mapper/ihealth-sports-activity.json");
+        ClassPathResource resource =
+                new ClassPathResource("/org/openmhealth/shim/ihealth/mapper/ihealth-sports-activity.json");
         responseNode = objectMapper.readTree(resource.getInputStream());
     }
 
     @Test
-    public void asDataPointsShouldReturnTheCorrectNumberOfDataPoints(){
+    public void asDataPointsShouldReturnTheCorrectNumberOfDataPoints() {
 
         List<DataPoint<PhysicalActivity>> dataPoints = mapper.asDataPoints(singletonList(responseNode));
-        assertThat(dataPoints.size(),equalTo(2));
+        assertThat(dataPoints.size(), equalTo(2));
     }
 
     @Test
-    public void asDataPointsShouldReturnCorrectSensedDataPoints(){
+    public void asDataPointsShouldReturnCorrectSensedDataPoints() {
 
         List<DataPoint<PhysicalActivity>> dataPoints = mapper.asDataPoints(singletonList(responseNode));
 
-        PhysicalActivity.Builder expectedPhysicalActivityBuilder = new PhysicalActivity.Builder("Swimming, breaststroke")
-                .setEffectiveTimeFrame(TimeInterval.ofStartDateTimeAndEndDateTime(
-                        OffsetDateTime.parse("2015-09-17T20:02:28-08:00"),
-                        OffsetDateTime.parse("2015-09-17T20:32:28-08:00")));
-        assertThat(dataPoints.get(0).getBody(),equalTo(expectedPhysicalActivityBuilder.build()));
+        PhysicalActivity.Builder expectedPhysicalActivityBuilder =
+                new PhysicalActivity.Builder("Swimming, breaststroke")
+                        .setEffectiveTimeFrame(TimeInterval.ofStartDateTimeAndEndDateTime(
+                                OffsetDateTime.parse("2015-09-17T20:02:28-08:00"),
+                                OffsetDateTime.parse("2015-09-17T20:32:28-08:00")));
+        assertThat(dataPoints.get(0).getBody(), equalTo(expectedPhysicalActivityBuilder.build()));
 
         testDataPointHeader(dataPoints.get(0).getHeader(), SCHEMA_ID, SENSED,
                 "3f8770f51cc84957a57d20f4fee1f34b", OffsetDateTime.parse("2015-09-17T20:02:57Z"));
     }
 
     @Test
-    public void asDataPointsShouldReturnCorrectSelfReportedDataPoints(){
+    public void asDataPointsShouldReturnCorrectSelfReportedDataPoints() {
 
         List<DataPoint<PhysicalActivity>> dataPoints = mapper.asDataPoints(singletonList(responseNode));
 
@@ -86,7 +88,7 @@ public class IHealthPhysicalActivityDataPointMapperUnitTests extends IHealthData
                                 OffsetDateTime.parse("2015-09-22T20:43:03-06:00"),
                                 OffsetDateTime.parse("2015-09-22T21:13:03-06:00")));
 
-        assertThat(dataPoints.get(1).getBody(),equalTo(expectedPhysicalActivityBuilder.build()));
+        assertThat(dataPoints.get(1).getBody(), equalTo(expectedPhysicalActivityBuilder.build()));
 
         assertThat(dataPoints.get(1).getHeader().getAcquisitionProvenance().getModality(), equalTo(SELF_REPORTED));
     }
@@ -94,11 +96,12 @@ public class IHealthPhysicalActivityDataPointMapperUnitTests extends IHealthData
     @Test
     public void asDataPointsReturnsNoDataPointsForAnEmptyList() throws IOException {
 
-        ClassPathResource resource = new ClassPathResource("/org/openmhealth/shim/ihealth/mapper/ihealth-sports-activity-empty-list.json");
+        ClassPathResource resource =
+                new ClassPathResource("/org/openmhealth/shim/ihealth/mapper/ihealth-sports-activity-empty-list.json");
         JsonNode emptyListResponseNode = objectMapper.readTree(resource.getInputStream());
 
         List<DataPoint<PhysicalActivity>> dataPoints = mapper.asDataPoints(singletonList(emptyListResponseNode));
-        assertThat(dataPoints.size(),equalTo(0));
+        assertThat(dataPoints.size(), equalTo(0));
     }
 
 }

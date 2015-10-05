@@ -98,7 +98,7 @@ public class IHealthBodyWeightDataPointMapperUnitTests extends IHealthDataPointM
 
         List<DataPoint<BodyWeight>> dataPoints = mapper.asDataPoints(singletonList(responseNode));
 
-        assertThat(dataPoints.get(0).getBody().getUserNotes(),nullValue());
+        assertThat(dataPoints.get(0).getBody().getUserNotes(), nullValue());
         assertThat(dataPoints.get(1).getBody().getUserNotes(), equalTo("Weight so good, look at me now"));
     }
 
@@ -110,7 +110,7 @@ public class IHealthBodyWeightDataPointMapperUnitTests extends IHealthDataPointM
         JsonNode zeroValueNode = objectMapper.readTree(resource.getInputStream());
 
         List<DataPoint<BodyWeight>> dataPoints = mapper.asDataPoints(singletonList(zeroValueNode));
-        assertThat(dataPoints.size(),equalTo(0));
+        assertThat(dataPoints.size(), equalTo(0));
     }
 
     @Test
@@ -121,7 +121,7 @@ public class IHealthBodyWeightDataPointMapperUnitTests extends IHealthDataPointM
         JsonNode emptyListNode = objectMapper.readTree(resource.getInputStream());
 
         List<DataPoint<BodyWeight>> dataPoints = mapper.asDataPoints(singletonList(emptyListNode));
-        assertThat(dataPoints.size(),equalTo(0));
+        assertThat(dataPoints.size(), equalTo(0));
     }
 
     @Test

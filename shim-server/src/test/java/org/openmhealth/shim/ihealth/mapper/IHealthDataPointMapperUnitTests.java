@@ -33,7 +33,8 @@ import static org.hamcrest.MatcherAssert.assertThat;
  */
 public class IHealthDataPointMapperUnitTests extends DataPointMapperUnitTests {
 
-    protected void testDataPointHeader(DataPointHeader testHeader, SchemaId schemaId, DataPointModality modality, String externalId, OffsetDateTime updatedDateTime){
+    protected void testDataPointHeader(DataPointHeader testHeader, SchemaId schemaId, DataPointModality modality,
+            String externalId, OffsetDateTime updatedDateTime) {
 
         assertThat(testHeader.getBodySchemaId(), equalTo(schemaId));
         assertThat(testHeader.getAcquisitionProvenance().getModality(), equalTo(modality));
@@ -46,7 +47,7 @@ public class IHealthDataPointMapperUnitTests extends DataPointMapperUnitTests {
     }
 
     @Test
-    public void setEffectiveTimeFrameShouldUseUtcWhenTimeZoneIsMissing(){
+    public void setEffectiveTimeFrameShouldUseUtcWhenTimeZoneIsMissing() {
 
         // Todo: waiting for response from iHealth on missing time zone representation
     }

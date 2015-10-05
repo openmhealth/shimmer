@@ -106,7 +106,7 @@ public class IHealthBodyMassIndexDataPointMapperUnitTests extends IHealthDataPoi
         JsonNode emptyListNode = objectMapper.readTree(resource.getInputStream());
 
         List<DataPoint<BodyMassIndex>> dataPoints = mapper.asDataPoints(singletonList(emptyListNode));
-        assertThat(dataPoints.size(),equalTo(0));
+        assertThat(dataPoints.size(), equalTo(0));
     }
 
 }

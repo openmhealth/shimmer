@@ -85,9 +85,10 @@ public class IHealthBloodPressureEndpointHeartRateDataPointMapperUnitTests exten
                 .setUserNotes("BP on the up and up.")
                 .build();
 
-//        assertThat(dataPoints.get(1).getBody(), equalTo(expectedHeartRate));
-//
-//        assertThat(dataPoints.get(1).getHeader().getAcquisitionProvenance().getModality(), equalTo(SELF_REPORTED));
+        //        assertThat(dataPoints.get(1).getBody(), equalTo(expectedHeartRate));
+        //
+        //        assertThat(dataPoints.get(1).getHeader().getAcquisitionProvenance().getModality(), equalTo
+        // (SELF_REPORTED));
     }
 
     @Test
@@ -107,7 +108,7 @@ public class IHealthBloodPressureEndpointHeartRateDataPointMapperUnitTests exten
         JsonNode noHeartRateBloodPressureNode = objectMapper.readTree(resource.getInputStream());
 
         List<DataPoint<HeartRate>> dataPoints = mapper.asDataPoints(singletonList(noHeartRateBloodPressureNode));
-        assertThat(dataPoints.size(),equalTo(0));
+        assertThat(dataPoints.size(), equalTo(0));
 
     }
 }

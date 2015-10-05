@@ -110,12 +110,13 @@ public abstract class IHealthDataPointMapper<T> implements DataPointMapper<T, Js
 
     }
 
-    static protected void setEffectiveTimeFrameIfExists(JsonNode listNode, Measure.Builder builder) {
+    protected static void setEffectiveTimeFrameIfExists(JsonNode listNode, Measure.Builder builder) {
 
         Optional<Long> optionalOffsetDateTime = asOptionalLong(listNode, "MDate");
 
         if (optionalOffsetDateTime.isPresent()) {
 
+            // Todo: Revisit after clarification from iHealth on how time zones are set
             Optional<String> timeZoneString = asOptionalString(listNode, "TimeZone");
 
             if (timeZoneString.isPresent()) {
@@ -145,7 +146,7 @@ public abstract class IHealthDataPointMapper<T> implements DataPointMapper<T, Js
         return offsetDateTimeFromOffsetInstant.toLocalDateTime().atOffset(ZoneOffset.of(timeZoneString));
     }
 
-    static protected void setUserNoteIfExists(JsonNode listNode, Measure.Builder builder) {
+    protected static void setUserNoteIfExists(JsonNode listNode, Measure.Builder builder) {
 
         Optional<String> note = asOptionalString(listNode, "Note");
 

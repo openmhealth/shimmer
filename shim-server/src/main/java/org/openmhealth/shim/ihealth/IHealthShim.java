@@ -332,7 +332,7 @@ public class IHealthShim extends OAuth2ShimBase {
         final OAuth2ProtectedResourceDetails resource = getResource();
 
         UriComponentsBuilder callBackUriBuilder = UriComponentsBuilder.fromUriString(getCallbackUrl())
-                .queryParam("state",exception.getStateKey());
+                .queryParam("state", exception.getStateKey());
 
         UriComponentsBuilder authorizationUriBuilder = UriComponentsBuilder.fromUriString(exception.getRedirectUri())
                 .queryParam("client_id", resource.getClientId())
