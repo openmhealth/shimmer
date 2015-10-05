@@ -39,6 +39,8 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.*;
 
 
 /**
+ * The base class for mappers that translate iHealth API responses to {@link DataPoint} objects.
+ *
  * @author Chris Schaefbauer
  */
 public abstract class IHealthDataPointMapper<T> implements DataPointMapper<T, JsonNode> {
@@ -47,6 +49,11 @@ public abstract class IHealthDataPointMapper<T> implements DataPointMapper<T, Js
     public static final String DATA_SOURCE_MANUAL = "Manual";
     public static final String DATA_SOURCE_FROM_DEVICE = "FromDevice";
 
+    /**
+     * Maps a JSON response with individual data points contained in a JSON array to a list of {@link  DataPoint}
+     * objects with the appropriate measure. Splits individual nodes and then iteratively maps the nodes in
+     * the list.
+     */
     @Override
     public List<DataPoint<T>> asDataPoints(List<JsonNode> responseNodes) {
 
@@ -72,6 +79,12 @@ public abstract class IHealthDataPointMapper<T> implements DataPointMapper<T, Js
         return dataPoints;
     }
 
+    /**
+     * Creates a data point header with information describing the data point created around the measure.
+     * <p>
+     * <p>Note: Additional properties within the header come from the iHealth API and are not defined by the data point
+     * header schema. Additional properties are subject to change.</p>
+     */
     protected DataPointHeader createDataPointHeader(JsonNode listNode, Measure measure) {
 
         DataPointAcquisitionProvenance.Builder acquisitionProvenanceBuilder =
@@ -90,12 +103,10 @@ public abstract class IHealthDataPointMapper<T> implements DataPointMapper<T, Js
                 lastUpdatedInUnixSecs -> acquisitionProvenance.setAdditionalProperty("source_updated_date_time",
                         OffsetDateTime.ofInstant(Instant.ofEpochSecond(lastUpdatedInUnixSecs), ZoneId.of("Z"))));
 
-        DataPointHeader dataPointHeader =
-                new DataPointHeader.Builder(UUID.randomUUID().toString(), measure.getSchemaId())
-                        .setAcquisitionProvenance(acquisitionProvenance)
-                        .build();
+        return new DataPointHeader.Builder(UUID.randomUUID().toString(), measure.getSchemaId())
+                .setAcquisitionProvenance(acquisitionProvenance)
+                .build();
 
-        return dataPointHeader;
     }
 
     static protected void setEffectiveTimeFrameIfExists(JsonNode listNode, Measure.Builder builder) {
@@ -116,11 +127,18 @@ public abstract class IHealthDataPointMapper<T> implements DataPointMapper<T, Js
         }
     }
 
-    protected static OffsetDateTime getDateTimeWithCorrectOffset(Long optionalOffsetDateTime,
+    /**
+     * This method transforms the unix epoch second timestamps in iHealth responses, which are not in utc but instead
+     * offset to the local time zone of the data point, into an {@link OffsetDateTime} with the correct date/time and
+     * offset.
+     */
+    protected static OffsetDateTime getDateTimeWithCorrectOffset(Long dateTimeInUnixSecondsWithLocalTimeOffset,
             String timeZoneString) {
 
+        // Since the timestamps are in local time, we can use the local date time provided by rendering the timestamp
+        // in UTC, then translating that local time to the appropriate offset.
         OffsetDateTime offsetDateTimeFromOffsetInstant = OffsetDateTime.ofInstant(
-                Instant.ofEpochSecond(optionalOffsetDateTime),
+                Instant.ofEpochSecond(dateTimeInUnixSecondsWithLocalTimeOffset),
                 ZoneId.of("Z"));
 
         return offsetDateTimeFromOffsetInstant.toLocalDateTime().atOffset(ZoneOffset.of(timeZoneString));
@@ -146,10 +164,24 @@ public abstract class IHealthDataPointMapper<T> implements DataPointMapper<T, Js
         }
     }
 
-    // TODO add Javadoc
+    /**
+     * @return The name of the JSON array that contains the individual data points. This is different per endpoint.
+     */
     protected abstract String getListNodeName();
 
+    /**
+     * @return The name of the JSON property whose value indicates the unit of measure used to render the values in
+     * the response. This is different per endpoint and some endpoints do not provide any units, in which case, the
+     * value should be an empty Optional.
+     */
     protected abstract Optional<String> getMeasureUnitNodeName();
 
+    /**
+     * @param listEntryNode a single node from the
+     * @param measureUnitMagicNumber The number representing the units used to render the response, according to
+     * iHealth. This is retrieved from the main body of the response node. If the measure type does not use units, then
+     * this value is null.
+     * @return the data point mapped from the listEntryNode, unless skipped
+     */
     protected abstract Optional<DataPoint<T>> asDataPoint(JsonNode listEntryNode, Integer measureUnitMagicNumber);
 }

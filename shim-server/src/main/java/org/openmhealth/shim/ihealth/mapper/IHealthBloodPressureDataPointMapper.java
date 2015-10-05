@@ -29,7 +29,9 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asRequir
  */
 public class IHealthBloodPressureDataPointMapper extends IHealthDataPointMapper<BloodPressure> {
 
-    static final double KPA_TO_MMHG_CONVERSION_RATE = 7.500617;
+    // documentation: http://www.ncbi.nlm.nih.gov/pmc/articles/PMC1603212/
+    static final double KPA_TO_MMHG_CONVERSION_RATE = 7.50;
+
     static final int MMHG_UNIT_MAGIC_NUMBER = 0;
     static final int KPA_UNIT_MAGIC_NUMBER = 1;
 

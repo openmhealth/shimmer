@@ -69,6 +69,7 @@ public class IHealthBodyWeightDataPointMapper extends IHealthDataPointMapper<Bod
         return Optional.of(new DataPoint<>(createDataPointHeader(listNode, bodyWeight), bodyWeight));
     }
 
+
     protected double getBodyWeightValueForUnitType(JsonNode listNode,
             IHealthBodyWeightUnit bodyWeightUnitType) {
 
@@ -78,6 +79,8 @@ public class IHealthBodyWeightDataPointMapper extends IHealthDataPointMapper<Bod
 
     protected double getBodyWeightValueForUnitType(double bodyWeightValue, IHealthBodyWeightUnit bodyWeightUnitType) {
 
+        // iHealth has one unit type that is unsupported by OMH schemas, so we need to convert the value into a unit
+        // system that is supported by the schemas.
         return bodyWeightValue * bodyWeightUnitType.getConversionFactorToOmh();
     }
 
