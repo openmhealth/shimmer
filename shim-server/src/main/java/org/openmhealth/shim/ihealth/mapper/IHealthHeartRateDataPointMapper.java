@@ -36,12 +36,21 @@ public abstract class IHealthHeartRateDataPointMapper extends IHealthDataPointMa
     }
 
     @Override
-    protected Optional<DataPoint<HeartRate>> asDataPoint(JsonNode listNode, Integer measureUnitMagicNumber) {
+    protected Optional<DataPoint<HeartRate>> asDataPoint(JsonNode listEntryNode, Integer measureUnitMagicNumber) {
 
-        double heartRateValue = asRequiredDouble(listNode, "HR");
+        double heartRateValue = asRequiredDouble(listEntryNode, "HR");
+
+        if (heartRateValue == 0) {
+
+            return Optional.empty();
+        }
+
         HeartRate.Builder heartRateBuilder = new HeartRate.Builder(heartRateValue);
-        setEffectiveTimeFrameIfExists(listNode, heartRateBuilder);
+
+        setEffectiveTimeFrameIfExists(listEntryNode, heartRateBuilder);
+        setUserNoteIfExists(listEntryNode, heartRateBuilder);
+
         HeartRate heartRate = heartRateBuilder.build();
-        return Optional.of(new DataPoint<>(createDataPointHeader(listNode, heartRate), heartRate));
+        return Optional.of(new DataPoint<>(createDataPointHeader(listEntryNode, heartRate), heartRate));
     }
 }

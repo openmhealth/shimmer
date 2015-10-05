@@ -27,8 +27,10 @@ import org.testng.annotations.Test;
 
 import java.io.IOException;
 import java.time.OffsetDateTime;
+import java.util.Collections;
 import java.util.List;
 
+import static java.util.Collections.*;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 
@@ -36,16 +38,22 @@ import static org.hamcrest.MatcherAssert.assertThat;
 /**
  * @author Chris Schaefbauer
  */
-public class IHealthHeartRateDataPointMapperUnitTests extends IHealthDataPointMapperUnitTests {
+public class IHealthBloodPressureEndpointHeartRateDataPointMapperUnitTests extends IHealthDataPointMapperUnitTests {
 
     JsonNode bpNode;
     JsonNode spo2Node;
-    private IHealthHeartRateDataPointMapper mapper = new IHealthHeartRateDataPointMapper();
+
+    private IHealthBloodOxygenEndpointHeartRateDataPointMapper bloodOxygenMapper =
+            new IHealthBloodOxygenEndpointHeartRateDataPointMapper();
+
+    private IHealthBloodPressureEndpointHeartRateDataPointMapper bloodPressureMapper =
+            new IHealthBloodPressureEndpointHeartRateDataPointMapper();
 
     @BeforeTest
     public void initializeResponseNodes() throws IOException {
 
-        ClassPathResource resource = new ClassPathResource("/org/openmhealth/shim/ihealth/mapper/ihealth-heart-rate-from-bp.json");
+        ClassPathResource resource =
+                new ClassPathResource("/org/openmhealth/shim/ihealth/mapper/ihealth-heart-rate-from-bp.json");
         bpNode = objectMapper.readTree(resource.getInputStream());
 
         resource = new ClassPathResource("/org/openmhealth/shim/ihealth/mapper/ihealth-heart-rate-from-spo2.json");
@@ -53,21 +61,22 @@ public class IHealthHeartRateDataPointMapperUnitTests extends IHealthDataPointMa
     }
 
     @Test
-    public void asDataPointsShouldReturnCorrectNumberOfDataPoints(){
+    public void asDataPointsShouldReturnCorrectNumberOfDataPoints() {
 
         List<DataPoint<HeartRate>> dataPoints = mapper.asDataPoints(Lists.newArrayList(bpNode, spo2Node));
-        assertThat(dataPoints.size(),equalTo(4));
+        assertThat(dataPoints.size(), equalTo(4));
     }
 
     @Test
-    public void asDataPointsShouldReturnCorrectSensedDataPointsFromBpResponse(){
+    public void asDataPointsShouldReturnCorrectSensedDataPointsFromBpResponse() {
 
-        List<DataPoint<HeartRate>> dataPoints = mapper.asDataPoints(Lists.newArrayList(bpNode, spo2Node));
+        List<DataPoint<HeartRate>> dataPoints = bloodPressureMapper.asDataPoints(
+                singletonList(bpNode));
 
         HeartRate.Builder expectedHeartRateBuilder = new HeartRate.Builder(100)
                 .setEffectiveTimeFrame(OffsetDateTime.parse("2015-09-17T04:04:23-08:00"));
         HeartRate expectedSensedHeartRate = expectedHeartRateBuilder.build();
-        assertThat(dataPoints.get(0).getBody(),equalTo(expectedSensedHeartRate));
+        assertThat(dataPoints.get(0).getBody(), equalTo(expectedSensedHeartRate));
 
     }
 
