@@ -116,7 +116,7 @@ public class IHealthBloodPressureDataPointMapperUnitTests extends IHealthDataPoi
         assertThat(bpValueFromMmHg, equalTo(120.0));
 
         double bpValueFromKpa = mapper.getBloodPressureValueInMmHg(16, 1);
-        assertThat(bpValueFromKpa, equalTo(120.009872));
+        assertThat(bpValueFromKpa, equalTo(120.0));
 
     }
 
