@@ -115,19 +115,6 @@ public class IHealthShim extends OAuth2ShimBase {
         };
     }
 
-    //    @Value("${openmhealth.shim.ihealth.sportSC}")
-    //    public String sportSC;
-    //    @Value("${openmhealth.shim.ihealth.sportSV}")
-    //    public String sportSV;
-    //    @Value("${openmhealth.shim.ihealth.bloodPressureSC}")
-    //    public String bloodPressureSC;
-    //    @Value("${openmhealth.shim.ihealth.bloodPressureSV}")
-    //    public String bloodPressureSV;
-    //    @Value("${openmhealth.shim.ihealth.spo2SC}")
-    //    public String spo2SC;
-    //    @Value("${openmhealth.shim.ihealth.spo2SV}")
-    //    public String spo2SV;
-
     Map<String, String> serialValues;
 
     public Map<String, String> getSerialValues() {
@@ -146,8 +133,6 @@ public class IHealthShim extends OAuth2ShimBase {
         BLOOD_GLUCOSE(singletonList("glucose.json")),
         BLOOD_PRESSURE(singletonList("bp.json")),
         BODY_WEIGHT(singletonList("weight.json")),
-        //SLEEP("sleep"),
-        //STEP_COUNT("activity"),
         BODY_MASS_INDEX(singletonList("weight.json")),
         HEART_RATE(Lists.newArrayList("bp.json", "spo2.json"));
 
@@ -193,14 +178,18 @@ public class IHealthShim extends OAuth2ShimBase {
 
         int i = 0;
         for (String endPoint : dataType.getEndPoint()) {
+
             UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromUriString(API_URL);
 
+            // Need to use a dummy userId if we haven't authenticated yet. This is the case where we are using
+            // getData to trigger Spring to conduct the OAuth exchange
             String userId = "uk";
+
             if (shimDataRequest.getAccessParameters() != null) {
 
                 OAuth2AccessToken token =
                         SerializationUtils.deserialize(shimDataRequest.getAccessParameters().getSerializedToken());
-                ;
+
                 userId = Preconditions.checkNotNull((String) token.getAdditionalInformation().get("UserID"));
                 uriBuilder.queryParam("access_token", token.getValue());
             }
@@ -216,8 +205,8 @@ public class IHealthShim extends OAuth2ShimBase {
                     .queryParam("sc", scValues.get(i))
                     .queryParam("sv", svValues.get(i));
 
-
             ResponseEntity<JsonNode> responseEntity;
+
             try {
                 URI url = uriBuilder.build().encode().toUri();
                 responseEntity = restTemplate.getForEntity(url, JsonNode.class);
@@ -229,9 +218,7 @@ public class IHealthShim extends OAuth2ShimBase {
             }
 
             if (shimDataRequest.getNormalize()) {
-                //                SimpleModule module = new SimpleModule();
-                //                module.addDeserializer(ShimDataResponse.class, dataType.getNormalizer());
-                //                objectMapper.registerModule(module);
+
                 IHealthDataPointMapper mapper;
 
                 switch ( dataType ) {
@@ -253,11 +240,11 @@ public class IHealthShim extends OAuth2ShimBase {
                         break;
                     case HEART_RATE:
                         // there are two different mappers for heart rate because the data can come from two endpoints
-                        if(endPoint == "bp.json"){
+                        if (endPoint == "bp.json") {
                             mapper = new IHealthBloodPressureEndpointHeartRateDataPointMapper();
                             break;
                         }
-                        else if (endPoint == "spo2.json"){
+                        else if (endPoint == "spo2.json") {
                             mapper = new IHealthBloodOxygenEndpointHeartRateDataPointMapper();
                             break;
                         }
@@ -277,7 +264,7 @@ public class IHealthShim extends OAuth2ShimBase {
         }
 
         return ResponseEntity.ok().body(
-                ShimDataResponse.result(SHIM_KEY,responseEntities));
+                ShimDataResponse.result(SHIM_KEY, responseEntities));
 
     }
 
@@ -320,12 +307,6 @@ public class IHealthShim extends OAuth2ShimBase {
                 throw new UnsupportedOperationException();
         }
     }
-
-    //    @Override
-    //    public void trigger(OAuth2RestOperations restTemplate, ShimDataRequest shimDataRequest) throws ShimException {
-    //
-    //
-    //    }
 
     @Override
     public OAuth2ProtectedResourceDetails getResource() {
