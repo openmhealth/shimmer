@@ -20,6 +20,7 @@ import org.openmhealth.schema.domain.omh.DataPointHeader;
 import org.openmhealth.schema.domain.omh.DataPointModality;
 import org.openmhealth.schema.domain.omh.SchemaId;
 import org.openmhealth.shim.common.mapper.DataPointMapperUnitTests;
+import org.testng.annotations.Test;
 
 import java.time.OffsetDateTime;
 
@@ -42,6 +43,12 @@ public class IHealthDataPointMapperUnitTests extends DataPointMapperUnitTests {
                 externalId));
         assertThat(testHeader.getAcquisitionProvenance().getAdditionalProperties().get("source_updated_date_time"),
                 equalTo(updatedDateTime));
+    }
+
+    @Test
+    public void setEffectiveTimeFrameShouldUseUtcWhenTimeZoneIsMissing(){
+
+        // Todo: waiting for response from iHealth on missing time zone representation
     }
 
 }

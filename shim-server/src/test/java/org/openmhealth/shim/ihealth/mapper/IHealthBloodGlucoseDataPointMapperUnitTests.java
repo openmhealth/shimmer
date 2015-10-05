@@ -65,7 +65,7 @@ public class IHealthBloodGlucoseDataPointMapperUnitTests extends IHealthDataPoin
 
         BloodGlucose.Builder expectedBloodGlucoseBuilder = new BloodGlucose.Builder(
                 new TypedUnitValue<>(BloodGlucoseUnit.MILLIGRAMS_PER_DECILITER, 60))
-                .setEffectiveTimeFrame(OffsetDateTime.parse("2015-09-17T04:03:27-08:00"))
+                .setEffectiveTimeFrame(OffsetDateTime.parse("2015-09-17T12:03:27-08:00"))
                 .setTemporalRelationshipToMeal(TemporalRelationshipToMeal.BEFORE_BREAKFAST)
                 .setUserNotes("Such glucose, much blood.");
 
@@ -86,7 +86,7 @@ public class IHealthBloodGlucoseDataPointMapperUnitTests extends IHealthDataPoin
         BloodGlucose.Builder expectedBloodGlucoseBuilder =
                 new BloodGlucose.Builder(new TypedUnitValue<>(BloodGlucoseUnit.MILLIGRAMS_PER_DECILITER, 70))
                         .setTemporalRelationshipToMeal(TemporalRelationshipToMeal.AFTER_BREAKFAST)
-                        .setEffectiveTimeFrame(OffsetDateTime.parse("2015-09-24T08:44:40-06:00"));
+                        .setEffectiveTimeFrame(OffsetDateTime.parse("2015-09-24T14:44:40-06:00"));
 
         assertThat(dataPoints.get(1).getBody(), equalTo(expectedBloodGlucoseBuilder.build()));
 

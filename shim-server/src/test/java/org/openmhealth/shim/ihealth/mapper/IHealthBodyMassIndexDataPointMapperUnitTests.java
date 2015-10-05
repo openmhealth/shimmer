@@ -63,7 +63,7 @@ public class IHealthBodyMassIndexDataPointMapperUnitTests extends IHealthDataPoi
 
         BodyMassIndex.Builder expectedBodyMassIndexBuilder = new BodyMassIndex.Builder(new TypedUnitValue<>(
                 BodyMassIndexUnit.KILOGRAMS_PER_SQUARE_METER, 22.56052563257619))
-                .setEffectiveTimeFrame(OffsetDateTime.parse("2015-09-17T04:04:09-08:00"));
+                .setEffectiveTimeFrame(OffsetDateTime.parse("2015-09-17T12:04:09-08:00"));
 
         assertThat(dataPoints.get(0).getBody(), equalTo(expectedBodyMassIndexBuilder.build()));
 
@@ -78,7 +78,7 @@ public class IHealthBodyMassIndexDataPointMapperUnitTests extends IHealthDataPoi
 
         BodyMassIndex.Builder expectedBodyMassIndexBuilder = new BodyMassIndex.Builder(
                 new TypedUnitValue<>(BodyMassIndexUnit.KILOGRAMS_PER_SQUARE_METER, 22.56052398681641))
-                .setEffectiveTimeFrame(OffsetDateTime.parse("2015-09-17T08:07:57-06:00"))
+                .setEffectiveTimeFrame(OffsetDateTime.parse("2015-09-17T14:07:57-06:00"))
                 .setUserNotes("Weight so good, look at me now");
 
         assertThat(dataPoints.get(1).getBody(), equalTo(expectedBodyMassIndexBuilder.build()));

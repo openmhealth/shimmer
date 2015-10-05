@@ -65,7 +65,7 @@ public class IHealthBodyWeightDataPointMapperUnitTests extends IHealthDataPointM
 
         BodyWeight.Builder expectedBodyWeightBuilder = new BodyWeight.Builder(
                 new MassUnitValue(MassUnit.KILOGRAM, 77.5643875134944))
-                .setEffectiveTimeFrame(OffsetDateTime.parse("2015-09-17T04:04:09-08:00"));
+                .setEffectiveTimeFrame(OffsetDateTime.parse("2015-09-17T12:04:09-08:00"));
 
         assertThat(dataPoints.get(0).getBody(), equalTo(expectedBodyWeightBuilder.build()));
 
@@ -83,7 +83,7 @@ public class IHealthBodyWeightDataPointMapperUnitTests extends IHealthDataPointM
 
         BodyWeight.Builder expectedBodyWeightBuilder =
                 new BodyWeight.Builder(new MassUnitValue(MassUnit.KILOGRAM, 77.56438446044922))
-                        .setEffectiveTimeFrame(OffsetDateTime.parse("2015-09-17T08:07:57-06:00"))
+                        .setEffectiveTimeFrame(OffsetDateTime.parse("2015-09-17T14:07:57-06:00"))
                         .setUserNotes("Weight so good, look at me now");
 
         assertThat(dataPoints.get(1).getBody(), equalTo(expectedBodyWeightBuilder.build()));

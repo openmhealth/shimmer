@@ -66,8 +66,8 @@ public class IHealthPhysicalActivityDataPointMapperUnitTests extends IHealthData
 
         PhysicalActivity.Builder expectedPhysicalActivityBuilder = new PhysicalActivity.Builder("Swimming, breaststroke")
                 .setEffectiveTimeFrame(TimeInterval.ofStartDateTimeAndEndDateTime(
-                        OffsetDateTime.parse("2015-09-17T12:02:28-08:00"),
-                        OffsetDateTime.parse("2015-09-17T12:32:28-08:00")));
+                        OffsetDateTime.parse("2015-09-17T20:02:28-08:00"),
+                        OffsetDateTime.parse("2015-09-17T20:32:28-08:00")));
         assertThat(dataPoints.get(0).getBody(),equalTo(expectedPhysicalActivityBuilder.build()));
 
         testDataPointHeader(dataPoints.get(0).getHeader(), SCHEMA_ID, SENSED,
@@ -83,8 +83,8 @@ public class IHealthPhysicalActivityDataPointMapperUnitTests extends IHealthData
         PhysicalActivity.Builder expectedPhysicalActivityBuilder = new PhysicalActivity.Builder("Running")
                 .setEffectiveTimeFrame(
                         TimeInterval.ofStartDateTimeAndEndDateTime(
-                                OffsetDateTime.parse("2015-09-22T14:43:03-06:00"),
-                                OffsetDateTime.parse("2015-09-22T15:13:03-06:00")));
+                                OffsetDateTime.parse("2015-09-22T20:43:03-06:00"),
+                                OffsetDateTime.parse("2015-09-22T21:13:03-06:00")));
 
         assertThat(dataPoints.get(1).getBody(),equalTo(expectedPhysicalActivityBuilder.build()));
 

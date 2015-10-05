@@ -27,6 +27,7 @@ import org.openmhealth.shim.common.mapper.DataPointMapper;
 import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -97,22 +98,34 @@ public abstract class IHealthDataPointMapper<T> implements DataPointMapper<T, Js
         return dataPointHeader;
     }
 
-    protected void setEffectiveTimeFrameIfExists(JsonNode listNode, Measure.Builder builder) {
+    static protected void setEffectiveTimeFrameIfExists(JsonNode listNode, Measure.Builder builder) {
 
         Optional<Long> optionalOffsetDateTime = asOptionalLong(listNode, "MDate");
 
         if (optionalOffsetDateTime.isPresent()) {
 
-            asOptionalString(listNode, "TimeZone").ifPresent(timezoneOffsetString -> builder
-                    .setEffectiveTimeFrame(
-                            OffsetDateTime.ofInstant(
-                                    Instant.ofEpochSecond(optionalOffsetDateTime.get()),
-                                    ZoneId.of(timezoneOffsetString))));
+            Optional<String> timeZoneString = asOptionalString(listNode, "TimeZone");
+
+            if( timeZoneString.isPresent()){
+
+                OffsetDateTime offsetDateTimeCorrectOffset =
+                        getDateTimeWithCorrectOffset(optionalOffsetDateTime.get(), timeZoneString.get());
+                builder.setEffectiveTimeFrame(offsetDateTimeCorrectOffset);
+            }
 
         }
     }
 
-    protected void setUserNoteIfExists(JsonNode listNode, Measure.Builder builder) {
+    protected static OffsetDateTime getDateTimeWithCorrectOffset(Long optionalOffsetDateTime,
+            String timeZoneString) {
+
+        OffsetDateTime offsetDateTimeFromOffsetInstant = OffsetDateTime.ofInstant(
+                Instant.ofEpochSecond(optionalOffsetDateTime),
+                ZoneId.of("Z"));
+        return offsetDateTimeFromOffsetInstant.toLocalDateTime().atOffset(ZoneOffset.of(timeZoneString));
+    }
+
+    static protected void setUserNoteIfExists(JsonNode listNode, Measure.Builder builder) {
 
         Optional<String> note = asOptionalString(listNode, "Note");
 

@@ -21,10 +21,6 @@ import org.openmhealth.schema.domain.omh.DataPoint;
 import org.openmhealth.schema.domain.omh.PhysicalActivity;
 import org.openmhealth.schema.domain.omh.TimeInterval;
 
-import java.time.Instant;
-import java.time.OffsetDateTime;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
 import java.util.Optional;
 
 import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.*;
@@ -64,12 +60,8 @@ public class IHealthPhysicalActivityDataPointMapper extends IHealthDataPointMapp
         if (startTimeUnixEpochSecs.isPresent() && endTimeUnixEpochSecs.isPresent() && timeZoneOffset.isPresent()) {
 
             physicalActivityBuilder.setEffectiveTimeFrame(TimeInterval.ofStartDateTimeAndEndDateTime(
-                    OffsetDateTime.ofInstant(
-                            Instant.ofEpochSecond(startTimeUnixEpochSecs.get()),
-                            ZoneId.ofOffset("UTC", ZoneOffset.ofHours(timeZoneOffset.get()))),
-                    OffsetDateTime.ofInstant(
-                            Instant.ofEpochSecond(endTimeUnixEpochSecs.get()),
-                            ZoneId.ofOffset("UTC", ZoneOffset.ofHours(timeZoneOffset.get())))));
+                    getDateTimeWithCorrectOffset(startTimeUnixEpochSecs.get(), timeZoneOffset.get().toString()),
+                    getDateTimeWithCorrectOffset(endTimeUnixEpochSecs.get(), timeZoneOffset.get().toString())));
         }
 
         PhysicalActivity physicalActivity = physicalActivityBuilder.build();
