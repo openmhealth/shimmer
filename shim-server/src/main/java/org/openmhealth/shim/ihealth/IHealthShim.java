@@ -318,11 +318,17 @@ public class IHealthShim extends OAuth2ShimBase {
     @Override
     protected String getAuthorizationUrl(UserRedirectRequiredException exception) {
         final OAuth2ProtectedResourceDetails resource = getResource();
-        return exception.getRedirectUri()
-                + "?client_id=" + resource.getClientId()
-                + "&response_type=code"
-                + "&APIName=" + Joiner.on(' ').join(resource.getScope())
-                + "&redirect_uri=" + getCallbackUrl() + "?state=" + exception.getStateKey();
+
+        UriComponentsBuilder callBackUriBuilder = UriComponentsBuilder.fromUriString(getCallbackUrl())
+                .queryParam("state",exception.getStateKey());
+
+        UriComponentsBuilder authorizationUriBuilder = UriComponentsBuilder.fromUriString(exception.getRedirectUri())
+                .queryParam("client_id", resource.getClientId())
+                .queryParam("response_type", "code")
+                .queryParam("APIName", Joiner.on(' ').join(resource.getScope()))
+                .queryParam("redirect_uri", callBackUriBuilder.build().toString());
+
+        return authorizationUriBuilder.build().encode().toString();
     }
 
     public class IHealthAuthorizationCodeAccessTokenProvider extends AuthorizationCodeAccessTokenProvider {
