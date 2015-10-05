@@ -32,6 +32,7 @@ import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.openmhealth.schema.domain.omh.DataPointModality.SELF_REPORTED;
 import static org.openmhealth.schema.domain.omh.DataPointModality.SENSED;
 
 
@@ -81,14 +82,12 @@ public class IHealthBloodPressureEndpointHeartRateDataPointMapperUnitTests exten
         List<DataPoint<HeartRate>> dataPoints = mapper.asDataPoints(singletonList(responseNode));
 
         HeartRate expectedHeartRate = new HeartRate.Builder(75)
-                .setEffectiveTimeFrame(OffsetDateTime.parse("2015-09-17T08:07:45-06:00"))
+                .setEffectiveTimeFrame(OffsetDateTime.parse("2015-09-17T14:07:45-06:00"))
                 .setUserNotes("BP on the up and up.")
                 .build();
 
-        //        assertThat(dataPoints.get(1).getBody(), equalTo(expectedHeartRate));
-        //
-        //        assertThat(dataPoints.get(1).getHeader().getAcquisitionProvenance().getModality(), equalTo
-        // (SELF_REPORTED));
+        assertThat(dataPoints.get(1).getBody(), equalTo(expectedHeartRate));
+        assertThat(dataPoints.get(1).getHeader().getAcquisitionProvenance().getModality(), equalTo(SELF_REPORTED));
     }
 
     @Test
