@@ -47,6 +47,12 @@ import static java.util.Collections.singletonList;
 import static org.slf4j.LoggerFactory.getLogger;
 
 
+/**
+ * Encapsulates parameters specific to the iHealth REST API and processes requests made of shimmer for iHealth data.
+ *
+ * @author Chris Schaefbauer
+ * @author Emerson Farrugia
+ */
 @Component
 @EnableConfigurationProperties
 @ConfigurationProperties(prefix = "openmhealth.shim.ihealth")
@@ -115,6 +121,9 @@ public class IHealthShim extends OAuth2ShimBase {
         };
     }
 
+    /**
+     * Map of values auto-configured from the application properties yaml.
+     */
     Map<String, String> serialValues;
 
     public Map<String, String> getSerialValues() {
@@ -171,12 +180,16 @@ public class IHealthShim extends OAuth2ShimBase {
                 now.plusDays(1) : shimDataRequest.getEndDateTime();
 
 
+        // SC and SV values are client-based keys that are unique to each endpoint within a project
         List<String> scValues = getScValues(dataType);
         List<String> svValues = getSvValues(dataType);
 
         List<JsonNode> responseEntities = Lists.newArrayList();
 
         int i = 0;
+
+        // We iterate because one of the measures (Heart rate) comes from multiple endpoints, so we submit
+        // requests to each of these endpoints, map the responses separately and then combine them
         for (String endPoint : dataType.getEndPoint()) {
 
             UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromUriString(API_URL);
@@ -265,7 +278,6 @@ public class IHealthShim extends OAuth2ShimBase {
 
         return ResponseEntity.ok().body(
                 ShimDataResponse.result(SHIM_KEY, responseEntities));
-
     }
 
     private List<String> getScValues(IHealthDataTypes dataType) {

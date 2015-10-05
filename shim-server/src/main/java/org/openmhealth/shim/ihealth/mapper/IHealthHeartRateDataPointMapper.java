@@ -27,6 +27,7 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asRequir
 
 /**
  * @author Chris Schaefbauer
+ * @author Emerson Farrugia
  */
 public abstract class IHealthHeartRateDataPointMapper extends IHealthDataPointMapper<HeartRate> {
 

@@ -42,6 +42,7 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.*;
  * The base class for mappers that translate iHealth API responses to {@link DataPoint} objects.
  *
  * @author Chris Schaefbauer
+ * @author Emerson Farrugia
  */
 public abstract class IHealthDataPointMapper<T> implements DataPointMapper<T, JsonNode> {
 
