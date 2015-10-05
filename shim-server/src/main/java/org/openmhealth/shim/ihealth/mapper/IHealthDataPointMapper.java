@@ -122,6 +122,7 @@ public abstract class IHealthDataPointMapper<T> implements DataPointMapper<T, Js
         OffsetDateTime offsetDateTimeFromOffsetInstant = OffsetDateTime.ofInstant(
                 Instant.ofEpochSecond(optionalOffsetDateTime),
                 ZoneId.of("Z"));
+
         return offsetDateTimeFromOffsetInstant.toLocalDateTime().atOffset(ZoneOffset.of(timeZoneString));
     }
 
@@ -133,8 +134,6 @@ public abstract class IHealthDataPointMapper<T> implements DataPointMapper<T, Js
 
             builder.setUserNotes(note.get());
         }
-
-
     }
 
     private void setAppropriateModality(String dataSourceValue, DataPointAcquisitionProvenance.Builder builder) {

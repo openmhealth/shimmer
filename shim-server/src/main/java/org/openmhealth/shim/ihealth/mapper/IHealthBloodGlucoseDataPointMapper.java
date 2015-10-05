@@ -32,6 +32,8 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asRequir
  */
 public class IHealthBloodGlucoseDataPointMapper extends IHealthDataPointMapper<BloodGlucose> {
 
+    public static final int MG_PER_DL_MAGIC_NUMBER = 0;
+    public static final int MMOL_PER_L_MAGIC_NUMBER = 1;
     protected static ImmutableMap<String, TemporalRelationshipToMeal> iHealthBloodGlucoseRelationshipToMeal;
 
     @Override
@@ -60,8 +62,7 @@ public class IHealthBloodGlucoseDataPointMapper extends IHealthDataPointMapper<B
             return Optional.empty();
         }
 
-        BloodGlucoseUnit bloodGlucoseUnit =
-                IHealthBloodGlucoseUnit.fromIHealthMagicNumber(measureUnitMagicNumber).getBloodGlucoseUnit();
+        BloodGlucoseUnit bloodGlucoseUnit = getBloodGlucoseUnitFromMagicNumber(measureUnitMagicNumber);
 
         BloodGlucose.Builder bloodGlucoseBuilder =
                 new BloodGlucose.Builder(new TypedUnitValue<>(bloodGlucoseUnit, bloodGlucoseValue));
@@ -108,35 +109,17 @@ public class IHealthBloodGlucoseDataPointMapper extends IHealthDataPointMapper<B
 
     }
 
-    protected enum IHealthBloodGlucoseUnit {
+    protected BloodGlucoseUnit getBloodGlucoseUnitFromMagicNumber(Integer measureUnitMagicNumber) {
 
-        mgPerDl(0, BloodGlucoseUnit.MILLIGRAMS_PER_DECILITER),
-        mmolPerL(1, BloodGlucoseUnit.MILLIMOLES_PER_LITER);
+        switch ( measureUnitMagicNumber ) {
 
-        private int magicNumber;
-        private BloodGlucoseUnit bgUnit;
-
-        IHealthBloodGlucoseUnit(int magicNumber, BloodGlucoseUnit bgUnit) {
-
-            this.magicNumber = magicNumber;
-            this.bgUnit = bgUnit;
+            case MG_PER_DL_MAGIC_NUMBER:
+                return BloodGlucoseUnit.MILLIGRAMS_PER_DECILITER;
+            case MMOL_PER_L_MAGIC_NUMBER:
+                return BloodGlucoseUnit.MILLIMOLES_PER_LITER;
+            default:
+                throw new UnsupportedOperationException();
         }
-
-        protected BloodGlucoseUnit getBloodGlucoseUnit() {
-            return bgUnit;
-        }
-
-        public static IHealthBloodGlucoseUnit fromIHealthMagicNumber(int magicNumberFromResponse) {
-
-            for (IHealthBloodGlucoseUnit type : values()) {
-                if (type.magicNumber == magicNumberFromResponse) {
-                    return type;
-                }
-            }
-            throw new UnsupportedOperationException();
-        }
-
     }
-
 
 }
