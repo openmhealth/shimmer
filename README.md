@@ -229,8 +229,8 @@ The currently supported shims are:
 | googlefit    | step_count        | [omh:step-count](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_step-count)
 | googlefit    | calories_burned   | [omh:calories-burned](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_calories-burned) |
 | jawbone      | activity          | [omh:physical-activity](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_physical-activity) |
-| jawbone      | weight<sup>2</sup>            | [omh:body-weight](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_body-weight)
-| jawbone      | body_mass_index<sup>2</sup>   | [omh:body-mass-index](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_body-mass-index) |
+| jawbone      | weight            | [omh:body-weight](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_body-weight)
+| jawbone      | body_mass_index   | [omh:body-mass-index](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_body-mass-index) |
 | jawbone      | steps             | [omh:step-count](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_step-count) |
 | jawbone      | sleep             | [omh:sleep-duration](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_sleep-duration) |
 | jawbone      | heart_rate<sup>2</sup>        | [omh:heart-rate](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_heart-rate) |
@@ -250,7 +250,7 @@ The currently supported shims are:
 
 <sup>1</sup> *The Fitbit API does not provide time zone information for the data points it returns. Furthermore, it is not possible to infer the time zone from any of the information provided. Because Open mHealth schemas require timestamps to have a time zone, we need to assign a time zone to timestamps. We set the time zone of all timestamps to UTC for consistency, even if the data may not have occurred in that time zone. This means that unless the event actually occurred in UTC, the timestamps will be incorrect. Please consider this when working with data normalized into OmH schemas that are retrieved from the Fitbit shim. We will fix this as soon as Fitbit makes changes to their API to provide time zone information.* 
 
-<sup>2</sup> *Body weight, body mass index, and heart rate mappers have not been tested on real data from Jawbone devices. They have been tested on example data provided in Jawbone API documentation. Please help us out by testing Shimmer with real-world data of one of these types from a Jawbone device and letting us know whether or not it works correctly.*
+<sup>2</sup> *The Heart rate mapper has not been tested on real data from Jawbone devices. They have been tested on example data provided in Jawbone API documentation. Please help us out by testing Shimmer with real-world data of one of these types from a Jawbone device and letting us know whether or not it works correctly.*
 
 <sup>3</sup> *Uses the daily activity summary when partner access is disabled (default) and uses intraday activity when partner access is enabled. See the YAML configuration file for details. Intraday activity requests are limited to 24 hours worth of data per request.*
 
