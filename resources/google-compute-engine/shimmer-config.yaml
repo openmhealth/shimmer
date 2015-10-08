@@ -1,0 +1,19 @@
+# This deployment consists of a single instance running three Docker containers, namely the Shimmer console, the
+# Shimmer resource server and MongoDB.
+
+# This deployment configuration file describes all the resources used by the Cloud Deployment Manager deployment.
+# see https://cloud.google.com/deployment-manager/configuration/create-configuration-file
+
+imports:
+  - path: shimmer-instance.jinja
+
+resources:
+- name: shimmer
+  type: shimmer-instance.jinja  # a customisation of the instance resource type
+  properties:
+    instanceImage: container-vm # an alias to the latest container VM, see https://cloud.google.com/compute/docs/containers/container_vms
+    instanceName: shimmer
+    instanceZone: us-central1-a
+    instanceMachineType: n1-standard-1
+    instanceBootDiskType: pd-standard
+    instanceNetwork: default

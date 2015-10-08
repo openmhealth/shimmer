@@ -1,0 +1,27 @@
+version: v1
+kind: Pod
+metadata:
+  name: shimmer
+spec:
+  containers:
+    - name: console
+      image: openmhealth/shimmer-console:latest
+      imagePullPolicy: IfNotPresent
+      ports:
+        - name: nginxPort
+          containerPort: 8083
+          hostPort: 8083
+          protocol: TCP
+    - name: mongo
+      image: mongo:latest
+      imagePullPolicy: IfNotPresent
+    - name: resource-server
+      image: openmhealth/shimmer-resource-server:latest
+      imagePullPolicy: IfNotPresent
+      env:
+        - name: SPRING_PROFILES_ACTIVE
+          value: development
+        - name: OPENMHEALTH_SHIM_SERVER_CALLBACKURLBASE
+          value: http://192.168.99.100:8083
+  restartPolicy: OnFailure
+  dnsPolicy: Default

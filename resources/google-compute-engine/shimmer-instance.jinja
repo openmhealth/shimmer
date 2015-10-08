@@ -1,0 +1,33 @@
+# This resource configuration file describes the detailed configuration of the "instance" resource to be created by
+# the Deployment Manager. It's a customisation of an "instance" resource type.
+#
+# see https://cloud.google.com/compute/docs/reference/latest/instances
+
+# set aliases
+{% set instanceName = properties["instanceName"] %}
+{% set instanceImage = properties["instanceImage"] %}
+{% set instanceNetwork = properties["instanceNetwork"] %}
+{% set instanceZone = properties["instanceZone"] %}
+{% set instanceBootDiskType = properties["instanceBootDiskType"] %}
+{% set instanceMachineType = properties["instanceMachineType"] %}
+
+resources:
+  - type: compute.v1.instance
+    name: {{ instanceName }}
+    properties:
+      zone: {{ instanceZone }}
+      machineType: {{ instanceMachineType }}
+      disks:
+        - deviceName: boot
+          type: PERSISTENT
+          diskType: {{ instanceBootDiskType }}
+          diskSizeGb: 10
+          boot: true
+          autoDelete: true
+          initializeParams:
+            sourceImage: {{ instanceImage }}
+      networkInterfaces:
+        - network: {{ instanceNetwork }}
+          accessConfigs:
+            - name: External NAT
+              type: ONE_TO_ONE_NAT

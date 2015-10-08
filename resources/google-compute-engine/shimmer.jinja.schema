@@ -1,0 +1,176 @@
+info:
+  version: dmv2
+  x-googleMetadata:
+    show: True
+    shortTitle: Shimmer
+    blurb: Open mHealth's Shimmer running on a single Docker-enabled instance.
+    smallImage:
+      src: Shimmer_small.png
+  categories:
+    - Infrastructure
+  softwareVersion: 0.3.0
+  deploymentType: SINGLE_VM
+  openSource: True
+  onlyShowForProjectType: all
+  products:
+    - clicktodeploy
+  defaultResources:
+    instances:
+      - machine-type: n1-standard-1
+        count: 1
+    disks:
+      - type: pd-standard
+        count: 1
+        size: 10 GB
+  defaultPriceUsd: 25.95
+  enabled: True
+  description:
+    - >
+      This deployment consists of a single container-vm instance running three Docker containers,
+      namely the Shimmer console, the Shimmer resource server and MongoDB. By default, the container-vm
+      instance is an <a target="_blank" href="https://cloud.google.com/compute/docs/machine-types">n1-standard-1</a>
+      (1 vCPU, 3.75 GB RAM) with an additional 10 GB data disk for database files.
+  docLinks:
+    - link: http://getshimmer.co
+      text: Shimmer website
+    - link: https://github.com/openmhealth/shimmer
+      text: Source code
+    - link: http://www.openmhealth.org
+      text: Open mHealth website
+  licenseURLs:
+    - link: http://www.apache.org/licenses/LICENSE-2.0
+      text: Apache 2.0
+  headerImage:
+    src: Shimmer.png
+  templateName: shimmer
+  appName: shimmer
+  deployingMessage: Deployment may take a few minutes to complete.
+
+formLayout:
+  - instanceName
+  - instanceZone
+  - instanceMachineType
+  - instanceBootDiskType
+  - instanceNetwork
+deploymentInfo:
+  info:
+  - type: infoItemList
+    value:
+    - label: Zone
+      value:
+        reference: $.modules.resources.shimmer.properties.instanceZone
+    - label: Machine type
+      value:
+        reference: $.modules.resources.shimmer.properties.instanceMachineType
+    - label: Image
+      value:
+        reference: $.modules.resources.shimmer.properties.instanceImage
+
+inputs:
+  required:
+    - instanceName
+    - instanceZone
+    - instanceMachineType
+    - instanceBootDiskType
+    - instanceNetwork
+  properties:
+    instanceName:
+      type: string
+      default: shimmer
+      description: Instance name prefix
+      metadata:
+        configPath:
+          - $.modules.resources.shimmer.properties.instanceName
+        uitype: gcenameprefix
+    instanceZone:
+      type: string
+      default: us-central1-f
+      description: Zone
+      metadata:
+        configPath:
+          - $.modules.resources.shimmer.properties.instanceZone
+        uitype: gcezone
+        tooltip: The Compute Engine zone the instance runs in.
+    instanceMachineType:
+      type: string
+      default: n1-standard-1
+      description: Machine type
+      enum:
+        - f1-micro
+        - g1-small
+        - n1-standard-1
+        - n1-standard-2
+        - n1-standard-4
+        - n1-standard-8
+        - n1-standard-16
+        - n1-standard-32
+        - n1-highcpu-2
+        - n1-highcpu-4
+        - n1-highcpu-8
+        - n1-highcpu-16
+        - n1-highcpu-32
+        - n1-highmem-2
+        - n1-highmem-4
+        - n1-highmem-8
+        - n1-highmem-16
+        - n1-highmem-32
+      metadata:
+        configPath:
+          - $.modules.resources.shimmer.properties.instanceMachineType
+        uitype: gcemachinetype
+        labeledValues:
+        - value: f1-micro
+          label: f1-micro (1 vCPU, 0.6 GB RAM)
+        - value: g1-small
+          label: g1-small (1 vCPU, 1.7 GB RAM)
+        - value: n1-standard-1
+          label: n1-standard-1 (1 vCPU, 3.75 GB RAM)
+        - value: n1-standard-2
+          label: n1-standard-2 (2 vCPUs, 7.5 GB RAM)
+        - value: n1-standard-4
+          label: n1-standard-4 (4 vCPUs, 15 GB RAM)
+        - value: n1-standard-8
+          label: n1-standard-8 (8 vCPUs, 30 GB RAM)
+        - value: n1-standard-16
+          label: n1-standard-16 (16 vCPUs, 60 GB RAM)
+        - value: n1-standard-32
+          label: n1-standard-32 (32 vCPUs, 120 GB RAM)
+        - value: n1-highcpu-2
+          label: n1-highcpu-2 (2 vCPUs, 1.8 GB RAM)
+        - value: n1-highcpu-4
+          label: n1-highcpu-4 (4 vCPUs, 3.6 GB RAM)
+        - value: n1-highcpu-8
+          label: n1-highcpu-8 (8 vCPUs, 7.2 GB RAM)
+        - value: n1-highcpu-16
+          label: n1-highcpu-16 (16 vCPU, 14.4 GB RAM)
+        - value: n1-highcpu-32
+          label: n1-highcpu-32 (32 vCPU, 28.8 GB RAM)
+        - value: n1-highmem-2
+          label: n1-highmem-2 (2 vCPUs, 13 GB RAM)
+        - value: n1-highmem-4
+          label: n1-highmem-4 (4 vCPUs, 26 GB RAM)
+        - value: n1-highmem-8
+          label: n1-highmem-8 (8 vCPUs, 52 GB RAM)
+        - value: n1-highmem-16
+          label: n1-highmem-16 (16 vCPUs, 104 GB RAM)
+        - value: n1-highmem-32
+          label: n1-highmem-32 (32 vCPUs, 208 GB RAM)
+    instanceBootDiskType:
+      type: string
+      default: pd-standard
+      description: Boot disk type
+      metadata:
+        configPath:
+          - $.modules.resources.shimmer.properties.instanceBootDiskType
+        uitype: gcedisktype
+        optionalLevel: advanced
+        tooltip: Disk type for storage of Docker images and configuration data
+    instanceNetwork:
+      type: string
+      description: Network name
+      metadata:
+        configPath:
+          - $.modules.resources.shimmer.properties.instanceNetwork
+        uitype: gcenetwork
+        optionLevel: advanced
+        tooltip: The name of a Compute Engine Network that the instance will belong to.
