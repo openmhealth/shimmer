@@ -71,4 +71,15 @@ public interface EndpointConfigurationProperties {
     default boolean supportsModificationDateTimeQueries() {
         return getModificationDateTimeQuerySettings().isPresent();
     }
+
+    /**
+     * @return the settings used by this endpoint to handle pagination in the request
+     */
+    Optional<PaginationRequestConfigurationProperties> getPaginationRequestConfigurationSettings();
+
+    /**
+     * @return true if this endpoint supports sending pagination information in requests
+     */
+    default boolean supportsPaginationInRequests() { return getPaginationRequestConfigurationSettings().isPresent(); }
+
 }
