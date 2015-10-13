@@ -48,11 +48,6 @@ public class ShimDataRequest {
     private OffsetDateTime endDateTime;
 
     /**
-     * The starting row for the data (for pagination purposes)
-     */
-    private Long numToSkip;
-
-    /**
      * Number of rows to return
      */
     private Long numToReturn;
@@ -62,24 +57,6 @@ public class ShimDataRequest {
      */
     private boolean normalize = true;
 
-    public ShimDataRequest() {
-    }
-
-    public ShimDataRequest(String dataTypeKey,
-            AccessParameters accessParameters,
-            OffsetDateTime startDateTime,
-            OffsetDateTime endDateTime,
-            Long numToSkip,
-            Long numToReturn,
-            boolean normalize) {
-        this.dataTypeKey = dataTypeKey;
-        this.accessParameters = accessParameters;
-        this.startDateTime = startDateTime;
-        this.endDateTime = endDateTime;
-        this.numToSkip = numToSkip;
-        this.numToReturn = numToReturn;
-        this.normalize = normalize;
-    }
 
     public void setDataTypeKey(String dataTypeKey) {
         this.dataTypeKey = dataTypeKey;
