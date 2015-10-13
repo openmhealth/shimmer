@@ -21,9 +21,9 @@ import org.joda.time.DateTime;
 import java.time.OffsetDateTime;
 import java.util.List;
 
+
 /**
- * A wrapper for encapsulating data requests sent
- * to shims. Prevents from having long method signatures.
+ * A wrapper for encapsulating data requests sent to shims. Prevents from having long method signatures.
  *
  * @author Danilo Bonilla
  */
@@ -34,15 +34,14 @@ public class ShimDataRequest {
      */
     private String dataTypeKey;
     /**
-     * parameters required for acessing data, this
-     * will likely be oauth token + any extras or some
-     * kind of trusted access.
+     * parameters required for acessing data, this will likely be oauth token + any extras or some kind of trusted
+     * access.
      */
     private AccessParameters accessParameters;
 
     /**
-     * // TODO replace this with filters on effective time, using the Data Point API
-     * The start date for the data being retrieved
+     * // TODO replace this with filters on effective time, using the Data Point API The start date for the data being
+     * retrieved
      */
     private OffsetDateTime startDateTime;
 
@@ -50,11 +49,6 @@ public class ShimDataRequest {
      * The end date for the data being retrieved
      */
     private OffsetDateTime endDateTime;
-
-    /**
-     * List of columns required
-     */
-    private List<String> columnList;
 
     /**
      * The starting row for the data (for pagination purposes)
@@ -67,9 +61,7 @@ public class ShimDataRequest {
     private Long numToReturn;
 
     /**
-     * If true, returns normalized results
-     * from the external data provider, otherwise
-     * returns raw data.
+     * If true, returns normalized results from the external data provider, otherwise returns raw data.
      */
     private boolean normalize = true;
 
@@ -77,18 +69,17 @@ public class ShimDataRequest {
     }
 
     public ShimDataRequest(String dataTypeKey,
-                           AccessParameters accessParameters,
-                           OffsetDateTime startDateTime,
-                           OffsetDateTime endDateTime,
-                           List<String> columnList,
-                           Long numToSkip,
-                           Long numToReturn,
-                           boolean normalize) {
+            AccessParameters accessParameters,
+            OffsetDateTime startDateTime,
+            OffsetDateTime endDateTime,
+            List<String> columnList,
+            Long numToSkip,
+            Long numToReturn,
+            boolean normalize) {
         this.dataTypeKey = dataTypeKey;
         this.accessParameters = accessParameters;
         this.startDateTime = startDateTime;
         this.endDateTime = endDateTime;
-        this.columnList = columnList;
         this.numToSkip = numToSkip;
         this.numToReturn = numToReturn;
         this.normalize = false;
@@ -126,10 +117,6 @@ public class ShimDataRequest {
         this.endDateTime = endDateTime;
     }
 
-    public void setColumnList(List<String> columnList) {
-        this.columnList = columnList;
-    }
-
     public void setNumToSkip(Long numToSkip) {
         this.numToSkip = numToSkip;
     }
@@ -144,10 +131,6 @@ public class ShimDataRequest {
 
     public AccessParameters getAccessParameters() {
         return accessParameters;
-    }
-
-    public List<String> getColumnList() {
-        return columnList;
     }
 
     public Long getNumToSkip() {
