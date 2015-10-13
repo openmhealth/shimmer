@@ -16,10 +16,7 @@
 
 package org.openmhealth.shim;
 
-import org.joda.time.DateTime;
-
 import java.time.OffsetDateTime;
-import java.util.List;
 
 
 /**
@@ -72,7 +69,6 @@ public class ShimDataRequest {
             AccessParameters accessParameters,
             OffsetDateTime startDateTime,
             OffsetDateTime endDateTime,
-            List<String> columnList,
             Long numToSkip,
             Long numToReturn,
             boolean normalize) {
@@ -82,7 +78,7 @@ public class ShimDataRequest {
         this.endDateTime = endDateTime;
         this.numToSkip = numToSkip;
         this.numToReturn = numToReturn;
-        this.normalize = false;
+        this.normalize = normalize;
     }
 
     public void setDataTypeKey(String dataTypeKey) {
@@ -97,10 +93,6 @@ public class ShimDataRequest {
         return startDateTime;
     }
 
-    public DateTime getStartDate() {
-        return getStartDateTime() == null ? null : new DateTime(getStartDateTime().toInstant());
-    }
-
     public void setStartDateTime(OffsetDateTime startDateTime) {
         this.startDateTime = startDateTime;
     }
@@ -109,16 +101,8 @@ public class ShimDataRequest {
         return endDateTime;
     }
 
-    public DateTime getEndDate() {
-        return getStartDateTime() == null ? null : new DateTime(getStartDateTime().toInstant());
-    }
-
     public void setEndDateTime(OffsetDateTime endDateTime) {
         this.endDateTime = endDateTime;
-    }
-
-    public void setNumToSkip(Long numToSkip) {
-        this.numToSkip = numToSkip;
     }
 
     public void setNumToReturn(Long numToReturn) {
@@ -131,10 +115,6 @@ public class ShimDataRequest {
 
     public AccessParameters getAccessParameters() {
         return accessParameters;
-    }
-
-    public Long getNumToSkip() {
-        return numToSkip;
     }
 
     public Long getNumToReturn() {
