@@ -32,6 +32,11 @@ public interface EndpointConfigurationProperties {
     String getId();
 
     /**
+     * @return The name of the API for which this endpoint configuration belongs
+     */
+    String getApiSourceName();
+
+    /**
      * @return the URI template used to send HTTP requests to this endpoint
      */
     UriTemplate getUriTemplate();

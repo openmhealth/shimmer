@@ -16,7 +16,7 @@
 
 package org.openmhealth.shimmer.common.configuration;
 
-import org.openmhealth.shimmer.common.domain.PaginationRequestScheme;
+import org.openmhealth.shimmer.common.domain.pagination.RequestPaginationScheme;
 
 import java.util.Optional;
 
@@ -26,7 +26,7 @@ import java.util.Optional;
  */
 public interface PaginationRequestConfigurationProperties {
 
-    PaginationRequestScheme getPaginationRequestScheme();
+    RequestPaginationScheme getRequestPaginationScheme();
 
     //public boolean isPaginated();
 

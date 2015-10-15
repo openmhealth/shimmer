@@ -14,15 +14,19 @@
  * limitations under the License.
  */
 
-package org.openmhealth.shimmer.common.domain;
+package org.openmhealth.shimmer.common.service;
+
+import org.openmhealth.shimmer.common.configuration.EndpointConfigurationProperties;
+import org.openmhealth.shimmer.common.domain.ProcessedResponse;
+import org.springframework.http.ResponseEntity;
+
 
 /**
  * @author Chris Schaefbauer
  */
-public interface PaginationResponseScheme {
+public interface ResponseProcessor<T> {
 
-
-
-    public String getResponseSchemeName();
+    public ProcessedResponse processResponse(EndpointConfigurationProperties endpointProperties,
+            ResponseEntity<?> responseEntity);
 
 }

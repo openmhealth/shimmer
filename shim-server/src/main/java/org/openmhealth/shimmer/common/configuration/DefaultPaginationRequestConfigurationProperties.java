@@ -16,7 +16,7 @@
 
 package org.openmhealth.shimmer.common.configuration;
 
-import org.openmhealth.shimmer.common.domain.PaginationRequestScheme;
+import org.openmhealth.shimmer.common.domain.pagination.RequestPaginationScheme;
 
 import java.util.Optional;
 
@@ -26,7 +26,7 @@ import java.util.Optional;
  */
 public class DefaultPaginationRequestConfigurationProperties implements PaginationRequestConfigurationProperties {
 
-    private PaginationRequestScheme paginationRequestScheme;
+    private RequestPaginationScheme requestPaginationScheme;
 
     private Integer paginationLimitDefault;
     private Integer paginationMaxLimit;
@@ -34,8 +34,8 @@ public class DefaultPaginationRequestConfigurationProperties implements Paginati
     private String offsetQueryParameterName;
 
     @Override
-    public PaginationRequestScheme getPaginationRequestScheme() {
-        return this.paginationRequestScheme;
+    public RequestPaginationScheme getRequestPaginationScheme() {
+        return this.requestPaginationScheme;
     }
 
     @Override

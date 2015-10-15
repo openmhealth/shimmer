@@ -14,19 +14,12 @@
  * limitations under the License.
  */
 
-package org.openmhealth.shimmer.common.configuration;
-
-import org.openmhealth.shimmer.common.domain.pagination.ResponsePaginationStrategy;
-
+package org.openmhealth.shimmer.common.domain;
 
 /**
  * @author Chris Schaefbauer
  */
-public interface PaginationResponseConfigurationProperties {
-
-    public ResponsePaginationStrategy getPaginationResponseStrategy();
-
-    public String getPagingDirectionality();
+public class ProcessedResponse {
 
 
 }

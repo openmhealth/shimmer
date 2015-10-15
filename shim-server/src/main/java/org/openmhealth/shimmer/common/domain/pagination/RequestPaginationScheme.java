@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.openmhealth.shimmer.common.domain;
+package org.openmhealth.shimmer.common.domain.pagination;
 
 import java.util.Map;
 
@@ -22,7 +22,7 @@ import java.util.Map;
 /**
  * @author Chris Schaefbauer
  */
-public class PaginationRequestScheme {
+public class RequestPaginationScheme {
 
     // Injected from config file
     protected String requestSchemeName;

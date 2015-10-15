@@ -14,16 +14,19 @@
  * limitations under the License.
  */
 
-package org.openmhealth.shimmer.common.domain;
+package org.openmhealth.shimmer.common.domain.pagination;
 
 /**
  * @author Chris Schaefbauer
  */
-public enum PaginationQuerySchemeName {
+public interface PaginationStatus<T extends ResponsePaginationStrategy> {
 
-    CURSOR,
-    TIME,
-    OFFSET,
-    CUSTOM
+    /**
+     * @return whether or not there is more data to retrieve through pagination
+     */
+    public boolean hasMoreData();
+
+
+
 
 }

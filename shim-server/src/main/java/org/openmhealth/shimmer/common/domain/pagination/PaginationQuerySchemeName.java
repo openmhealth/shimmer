@@ -14,19 +14,16 @@
  * limitations under the License.
  */
 
-package org.openmhealth.shimmer.common.configuration;
-
-import org.openmhealth.shimmer.common.domain.pagination.ResponsePaginationStrategy;
-
+package org.openmhealth.shimmer.common.domain.pagination;
 
 /**
  * @author Chris Schaefbauer
  */
-public interface PaginationResponseConfigurationProperties {
+public enum PaginationQuerySchemeName {
 
-    public ResponsePaginationStrategy getPaginationResponseStrategy();
-
-    public String getPagingDirectionality();
-
+    CURSOR,
+    TIME,
+    OFFSET,
+    CUSTOM
 
 }

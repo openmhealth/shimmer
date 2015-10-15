@@ -41,12 +41,12 @@ public class OffsetPaginationQueryParameterTransformer implements PaginationQuer
         paginationParameters.put(configurationProperties.getLimitQueryParameterName().get(),
                 singletonList(Integer.toString(inputLimitValue)));
 
-        if (configurationProperties.getPaginationRequestScheme().getRequestSchemeDetail("offset-type") == "page") {
+        if (configurationProperties.getRequestPaginationScheme().getRequestSchemeDetail("offset-type") == "page") {
 
 
             Integer pageNumberFromSkipAndLimit = getDesiredPageNumberFromSkipAndLimit(inputSkipValue,
                     inputLimitValue, Integer.parseInt(
-                            configurationProperties.getPaginationRequestScheme()
+                            configurationProperties.getRequestPaginationScheme()
                                     .getRequestSchemeDetail("offset-page-start")));
 
             paginationParameters.put(configurationProperties.getOffsetQueryParameterName(),
@@ -54,7 +54,7 @@ public class OffsetPaginationQueryParameterTransformer implements PaginationQuer
 
 
         }
-        else if (configurationProperties.getPaginationRequestScheme().getRequestSchemeDetail("offset-type") == "raw") {
+        else if (configurationProperties.getRequestPaginationScheme().getRequestSchemeDetail("offset-type") == "raw") {
             paginationParameters
                     .put(configurationProperties.getOffsetQueryParameterName(),
                             singletonList(inputSkipValue.toString()));

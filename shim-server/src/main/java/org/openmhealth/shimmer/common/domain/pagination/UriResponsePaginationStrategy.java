@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.openmhealth.shimmer.common.domain;
+package org.openmhealth.shimmer.common.domain.pagination;
 
 import org.openmhealth.shimmer.common.extractor.UriExtractor;
 
@@ -22,7 +22,7 @@ import org.openmhealth.shimmer.common.extractor.UriExtractor;
 /**
  * @author Chris Schaefbauer
  */
-public class UriPaginationResponseScheme implements PaginationResponseScheme {
+public class UriResponsePaginationStrategy implements ResponsePaginationStrategy {
 
 
     private String paginationNextUriPropertyName;

@@ -32,6 +32,7 @@ public class DefaultEndpointConfigurationProperties implements EndpointConfigura
     private DateTimeQueryConfigurationProperties creationDateTimeQuerySettings;
     private DateTimeQueryConfigurationProperties modificationDateTimeQuerySettings;
     private PaginationRequestConfigurationProperties paginationQuerySettings;
+    private String apiSourceName;
 
     @Override
     public String getId() {
@@ -40,6 +41,15 @@ public class DefaultEndpointConfigurationProperties implements EndpointConfigura
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    @Override
+    public String getApiSourceName() {
+        return apiSourceName;
+    }
+
+    public void setApiSourceName(String apiSourceName) {
+        this.apiSourceName = apiSourceName;
     }
 
     @Override
@@ -86,7 +96,6 @@ public class DefaultEndpointConfigurationProperties implements EndpointConfigura
     public void setPaginationQuerySettings(PaginationRequestConfigurationProperties settings){
         this.paginationQuerySettings = settings;
     }
-
 
 
 

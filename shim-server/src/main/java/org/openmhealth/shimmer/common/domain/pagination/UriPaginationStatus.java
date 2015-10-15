@@ -14,19 +14,28 @@
  * limitations under the License.
  */
 
-package org.openmhealth.shimmer.common.configuration;
+package org.openmhealth.shimmer.common.domain.pagination;
 
-import org.openmhealth.shimmer.common.domain.pagination.ResponsePaginationStrategy;
+import java.util.Optional;
 
 
 /**
  * @author Chris Schaefbauer
  */
-public interface PaginationResponseConfigurationProperties {
+public class UriPaginationStatus implements PaginationStatus<UriResponsePaginationStrategy> {
 
-    public ResponsePaginationStrategy getPaginationResponseStrategy();
+    private String uriParameterValue;
 
-    public String getPagingDirectionality();
+    @Override
+    public boolean hasMoreData() {
+        return getUriParameterValue().isPresent();
+    }
 
+    public Optional<String> getUriParameterValue() {
+        return Optional.ofNullable(uriParameterValue);
+    }
 
+    public void setUriParameterValue(String uriParameterValue) {
+        this.uriParameterValue = uriParameterValue;
+    }
 }
