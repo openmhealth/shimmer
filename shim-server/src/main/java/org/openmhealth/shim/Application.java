@@ -274,7 +274,8 @@ public class Application extends WebSecurityConfigurerAdapter {
      * Endpoint for retrieving data from shims.
      *
      * @param username User ID record for which to retrieve data, if not approved this will throw ShimException.
-     * todo: finish javadoc!
+     * <p>
+     * TODO: finish javadoc!
      * @return The shim data response wrapper with data from the shim.
      */
     @RequestMapping(value = "/data/{shim}/{dataType}", produces = APPLICATION_JSON_VALUE)
@@ -282,10 +283,9 @@ public class Application extends WebSecurityConfigurerAdapter {
             @RequestParam(value = "username") String username,
             @PathVariable("shim") String shim,
             @PathVariable("dataType") String dataTypeKey,
-            @RequestParam(value = "normalize", defaultValue = "") String normalize,
+            @RequestParam(value = "normalize", defaultValue = "true") boolean normalize,
             @RequestParam(value = "dateStart", defaultValue = "") String dateStart,
-            @RequestParam(value = "dateEnd", defaultValue = "") String dateEnd,
-            @RequestParam(value = "numToReturn", defaultValue = "50") Long numToReturn)
+            @RequestParam(value = "dateEnd", defaultValue = "") String dateEnd)
             throws ShimException {
 
         setPassThroughAuthentication(username, shim);
@@ -293,18 +293,14 @@ public class Application extends WebSecurityConfigurerAdapter {
         ShimDataRequest shimDataRequest = new ShimDataRequest();
 
         shimDataRequest.setDataTypeKey(dataTypeKey);
+        shimDataRequest.setNormalize(normalize);
 
-        if(!normalize.equals("")){
-            shimDataRequest.setNormalize(Boolean.parseBoolean(normalize));
-        }
-
-        if (!"".equals(dateStart)) {
+        if (!dateStart.isEmpty()) {
             shimDataRequest.setStartDateTime(LocalDate.parse(dateStart).atStartOfDay().atOffset(UTC));
         }
-        if (!"".equals(dateEnd)) {
+        if (!dateEnd.isEmpty()) {
             shimDataRequest.setEndDateTime(LocalDate.parse(dateEnd).atStartOfDay().atOffset(UTC));
         }
-        shimDataRequest.setNumToReturn(numToReturn);
 
         AccessParameters accessParameters = accessParametersRepo.findByUsernameAndShimKey(
                 username, shim, new Sort(Sort.Direction.DESC, "dateCreated"));
@@ -313,6 +309,7 @@ public class Application extends WebSecurityConfigurerAdapter {
             throw new ShimException("User '" + username + "' has not authorized shim: '" + shim + "'");
         }
         shimDataRequest.setAccessParameters(accessParameters);
+
         return shimRegistry.getShim(shim).getData(shimDataRequest);
     }
 

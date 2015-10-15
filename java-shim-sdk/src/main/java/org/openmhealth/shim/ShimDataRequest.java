@@ -48,11 +48,6 @@ public class ShimDataRequest {
     private OffsetDateTime endDateTime;
 
     /**
-     * Number of rows to return
-     */
-    private Long numToReturn;
-
-    /**
      * If true, returns normalized results from the external data provider, otherwise returns raw data.
      */
     private boolean normalize = true;
@@ -82,9 +77,6 @@ public class ShimDataRequest {
         this.endDateTime = endDateTime;
     }
 
-    public void setNumToReturn(Long numToReturn) {
-        this.numToReturn = numToReturn;
-    }
 
     public String getDataTypeKey() {
         return dataTypeKey;
@@ -92,10 +84,6 @@ public class ShimDataRequest {
 
     public AccessParameters getAccessParameters() {
         return accessParameters;
-    }
-
-    public Long getNumToReturn() {
-        return numToReturn;
     }
 
     public boolean getNormalize() {

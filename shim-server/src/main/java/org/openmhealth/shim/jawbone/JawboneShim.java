@@ -150,12 +150,6 @@ public class JawboneShim extends OAuth2ShimBase {
                     + " in shimDataRequest, cannot retrieve data.");
         }
 
-        // FIXME this needs to get changed or documented
-        long numToReturn = 100;
-        if (shimDataRequest.getNumToReturn() != null) {
-            numToReturn = shimDataRequest.getNumToReturn();
-        }
-
         OffsetDateTime today = OffsetDateTime.now();
 
         OffsetDateTime startDateTime = shimDataRequest.getStartDateTime() == null ?
@@ -166,10 +160,11 @@ public class JawboneShim extends OAuth2ShimBase {
                 today.plusDays(1) : shimDataRequest.getEndDateTime();
         long endTimeInEpochSecond = endDateTime.toEpochSecond();
 
-        UriComponentsBuilder uriComponentsBuilder =
-                UriComponentsBuilder.fromUriString(DATA_URL).path(jawboneDataType.getEndPoint())
-                        .queryParam("start_time", startTimeInEpochSecond).queryParam("end_time", endTimeInEpochSecond)
-                        .queryParam("limit", numToReturn);
+        UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder
+                .fromUriString(DATA_URL)
+                .path(jawboneDataType.getEndPoint())
+                .queryParam("start_time", startTimeInEpochSecond)
+                .queryParam("end_time", endTimeInEpochSecond);
 
         ResponseEntity<JsonNode> responseEntity;
         try {
@@ -184,7 +179,7 @@ public class JawboneShim extends OAuth2ShimBase {
         if (shimDataRequest.getNormalize()) {
 
             JawboneDataPointMapper mapper;
-            switch ( jawboneDataType ) {
+            switch (jawboneDataType) {
                 case WEIGHT:
                     mapper = new JawboneBodyWeightDataPointMapper();
                     break;
@@ -222,7 +217,7 @@ public class JawboneShim extends OAuth2ShimBase {
     protected String getAuthorizationUrl(UserRedirectRequiredException exception) {
 
         final OAuth2ProtectedResourceDetails resource = getResource();
-        
+
         UriComponentsBuilder uriBuilder = UriComponentsBuilder
                 .fromUriString(exception.getRedirectUri())
                 .queryParam("state", exception.getStateKey())

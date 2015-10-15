@@ -126,7 +126,6 @@ public abstract class OAuth2ShimBase extends ShimBase implements OAuth2Shim {
     protected ShimDataRequest getTriggerDataRequest() {
         ShimDataRequest shimDataRequest = new ShimDataRequest();
         shimDataRequest.setDataTypeKey(getShimDataTypes()[0].toString());
-        shimDataRequest.setNumToReturn(1l);
         return shimDataRequest;
     }
 

@@ -165,16 +165,11 @@ public class RunkeeperShim extends OAuth2ShimBase {
         OffsetDateTime endDateTime = shimDataRequest.getEndDateTime() == null ?
                 now.plusDays(1) : shimDataRequest.getEndDateTime();
 
-        long numToReturn = shimDataRequest.getNumToReturn() == null ||
-                shimDataRequest.getNumToReturn() <= 0 ? 100 :
-                shimDataRequest.getNumToReturn();
-
         UriComponentsBuilder uriBuilder = UriComponentsBuilder
                 .fromUriString(DATA_URL)
                 .pathSegment(runkeeperDataType.getEndPointUrl())
                 .queryParam("noEarlierThan", startDateTime.toLocalDate())
                 .queryParam("noLaterThan", endDateTime.toLocalDate())
-                .queryParam("pageSize", numToReturn)
                 .queryParam("detail", true); // added to all endpoints to support summaries
 
 
