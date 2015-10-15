@@ -16,6 +16,7 @@
 
 package org.openmhealth.shimmer.common.domain.parameters;
 
+import java.util.List;
 import java.util.Optional;
 
 
@@ -26,6 +27,7 @@ public class NumberRequestParameter extends RequestParameter<Double> {
 
     private Double maximumValue;
     private Double minimumValue;
+    private List<Double> allowableValues;
 
     public Optional<Double> getMaximumValue() {
         return Optional.ofNullable(maximumValue);
@@ -44,5 +46,11 @@ public class NumberRequestParameter extends RequestParameter<Double> {
     }
 
 
+    public Optional<List<Double>> getAllowableValues() {
+        return Optional.ofNullable(allowableValues);
+    }
 
+    public void setAllowableValues(List<Double> allowableValues) {
+        this.allowableValues = allowableValues;
+    }
 }

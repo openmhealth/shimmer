@@ -16,10 +16,22 @@
 
 package org.openmhealth.shimmer.common.domain.parameters;
 
+import java.util.List;
+import java.util.Optional;
+
+
 /**
  * @author Chris Schaefbauer
  */
 public class StringRequestParameter extends RequestParameter<String> {
 
+    private List<String> allowableValues;
 
+    public Optional<List<String>> getAllowableValues() {
+        return Optional.ofNullable(allowableValues);
+    }
+
+    public void setAllowableValues(List<String> allowableValues) {
+        this.allowableValues = allowableValues;
+    }
 }

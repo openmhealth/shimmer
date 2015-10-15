@@ -26,8 +26,6 @@ import java.time.format.DateTimeFormatter;
 public class DateTimeRequestParameter extends RequestParameter<OffsetDateTime> {
 
     private DateTimeFormatter dateTimeFormat;
-//    DurationUnitValue minimumValue;
-//    DurationUnitValue maximumValue;
 
     public DateTimeFormatter getDateTimeFormat() {
         return dateTimeFormat;

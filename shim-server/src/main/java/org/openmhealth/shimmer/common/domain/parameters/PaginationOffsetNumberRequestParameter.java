@@ -25,14 +25,14 @@ public class PaginationOffsetNumberRequestParameter extends NumberRequestParamet
         return paginationOffsetType;
     }
 
-    public void setPaginationOffsetType(
-            PaginationOffsetType paginationOffsetType) {
+    public void setPaginationOffsetType(PaginationOffsetType paginationOffsetType) {
         this.paginationOffsetType = paginationOffsetType;
     }
 
     PaginationOffsetType paginationOffsetType;
 
-    public enum PaginationOffsetType{
+
+    public enum PaginationOffsetType {
         PAGE,
         RAW
     }

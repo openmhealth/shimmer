@@ -29,9 +29,6 @@ public abstract class RequestParameter<T> {
     private boolean required;
     private String parameterName;
 
-    //private Optional<DateTimeFormatter> dateTimeFormatter;
-
-
     public RequestParameterLocation getRequestParameterLocation() {
         return requestParameterLocation;
     }
