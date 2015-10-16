@@ -5,15 +5,17 @@
 # see https://cloud.google.com/deployment-manager/configuration/create-configuration-file
 
 imports:
-  - path: shimmer-instance.jinja
+  - path: container_manifest.yaml
+  - path: vm-template.py
 
 resources:
-- name: shimmer
-  type: shimmer-instance.jinja  # a customisation of the instance resource type
+- name: vm
+  type: vm-template.py  # a customisation of the instance resource type
   properties:
-    instanceImage: container-vm # an alias to the latest container VM, see https://cloud.google.com/compute/docs/containers/container_vms
+    instanceImage: container-vm-v20150806 # see https://cloud.google.com/compute/docs/containers/container_vms
     instanceName: shimmer
     instanceZone: us-central1-a
     instanceMachineType: n1-standard-1
     instanceBootDiskType: pd-standard
     instanceNetwork: default
+    containerManifest: container_manifest.yaml

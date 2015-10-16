@@ -1,3 +1,8 @@
+# This is a container manifest, the Kubernetes equivalent of Docker Compose.
+#
+# references:
+#  https://cloud.google.com/compute/docs/containers/container_vms
+
 version: v1
 kind: Pod
 metadata:
