@@ -9,11 +9,11 @@ imports:
   - path: vm-template.py
 
 resources:
-- name: vm
+- name: shimmer
   type: vm-template.py  # a customisation of the instance resource type
   properties:
     instanceImage: container-vm-v20150806 # see https://cloud.google.com/compute/docs/containers/container_vms
-    instanceName: shimmer
+    instanceName: shimmer-vm
     instanceZone: us-central1-a
     instanceMachineType: n1-standard-1
     instanceBootDiskType: pd-standard
