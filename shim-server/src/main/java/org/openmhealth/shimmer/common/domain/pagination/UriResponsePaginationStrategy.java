@@ -16,7 +16,9 @@
 
 package org.openmhealth.shimmer.common.domain.pagination;
 
-import org.openmhealth.shimmer.common.extractor.UriExtractor;
+import org.apache.http.client.methods.RequestBuilder;
+import org.openmhealth.shimmer.common.domain.ResponseLocation;
+import org.openmhealth.shimmer.common.extractor.PaginationResponseExtractor;
 
 
 /**
@@ -25,16 +27,17 @@ import org.openmhealth.shimmer.common.extractor.UriExtractor;
 public class UriResponsePaginationStrategy implements ResponsePaginationStrategy {
 
 
-    private String paginationNextUriPropertyName;
+    private String paginationNextUriPropertyIdentifier;
     private String paginationBaseUri;
-    private UriExtractor uriExtractor;
+    private PaginationResponseExtractor paginationResponseExtractor;
+    private ResponseLocation paginationResponseLocation;
 
-    public String getPaginationNextUriPropertyName() {
-        return paginationNextUriPropertyName;
+    public String getPaginationNextUriPropertyIdentifier() {
+        return paginationNextUriPropertyIdentifier;
     }
 
-    public void setPaginationNextUriPropertyName(String paginationNextUriPropertyName) {
-        this.paginationNextUriPropertyName = paginationNextUriPropertyName;
+    public void setPaginationNextUriPropertyIdentifier(String paginationNextUriPropertyIdentifier) {
+        this.paginationNextUriPropertyIdentifier = paginationNextUriPropertyIdentifier;
     }
 
     public String getPaginationBaseUri() {
@@ -46,11 +49,33 @@ public class UriResponsePaginationStrategy implements ResponsePaginationStrategy
     }
 
     @Override
-    public String getResponseSchemeName() {
-        return "URI";
+    public PaginationResponseType getPaginationResponseType() {
+        return PaginationResponseType.URI;
+    }
+
+    @Override
+    public ResponseLocation getPaginationResponseLocation() {
+        return paginationResponseLocation;
+    }
+
+    @Override
+    public RequestBuilder operateOnRequest(RequestBuilder requestBuilder) {
+        return null;
+    }
+
+    public void setPaginationResponseLocation(
+            ResponseLocation paginationResponseLocation) {
+        this.paginationResponseLocation = paginationResponseLocation;
     }
 
 
+    public PaginationResponseExtractor getPaginationResponseExtractor() {
+        return paginationResponseExtractor;
+    }
+
+    public void setPaginationResponseExtractor(PaginationResponseExtractor paginationResponseExtractor) {
+        this.paginationResponseExtractor = paginationResponseExtractor;
+    }
 
 
 }

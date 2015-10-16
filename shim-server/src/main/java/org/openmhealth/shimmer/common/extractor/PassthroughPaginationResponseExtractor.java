@@ -16,14 +16,13 @@
 
 package org.openmhealth.shimmer.common.extractor;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import org.springframework.web.util.UriComponentsBuilder;
-
-
 /**
  * @author Chris Schaefbauer
  */
-public interface UriExtractor {
+public class PassthroughPaginationResponseExtractor implements PaginationResponseExtractor {
 
-    public UriComponentsBuilder extractUri(JsonNode responseNode);
+    @Override
+    public String extractPaginationResponse(String rawPaginationInformationFromResponse) {
+        return rawPaginationInformationFromResponse;
+    }
 }

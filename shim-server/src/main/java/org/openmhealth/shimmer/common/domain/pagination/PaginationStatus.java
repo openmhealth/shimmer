@@ -17,6 +17,7 @@
 package org.openmhealth.shimmer.common.domain.pagination;
 
 /**
+ * Encapsulates the information necessary to determine whether more information exists in pagination and how to follow that information.
  * @author Chris Schaefbauer
  */
 public interface PaginationStatus<T extends ResponsePaginationStrategy> {
@@ -25,6 +26,12 @@ public interface PaginationStatus<T extends ResponsePaginationStrategy> {
      * @return whether or not there is more data to retrieve through pagination
      */
     public boolean hasMoreData();
+
+    public T getResponseStrategy();
+
+    public void setResponseStrategy(T paginationResponseStrategy);
+
+    public T createNewResponseStrategyForType();
 
 
 

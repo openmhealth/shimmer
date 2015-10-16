@@ -14,21 +14,36 @@
  * limitations under the License.
  */
 
-package org.openmhealth.shimmer.common.domain.pagination;
+package org.openmhealth.shimmer.common.configuration;
 
-import org.apache.http.client.methods.RequestBuilder;
 import org.openmhealth.shimmer.common.domain.ResponseLocation;
+import org.openmhealth.shimmer.common.domain.pagination.PaginationResponseType;
 
 
 /**
  * @author Chris Schaefbauer
  */
-public interface ResponsePaginationStrategy {
+public class TokenPaginationResponseConfigurationProperties implements PaginationResponseConfigurationProperties {
 
-    public PaginationResponseType getPaginationResponseType();
 
-    public ResponseLocation getPaginationResponseLocation();
 
-    public RequestBuilder operateOnRequest(RequestBuilder requestBuilder);
+    @Override
+    public PaginationResponseType getResponseType() {
+        return null;
+    }
 
+    @Override
+    public String getPagingDirectionality() {
+        return null;
+    }
+
+    @Override
+    public ResponseLocation getPaginationResponseLocation() {
+        return null;
+    }
+
+    @Override
+    public String getNextPaginationPropertyIdentifier() {
+        return null;
+    }
 }

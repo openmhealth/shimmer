@@ -24,18 +24,45 @@ import java.util.Optional;
  */
 public class UriPaginationStatus implements PaginationStatus<UriResponsePaginationStrategy> {
 
-    private String uriParameterValue;
+    private String nextUriStringFromResponse;
+    private UriResponsePaginationStrategy uriResponsePaginationStrategy;
+
+    public String getBaseUri() {
+        return baseUri;
+    }
+
+    public void setBaseUri(String baseUri) {
+        this.baseUri = baseUri;
+    }
+
+    private String baseUri;
 
     @Override
     public boolean hasMoreData() {
-        return getUriParameterValue().isPresent();
+        return getNextUriStringFromResponse().isPresent();
     }
 
-    public Optional<String> getUriParameterValue() {
-        return Optional.ofNullable(uriParameterValue);
+    @Override
+    public UriResponsePaginationStrategy getResponseStrategy() {
+        return uriResponsePaginationStrategy;
     }
 
-    public void setUriParameterValue(String uriParameterValue) {
-        this.uriParameterValue = uriParameterValue;
+    @Override
+    public void setResponseStrategy(UriResponsePaginationStrategy paginationResponseStrategy) {
+        this.uriResponsePaginationStrategy = paginationResponseStrategy;
     }
+
+    @Override
+    public UriResponsePaginationStrategy createNewResponseStrategyForType() {
+        return new UriResponsePaginationStrategy();
+    }
+
+    public Optional<String> getNextUriStringFromResponse() {
+        return Optional.ofNullable(nextUriStringFromResponse);
+    }
+
+    public void setNextUriStringFromResponse(String nextUriStringFromResponse) {
+        this.nextUriStringFromResponse = nextUriStringFromResponse;
+    }
+
 }

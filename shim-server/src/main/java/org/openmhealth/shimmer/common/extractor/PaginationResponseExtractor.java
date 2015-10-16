@@ -14,21 +14,12 @@
  * limitations under the License.
  */
 
-package org.openmhealth.shimmer.common.domain.pagination;
-
-import org.apache.http.client.methods.RequestBuilder;
-import org.openmhealth.shimmer.common.domain.ResponseLocation;
-
+package org.openmhealth.shimmer.common.extractor;
 
 /**
  * @author Chris Schaefbauer
  */
-public interface ResponsePaginationStrategy {
+public interface PaginationResponseExtractor {
 
-    public PaginationResponseType getPaginationResponseType();
-
-    public ResponseLocation getPaginationResponseLocation();
-
-    public RequestBuilder operateOnRequest(RequestBuilder requestBuilder);
-
+    public String extractPaginationResponse(String rawPaginationInformationFromResponse);
 }

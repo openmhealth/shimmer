@@ -16,19 +16,13 @@
 
 package org.openmhealth.shimmer.common.domain.pagination;
 
-import org.apache.http.client.methods.RequestBuilder;
-import org.openmhealth.shimmer.common.domain.ResponseLocation;
-
-
 /**
  * @author Chris Schaefbauer
  */
-public interface ResponsePaginationStrategy {
+public enum PaginationResponseType {
 
-    public PaginationResponseType getPaginationResponseType();
-
-    public ResponseLocation getPaginationResponseLocation();
-
-    public RequestBuilder operateOnRequest(RequestBuilder requestBuilder);
-
+    URI,
+    TOKEN,
+    MANUAL,
+    CUSTOM
 }

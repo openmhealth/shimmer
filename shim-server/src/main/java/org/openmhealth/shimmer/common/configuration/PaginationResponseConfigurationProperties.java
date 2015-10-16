@@ -16,7 +16,8 @@
 
 package org.openmhealth.shimmer.common.configuration;
 
-import org.openmhealth.shimmer.common.domain.pagination.ResponsePaginationStrategy;
+import org.openmhealth.shimmer.common.domain.ResponseLocation;
+import org.openmhealth.shimmer.common.domain.pagination.PaginationResponseType;
 
 
 /**
@@ -24,9 +25,13 @@ import org.openmhealth.shimmer.common.domain.pagination.ResponsePaginationStrate
  */
 public interface PaginationResponseConfigurationProperties {
 
-    public ResponsePaginationStrategy getPaginationResponseStrategy();
+    public PaginationResponseType getResponseType();
 
     public String getPagingDirectionality();
+
+    public ResponseLocation getPaginationResponseLocation();
+
+    public String getNextPaginationPropertyIdentifier();
 
 
 }

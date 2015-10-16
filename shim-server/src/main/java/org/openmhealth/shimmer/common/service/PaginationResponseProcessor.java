@@ -16,6 +16,7 @@
 
 package org.openmhealth.shimmer.common.service;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import org.openmhealth.shimmer.common.configuration.PaginationResponseConfigurationProperties;
 import org.openmhealth.shimmer.common.domain.pagination.PaginationStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,14 +25,14 @@ import org.springframework.http.ResponseEntity;
 /**
  * @author Chris Schaefbauer
  */
-public interface PaginationResponseProcessor {
+public interface PaginationResponseProcessor<T extends PaginationResponseConfigurationProperties> {
 
     /**
      * Processes the pagination content in the response and loads the object to respond to requests for information about pagination.
      * @param paginationResponseProperties
      * @param responseEntity
      */
-    public PaginationStatus processPaginationResponse(PaginationResponseConfigurationProperties paginationResponseProperties,
-            ResponseEntity<?> responseEntity);
+    public PaginationStatus processPaginationResponse(T paginationResponseProperties,
+            ResponseEntity<JsonNode> responseEntity);
 }
 
