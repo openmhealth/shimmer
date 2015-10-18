@@ -46,7 +46,6 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.*;
  * @author Emerson Farrugia
  * @author Danilo Bonilla
  * @author Chris Schaefbauer
- *
  * @see <a href="https://jawbone.com/up/developer/endpoints/workouts">API documentation</a>
  */
 public class JawbonePhysicalActivityDataPointMapper extends JawboneDataPointMapper<PhysicalActivity> {
@@ -100,7 +99,8 @@ public class JawbonePhysicalActivityDataPointMapper extends JawboneDataPointMapp
 
         PhysicalActivity.Builder builder = new PhysicalActivity.Builder(activityName);
 
-        asOptionalInteger(workoutNode, "details.meters")
+
+        asOptionalBigDecimal(workoutNode, "details.meters")
                 .ifPresent(distance -> builder.setDistance(new LengthUnitValue(METER, distance)));
 
         Optional<Long> endTimestamp = asOptionalLong(workoutNode, "time_completed");
@@ -152,7 +152,7 @@ public class JawbonePhysicalActivityDataPointMapper extends JawboneDataPointMapp
      */
     public SelfReportedIntensity asSelfReportedIntensity(int intensityValue) {
 
-        switch (intensityValue) {
+        switch ( intensityValue ) {
             case 1:
                 return LIGHT;
             case 2:

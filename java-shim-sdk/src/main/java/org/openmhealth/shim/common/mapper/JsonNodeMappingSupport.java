@@ -5,6 +5,7 @@ import com.google.common.base.Splitter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.math.BigDecimal;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -83,6 +84,7 @@ public class JsonNodeMappingSupport {
     }
 
     // TODO add tests
+
     /**
      * @param parentNode a parent node
      * @param path the path to a child node
@@ -108,6 +110,7 @@ public class JsonNodeMappingSupport {
     }
 
     // TODO add tests
+
     /**
      * @param parentNode a parent node
      * @param path the path to a child node
@@ -395,6 +398,17 @@ public class JsonNodeMappingSupport {
     public static Optional<Integer> asOptionalInteger(JsonNode parentNode, String path) {
 
         return asOptionalValue(parentNode, path, JsonNode::isIntegralNumber, JsonNode::intValue);
+    }
+
+    /**
+     * @param parentNode a parent node
+     * @param path the path to a child node
+     * @return the value of the child node as a Big Decimal, or an empty optional if the child doesn't exist or if the
+     * value of the child node isn't numeric
+     */
+    public static Optional<BigDecimal> asOptionalBigDecimal(JsonNode parentNode, String path) {
+
+        return asOptionalValue(parentNode, path, JsonNode::isNumber, JsonNode::decimalValue);
     }
 
     /**
