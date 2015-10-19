@@ -33,6 +33,7 @@ public class DefaultEndpointConfigurationProperties implements EndpointConfigura
     private DateTimeQueryConfigurationProperties modificationDateTimeQuerySettings;
     private PaginationRequestConfigurationProperties paginationQuerySettings;
     private String apiSourceName;
+    private PaginationResponseConfigurationProperties paginationResponseSettings;
 
     @Override
     public String getId() {
@@ -97,6 +98,13 @@ public class DefaultEndpointConfigurationProperties implements EndpointConfigura
         this.paginationQuerySettings = settings;
     }
 
+    @Override
+    public Optional<PaginationResponseConfigurationProperties> getPaginationResponseConfigurationSettings() {
+        return Optional.ofNullable(this.paginationResponseSettings);
+    }
 
+    public void setPaginationResponseSettings(PaginationResponseConfigurationProperties settings){
+        this.paginationResponseSettings = settings;
+    }
 
 }

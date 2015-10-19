@@ -14,20 +14,19 @@
  * limitations under the License.
  */
 
-package org.openmhealth.shimmer.common.domain;
+package org.openmhealth.shimmer.common.domain.pagination;
 
-import org.openmhealth.shimmer.common.domain.pagination.PaginationStatus;
+import org.apache.http.client.methods.RequestBuilder;
 
 
 /**
  * @author Chris Schaefbauer
  */
-public class ProcessedResponse {
+public class ConcatUriResponsePaginationStrategy extends UriResponsePaginationStrategy {
 
+    @Override
+    public RequestBuilder operateOnRequest(RequestBuilder requestBuilder) {
 
-    private PaginationStatus paginationStatus;
-
-    public void setPaginationStatus(PaginationStatus paginationStatus){
-        this.paginationStatus = paginationStatus;
+        requestBuilder.setUri(getPaginationBaseUri().concat(g))
     }
 }

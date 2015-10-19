@@ -19,6 +19,7 @@ package org.openmhealth.shimmer.common.service;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.openmhealth.shimmer.common.configuration.EndpointConfigurationProperties;
 import org.openmhealth.shimmer.common.domain.ProcessedResponse;
+import org.openmhealth.shimmer.common.domain.pagination.PaginationStatus;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -35,23 +36,40 @@ public class ResponseProcessorImpl<T> implements ResponseProcessor<T> {
         ProcessedResponse processedResponse = new ProcessedResponse();
 
         HttpStatus statusCode = responseEntity.getStatusCode();
-//        if(!statusCode.is2xxSuccessful()){
-//            //log issue
-//            return ProcessedResponse.Error(statusCode);
-//        }
-//
-//        processedResponse.setStatusCode(statusCode);
-//
-//        // Need to be able to get the shim and then its mappers
-//        Shim targetShim = getShimByApiSourceName(endpointProperties.getApiSourceName());
-//        DataPointMapper mapper = targetShim.getMapperForSchema();
-//        List<DataPoint> dataPoints = mapper.asDataPoints(Collections.singletonList(responseEntity.getBody()));
-//
-//        processedResponse.setMappedData(dataPoints);
-//
-//        PaginationStatus paginationStatus;
-//        PaginationResponseProcessor paginationProcessor =
-//        processedResponse.setPaginationStatus(paginationStatus);
+        //        if(!statusCode.is2xxSuccessful()){
+        //            //log issue
+        //            return ProcessedResponse.Error(statusCode);
+        //        }
+        //
+        //        processedResponse.setStatusCode(statusCode);
+        //
+        //        // Need to be able to get the shim and then its mappers
+        //        Shim targetShim = getShimByApiSourceName(endpointProperties.getApiSourceName());
+        //        DataPointMapper mapper = targetShim.getMapperForSchema();
+        //        List<DataPoint> dataPoints = mapper.asDataPoints(Collections.singletonList(responseEntity.getBody()));
+        //
+        //        processedResponse.setMappedData(dataPoints);
+        //
+        if (endpointProperties.supportsPaginationInResponses()) {
+            PaginationResponseProcessor paginationProcessor;
+            switch ( endpointProperties.getPaginationResponseConfigurationSettings().get().getResponseType() ) {
+                case URI:
+                    paginationProcessor = new UriPaginationResponseProcessor();
+                    break;
+//                case TOKEN:
+//                    //paginationProcessor = new TokenPaginationResponseProcessor();
+//                    break;
+                default:
+                    throw new UnsupportedOperationException();
+
+            }
+
+            PaginationStatus paginationStatus = paginationProcessor.processPaginationResponse(
+                    endpointProperties.getPaginationResponseConfigurationSettings().get(),
+                    responseEntity);
+
+            processedResponse.setPaginationStatus(paginationStatus);
+        }
 
         return processedResponse;
     }

@@ -24,7 +24,7 @@ import org.openmhealth.shimmer.common.extractor.PaginationResponseExtractor;
 /**
  * @author Chris Schaefbauer
  */
-public class UriResponsePaginationStrategy implements ResponsePaginationStrategy {
+public abstract class UriResponsePaginationStrategy implements ResponsePaginationStrategy {
 
 
     private String paginationNextUriPropertyIdentifier;
@@ -59,15 +59,12 @@ public class UriResponsePaginationStrategy implements ResponsePaginationStrategy
     }
 
     @Override
-    public RequestBuilder operateOnRequest(RequestBuilder requestBuilder) {
-        return null;
-    }
+    public abstract RequestBuilder operateOnRequest(RequestBuilder requestBuilder);
 
     public void setPaginationResponseLocation(
             ResponseLocation paginationResponseLocation) {
         this.paginationResponseLocation = paginationResponseLocation;
     }
-
 
     public PaginationResponseExtractor getPaginationResponseExtractor() {
         return paginationResponseExtractor;
