@@ -21,12 +21,21 @@ import org.springframework.http.ResponseEntity;
 
 import java.util.Optional;
 
+import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asOptionalString;
+
 
 /**
  * @author Chris Schaefbauer
  */
-public interface PaginationResponseExtractor {
+public class SimpleBodyPaginationResponseExtractor implements PaginationResponseExtractor {
 
+
+    @Override
     public Optional<String> extractPaginationResponse(ResponseEntity<JsonNode> responseEntity,
-            String paginationPropertyIdentifier);
+            String paginationPropertyIdentifier) {
+
+        return asOptionalString(responseEntity.getBody(), paginationPropertyIdentifier);
+    }
+
+
 }

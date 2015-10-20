@@ -16,13 +16,22 @@
 
 package org.openmhealth.shimmer.common.extractor;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import org.springframework.http.ResponseEntity;
+
+import java.util.Optional;
+
+
 /**
  * @author Chris Schaefbauer
  */
-public class PassthroughPaginationResponseExtractor implements PaginationResponseExtractor {
+public class SimpleHeaderPaginationResponseExtractor implements PaginationResponseExtractor {
 
     @Override
-    public String extractPaginationResponse(String rawPaginationInformationFromResponse) {
-        return rawPaginationInformationFromResponse;
+    public Optional<String> extractPaginationResponse(ResponseEntity<JsonNode> responseEntity,
+            String paginationPropertyIdentifier) {
+
+        String pagingHeader = responseEntity.getHeaders().getFirst(paginationPropertyIdentifier);
+        return Optional.ofNullable(pagingHeader);
     }
 }
