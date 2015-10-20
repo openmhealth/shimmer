@@ -22,47 +22,43 @@ import java.util.Optional;
 /**
  * @author Chris Schaefbauer
  */
-public class UriPaginationStatus implements PaginationStatus<UriResponsePaginationStrategy> {
+public class UriPaginationStatus implements PaginationStatus {
 
-    private String nextUriStringFromResponse;
-    private UriResponsePaginationStrategy uriResponsePaginationStrategy;
-
-    public String getBaseUri() {
-        return baseUri;
-    }
-
-    public void setBaseUri(String baseUri) {
-        this.baseUri = baseUri;
-    }
-
-    private String baseUri;
+    private String nextPageUriValue;
+    //private String baseUri;
 
     @Override
     public boolean hasMoreData() {
-        return getNextUriStringFromResponse().isPresent();
+        return getPaginationResponseValue().isPresent();
     }
 
-    @Override
-    public UriResponsePaginationStrategy getResponseStrategy() {
-        return uriResponsePaginationStrategy;
+//    public String getBaseUri() {
+//        return baseUri;
+//    }
+//
+//    public void setBaseUri(String baseUri) {
+//        this.baseUri = baseUri;
+//    }
+
+    public Optional<String> getPaginationResponseValue() {
+        return Optional.ofNullable(nextPageUriValue);
     }
 
-    @Override
-    public void setResponseStrategy(UriResponsePaginationStrategy paginationResponseStrategy) {
-        this.uriResponsePaginationStrategy = paginationResponseStrategy;
+    public void setPaginationResponseValue(String paginationNextUriValue) {
+        this.nextPageUriValue = paginationNextUriValue;
     }
 
-    @Override
-    public UriResponsePaginationStrategy createNewResponseStrategyForType() {
-        return new UriResponsePaginationStrategy();
-    }
+//    @Override
+//    public UriResponsePaginationStrategy createNewResponseStrategyForType(
+//            UriPaginationResponseConfigurationProperties configuration) {
+//
+//        if(configuration.getBaseUri().isPresent() && !configuration.getBaseUri().get().isEmpty()){
+//            return new ConcatUriResponsePaginationStrategy();
+//        }
+//
+//        return new CompleteUriResponsePaginationStrategy();
+//    }
 
-    public Optional<String> getNextUriStringFromResponse() {
-        return Optional.ofNullable(nextUriStringFromResponse);
-    }
 
-    public void setNextUriStringFromResponse(String nextUriStringFromResponse) {
-        this.nextUriStringFromResponse = nextUriStringFromResponse;
-    }
 
 }

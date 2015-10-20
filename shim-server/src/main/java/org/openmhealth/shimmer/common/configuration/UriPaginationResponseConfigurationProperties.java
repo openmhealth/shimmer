@@ -56,6 +56,16 @@ public class UriPaginationResponseConfigurationProperties implements PaginationR
         return null;
     }
 
+//    @Override
+//    public UriResponsePaginationStrategy createNewResponseStrategyForType() {
+//
+//        if(getBaseUri().isPresent() && !getBaseUri().get().isEmpty()){
+//            return new ConcatUriResponsePaginationStrategy();
+//        }
+//
+//        return new CompleteUriResponsePaginationStrategy();
+//    }
+
 
     @Override
     public String getPagingDirectionality() {

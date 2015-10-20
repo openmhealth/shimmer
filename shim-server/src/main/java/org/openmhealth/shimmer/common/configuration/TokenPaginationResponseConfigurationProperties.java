@@ -19,17 +19,19 @@ package org.openmhealth.shimmer.common.configuration;
 import org.openmhealth.shimmer.common.domain.ResponseLocation;
 import org.openmhealth.shimmer.common.domain.pagination.PaginationResponseType;
 
+import static org.openmhealth.shimmer.common.domain.pagination.PaginationResponseType.*;
+
 
 /**
  * @author Chris Schaefbauer
  */
-public class TokenPaginationResponseConfigurationProperties implements PaginationResponseConfigurationProperties {
-
+public class TokenPaginationResponseConfigurationProperties
+        implements PaginationResponseConfigurationProperties {
 
 
     @Override
     public PaginationResponseType getResponseType() {
-        return null;
+        return TOKEN;
     }
 
     @Override
@@ -46,4 +48,9 @@ public class TokenPaginationResponseConfigurationProperties implements Paginatio
     public String getNextPaginationPropertyIdentifier() {
         return null;
     }
+
+//    @Override
+//    public TokenResponsePaginationStrategy createNewResponseStrategyForType() {
+//        return null;
+//    }
 }

@@ -17,27 +17,19 @@
 package org.openmhealth.shimmer.common.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.google.common.base.Joiner;
-import com.google.common.collect.Lists;
 import org.openmhealth.shimmer.common.configuration.UriPaginationResponseConfigurationProperties;
-import org.openmhealth.shimmer.common.domain.ResponseLocation;
 import org.openmhealth.shimmer.common.domain.pagination.PaginationStatus;
 import org.openmhealth.shimmer.common.domain.pagination.UriPaginationStatus;
-import org.openmhealth.shimmer.common.domain.pagination.UriResponsePaginationStrategy;
-import org.openmhealth.shimmer.common.extractor.PaginationResponseExtractor;
-import org.openmhealth.shimmer.common.extractor.PassthroughPaginationResponseExtractor;
 import org.springframework.http.ResponseEntity;
-
-import java.util.List;
-
-import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asOptionalString;
 
 
 /**
  * @author Chris Schaefbauer
  */
 public class UriPaginationResponseProcessor
-        implements PaginationResponseProcessor<UriPaginationResponseConfigurationProperties> {
+        extends PaginationResponseProcessor<UriPaginationResponseConfigurationProperties> {
+
+
 
     @Override
     public PaginationStatus processPaginationResponse(
@@ -45,42 +37,16 @@ public class UriPaginationResponseProcessor
             ResponseEntity<JsonNode> responseEntity) {
 
         UriPaginationStatus paginationStatus = new UriPaginationStatus();
-        //        UriResponsePaginationStrategy paginationResponseStrategy =
-        //                (UriResponsePaginationStrategy) paginationResponseProperties.getPaginationResponseStrategy();
 
-        // addresses both should we paginate and how
-        if (paginationResponseProperties.getPaginationResponseLocation() == ResponseLocation.BODY) {
-            //body
-            String paginationNextUriPropertyName = paginationResponseProperties.getNextPaginationPropertyIdentifier();
-            asOptionalString(responseEntity.getBody(), paginationNextUriPropertyName)
-                    .ifPresent(nextUri -> paginationStatus.setNextUriStringFromResponse(nextUri));
-        }
-        else {
-            List<String> pagingHeaders = responseEntity.getHeaders().getOrDefault(
-                    paginationResponseProperties.getNextPaginationPropertyIdentifier(), Lists.newArrayList());
-            if (!pagingHeaders.isEmpty()) {
+        String paginationNextUriPropertyName = paginationResponseProperties.getNextPaginationPropertyIdentifier();
+        getPaginationResponseExtractor().extractPaginationResponse(responseEntity, paginationNextUriPropertyName)
+                .ifPresent(nextUri -> paginationStatus.setPaginationResponseValue(nextUri));
 
-                //String extractedUri = paginationResponseStrategy.getPaginationResponseExtractor().extractUri(join(pagingHeaders,
-                // ","));
-
-                paginationStatus.setNextUriStringFromResponse(Joiner.on(",").skipNulls().join(pagingHeaders));
-            }
-        }
-
-        // now on to the rest of how we paginate
-        paginationResponseProperties.getBaseUri().ifPresent(baseUri -> paginationStatus.setBaseUri(baseUri));
-
-        UriResponsePaginationStrategy uriResponsePaginationStrategy =
-                paginationStatus.createNewResponseStrategyForType(); // Could we use a builder here?
-        uriResponsePaginationStrategy.setPaginationResponseExtractor(getPaginationResponseExtractor());
-
-
-        paginationStatus.setResponseStrategy(uriResponsePaginationStrategy);
+        // now on to the rest of how we paginate, though we may not even need this since it comes from the configs
+        //paginationResponseProperties.getBaseUri().ifPresent(baseUri -> paginationStatus.setBaseUri(baseUri));
 
         return paginationStatus;
     }
 
-    public PaginationResponseExtractor getPaginationResponseExtractor() {
-        return new PassthroughPaginationResponseExtractor(); // This needs to get dependency injected somehow, maybe from Shim?
-    }
+
 }

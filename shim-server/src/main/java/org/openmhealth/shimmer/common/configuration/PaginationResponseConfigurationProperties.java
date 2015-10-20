@@ -23,7 +23,7 @@ import org.openmhealth.shimmer.common.domain.pagination.PaginationResponseType;
 /**
  * @author Chris Schaefbauer
  */
-public interface PaginationResponseConfigurationProperties {
+public interface PaginationResponseConfigurationProperties<T> {
 
     public PaginationResponseType getResponseType();
 
@@ -32,6 +32,8 @@ public interface PaginationResponseConfigurationProperties {
     public ResponseLocation getPaginationResponseLocation();
 
     public String getNextPaginationPropertyIdentifier();
+
+    //public T createNewResponseStrategyForType();
 
 
 }
