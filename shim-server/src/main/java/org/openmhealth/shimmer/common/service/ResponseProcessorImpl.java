@@ -44,7 +44,8 @@ public class ResponseProcessorImpl<T> implements ResponseProcessor<T> {
         //        processedResponse.setStatusCode(statusCode);
         //
         //        // Need to be able to get the shim and then its mappers
-        //        Shim targetShim = getShimByApiSourceName(endpointProperties.getApiSourceName());
+        //        Shim targetShim;
+        //= getShimByApiSourceName(endpointProperties.getApiSourceName());
         //        DataPointMapper mapper = targetShim.getMapperForSchema();
         //        List<DataPoint> dataPoints = mapper.asDataPoints(Collections.singletonList(responseEntity.getBody()));
         //
@@ -56,9 +57,14 @@ public class ResponseProcessorImpl<T> implements ResponseProcessor<T> {
                 case URI:
                     paginationProcessor = new UriPaginationResponseProcessor();
                     break;
-//                case TOKEN:
-//                    //paginationProcessor = new TokenPaginationResponseProcessor();
-//                    break;
+                case TOKEN:
+                    paginationProcessor = new TokenPaginationResponseProcessor();
+                    break;
+                case MANUAL:
+                    paginationProcessor = new ManualPaginationResponseProcessor();
+                    break;
+//                case CUSTOM:
+//                    paginationProcessor = targetShim.getCustomPaginationResponseProcessor();
                 default:
                     throw new UnsupportedOperationException();
 

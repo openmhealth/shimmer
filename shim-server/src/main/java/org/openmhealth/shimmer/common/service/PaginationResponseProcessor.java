@@ -19,20 +19,31 @@ package org.openmhealth.shimmer.common.service;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.openmhealth.shimmer.common.configuration.PaginationResponseConfigurationProperties;
 import org.openmhealth.shimmer.common.domain.pagination.PaginationStatus;
+import org.openmhealth.shimmer.common.extractor.PaginationResponseExtractor;
 import org.springframework.http.ResponseEntity;
 
 
 /**
  * @author Chris Schaefbauer
  */
-public interface PaginationResponseProcessor<T extends PaginationResponseConfigurationProperties> {
+public abstract class PaginationResponseProcessor<T extends PaginationResponseConfigurationProperties> {
+
+    PaginationResponseExtractor responseExtractor;
 
     /**
      * Processes the pagination content in the response and loads the object to respond to requests for information about pagination.
      * @param paginationResponseProperties
      * @param responseEntity
      */
-    public PaginationStatus processPaginationResponse(T paginationResponseProperties,
+    public abstract PaginationStatus processPaginationResponse(T paginationResponseProperties,
             ResponseEntity<JsonNode> responseEntity);
+
+    public PaginationResponseExtractor getPaginationResponseExtractor() {
+        return responseExtractor; // This needs to get dependency injected somehow, maybe from Shim?
+    }
+
+    public void setPaginationResponseExtractor(PaginationResponseExtractor responseExtractor) {
+        this.responseExtractor = responseExtractor;
+    }
 }
 
