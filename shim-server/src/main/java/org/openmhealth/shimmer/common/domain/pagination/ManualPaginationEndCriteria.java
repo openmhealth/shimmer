@@ -22,6 +22,7 @@ package org.openmhealth.shimmer.common.domain.pagination;
 public enum ManualPaginationEndCriteria {
 
     EMPTY_RESPONSE,
+    EMPTY_OR_MISSING_FIELD,
     LESS_THAN_LIMIT,
     EXPLICITLY_INDICATED,
     INDICATED_WITH_ERROR,

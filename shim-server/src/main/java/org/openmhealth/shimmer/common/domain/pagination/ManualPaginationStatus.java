@@ -16,7 +16,11 @@
 
 package org.openmhealth.shimmer.common.domain.pagination;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
 import java.util.Optional;
+
+import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asOptionalNode;
 
 
 /**
@@ -24,15 +28,66 @@ import java.util.Optional;
  */
 public class ManualPaginationStatus implements PaginationStatus {
 
+    private String endPropertyIdentifier;
+
+    // Todo: may want the hasMoreData to take a ResponseConfiguration
+
+
+    private ManualPaginationEndCriteria endCriteria;
+    private JsonNode responseBody;
+
+
+    public ManualPaginationStatus(JsonNode responseBody, ManualPaginationEndCriteria endCriteria,
+            String paginationEndPropertyIdentifier) {
+        this.responseBody = responseBody;
+        this.endCriteria = endCriteria;
+        this.endPropertyIdentifier = paginationEndPropertyIdentifier;
+    }
 
 
     @Override
     public boolean hasMoreData() {
 
+        Optional<JsonNode> endPropertyNodeOptional = asOptionalNode(responseBody, endPropertyIdentifier);
+        switch ( endCriteria ) {
+            case EMPTY_RESPONSE:
+                if (!responseBody.elements().hasNext()) {
+                    return false;
+                }
+                return true;
+            case EMPTY_OR_MISSING_FIELD:
 
-        return true;
+                if(!endPropertyNodeOptional.isPresent()){
+                    return false;
+                }
+                JsonNode endPropertyNode = endPropertyNodeOptional.get();
+                if(endPropertyNode.isArray()){
+                    if(endPropertyNode.size() == 0){
+                        return false;
+                    }
+                }
+                if(endPropertyNode.isTextual()){
+                    if(endPropertyNode.asText("").isEmpty()){
+                        return false;
+                    }
+                }
+                break;
+            case EXPLICITLY_INDICATED:
+                if(endPropertyNodeOptional.isPresent()){
+                    endPropertyNodeOptional.get();
+                }
+        }
+        return false;
 
     }
+
+    //    public ManualPaginationEndCriteria getEndCriteria() {
+    //        return endCriteria;
+    //    }
+    //
+    //    public void setEndCriteria(ManualPaginationEndCriteria endCriteria) {
+    //        this.endCriteria = endCriteria;
+    //    }
 
     @Override
     public Optional<String> getPaginationResponseValue() {

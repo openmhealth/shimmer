@@ -32,6 +32,7 @@ public class UriPaginationResponseConfigurationProperties implements PaginationR
     private String baseUri;
 
     private String pagingDirectionality; // Todo: This needs to be broken up to address the 3 types of directionality
+    private boolean responseInformationEncoded;
 
     public Optional<String> getBaseUri() {
         return Optional.ofNullable(baseUri);
@@ -52,6 +53,10 @@ public class UriPaginationResponseConfigurationProperties implements PaginationR
     }
 
     @Override
+    public boolean isResponseInformationEncoded() {
+        return responseInformationEncoded;
+    }
+
     public String getNextPaginationPropertyIdentifier() {
         return null;
     }
@@ -76,4 +81,7 @@ public class UriPaginationResponseConfigurationProperties implements PaginationR
         this.pagingDirectionality = pagingDirectionality;
     }
 
+    public void setResponseInformationEncoded(boolean responseInformationEncoded) {
+        this.responseInformationEncoded = responseInformationEncoded;
+    }
 }

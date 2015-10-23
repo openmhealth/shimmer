@@ -19,6 +19,7 @@ package org.openmhealth.shimmer.common.service;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.openmhealth.shimmer.common.configuration.ManualPaginationResponseConfigurationProperties;
 import org.openmhealth.shimmer.common.domain.pagination.ManualPaginationEndCriteria;
+import org.openmhealth.shimmer.common.domain.pagination.ManualPaginationStatus;
 import org.openmhealth.shimmer.common.domain.pagination.PaginationStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -35,8 +36,12 @@ public class ManualPaginationResponseProcessor
             ResponseEntity<JsonNode> responseEntity) {
 
         ManualPaginationEndCriteria paginationEndCriteria = paginationResponseProperties.getPaginationEndCriteria();
+        String endPaginationPropertyIdentifier = paginationResponseProperties.getEndPaginationPropertyIdentifier();
 
+        ManualPaginationStatus paginationStatus =
+                new ManualPaginationStatus(responseEntity.getBody(), paginationEndCriteria,
+                        endPaginationPropertyIdentifier);
 
-        return null;
+        return paginationStatus;
     }
 }

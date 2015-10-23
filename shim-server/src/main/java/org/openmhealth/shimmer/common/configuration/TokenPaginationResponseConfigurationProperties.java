@@ -29,6 +29,8 @@ public class TokenPaginationResponseConfigurationProperties
         implements PaginationResponseConfigurationProperties {
 
 
+    private boolean responseInformationEncoded;
+
     @Override
     public PaginationResponseType getResponseType() {
         return TOKEN;
@@ -45,11 +47,20 @@ public class TokenPaginationResponseConfigurationProperties
     }
 
     @Override
+    public boolean isResponseInformationEncoded() {
+        return responseInformationEncoded;
+    }
+
+
     public String getNextPaginationPropertyIdentifier() {
         return null;
     }
 
-//    @Override
+    public void setResponseInformationEncoded(boolean responseInformationEncoded) {
+        this.responseInformationEncoded = responseInformationEncoded;
+    }
+
+    //    @Override
 //    public TokenResponsePaginationStrategy createNewResponseStrategyForType() {
 //        return null;
 //    }

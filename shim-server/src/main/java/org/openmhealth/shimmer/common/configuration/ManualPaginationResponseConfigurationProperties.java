@@ -29,6 +29,7 @@ import static org.openmhealth.shimmer.common.domain.pagination.PaginationRespons
 public class ManualPaginationResponseConfigurationProperties implements PaginationResponseConfigurationProperties {
 
     private ManualPaginationEndCriteria paginationEndCriteria;
+    private boolean responseInformationEncoded;
 
     @Override
     public PaginationResponseType getResponseType() {
@@ -45,16 +46,24 @@ public class ManualPaginationResponseConfigurationProperties implements Paginati
         return null;
     }
 
+    @Override
+    public boolean isResponseInformationEncoded() {
+        return false;
+    }
+
     public ManualPaginationEndCriteria getPaginationEndCriteria() {
         return paginationEndCriteria;
     }
 
-    @Override
-    public String getNextPaginationPropertyIdentifier() {
+    public String getEndPaginationPropertyIdentifier() {
         return null;
     }
 
     public void setPaginationEndCriteria(ManualPaginationEndCriteria paginationEndCriteria) {
         this.paginationEndCriteria = paginationEndCriteria;
+    }
+
+    public void setResponseInformationEncoded(boolean isResponseInformationEncoded) {
+        this.responseInformationEncoded = isResponseInformationEncoded;
     }
 }

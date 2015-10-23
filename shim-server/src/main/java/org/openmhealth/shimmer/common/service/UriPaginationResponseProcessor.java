@@ -30,7 +30,6 @@ public class UriPaginationResponseProcessor
         extends PaginationResponseProcessor<UriPaginationResponseConfigurationProperties> {
 
 
-
     @Override
     public PaginationStatus processPaginationResponse(
             UriPaginationResponseConfigurationProperties paginationResponseProperties,
@@ -39,8 +38,19 @@ public class UriPaginationResponseProcessor
         UriPaginationStatus paginationStatus = new UriPaginationStatus();
 
         String paginationNextUriPropertyName = paginationResponseProperties.getNextPaginationPropertyIdentifier();
-        getPaginationResponseExtractor().extractPaginationResponse(responseEntity, paginationNextUriPropertyName)
-                .ifPresent(nextUri -> paginationStatus.setPaginationResponseValue(nextUri));
+
+        if (getPaginationResponseDecoder().isPresent()) {
+
+            getPaginationResponseExtractor().extractPaginationResponse(responseEntity, paginationNextUriPropertyName)
+                    .ifPresent(nextUri -> paginationStatus.setPaginationResponseValue(
+                            getPaginationResponseDecoder().get().decodePaginationResponseValue(nextUri)));
+        }
+        else {
+
+            getPaginationResponseExtractor().extractPaginationResponse(responseEntity, paginationNextUriPropertyName)
+                    .ifPresent(nextUri -> paginationStatus.setPaginationResponseValue(nextUri));
+        }
+
 
         // now on to the rest of how we paginate, though we may not even need this since it comes from the configs
         //paginationResponseProperties.getBaseUri().ifPresent(baseUri -> paginationStatus.setBaseUri(baseUri));

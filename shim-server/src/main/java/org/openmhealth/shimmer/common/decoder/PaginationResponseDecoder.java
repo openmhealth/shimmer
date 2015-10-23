@@ -14,28 +14,12 @@
  * limitations under the License.
  */
 
-package org.openmhealth.shimmer.common.configuration;
-
-import org.openmhealth.shimmer.common.domain.ResponseLocation;
-import org.openmhealth.shimmer.common.domain.pagination.PaginationResponseType;
-
+package org.openmhealth.shimmer.common.decoder;
 
 /**
  * @author Chris Schaefbauer
  */
-public interface PaginationResponseConfigurationProperties<T> {
+public interface PaginationResponseDecoder {
 
-    public PaginationResponseType getResponseType();
-
-    public String getPagingDirectionality();
-
-    public ResponseLocation getPaginationResponseLocation();
-
-    public boolean isResponseInformationEncoded();
-
-    //public String getNextPaginationPropertyIdentifier();
-
-    //public T createNewResponseStrategyForType();
-
-
+    public String decodePaginationResponseValue(String paginationResponseValue);
 }
