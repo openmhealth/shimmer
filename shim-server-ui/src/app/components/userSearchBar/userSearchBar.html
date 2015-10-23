@@ -1,0 +1,14 @@
+<div class="user-search-bar">
+
+  <span class="glyphicon glyphicon-user"></span><h2>User ID</h2>
+
+  <ui-select ng-model="search.currentUser">
+    <ui-select-match placeholder="Select or search for a user...">
+      {{$select.selected.id}}
+    </ui-select-match>
+    <ui-select-choices repeat="user in search.getUsers($select.search) | filter: $select.search">
+      <div ng-bind="user.id"></div>
+    </ui-select-choices>
+  </ui-select>
+
+</div>

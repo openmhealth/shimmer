@@ -1,7 +1,11 @@
+node_modules/
+bower_components/
+coverage/
+.sass-cache/
 .idea/
 shim-server-ui.iml
-node_modules
 docker/assets
-.tmp
-.sass-cache
-app/bower_components
+.tmp/
+dist/
+
+typings/

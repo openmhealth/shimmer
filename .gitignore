@@ -68,3 +68,4 @@ crashlytics-build.properties
 ### Gradle ###
 .gradle
 build/
+previous-shim-server-ui

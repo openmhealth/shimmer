@@ -1,0 +1,134 @@
+<div class="container">
+
+  <ng-include src="'app/navbar/navbar.html'"></ng-include>
+
+  <accordion class="shim-list" close-others="false" ng-init="groupOpen=[false,false,false]">
+
+    <accordion-group panel-class="shim-panel" is-open="groupOpen[0]">
+        <accordion-heading>
+          <span class="glyphicon glyphicon-triangle-right"></span><h2>Shim Name</h2>
+        </accordion-heading>
+    </accordion-group>
+
+    <accordion-group panel-class="shim-panel" is-open="groupOpen[1]">
+        <accordion-heading>
+          <span class="glyphicon glyphicon-triangle-right"></span><h2>Shim Name</h2>
+        </accordion-heading>
+        <div class="details">
+          <div class="row">
+
+            <div class="col-sm-7">
+              <h3>Shim configuration</h3>
+                <div class="table-responsive">
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <th class="col-sm-2"></th>
+                        <th class="col-sm-5"></th>
+                        <th class="col-sm-5"></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <th scope="row">Label</th>
+                        <td><input type="text" value="value" class="form-control input-sm"/></td>
+                        <td class="description">help text</td>
+                      </tr>
+                      <tr>
+                        <th scope="row">Another label</th>
+                        <td><input type="text" value="value" class="form-control input-sm"/></td>
+                        <td class="description" ng-init="isCollapsed = true">
+                          help text that is so long that it has to break and flow to the next...
+                          <span class="more" popover="help text that is so long that it has to break and flow to the next line and a more link is shown so you can hover and read all the extra goodness" popover-trigger="mouseenter">more</span>
+
+                        </td>
+                      </tr>
+                      <tr>
+                        <th scope="row">A very long label that has to break</th>
+                        <td><input type="text" value="value" class="form-control input-sm"/></td>
+                        <td class="description">help text</td>
+                      </tr>
+                      <tr>
+                        <th scope="row">Another label</th>
+                        <td><input type="text" value="value" class="form-control input-sm"/></td>
+                        <td class="description">help text</td>
+                      </tr>
+
+                      <tr>
+                        <td class="description" colspan="3">
+                          <div class="save-config">
+                          Changes will become active after they are saved.
+                            <button type="button" class="btn btn-default btn-xs">save changes</button>
+                          </div>
+                        </td>
+                      </tr>
+
+                    </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="col-sm-5">
+              <h3>Vendor API Statistics</h3>
+                <div class="table-responsive">
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <th class="col-sm-3"></th>
+                        <th class="col-sm-7"></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <th scope="row" class="compact">Label</th>
+                        <td class="compact">Information</td>
+                      </tr>
+                      <tr>
+                        <th scope="row" class="compact">Another label</th>
+                        <td class="compact">Information</td>
+                      </tr>
+                      <tr>
+                        <th scope="row" class="compact">A very long label that has to break</th>
+                        <td class="compact">Information</td>
+                      </tr>
+                      <tr>
+                        <th scope="row" class="compact">Another label</th>
+                        <td class="compact">Information</td>
+                      </tr>
+                    </tbody>
+                </table>
+              </div>
+
+              <h3>Supported schemas</h3>
+                <div class="table-responsive">
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <th class="col-sm-12"></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td class="compact flat-list">
+                        granola:schema-name:1.0, granola:schema-name:1.0, granola:schema-name:1.0, omh:schema-longer-name:1.0, omh:schema-name:1.0, omh:schema-name:1.1, omh:schema-name:1.0
+                        </td>
+                      </tr>
+                    </tbody>
+                </table>
+              </div>
+            </div>
+
+          </div>
+        </div>
+    </accordion-group>
+
+    <accordion-group panel-class="shim-panel" is-open="groupOpen[2]">
+        <accordion-heading>
+          <span class="glyphicon glyphicon-triangle-right"></span><h2>Shim Name</h2>
+        </accordion-heading>
+    </accordion-group>
+
+  </accordion>
+
+</div>
+
