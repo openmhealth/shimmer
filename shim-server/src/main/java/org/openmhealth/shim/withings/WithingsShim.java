@@ -73,9 +73,10 @@ public class WithingsShim extends OAuth1ShimBase {
     @Autowired
     public WithingsShim(ApplicationAccessParametersRepo applicationParametersRepo,
             AuthorizationRequestParametersRepo authorizationRequestParametersRepo,
-            ShimServerConfig shimServerConfig) {
+            ShimServerConfig shimServerConfig,
+            AccessParametersRepo accessParametersRepo) {
 
-        super(applicationParametersRepo, authorizationRequestParametersRepo, shimServerConfig);
+        super(applicationParametersRepo, authorizationRequestParametersRepo, shimServerConfig, accessParametersRepo);
 
     }
 
@@ -200,7 +201,7 @@ public class WithingsShim extends OAuth1ShimBase {
             if (shimDataRequest.getNormalize()) {
                 WithingsDataPointMapper mapper;
 
-                switch (withingsDataType) {
+                switch ( withingsDataType ) {
 
                     case BODY_WEIGHT:
                         mapper = new WithingsBodyWeightDataPointMapper();

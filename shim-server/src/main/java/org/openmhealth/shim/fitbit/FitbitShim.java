@@ -64,9 +64,10 @@ public class FitbitShim extends OAuth1ShimBase {
     @Autowired
     public FitbitShim(ApplicationAccessParametersRepo applicationParametersRepo,
             AuthorizationRequestParametersRepo authorizationRequestParametersRepo,
-            ShimServerConfig shimServerConfig) {
+            ShimServerConfig shimServerConfig,
+            AccessParametersRepo accessParametersRepo) {
 
-        super(applicationParametersRepo, authorizationRequestParametersRepo, shimServerConfig);
+        super(applicationParametersRepo, authorizationRequestParametersRepo, shimServerConfig, accessParametersRepo);
     }
 
     @Override
