@@ -21,7 +21,7 @@ import static org.hamcrest.Matchers.equalTo;
 /**
  * @author Chris Schaefbauer
  */
-public class FitbitStepCountDataPointUnitTests extends DataPointMapperUnitTests {
+public class FitbitStepCountDataPointMapperUnitTests extends DataPointMapperUnitTests {
 
     JsonNode responseNodeStepTimeSeries;
     protected final FitbitStepCountDataPointMapper mapper = new FitbitStepCountDataPointMapper();
