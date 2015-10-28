@@ -105,8 +105,8 @@ public abstract class FitbitDataPointMapper<T> implements JsonNodeDataPointMappe
     }
 
     /**
-     * Takes a Fitbit response JSON node, which contains a date and time property, and then maps them into an {@link
-     * OffsetDateTime} object
+     * Takes a Fitbit response JSON node, which contains a date and time property, and then maps those fields into an
+     * {@link OffsetDateTime} object
      *
      * @return the date and time based on the "date" and "time" properties of the JsonNode parameter, wrapped as an
      * {@link Optional}
