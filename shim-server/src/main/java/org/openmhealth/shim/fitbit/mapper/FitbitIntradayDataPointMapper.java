@@ -41,7 +41,7 @@ public abstract class FitbitIntradayDataPointMapper<T> extends FitbitDataPointMa
     public List<DataPoint<T>> asDataPoints(List<JsonNode> responseNodes) {
 
         checkNotNull(responseNodes);
-        checkArgument(responseNodes.size() == 1, "FitbitDataPointMapper requires one response node.");
+        checkArgument(responseNodes.size() == 1, "A single response node is allowed per call.");
 
         parentNode = responseNodes.get(0);
 
@@ -54,8 +54,6 @@ public abstract class FitbitIntradayDataPointMapper<T> extends FitbitDataPointMa
         }
 
         return dataPoints;
-
-
     }
 
     /**
@@ -69,5 +67,4 @@ public abstract class FitbitIntradayDataPointMapper<T> extends FitbitDataPointMa
     }
 
     public abstract String getDateTimeNodeListName();
-
 }
