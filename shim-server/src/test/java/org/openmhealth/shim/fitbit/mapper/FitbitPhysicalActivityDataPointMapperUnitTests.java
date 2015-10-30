@@ -1,7 +1,6 @@
 package org.openmhealth.shim.fitbit.mapper;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import org.hamcrest.CoreMatchers;
 import org.openmhealth.schema.domain.omh.*;
 import org.openmhealth.shim.common.mapper.DataPointMapperUnitTests;
 import org.springframework.core.io.ClassPathResource;
@@ -87,10 +86,10 @@ public class FitbitPhysicalActivityDataPointMapperUnitTests extends DataPointMap
         }
         PhysicalActivity expectedPhysicalActivity = dataPointBuilderForExpected.build();
 
-        assertThat(dataPoint.getBody(), CoreMatchers.equalTo(expectedPhysicalActivity));
-        assertThat(dataPoint.getHeader().getBodySchemaId(), CoreMatchers.equalTo(PhysicalActivity.SCHEMA_ID));
+        assertThat(dataPoint.getBody(), equalTo(expectedPhysicalActivity));
+        assertThat(dataPoint.getHeader().getBodySchemaId(), equalTo(PhysicalActivity.SCHEMA_ID));
         assertThat(dataPoint.getHeader().getAcquisitionProvenance().getAdditionalProperties().get("external_id"), equalTo(logId));
-        assertThat(dataPoint.getHeader().getAcquisitionProvenance().getSourceName(), CoreMatchers.equalTo(FitbitDataPointMapper.RESOURCE_API_SOURCE_NAME));
+        assertThat(dataPoint.getHeader().getAcquisitionProvenance().getSourceName(), equalTo(FitbitDataPointMapper.RESOURCE_API_SOURCE_NAME));
 
     }
 

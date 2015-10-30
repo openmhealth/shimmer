@@ -45,18 +45,18 @@ public class JawboneBodyWeightDataPointMapperUnitTests extends JawboneDataPointM
     public void asDataPointsShouldReturnCorrectNumberOfDataPoints() {
 
         List<DataPoint<BodyWeight>> dataPoints = mapper.asDataPoints(singletonList(responseNode));
-        assertThat(dataPoints.size(), equalTo(2));
+        assertThat(dataPoints.size(), equalTo(3));
     }
 
     @Test
-    public void asDataPointsShouldReturnCorrectDataPointWhenUserNotePropertyIsInResponse() {
+    public void asDataPointsShouldReturnCorrectDataPointWhenTimeZoneIsInOlsonFormat() {
 
         List<DataPoint<BodyWeight>> dataPoints = mapper.asDataPoints(singletonList(responseNode));
 
         BodyWeight testBodyWeight = dataPoints.get(0).getBody();
         BodyWeight expectedBodyWeight = new BodyWeight.
-                Builder(new MassUnitValue(MassUnit.KILOGRAM, 86.0010436535)).
-                setEffectiveTimeFrame(OffsetDateTime.parse("2015-08-11T22:37:20-06:00")).
+                Builder(new MassUnitValue(MassUnit.KILOGRAM, 64)).
+                setEffectiveTimeFrame(OffsetDateTime.parse("2015-10-04T19:52:41-06:00")).
                 setUserNotes("First weight").
                 build();
 
@@ -64,29 +64,41 @@ public class JawboneBodyWeightDataPointMapperUnitTests extends JawboneDataPointM
 
         Map<String, Object> testProperties = Maps.newHashMap();
         testProperties.put("schemaId", BodyWeight.SCHEMA_ID);
-        testProperties.put("externalId", "QkfTizSpRdubVXHaj3iZk6Vd3qqdl_RJ");
-        testProperties.put("sourceUpdatedDateTime", "2015-08-12T04:37:20Z");
+        testProperties.put("externalId", "JM2JlMHcHlVJUd597YY3Lnny5eEku5Ll");
+        testProperties.put("sourceUpdatedDateTime", "2015-10-06T01:52:51Z");
         testProperties.put("shared", false);
 
         testDataPointHeader(dataPoints.get(0).getHeader(), testProperties);
     }
 
     @Test
-    public void asDataPointsShouldReturnCorrectDataPointWhenUserNoteIsNull() {
+    public void asDataPointsShouldReturnCorrectDataPointWhenTimeZoneIsInGMTOffset() {
 
         List<DataPoint<BodyWeight>> dataPoints = mapper.asDataPoints(singletonList(responseNode));
         BodyWeight testBodyWeight = dataPoints.get(1).getBody();
-        BodyWeight expectedBodyWeight = new BodyWeight.Builder(new MassUnitValue(MassUnit.KILOGRAM, 86.5010436535))
-                .setEffectiveTimeFrame(OffsetDateTime.parse("2015-08-11T22:37:18-06:00"))
+        BodyWeight expectedBodyWeight = new BodyWeight.Builder(new MassUnitValue(MassUnit.KILOGRAM, 74.5))
+                .setEffectiveTimeFrame(OffsetDateTime.parse("2015-10-05T19:52:52-06:00"))
                 .build();
         assertThat(testBodyWeight, equalTo(expectedBodyWeight));
 
         Map<String, Object> testProperties = Maps.newHashMap();
         testProperties.put("schemaId", BodyWeight.SCHEMA_ID);
-        testProperties.put("externalId", "QkfTizSpRdukQY3ns4PYbkucZTM5yPMg");
-        testProperties.put("sourceUpdatedDateTime", "2015-08-13T08:23:58Z");
+        testProperties.put("externalId", "JM2JlMHcHlUP2mAvWWVlwwNFFVo_4CfQ");
+        testProperties.put("sourceUpdatedDateTime", "2015-10-06T01:52:52Z");
         testProperties.put("shared", true);
         testDataPointHeader(dataPoints.get(1).getHeader(), testProperties);
+    }
+
+    @Test
+    public void asDataPointsShouldReturnDataPointWithoutEffectiveTimeFrameWhenTimeZoneIsNull(){
+
+        List<DataPoint<BodyWeight>> dataPoints = mapper.asDataPoints(singletonList(responseNode));
+
+        BodyWeight expectedBodyWeight = new BodyWeight.Builder(new MassUnitValue(MassUnit.KILOGRAM, 74.8))
+                .setEffectiveTimeFrame(OffsetDateTime.parse("2015-10-06T19:39:01Z"))
+                .build();
+
+        assertThat(dataPoints.get(2).getBody(),equalTo(expectedBodyWeight));
     }
 
 
