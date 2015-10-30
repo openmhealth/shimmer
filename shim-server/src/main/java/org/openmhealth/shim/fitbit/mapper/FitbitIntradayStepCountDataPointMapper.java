@@ -49,8 +49,7 @@ public class FitbitIntradayStepCountDataPointMapper extends FitbitIntradayDataPo
 
         StepCount.Builder stepCountBuilder = new StepCount.Builder(stepCountValue);
 
-        // We use 1 minute because the Fitbit shim requests 1 minute granularity currently
-        Optional<LocalDate> dateFromParent = getDateFromParentNode();
+        Optional<LocalDate> dateFromParent = getDateFromSummaryForDay();
 
         if (dateFromParent.isPresent()) {
 
@@ -58,7 +57,8 @@ public class FitbitIntradayStepCountDataPointMapper extends FitbitIntradayDataPo
             asOptionalString(listEntryNode, "time").ifPresent(time -> stepCountBuilder
                     .setEffectiveTimeFrame(ofStartDateTimeAndDuration(
                             dateFromParent.get().atTime(LocalTime.parse(time)).atOffset(UTC),
-                            new DurationUnitValue(MINUTE, 1))));
+                            new DurationUnitValue(MINUTE,
+                                    1)))); // We use 1 minute since the shim requests data at 1 minute granularity
         }
 
         return Optional.of(newDataPoint(stepCountBuilder.build(), null));
@@ -70,7 +70,7 @@ public class FitbitIntradayStepCountDataPointMapper extends FitbitIntradayDataPo
     }
 
     @Override
-    public String getDateTimeNodeListName() {
+    public String getSummaryForDayNodeName() {
         return "activities-steps";
     }
 }

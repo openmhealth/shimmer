@@ -35,7 +35,7 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asRequir
  */
 public abstract class FitbitIntradayDataPointMapper<T> extends FitbitDataPointMapper<T> {
 
-    private JsonNode parentNode;
+    private JsonNode responseNode;
 
     @Override
     public List<DataPoint<T>> asDataPoints(List<JsonNode> responseNodes) {
@@ -43,14 +43,12 @@ public abstract class FitbitIntradayDataPointMapper<T> extends FitbitDataPointMa
         checkNotNull(responseNodes);
         checkArgument(responseNodes.size() == 1, "A single response node is allowed per call.");
 
-        parentNode = responseNodes.get(0);
-
-        JsonNode targetTypeNodeList = asRequiredNode(responseNodes.get(0), getListNodeName());
+        responseNode = responseNodes.get(0);
 
         List<DataPoint<T>> dataPoints = Lists.newArrayList();
 
-        for (JsonNode targetTypeNode : targetTypeNodeList) {
-            asDataPoint(targetTypeNode).ifPresent(dataPoints::add);
+        for (JsonNode listEntryNode : asRequiredNode(responseNode, getListNodeName())) {
+            asDataPoint(listEntryNode).ifPresent(dataPoints::add);
         }
 
         return dataPoints;
@@ -60,11 +58,14 @@ public abstract class FitbitIntradayDataPointMapper<T> extends FitbitDataPointMa
      * Allows specific intraday activity measure mappers to access the date that the datapoint occured, which is stored
      * outside the individual list nodes
      */
-    public Optional<LocalDate> getDateFromParentNode() {
+    public Optional<LocalDate> getDateFromSummaryForDay() {
 
-        JsonNode summaryForDayNode = asRequiredNode(parentNode, getDateTimeNodeListName()).get(0);
+        JsonNode summaryForDayNode = asRequiredNode(responseNode, getSummaryForDayNodeName()).get(0);
         return asOptionalLocalDate(summaryForDayNode, "dateTime");
     }
 
-    public abstract String getDateTimeNodeListName();
+    /**
+     * @return the name of the summary list node which contains a data point with the dateTime field
+     */
+    public abstract String getSummaryForDayNodeName();
 }
