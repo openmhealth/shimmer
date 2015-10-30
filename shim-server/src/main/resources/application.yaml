@@ -26,6 +26,7 @@ openmhealth:
 
     #NOTE: Un-comment and fill in with your credentials if you're not using the UI
     #fitbit:
+    #  partner_access: true
     #  clientId: [YOUR_CLIENT_ID]
     #  clientSecret: [YOUR_CLIENT_SECRET]
     #fatsecret:

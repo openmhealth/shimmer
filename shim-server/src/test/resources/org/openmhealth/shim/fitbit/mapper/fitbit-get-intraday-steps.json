@@ -1,0 +1,26 @@
+{
+    "activities-steps": [
+        {
+            "dateTime": "2015-08-21",
+            "value": "3212"
+        }
+    ],
+    "activities-steps-intraday": {
+        "dataset": [
+            {
+                "time": "00:00:00",
+                "value": 7
+            },
+            {
+                "time": "14:27:00",
+                "value": 0
+            },
+            {
+                "time": "14:28:00",
+                "value": 52
+            }
+        ],
+        "datasetInterval": 1,
+        "datasetType": "minute"
+    }
+}
