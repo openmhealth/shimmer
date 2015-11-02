@@ -3,32 +3,32 @@ export function runMock($httpBackend: angular.IHttpBackendService) {
 
     var configuration = {
         shimName: 'Withings',
-        directives: <IConfigurationDirective[]>[
-            <IConfigurationDirective>{
-                configPath: 'string.test.path',
+        settings: <ConfigurationSetting[]>[
+            <ConfigurationSetting>{
+                settingId: 'string.test.path',
                 type: 'string',
                 length: 12,
                 label: 'String mock',
                 description: 'A required string mock that must be 12 characters',
                 required: true
             },
-            <IConfigurationDirective>{
-                configPath: 'boolean.test.path',
+            <ConfigurationSetting>{
+                settingId: 'boolean.test.path',
                 type: 'boolean',
                 label: 'Boolean mock',
                 description: 'An optional boolean with a super long description that must be truncated.',
                 required: false
             },
-            <IConfigurationDirective>{
-                configPath: 'integer.test.path',
+            <ConfigurationSetting>{
+                settingId: 'integer.test.path',
                 type: 'integer',
                 min: 0,
                 max: 100,
                 label: 'Integer mock with a really long label',
                 required: true
             },
-            <IConfigurationDirective>{
-                configPath: 'float.test.path',
+            <ConfigurationSetting>{
+                settingId: 'float.test.path',
                 type: 'float',
                 label: 'Float mock',
                 required: false
@@ -36,16 +36,16 @@ export function runMock($httpBackend: angular.IHttpBackendService) {
         ],
         values: [
           { settingId:'string.test.path', value:'dfhg29h92020' },
-          { 'boolean.test.path': 'false' },
-          { 'integer.test.path': '3' },
-          { 'float.test.path': '1.01' },
+          { settingId:'boolean.test.path', value: 'false' },
+          { settingId:'integer.test.path', value: '3' },
+          { settingId:'float.test.path', value: '1.01' },
         ]
     };
 
-    var schemas = <ISchemaList>{
+    var schemas = <SchemaList>{
         shimName: 'Withings',
-        schemas: <ISchema[]>[
-                <ISchema>{
+        schemas: <Schema[]>[
+            <Schema>{
                     'namespace': 'granola',
                     name: 'schema-name',
                     version: '1.x',
@@ -54,7 +54,7 @@ export function runMock($httpBackend: angular.IHttpBackendService) {
                       'pies eaten'
                     ]
                 },
-                <ISchema>{
+            <Schema>{
                     'namespace': 'omh',
                     name: 'schema-name',
                     version: '1.2',
@@ -63,7 +63,7 @@ export function runMock($httpBackend: angular.IHttpBackendService) {
                         'meatball index'
                     ]
                 },
-                <ISchema>{
+            <Schema>{
                     'namespace': 'omh',
                     name: 'schema-name',
                     version: '1.1',
@@ -72,7 +72,7 @@ export function runMock($httpBackend: angular.IHttpBackendService) {
                         'melbatoast index'
                     ]
                 },
-                <ISchema>{
+            <Schema>{
                     'namespace': 'omh',
                     name: 'schema-name',
                     version: '1.2',
@@ -81,7 +81,7 @@ export function runMock($httpBackend: angular.IHttpBackendService) {
                         'meatball index'
                     ]
                 },
-                <ISchema>{
+            <Schema>{
                     'namespace': 'omh',
                     name: 'schema-with-name',
                     version: '1.11',
@@ -90,7 +90,7 @@ export function runMock($httpBackend: angular.IHttpBackendService) {
                         'melbatoast index'
                     ]
                 },
-                <ISchema>{
+            <Schema>{
                     'namespace': 'omh',
                     name: 'schema-schema-name',
                     version: '1.2',
@@ -99,7 +99,7 @@ export function runMock($httpBackend: angular.IHttpBackendService) {
                         'meatball index'
                     ]
                 },
-                <ISchema>{
+                <Schema>{
                     'namespace': 'omh',
                     name: 'schema-other-name',
                     version: '1.1',
@@ -108,7 +108,7 @@ export function runMock($httpBackend: angular.IHttpBackendService) {
                         'melbatoast index'
                     ]
                 },
-                <ISchema>{
+                <Schema>{
                     'namespace': 'omh',
                     name: 'schema-name',
                     version: '1.2',
@@ -117,7 +117,7 @@ export function runMock($httpBackend: angular.IHttpBackendService) {
                         'meatball index'
                     ]
                 },
-                <ISchema>{
+                <Schema>{
                     'namespace': 'omh',
                     name: 'schema-name-also',
                     version: '1.1',
@@ -126,7 +126,7 @@ export function runMock($httpBackend: angular.IHttpBackendService) {
                         'melbatoast index'
                     ]
                 },
-                <ISchema>{
+                <Schema>{
                     'namespace': 'omh',
                     name: 'schemas-name',
                     version: '1.2',
@@ -135,7 +135,7 @@ export function runMock($httpBackend: angular.IHttpBackendService) {
                         'meatball index'
                     ]
                 },
-                <ISchema>{
+                <Schema>{
                     'namespace': 'granola',
                     name: 'schema-name',
                     version: '1.1',

@@ -9,12 +9,12 @@ export class ShimmerService {
   public static API_DOMAIN: string = 'http://localhost';
   public static API_PORT: string = '3000';
   public static API_PATH: string = '/api';
-  public shims: IShimMap;
+  public shims: ShimMap;
 
   // Authorizations for the current user
-  private AuthorizationsResource: IAuthorizationsResource;
-  private ConfigurationResource: IConfigurationResource;
-  private SchemaResource: ISchemaResource;
+  private AuthorizationsResource: AuthorizationsResource;
+  private ConfigurationResource: ConfigurationResource;
+  private SchemaListResource: SchemaListResource;
   private apiUrl: string;
 
   /* @ngInject */
@@ -24,42 +24,77 @@ export class ShimmerService {
       this.apiUrl = ShimmerService.API_PATH;
       this.shims = {};
 
-    this.AuthorizationsResource = <IAuthorizationsResource>$resource(
+    this.AuthorizationsResource = <AuthorizationsResource>$resource(
       this.apiUrl + '/authorizations', {
-        update: (authorizations: IAuthorizations): IAuthorizations => {
-          return <IAuthorizations>null;
+        update: (authorizations: Authorizations): Authorizations => {
+          return <Authorizations>null;
         }
       }
     );
 
-    this.ConfigurationResource = <IConfigurationResource>$resource(
+    this.ConfigurationResource = <ConfigurationResource>$resource(
       this.apiUrl + '/configuration', {
-        update: (configuration: IConfiguration): IConfiguration => {
-          return <IConfiguration>null;
+        update: (configuration: Configuration): Configuration => {
+          return <Configuration>null;
         }
       }
     );
 
-    this.SchemaResource = <ISchemaResource>$resource(
+    this.SchemaListResource = <SchemaListResource>$resource(
       this.apiUrl + '/schemas', {
-            update: (schemaList: ISchemaList): ISchemaList => {
-                return <ISchemaList>null;
+            update: (schemaList: SchemaList): SchemaList => {
+                return <SchemaList>null;
         }
       }
     ); 
 
 
-    this.updateConfigurations().then((newConfigurations: IConfiguration[]): void => {
+    this.updateConfigurations().then((newConfigurations: ConfigurationResourceDefinition[]): void => {
         console.info('shims from config:', this.shims);
     });
-    this.updateSchemas().then((newSchemas: ISchemaList[]): void => {
+    this.updateSchemas().then((newSchemas: SchemaListResourceDefinition[]): void => {
         console.info('shims:', this.shims);
     });
   }
 
-  public searchUsers(searchTerm: string): angular.IPromise<IAuthorizations[]> {
+  public searchUsers(searchTerm: string): angular.IPromise<Authorizations[]> {
     return this.AuthorizationsResource.query( { username: searchTerm } ).$promise;
   }
+
+  public updateConfigurations(): angular.IPromise<angular.resource.IResourceArray<ConfigurationResourceDefinition>> {
+
+      return this.ConfigurationResource.query({}, this.updateShimProperty((newConfig: Configuration): void => {
+          var map = {};
+          newConfig.values.forEach((value: ConfigurationValue): void=> {
+              map[ value.settingId ] = value;
+          });
+          newConfig.values = map;
+          newConfig.settings.forEach((setting: ConfigurationSetting): void=> {
+              if (setting.type == 'integer') {
+                  newConfig.values[setting.settingId].value = parseInt(newConfig.values[setting.settingId].value);
+              }
+              if (setting.type == 'float') {
+                  newConfig.values[setting.settingId].value = parseFloat(newConfig.values[setting.settingId].value);
+              }
+          });
+          this.shims[newConfig.shimName].configuration = newConfig;
+      })).$promise;
+
+  }
+
+  public updateSchemas(): angular.IPromise<angular.resource.IResourceArray<SchemaListResourceDefinition>> {
+
+      return this.SchemaListResource.query({}, this.updateShimProperty((newSchemaList: SchemaList): void => {
+          this.shims[newSchemaList.shimName].schemas = newSchemaList.schemas;
+      })).$promise;
+
+  }
+
+  public getConfiguration(shimName: string): Configuration {
+      return this.shims[shimName].configuration;
+  }
+
+
 
   private pruneShims(shimNames: string[]){
     // clear out shims that are nolonger there
@@ -86,16 +121,16 @@ export class ShimmerService {
 
   // generic method for updating a property of a shim using a callback that
   // handles the specific type of resource queried.
-  private updateShimProperty(propertyCallback: (property: IShimPropertyResource) => void): (newProperties: IShimPropertyResource[])=>IShimPropertyResource[] {
+  private updateShimProperty( propertyCallback: (property: ShimPropertyResource) => void): (newProperties: ShimPropertyResource[]) => ShimPropertyResource[] {
 
       var callback = propertyCallback;
 
-      return (newProperties: IShimPropertyResource[]) => {
+      return (newProperties: ShimPropertyResource[]) => {
 
         var shimNames = this.responseShimNames(newProperties);
         this.pruneShims(shimNames);
 
-        newProperties.forEach((newProperty: IShimPropertyResource): void => {
+        newProperties.forEach((newProperty: ShimPropertyResource): void => {
             callback( newProperty );
         });
 
@@ -103,42 +138,6 @@ export class ShimmerService {
 
       }
 
-  }
-
-  public updateConfigurations(): angular.IPromise<angular.resource.IResourceArray<IConfigurationResourceDefinition>> {
-
-      return this.ConfigurationResource.query({}, this.updateShimProperty((newConfig: IConfiguration): void => {
-          var map = {};
-          newConfig.values.forEach((value: IConfigurationValue): void=> {
-              var key = Object.keys(value)[0];
-              console.log(value);
-              map[key] = value[key];
-          });
-          newConfig.values = map;
-          newConfig.directives.forEach( (directive: IConfigurationDirective): void=> { 
-              if (directive.type == 'integer') {
-                  newConfig.values[directive.configPath] = parseInt(newConfig.values[directive.configPath]);
-              }
-              if (directive.type == 'float') {
-                  newConfig.values[directive.configPath] = parseFloat(newConfig.values[directive.configPath]);
-              }
-          });
-          this.shims[newConfig.shimName].configuration = newConfig;
-      })).$promise;
-
-  }
-
-  public updateSchemas(): angular.IPromise<angular.resource.IResourceArray<ISchemaListResourceDefinition>> {
-
-      return this.SchemaResource.query({}, this.updateShimProperty((newSchemaList: ISchemaList): void => {
-          this.shims[newSchemaList.shimName].schemas = newSchemaList.schemas;
-      })).$promise;
-
-  }
-
-
-  public getConfiguration( shimName: string ): IConfiguration{
-      return this.shims[shimName].configuration;
   }
 
 }

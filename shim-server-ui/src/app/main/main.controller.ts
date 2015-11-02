@@ -3,7 +3,12 @@ import { ShimmerService } from '../components/shimmer/shimmer.service';
 export class MainController {
 
   private shimmer: ShimmerService;
-  public shims: IShimMap;
+  public shims: ShimMap;
+  public validBooleanSettings: any[] = [
+    { label: '--', value: null },
+    { label: 'true', value: 'true' },
+    { label: 'false', value: 'false' }
+  ];
 
 
   /* @ngInject */

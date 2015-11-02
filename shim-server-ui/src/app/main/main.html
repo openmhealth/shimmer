@@ -24,31 +24,31 @@
                     </thead>
                     <tbody>
 
-                      <tr ng-repeat="directive in shim.configuration.directives">
-                        <th scope="row">{{directive.label}}</th>
+                      <tr ng-repeat="setting in shim.configuration.settings">
+                        <th scope="row">{{setting.label}}</th>
                         <td>
 
-                          <input type="number" class="form-control input-sm" ng-model="shim.configuration.values[directive.configPath]" ng-if="directive.type==='integer'" />
+                          <input type="number" class="form-control input-sm" ng-model="shim.configuration.values[setting.settingId].value" ng-if="setting.type==='integer'" />
 
-                          <input type="number" class="form-control input-sm" ng-model="shim.configuration.values[directive.configPath]" ng-if="directive.type==='float'"/>
+                          <input type="number" class="form-control input-sm" ng-model="shim.configuration.values[setting.settingId].value" ng-if="setting.type==='float'"/>
 
-                          <input type="text" value="value" class="form-control input-sm" ng-model="shim.configuration.values[directive.configPath]" ng-if="directive.type==='string'"/>
+                          <input type="text" value="value" class="form-control input-sm" ng-model="shim.configuration.values[setting.settingId].value" ng-if="setting.type==='string'"/>
 
-                          <ui-select ng-model="shim.configuration.value[directive.configPath]" ng-if="directive.type==='boolean'">
+                          <ui-select ng-model="shim.configuration.values[setting.settingId].value" ng-if="setting.type==='boolean'">
                             <ui-select-match placeholder="--">
-                              {{$select.selected}}
+                              {{$select.selected.label}}
                             </ui-select-match>
-                            <ui-select-choices repeat="option in ['--','true','false']">
-                              <div ng-bind="option"></div>
+                            <ui-select-choices repeat="option.value as option in main.validBooleanSettings">
+                              <div ng-bind="option.label"></div>
                             </ui-select-choices>
                           </ui-select>
 
 
                         </td>
                         <td class="description">
-                          <span  ng-if="directive.description">
-                            {{main.truncate(directive.description,70)}}
-                            <span class="more" popover="{{directive.description}}" popover-trigger="mouseenter" ng-if="directive.description.length>70">more</span>
+                          <span  ng-if="setting.description">
+                            {{main.truncate(setting.description,70)}}
+                            <span class="more" popover="{{setting.description}}" popover-trigger="mouseenter" ng-if="setting.description.length>70">more</span>
                           </span>
                         </td>
                       </tr>
