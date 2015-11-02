@@ -62,7 +62,7 @@ public class FitbitShim extends OAuth1ShimBase {
 
     private static final String TOKEN_URL = "https://api.fitbit.com/oauth/access_token";
 
-    @Value("${openmhealth.shim.fitbit.partner_access:false}")
+    @Value("${openmhealth.shim.fitbit.partnerAccess:false}")
     protected boolean partnerAccess;
 
     @Autowired

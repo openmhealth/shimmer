@@ -25,8 +25,9 @@ openmhealth:
       callbackUrlBase: http://localhost:8083
 
     #NOTE: Un-comment and fill in with your credentials if you're not using the UI
+    #NOTE: Un-comment and set partnerAccess to true if your credentials for a given API have partner access
     #fitbit:
-    #  partner_access: true
+    #  partnerAccess: true
     #  clientId: [YOUR_CLIENT_ID]
     #  clientSecret: [YOUR_CLIENT_SECRET]
     #fatsecret:
@@ -45,7 +46,7 @@ openmhealth:
     #  clientId: [YOUR_CLIENT_ID]
     #  clientSecret: [YOUR_CLIENT_SECRET]
     #withings:
-    #  partner_access: true
+    #  partnerAccess: true
     #  clientId: [YOUR_CLIENT_ID]
     #  clientSecret: [YOUR_CLIENT_SECRET]
     #healthvault:
