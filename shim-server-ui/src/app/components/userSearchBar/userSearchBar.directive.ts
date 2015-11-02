@@ -1,37 +1,38 @@
 // import { GithubContributor } from '../githubContributor/githubContributor.service';
+import { UsersController } from '../../users/users.controller';
 
-interface IProjectsScope extends ng.IScope {
+interface IProjectsScope extends angular.IScope {
   extraValues: any[];
 }
 
 /** @ngInject */
-export function userSearchBar(): ng.IDirective {
+export function userSearchBar(): angular.IDirective {
 
     return {
         restrict: 'E',
         scope: {
-          userList: '=',
-          currentUser: '='
+          users: '=',
         },
         templateUrl: 'app/components/userSearchBar/userSearchBar.html',
         link: linkFunc,
         controller: UserSearchBarController,
-        controllerAs: 'search',
+        controllerAs: 'searchBar',
         bindToController: true
     };
 
 }
 
-/** @ngInject */
 export class UserSearchBarController {
 
-  public getUsers = function(searchTerm: string) {
-    return this.userList;
-  };
+    public users: UsersController;
+
+    /** @ngInject */
+    constructor() {
+    }
 
 }
 
-function linkFunc(scope: IProjectsScope, el: JQuery, attr: any, vm: UserSearchBarController) {
-    console.dir(scope);
+/** @ngInject */
+function linkFunc(scope: IProjectsScope, el: JQuery, attr: any, searchBar: UserSearchBarController) {
 }
 

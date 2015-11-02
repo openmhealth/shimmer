@@ -1,16 +1,28 @@
 // import { WebDevTecService, ITecThing } from '../components/webDevTec/webDevTec.service';
+import { ShimmerService } from '../components/shimmer/shimmer.service';
 
-export interface IUser {
-  id: string;
-}
 
 export class UsersController {
+
   public currentUser: IUser;
-  public userList: IUser[];
+  public list: IUser[];
+  private shimmer: ShimmerService;
+
+  public refresh(searchTerm: string): void {
+    var self = this;
+    this.shimmer.searchUsers(searchTerm).then(function(authorizations: IAuthorizations[]) {
+      self.list = authorizations.map(function(authorization: IAuthorizations) {
+        return { id: authorization.username, authorizations: authorization.auths };
+      });
+    });
+  };
+
+
   /* @ngInject */
-  constructor () {;
-    this.userList = [{ id: 'test' }, { id: 'sample' }, { id: 'third' }];
-    this.currentUser = this.userList[0];
+  constructor(shimmer: ShimmerService) {
+    this.list = [];
+    this.currentUser = { id: '', authorizations: [] };
+    this.shimmer = shimmer;
   }
 
 }

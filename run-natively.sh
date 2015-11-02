@@ -17,7 +17,7 @@ fi
 echo -n "Do you want to rebuild the console (y/N)? "
 read answer
 if echo "$answer" | grep -iq "^y" ;then
-    cd ${BASEDIR}/shim-server-ui #CMD
+    cd ${BASEDIR}/previous-shim-server-ui #CMD
 
     if ! isNpmPackageInstalled grunt-cli
     then
@@ -45,7 +45,7 @@ if echo "$answer" | grep -iq "^y" ;then
     grunt build #CMD
 
     cd ${BASEDIR}/shim-server/src/main/resources #CMD
-    ln -sfh ../../../../shim-server-ui/docker/assets public
+    ln -sfh ../../../../previous-shim-server-ui/docker/assets public
     #CMD create a symlink called shim-server/src/main/resources/public to the Grunt output directory
 fi
 

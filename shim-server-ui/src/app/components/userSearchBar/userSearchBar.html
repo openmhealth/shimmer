@@ -1,14 +1,17 @@
-<div class="user-search-bar">
-
+<div class="user-search-bar" ng-cloak>
   <span class="glyphicon glyphicon-user"></span><h2>User ID</h2>
 
-  <ui-select ng-model="search.currentUser">
+  <ui-select ng-model="searchBar.users.currentUser">
     <ui-select-match placeholder="Select or search for a user...">
-      {{$select.selected.id}}
+      <span ng-if="$select.selected.id">{{$select.selected.id}}</span>
+      <span ng-if="!$select.selected.id">Select or search for a user...</span>
     </ui-select-match>
-    <ui-select-choices repeat="user in search.getUsers($select.search) | filter: $select.search">
+    <ui-select-choices repeat="user in searchBar.users.list | filter: $select.search"
+     refresh="searchBar.users.refresh($select.search)" refresh-delay="0">
       <div ng-bind="user.id"></div>
     </ui-select-choices>
   </ui-select>
+
+  <button type="button" class="btn btn-default btn-xs hidden" ng-class="{ hidden: !searchBar.users.list.length==0 }">+ add user</button>
 
 </div>

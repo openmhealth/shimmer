@@ -105,8 +105,14 @@ body{
   .input-sm {
     height: 25px;
   }
+  input[type=number].input-sm {
+    padding: 0 10px;
+  }
   .panel-group .panel + .panel {
     margin: -1px;
+  }
+  a.accordion-toggle {
+    display: block;
   }
   .shim-panel {
     min-height: 70px;
@@ -140,6 +146,9 @@ body{
       }
       .table {
         border-bottom: 1px solid $table-border-color;
+        &.configuration{
+          border-bottom: none;
+        }
       }
       .table > thead > tr > td, .table > tbody > tr > th, .table > tbody > tr > td, .table > tfoot > tr > th, .table > tfoot > tr > td{
         padding: 16px 5px;
@@ -151,6 +160,9 @@ body{
         }
         &.flat-list {
           line-height: 28px;
+          div {
+            white-space: nowrap;
+          }
         }
       }
       .table > thead > tr > th {
@@ -171,10 +183,10 @@ body{
         font-weight: 100;
         color: $lable-color;
         text-align: right;
-      }
-      .save-config {
-        button {
-          margin-left: 5px;
+        &.save-config {
+          button {
+            margin-left: 5px;
+          }
         }
       }
     }
@@ -206,6 +218,9 @@ body{
       outline: none;
       box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
     }
+  }
+  button {
+    vertical-align: top;
   }
 }
 /**

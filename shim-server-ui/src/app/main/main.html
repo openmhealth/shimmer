@@ -4,15 +4,9 @@
 
   <accordion class="shim-list" close-others="false" ng-init="groupOpen=[false,false,false]">
 
-    <accordion-group panel-class="shim-panel" is-open="groupOpen[0]">
+    <accordion-group panel-class="shim-panel" is-open="groupOpen[1]" ng-repeat="(shimName, shim) in main.shims">
         <accordion-heading>
-          <span class="glyphicon glyphicon-triangle-right"></span><h2>Shim Name</h2>
-        </accordion-heading>
-    </accordion-group>
-
-    <accordion-group panel-class="shim-panel" is-open="groupOpen[1]">
-        <accordion-heading>
-          <span class="glyphicon glyphicon-triangle-right"></span><h2>Shim Name</h2>
+          <span class="glyphicon glyphicon-triangle-right"></span><h2>{{shimName}}</h2>
         </accordion-heading>
         <div class="details">
           <div class="row">
@@ -20,7 +14,7 @@
             <div class="col-sm-7">
               <h3>Shim configuration</h3>
                 <div class="table-responsive">
-                  <table class="table">
+                  <table class="table configuration">
                     <thead>
                       <tr>
                         <th class="col-sm-2"></th>
@@ -29,37 +23,41 @@
                       </tr>
                     </thead>
                     <tbody>
-                      <tr>
-                        <th scope="row">Label</th>
-                        <td><input type="text" value="value" class="form-control input-sm"/></td>
-                        <td class="description">help text</td>
-                      </tr>
-                      <tr>
-                        <th scope="row">Another label</th>
-                        <td><input type="text" value="value" class="form-control input-sm"/></td>
-                        <td class="description" ng-init="isCollapsed = true">
-                          help text that is so long that it has to break and flow to the next...
-                          <span class="more" popover="help text that is so long that it has to break and flow to the next line and a more link is shown so you can hover and read all the extra goodness" popover-trigger="mouseenter">more</span>
+
+                      <tr ng-repeat="directive in shim.configuration.directives">
+                        <th scope="row">{{directive.label}}</th>
+                        <td>
+
+                          <input type="number" class="form-control input-sm" ng-model="shim.configuration.values[directive.configPath]" ng-if="directive.type==='integer'" />
+
+                          <input type="number" class="form-control input-sm" ng-model="shim.configuration.values[directive.configPath]" ng-if="directive.type==='float'"/>
+
+                          <input type="text" value="value" class="form-control input-sm" ng-model="shim.configuration.values[directive.configPath]" ng-if="directive.type==='string'"/>
+
+                          <ui-select ng-model="shim.configuration.value[directive.configPath]" ng-if="directive.type==='boolean'">
+                            <ui-select-match placeholder="--">
+                              {{$select.selected}}
+                            </ui-select-match>
+                            <ui-select-choices repeat="option in ['--','true','false']">
+                              <div ng-bind="option"></div>
+                            </ui-select-choices>
+                          </ui-select>
+
 
                         </td>
-                      </tr>
-                      <tr>
-                        <th scope="row">A very long label that has to break</th>
-                        <td><input type="text" value="value" class="form-control input-sm"/></td>
-                        <td class="description">help text</td>
-                      </tr>
-                      <tr>
-                        <th scope="row">Another label</th>
-                        <td><input type="text" value="value" class="form-control input-sm"/></td>
-                        <td class="description">help text</td>
+                        <td class="description">
+                          <span  ng-if="directive.description">
+                            {{main.truncate(directive.description,70)}}
+                            <span class="more" popover="{{directive.description}}" popover-trigger="mouseenter" ng-if="directive.description.length>70">more</span>
+                          </span>
+                        </td>
                       </tr>
 
+
                       <tr>
-                        <td class="description" colspan="3">
-                          <div class="save-config">
+                        <td class="description save-config" colspan="3">
                           Changes will become active after they are saved.
                             <button type="button" class="btn btn-default btn-xs">save changes</button>
-                          </div>
                         </td>
                       </tr>
 
@@ -69,7 +67,9 @@
             </div>
 
             <div class="col-sm-5">
-              <h3>Vendor API Statistics</h3>
+
+<!-- TODO: Add stats -->
+<!--               <h3>Vendor API Statistics</h3>
                 <div class="table-responsive">
                   <table class="table">
                     <thead>
@@ -98,6 +98,7 @@
                     </tbody>
                 </table>
               </div>
+ -->
 
               <h3>Supported schemas</h3>
                 <div class="table-responsive">
@@ -110,7 +111,7 @@
                     <tbody>
                       <tr>
                         <td class="compact flat-list">
-                        granola:schema-name:1.0, granola:schema-name:1.0, granola:schema-name:1.0, omh:schema-longer-name:1.0, omh:schema-name:1.0, omh:schema-name:1.1, omh:schema-name:1.0
+                          <div ng-repeat="schema in shim.schemas">{{schema.namespace}}:{{schema.name}}:{{schema.version}}</div>
                         </td>
                       </tr>
                     </tbody>
@@ -120,12 +121,6 @@
 
           </div>
         </div>
-    </accordion-group>
-
-    <accordion-group panel-class="shim-panel" is-open="groupOpen[2]">
-        <accordion-heading>
-          <span class="glyphicon glyphicon-triangle-right"></span><h2>Shim Name</h2>
-        </accordion-heading>
     </accordion-group>
 
   </accordion>
