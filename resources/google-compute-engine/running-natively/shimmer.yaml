@@ -1,0 +1,18 @@
+# TODO This deployment consists of a ...
+
+# This deployment configuration file describes all the resources used by the Cloud Deployment Manager deployment.
+# see https://cloud.google.com/deployment-manager/configuration/create-configuration-file
+
+imports:
+  - path: vm_template.py
+
+resources:
+- name: shimmer
+  type: vm_template.py  # a customisation of the instance resource type
+  properties:
+    instanceImage: debian-8-jessie-v20150929 # see https://cloud.google.com/compute/docs/operating-systems/linux-os#debian
+    instanceName: shimmer-vm
+    instanceZone: us-central1-a
+    instanceMachineType: n1-standard-1
+    instanceBootDiskType: pd-standard
+    instanceNetwork: default
