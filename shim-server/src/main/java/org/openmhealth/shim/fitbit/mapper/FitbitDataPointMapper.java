@@ -18,10 +18,7 @@ package org.openmhealth.shim.fitbit.mapper;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.Lists;
-import org.openmhealth.schema.domain.omh.DataPoint;
-import org.openmhealth.schema.domain.omh.DataPointAcquisitionProvenance;
-import org.openmhealth.schema.domain.omh.DataPointHeader;
-import org.openmhealth.schema.domain.omh.Measure;
+import org.openmhealth.schema.domain.omh.*;
 import org.openmhealth.shim.common.mapper.JsonNodeDataPointMapper;
 
 import java.time.LocalDateTime;
@@ -44,7 +41,7 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asRequir
  * @author Chris Schaefbauer
  * @author Emerson Farrugia
  */
-public abstract class FitbitDataPointMapper<T> implements JsonNodeDataPointMapper<T> {
+public abstract class FitbitDataPointMapper<T extends SchemaSupport> implements JsonNodeDataPointMapper<T> {
 
     public static final String RESOURCE_API_SOURCE_NAME = "Fitbit Resource API";
 
