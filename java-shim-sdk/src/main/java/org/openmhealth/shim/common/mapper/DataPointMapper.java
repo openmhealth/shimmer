@@ -2,8 +2,12 @@ package org.openmhealth.shim.common.mapper;
 
 
 import org.openmhealth.schema.domain.omh.DataPoint;
+import org.openmhealth.schema.domain.omh.SchemaId;
 import org.openmhealth.schema.domain.omh.SchemaSupport;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.ParameterizedType;
 import java.util.List;
 
 
@@ -25,4 +29,27 @@ public interface DataPointMapper<B extends SchemaSupport, I> {
      * @return the list of data points mapped from those inputs
      */
     List<DataPoint<B>> asDataPoints(List<I> inputs);
+
+    /**
+     * Gets the schema identifier of the data point body that this mapper creates. This default implementation assumes
+     * that body classes have a default constructor used for serialization, and must be overridden if they don't.
+     *
+     * @return the schema identifier of the body type
+     */
+    @SuppressWarnings("unchecked")
+    default SchemaId getBodySchemaId() {
+
+        try {
+            Class<B> bodyClass = (Class<B>)
+                    ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
+
+            Constructor<B> bodyClassConstructor = bodyClass.getDeclaredConstructor();
+            bodyClassConstructor.setAccessible(true);
+
+            return bodyClassConstructor.newInstance().getSchemaId();
+        }
+        catch (NoSuchMethodException | InstantiationException | InvocationTargetException | IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
