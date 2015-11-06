@@ -32,6 +32,11 @@ public interface EndpointConfigurationProperties {
     String getId();
 
     /**
+     * @return The name of the API for which this endpoint configuration belongs
+     */
+    String getApiSourceName();
+
+    /**
      * @return the URI template used to send HTTP requests to this endpoint
      */
     UriTemplate getUriTemplate();
@@ -71,4 +76,25 @@ public interface EndpointConfigurationProperties {
     default boolean supportsModificationDateTimeQueries() {
         return getModificationDateTimeQuerySettings().isPresent();
     }
+
+    /**
+     * @return the settings used by this endpoint to handle pagination in the request
+     */
+    Optional<PaginationRequestConfigurationProperties> getPaginationRequestConfigurationSettings();
+
+    /**
+     * @return true if this endpoint supports sending pagination information in requests
+     */
+    default boolean supportsPaginationInRequests() { return getPaginationRequestConfigurationSettings().isPresent(); }
+
+    /**
+     * @return the settings used by this endpoint to handle pagination responses
+     */
+    Optional<PaginationResponseConfigurationProperties> getPaginationResponseConfigurationSettings();
+
+    /**
+     * @return true if this endpoint provides pagination information in its responses
+     */
+    default boolean supportsPaginationInResponses() { return getPaginationResponseConfigurationSettings().isPresent(); }
+
 }
