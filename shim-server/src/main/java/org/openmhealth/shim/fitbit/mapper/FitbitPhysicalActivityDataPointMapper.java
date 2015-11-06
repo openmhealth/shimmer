@@ -24,24 +24,19 @@ import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.Optional;
 
+import static org.openmhealth.schema.domain.omh.DurationUnit.DAY;
+import static org.openmhealth.schema.domain.omh.DurationUnit.MILLISECOND;
+import static org.openmhealth.schema.domain.omh.LengthUnit.KILOMETER;
 import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.*;
 
 
 /**
- * A mapper from Fitbit Resource API activities/date responses to {@link PhysicalActivity} objects.
+ * A mapper from Fitbit Resource API <code>activities/date</code> responses to {@link PhysicalActivity} objects.
  *
  * @author Chris Schaefbauer
  */
 public class FitbitPhysicalActivityDataPointMapper extends FitbitDataPointMapper<PhysicalActivity> {
 
-    /**
-     * Maps a JSON response node from the Fitbit API into a {@link PhysicalActivity} measure.
-     *
-     * @param node a JSON node for an individual object in the "activities" array retrieved from the activities/date/
-     * Fitbit API endpoint
-     * @return a {@link DataPoint} object containing a {@link PhysicalActivity} measure with the appropriate values from
-     * the node parameter, wrapped as an {@link Optional}
-     */
     @Override
     protected Optional<DataPoint<PhysicalActivity>> asDataPoint(JsonNode node) {
 
@@ -50,10 +45,11 @@ public class FitbitPhysicalActivityDataPointMapper extends FitbitDataPointMapper
 
         Boolean hasStartTime = asRequiredBoolean(node, "hasStartTime");
 
-        //hasStartTime is true if the startTime value has been set, which is required of entries through the user GUI
-        // and from sensed data,
-        // however some of their data import workflows may set dummy values for these (00:00:00), in which case
-        // hasStartTime is false and the time shouldn't be used
+        /*
+         * hasStartTime is true if the startTime value has been set, which is required of entries through the user
+         * GUI and from sensed data, however some of their data import workflows may set dummy values for these
+         * (00:00:00), in which case hasStartTime is false and the time shouldn't be used
+         */
         if (hasStartTime) {
 
             Optional<LocalDateTime> localStartDateTime = asOptionalLocalDateTime(node, "startDate", "startTime");
@@ -64,38 +60,37 @@ public class FitbitPhysicalActivityDataPointMapper extends FitbitDataPointMapper
                 OffsetDateTime offsetStartDateTime = combineDateTimeAndTimezone(localStartDateTime.get());
                 if (duration.isPresent()) {
                     activityBuilder.setEffectiveTimeFrame(TimeInterval.ofStartDateTimeAndDuration(offsetStartDateTime,
-                            new DurationUnitValue(DurationUnit.MILLISECOND, duration.get())));
+                            new DurationUnitValue(MILLISECOND, duration.get())));
                 }
                 else {
                     activityBuilder.setEffectiveTimeFrame(offsetStartDateTime);
                 }
-
             }
         }
         else {
-
             Optional<LocalDate> localStartDate = asOptionalLocalDate(node, "startDate");
 
             if (localStartDate.isPresent()) {
-                //In this case we have a date, but no time, so we set the startTime to beginning of day on the
+                // in this case we have a date, but no time, so we set the startTime to beginning of day on the
                 // startDate, add the offset, then set the duration as the entire day
                 LocalDateTime localStartDateTime = localStartDate.get().atStartOfDay();
                 OffsetDateTime offsetStartDateTime = combineDateTimeAndTimezone(localStartDateTime);
                 activityBuilder.setEffectiveTimeFrame(TimeInterval
-                        .ofStartDateTimeAndDuration(offsetStartDateTime, new DurationUnitValue(DurationUnit.DAY, 1)));
+                        .ofStartDateTimeAndDuration(offsetStartDateTime, new DurationUnitValue(DAY, 1)));
             }
         }
 
         Optional<Double> distance = asOptionalDouble(node, "distance");
 
         if (distance.isPresent()) {
-            //by default fitbit returns metric unit values (https://wiki.fitbit.com/display/API/API+Unit+System), so
+            // by default fitbit returns metric unit values (https://wiki.fitbit.com/display/API/API+Unit+System), so
             // this assumes that the response is using the default for distance (KM)
-            activityBuilder.setDistance(new LengthUnitValue(LengthUnit.KILOMETER, distance.get()));
+            activityBuilder.setDistance(new LengthUnitValue(KILOMETER, distance.get()));
         }
 
         PhysicalActivity measure = activityBuilder.build();
         Optional<Long> externalId = asOptionalLong(node, "logId");
+
         return Optional.of(newDataPoint(measure, externalId.orElse(null)));
     }
 
