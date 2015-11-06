@@ -59,6 +59,7 @@ public class GoogleFitCaloriesBurnedDataPointMapper extends GoogleFitDataPointMa
                 return Optional.empty();
             }
         }
+
         return Optional.of(newDataPoint(caloriesBurned, originDataSourceId.orElse(null)));
     }
 }
