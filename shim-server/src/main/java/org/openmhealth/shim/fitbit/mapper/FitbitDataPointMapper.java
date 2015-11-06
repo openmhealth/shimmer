@@ -48,14 +48,14 @@ public abstract class FitbitDataPointMapper<T extends SchemaSupport> implements 
     /**
      * Maps JSON response nodes from the Fitbit API into a list of {@link DataPoint} objects with the appropriate type.
      * <p>
-     * <p>Data points from the Fitbit API do not have any time zone information, so these mappers use UTC as the
+     * Data points from the Fitbit API do not have any time zone information, so these mappers use UTC as the
      * timezone. There is currently no way to determine the correct time zone for a datapoint given the Fitbit API.</p>
      *
      * @param responseNodes the list of two json nodes - the first being the get-user-info response (from
      * user/<user-id>/profile) and the second being the specific data point of interest for the mapper
      * @return a list of DataPoint objects of type T with the appropriate values mapped from the input JSON; if JSON
-     * objects are contained within an array in the input response, each item in that array will map into an item in
-     * the list
+     * objects are contained within an array in the input response, each item in that array will map into an item in the
+     * list
      */
     @Override
     public List<DataPoint<T>> asDataPoints(List<JsonNode> responseNodes) {
@@ -72,8 +72,6 @@ public abstract class FitbitDataPointMapper<T extends SchemaSupport> implements 
         }
 
         return dataPoints;
-
-
     }
 
     /**
