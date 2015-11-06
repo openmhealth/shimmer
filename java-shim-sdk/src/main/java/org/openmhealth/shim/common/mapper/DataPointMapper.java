@@ -10,6 +10,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.ParameterizedType;
 import java.util.List;
 
+import static java.util.Collections.singletonList;
+
 
 /**
  * A mapper that creates data points from one or more inputs.
@@ -29,6 +31,14 @@ public interface DataPointMapper<B extends SchemaSupport, I> {
      * @return the list of data points mapped from those inputs
      */
     List<DataPoint<B>> asDataPoints(List<I> inputs);
+
+    /**
+     * @see #asDataPoints(List)
+     */
+    default List<DataPoint<B>> asDataPoints(I input) {
+
+        return asDataPoints(singletonList(input));
+    }
 
     /**
      * Gets the schema identifier of the data point body that this mapper creates. This default implementation assumes
