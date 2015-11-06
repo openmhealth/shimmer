@@ -16,11 +16,16 @@
 
 package org.openmhealth.shimmer.common.domain;
 
+import com.google.common.collect.Maps;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.RequestEntity;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.util.UriComponentsBuilder;
 import org.springframework.web.util.UriTemplate;
+
+import java.net.URI;
+import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -32,12 +37,13 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * @author Emerson Farrugia
  * @author Chris Schaefbauer
  */
-public class RequestEntityBuilder {
+public class RequestEntityBuilder<T> {
 
     private UriTemplate uriTemplate;
     private HttpMethod httpMethod = HttpMethod.GET;
     private MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
     private MultiValueMap<String, String> queryParameters = new LinkedMultiValueMap<>();
+    private Map<String, String> pathParameters = Maps.newHashMap();
 
 
     /**
@@ -89,6 +95,17 @@ public class RequestEntityBuilder {
         addToMultiValueMap(queryParameters, name, value);
     }
 
+    public void addPathParameter(String name, String value) {
+
+        // Do we need to be able to handle multivalue and then figure out delineation or do we just require the value
+        // to contain all the values separated properly?
+        checkNotNull(name);
+        checkArgument(!name.isEmpty());
+        checkNotNull(value);
+        checkArgument(!value.isEmpty());
+        pathParameters.put(name, value);
+    }
+
     private void addToMultiValueMap(MultiValueMap<String, String> map, String key, String value) {
 
         checkNotNull(key);
@@ -102,9 +119,13 @@ public class RequestEntityBuilder {
     /**
      * @return the request entity
      */
-    public RequestEntity<?> build() {
+    public RequestEntity<T> build() {
 
-        // FIXME implement me
-        return null;
+        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromUriString(uriTemplate.toString())
+                .queryParams(queryParameters);
+
+        URI completedUri = uriBuilder.buildAndExpand(pathParameters).encode().toUri();
+
+        return new RequestEntity(headers, httpMethod, completedUri);
     }
 }
