@@ -1,10 +1,13 @@
+<link rel="stylesheet" href="//code.jquery.com/ui/1.10.2/themes/smoothness/jquery-ui.css">
+
+
 <div class="container">
 
   <ng-include src="'app/navbar/navbar.html'"></ng-include>
 
-  <accordion class="shim-list" close-others="false" ng-init="groupOpen=[false,false,false]">
+  <accordion class="shim-list" close-others="false">
 
-    <accordion-group panel-class="shim-panel" is-open="groupOpen[1]" ng-repeat="(shimName, shim) in main.shims">
+    <accordion-group panel-class="shim-panel" is-open="main.panelStates[shimName]" ng-repeat="(shimName, shim) in main.shims">
         <accordion-heading>
           <span class="glyphicon glyphicon-triangle-right"></span><h2>{{shimName}}</h2>
         </accordion-heading>
@@ -14,55 +17,72 @@
             <div class="col-sm-7">
               <h3>Shim configuration</h3>
                 <div class="table-responsive">
-                  <table class="table configuration">
-                    <thead>
-                      <tr>
-                        <th class="col-sm-2"></th>
-                        <th class="col-sm-5"></th>
-                        <th class="col-sm-5"></th>
-                      </tr>
-                    </thead>
-                    <tbody>
 
-                      <tr ng-repeat="setting in shim.configuration.settings">
-                        <th scope="row">{{setting.label}}</th>
-                        <td>
+                  <form name="main.configurationForm">
 
-                          <input type="number" class="form-control input-sm" ng-model="shim.configuration.values[setting.settingId].value" ng-if="setting.type==='integer'" />
+                    <table class="table configuration">
+                      <thead>
+                        <tr>
+                          <th class="col-sm-2"></th>
+                          <th class="col-sm-5"></th>
+                          <th class="col-sm-5"></th>
+                        </tr>
+                      </thead>
+                      <tbody>
 
-                          <input type="number" class="form-control input-sm" ng-model="shim.configuration.values[setting.settingId].value" ng-if="setting.type==='float'"/>
+                        <tr ng-repeat="setting in shim.configuration.settings">
+                          <th scope="row">{{setting.label}}</th>
+                          <td>
 
-                          <input type="text" value="value" class="form-control input-sm" ng-model="shim.configuration.values[setting.settingId].value" ng-if="setting.type==='string'"/>
+                            <input type="number" class="form-control input-sm" ng-model="shim.configuration.values[setting.settingId].value" ng-if="setting.type==='integer'" min="{{setting.min}}" max="{{setting.max}}" ng-pattern="main.patterns.integer" name="{{setting.settingId}}" ng-required="setting.required">
 
-                          <ui-select ng-model="shim.configuration.values[setting.settingId].value" ng-if="setting.type==='boolean'">
-                            <ui-select-match placeholder="--">
-                              {{$select.selected.label}}
-                            </ui-select-match>
-                            <ui-select-choices repeat="option.value as option in main.validBooleanSettings">
-                              <div ng-bind="option.label"></div>
-                            </ui-select-choices>
-                          </ui-select>
+                            <!--  ui-validate=" 'main.validate(shim.configuration,setting)' " -->
+
+                            <input type="number" class="form-control input-sm" ng-model="shim.configuration.values[setting.settingId].value" ng-if="setting.type==='float'" min="{{setting.min}}" max="{{setting.max}}" name="{{setting.settingId}}" ng-required="setting.required">
+
+                            <input type="text" value="value" class="form-control input-sm" ng-model="shim.configuration.values[setting.settingId].value" ng-if="setting.type==='string'" ng-minlength="setting.minlength" ng-maxlength="setting.maxlength" name="{{setting.settingId}}" ng-required="setting.required">
+
+                            <ui-select ng-model="shim.configuration.values[setting.settingId].value" ng-if="setting.type==='boolean'" name="{{setting.settingId}}" ng-required="setting.required">
+                              <ui-select-match placeholder="--">
+                                {{$select.selected}}
+                              </ui-select-match>
+                              <ui-select-choices repeat="option in main.validBooleanSettings">
+                                <div ng-bind="main.booleanLabels[ option ]"></div>
+                              </ui-select-choices>
+                            </ui-select>
+
+                            <div ng-messages="main.configurationForm[setting.settingId].$error" role="alert" class="form-validation-message">
+                              <div ng-message="required">Value is required.</div>
+                              <div ng-message="minlength">Value is too short.</div>
+                              <div ng-message="maxlength">Value is too long.</div>
+                              <div ng-message="min">Number must be &gt; {{setting.min}}</div>
+                              <div ng-message="max">Number must be &lt; {{setting.max}}</div>
+                              <div ng-message="number">Value must be a number</div>
+                              <div ng-message="pattern">Number must be a{{setting.type=='integer'?'n':''}} {{setting.type}}</div>
+                            </div>
+
+                          </td>
+                          <td class="description">
+                            <span  ng-if="setting.description">
+                              {{main.truncate(setting.description,70)}}
+                              <span class="more" popover="{{setting.description}}" popover-trigger="mouseenter" ng-if="setting.description.length>70">more</span>
+                            </span>
+                          </td>
+                        </tr>
 
 
-                        </td>
-                        <td class="description">
-                          <span  ng-if="setting.description">
-                            {{main.truncate(setting.description,70)}}
-                            <span class="more" popover="{{setting.description}}" popover-trigger="mouseenter" ng-if="setting.description.length>70">more</span>
-                          </span>
-                        </td>
-                      </tr>
+                        <tr>
+                          <td class="description save-config" colspan="3">
+                            Changes will become active after they are saved.
+                              <button type="button" class="btn btn-default btn-xs">save changes</button>
+                          </td>
+                        </tr>
 
+                      </tbody>
+                    </table>
 
-                      <tr>
-                        <td class="description save-config" colspan="3">
-                          Changes will become active after they are saved.
-                            <button type="button" class="btn btn-default btn-xs">save changes</button>
-                        </td>
-                      </tr>
+                  </form>
 
-                    </tbody>
-                </table>
               </div>
             </div>
 
@@ -126,4 +146,6 @@
   </accordion>
 
 </div>
+
+{{main.shims}}
 

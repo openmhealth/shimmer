@@ -1,18 +1,30 @@
+<link rel="stylesheet" href="//code.jquery.com/ui/1.10.2/themes/smoothness/jquery-ui.css">
+
+
 <div class="container">
 
   <ng-include src="'app/navbar/navbar.html'"></ng-include>
 
-  <user-search-bar users="users"></user-search-bar>
+  <user-search-bar></user-search-bar>
 
   <accordion class="shim-list" close-others="false" ng-init="groupOpen=[false,false,false]">
 
-    <accordion-group panel-class="shim-panel" is-open="groupOpen[0]">
+    <accordion-group panel-class="shim-panel" is-open="groupOpen[0]" ng-repeat="(shimName, shim) in users.shims">
         <accordion-heading>
-          <span class="glyphicon glyphicon-triangle-right"></span><h2>Shim Name</h2>
+
+          <span class="glyphicon glyphicon-triangle-right" ng-class="{ disabled: !(users.searchBar.selectedUser&&shim.authenticated) }"></span>
+          <h2>{{shimName}}</h2>
+          <div class="user-connect-disconnect" ng-if="users.searchBar.selectedUser&&!shim.authenticated">
+            <span><span class="glyphicon glyphicon-remove"></span>User is not connected.</span> <button type="button" class="btn btn-default btn-xs" ng-click="users.connectSelectedUser($event,shimName)">connect</button>
+          </div>
+          <div class="user-connect-disconnect" ng-if="users.searchBar.selectedUser&&shim.authenticated">
+            <span><span class="glyphicon glyphicon-ok"></span>User is connected.</span> <button type="button" class="btn btn-default btn-xs" ng-click="users.disconnectSelectedUser($event,shimName)">disconnect</button>
+          </div>
+
         </accordion-heading>
     </accordion-group>
 
-    <accordion-group panel-class="shim-panel" is-open="groupOpen[1]">
+<!--     <accordion-group panel-class="shim-panel" is-open="groupOpen[1]">
         <accordion-heading>
           <span class="glyphicon glyphicon-triangle-right"></span><h2>Shim Name</h2>
         </accordion-heading>
@@ -55,13 +67,7 @@
 
           </div>
         </div>
-    </accordion-group>
-
-    <accordion-group panel-class="shim-panel" is-open="groupOpen[2]">
-        <accordion-heading>
-          <span class="glyphicon glyphicon-triangle-right"></span><h2>Shim Name</h2>
-        </accordion-heading>
-    </accordion-group>
+    </accordion-group> -->
 
   </accordion>
 

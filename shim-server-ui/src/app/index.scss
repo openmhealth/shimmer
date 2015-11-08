@@ -84,6 +84,20 @@ body{
   padding-top: 0;
   padding-bottom: 2px;
 }
+.form-validation-message{
+  color: maroon;
+  margin-top: 2px;
+}
+.ui-select-bootstrap {
+  .form-control {
+    @extend .btn-xs;
+    height: 25px;
+  }
+  .btn-default-focus {
+    outline: none;
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+  }
+}
 
 .shim-list {
   .glyphicon-triangle-right{
@@ -93,6 +107,9 @@ body{
     transform: rotate(0deg);
     -webkit-transition: -webkit-transform 400ms; /* Safari */
     transition: transform 400ms;
+    &.disabled{
+      visibility: hidden;
+    }
   }
   .panel-open .glyphicon-triangle-right {
     -ms-transform: rotate(90deg); /* IE 9 */
@@ -101,6 +118,7 @@ body{
   }
   h2 {
     @extend .list-heading;
+    text-transform: capitalize;
   }
   .input-sm {
     height: 25px;
@@ -113,8 +131,12 @@ body{
   }
   a.accordion-toggle {
     display: block;
+    &:hover{
+      text-decoration: none;
+    }
   }
   .shim-panel {
+    position: relative;
     min-height: 70px;
     margin: 0;
     border: 1px solid $list-line-divider-color;
@@ -208,21 +230,67 @@ body{
     width: 300px;
     display: inline-block;
     margin-left: 5px;
-    //margin-top: -4px;
     vertical-align: top;
-    .form-control {
-      @extend .btn-xs;
-      height: 25px;
-    }
-    .btn-default-focus {
-      outline: none;
-      box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
-    }
   }
   button {
     vertical-align: top;
   }
 }
+
+.user-connect-disconnect {
+  position: absolute;
+  right: 15px;
+  top: 20px;
+  button{
+    margin-left: 15px;
+  }
+  .glyphicon {
+    margin-right: 10px;
+  }
+}
+
+
+.list-group.request-parameters {
+  border-bottom: 1px solid $list-line-divider-color;
+  border-top: 1px solid $list-line-divider-color;
+  .list-group-item {
+    height: 70px;
+    padding-top: 22px;
+    border: none;
+    border-radius: none;
+    border-top: 1px solid $list-line-divider-color;
+    span.parameter-label,
+    span.parameter-dropdown,
+    span.parameter-date,
+    span.parameter-button
+    {
+      display: inline-block;
+    }
+    span.parameter-dropdown{
+      margin-right: 10px;
+    }
+    span.parameter-label{
+      &.url{
+        width: 5%;
+      }
+    }
+    span.parameter-date{
+    }
+    span.parameter-text{
+      input{
+        width: 70%;
+      }
+    }
+    .ui-select-bootstrap {
+      width: 300px;
+      display: inline-block;
+      margin-left: 5px;
+      vertical-align: middle;
+    }
+
+  }
+}
+
 /**
  *  Do not remove the comments below. It's the markers used by gulp-inject to inject
  *  all your sass files automatically

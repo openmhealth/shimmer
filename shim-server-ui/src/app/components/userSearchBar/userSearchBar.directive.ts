@@ -1,7 +1,8 @@
-// import { GithubContributor } from '../githubContributor/githubContributor.service';
+import { ShimmerService } from '../shimmer/shimmer.service';
+import { UserSearchBarService } from '../userSearchBar/userSearchBar.service';
 import { UsersController } from '../../users/users.controller';
 
-interface IProjectsScope extends angular.IScope {
+interface ProjectsScope extends angular.IScope {
   extraValues: any[];
 }
 
@@ -10,9 +11,7 @@ export function userSearchBar(): angular.IDirective {
 
     return {
         restrict: 'E',
-        scope: {
-          users: '=',
-        },
+        scope: {},
         templateUrl: 'app/components/userSearchBar/userSearchBar.html',
         link: linkFunc,
         controller: UserSearchBarController,
@@ -24,15 +23,33 @@ export function userSearchBar(): angular.IDirective {
 
 export class UserSearchBarController {
 
-    public users: UsersController;
+    private userList: User[];
+    public service: UserSearchBarService;
 
     /** @ngInject */
-    constructor() {
+    constructor(private shimmer: ShimmerService, userSearchBar: UserSearchBarService) {
+        this.userList = [];
+        this.service = userSearchBar;
+    }
+
+    public refresh(searchTerm: string): void {
+        var self: UserSearchBarController = this;
+        this.shimmer.searchUsers(searchTerm).then(function(authorizations: angular.resource.IResourceArray<AuthorizationsResourceDefinition>) {
+            self.userList = authorizations.map(function(authorization: AuthorizationsResourceDefinition) {
+              return { id: authorization.username, authorizations: authorization.auths };
+        });
+      });
+    };
+
+    public setSelectedUser( user: User ){
+        console.info('changed: ', user);
+        this.service.selectedUser = user;
+        this.shimmer.updateAuthorizations( user.id );
     }
 
 }
 
 /** @ngInject */
-function linkFunc(scope: IProjectsScope, el: JQuery, attr: any, searchBar: UserSearchBarController) {
+function linkFunc(scope: ProjectsScope, el: JQuery, attr: any, searchBar: UserSearchBarController) {
 }
 

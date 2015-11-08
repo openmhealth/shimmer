@@ -5,12 +5,13 @@ interface ShimPropertyResource {
 }
 
 // API Authorizations
-interface Authorizations extends angular.resource.IResource<Authorizations> {
+interface Authorizations {
   auths: string[];
   username: string;
 }
-
-interface AuthorizationsResource extends angular.resource.IResourceClass<Authorizations> {
+interface AuthorizationsResourceDefinition extends angular.resource.IResource<Authorizations>, Authorizations {
+}
+interface AuthorizationsResource extends angular.resource.IResourceClass<AuthorizationsResourceDefinition> {
   update( authorizations: Authorizations): Authorizations;
 }
 
@@ -30,7 +31,8 @@ interface ConfigurationSetting {
     required: boolean;
     label: string;
     description?: string;
-    length?: number;
+    minlength?: number;
+    maxlength?: number;
     min?: number;
     max?: number;
 }
@@ -38,7 +40,11 @@ interface Configuration extends ShimPropertyResource {
     settings: ConfigurationSetting[];
     values: any;
 }
-interface ConfigurationResourceDefinition extends angular.resource.IResource<Configuration> {
+interface ConfigurationImpl extends ShimPropertyResource {
+    getSetting(serttingId: string): ConfigurationSetting;
+    getValue(serttingId: string): ConfigurationValue;
+}
+interface ConfigurationResourceDefinition extends angular.resource.IResource<Configuration>, Configuration {
 }
 interface ConfigurationResource extends angular.resource.IResourceClass<ConfigurationResourceDefinition> {
     update(configuration: Configuration): angular.IPromise<Configuration>;
@@ -78,9 +84,11 @@ interface ShimMap {
 }
 
 //Requests
-interface Request {
+interface RequestParameters {
     shim: Shim;
     schema: Schema;
-    dates: Date[];
+    dateType: string;
+    startDate: Date,
+    endDate: Date,
     url: string;
 }

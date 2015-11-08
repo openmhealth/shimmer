@@ -8,11 +8,17 @@ export function routerConfig($stateProvider: ng.ui.IStateProvider, $urlRouterPro
       controllerAs: 'main'
     })
     .state('users', {
-        url: '/users',
-        templateUrl: 'app/users/users.html',
-        controller: 'UsersController',
-        controllerAs: 'users'
-    });
+      url: '/users',
+      templateUrl: 'app/users/users.html',
+      controller: 'UsersController',
+      controllerAs: 'users'
+    })
+    .state('requests', {
+      url: '/requests',
+      templateUrl: 'app/requests/requests.html',
+      controller: 'RequestsController',
+      controllerAs: 'requests'
+  });
 
   $urlRouterProvider.otherwise('/');
 }

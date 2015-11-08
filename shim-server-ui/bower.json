@@ -17,9 +17,10 @@
     "angular-toastr": "~1.5.0",
     "moment": "~2.10.6",
     "animate.css": "~3.4.0",
-    "angular": "~1.4.2",
+    "angular": "~1.4.5",
     "open-sans-fontface": "~1.4.2",
-    "ui-select": "angular-ui-select#~0.13.2"
+    "ui-select": "angular-ui-select#~0.13.2",
+    "angular-ui-date": "~0.0.8"
   },
   "devDependencies": {
     "angular-mocks": "~1.4.2"
@@ -34,6 +35,9 @@
         "assets/fonts/bootstrap/glyphicons-halflings-regular.woff",
         "assets/fonts/bootstrap/glyphicons-halflings-regular.woff2"
       ]
+    },
+    "angular-ui-date": {
+      "styles": "../jquery-ui/themes/smoothness/jquery-ui.css"
     }
   },
   "resolutions": {

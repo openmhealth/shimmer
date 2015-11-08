@@ -2,12 +2,13 @@
 export function runMock($httpBackend: angular.IHttpBackendService) {
 
     var configuration = {
-        shimName: 'Withings',
+        shimName: 'withings',
         settings: <ConfigurationSetting[]>[
             <ConfigurationSetting>{
                 settingId: 'string.test.path',
                 type: 'string',
-                length: 12,
+                minlength: 12,
+                maxlength: 14,
                 label: 'String mock',
                 description: 'A required string mock that must be 12 characters',
                 required: true
@@ -43,7 +44,7 @@ export function runMock($httpBackend: angular.IHttpBackendService) {
     };
 
     var schemas = <SchemaList>{
-        shimName: 'Withings',
+        shimName: 'withings',
         schemas: <Schema[]>[
             <Schema>{
                     'namespace': 'granola',
@@ -159,8 +160,10 @@ export function runMock($httpBackend: angular.IHttpBackendService) {
     return [200, newConfiguration, {}];
   });
 
-  $httpBackend.whenGET(/^\/api\/[.+\/]?authorizations/).passThrough();
-  $httpBackend.whenGET(/app\//).passThrough();
+    $httpBackend.whenGET(/^\/api\/[.+\/]?authorizations/).passThrough();
+    $httpBackend.whenGET(/^\/api\/[.+\/]?authorize/).passThrough();
+    $httpBackend.whenDELETE(/^\/api\/[.+\/]?de-authorize\/.+/).passThrough();
+    $httpBackend.whenGET(/app\//).passThrough();
 
 }
 
