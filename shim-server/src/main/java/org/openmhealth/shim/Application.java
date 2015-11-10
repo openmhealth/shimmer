@@ -321,7 +321,7 @@ public class Application extends WebSecurityConfigurerAdapter {
         if (!"".equals(dateEnd)) {
             shimDataRequest.setEndDateTime(LocalDate.parse(dateEnd).atStartOfDay().atOffset(UTC));
         }
-        shimDataRequest.setNumToReturn(numToReturn);
+        //shimDataRequest.setNumToReturn(numToReturn);
 
         AccessParameters accessParameters = accessParametersRepo.findByUsernameAndShimKey(
                 username, shim, new Sort(Sort.Direction.DESC, "dateCreated"));

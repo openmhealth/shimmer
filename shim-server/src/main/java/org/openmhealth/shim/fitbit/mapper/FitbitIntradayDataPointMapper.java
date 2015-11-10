@@ -19,6 +19,7 @@ package org.openmhealth.shim.fitbit.mapper;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.Lists;
 import org.openmhealth.schema.domain.omh.DataPoint;
+import org.openmhealth.schema.domain.omh.SchemaSupport;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -33,7 +34,7 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asRequir
 /**
  * @author Chris Schaefbauer
  */
-public abstract class FitbitIntradayDataPointMapper<T> extends FitbitDataPointMapper<T> {
+public abstract class FitbitIntradayDataPointMapper<T extends SchemaSupport> extends FitbitDataPointMapper<T> {
 
     private JsonNode responseNode;
 
