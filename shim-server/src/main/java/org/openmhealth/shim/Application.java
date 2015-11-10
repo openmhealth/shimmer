@@ -56,6 +56,8 @@ import static org.springframework.web.bind.annotation.RequestMethod.*;
 @RestController
 public class Application extends WebSecurityConfigurerAdapter {
 
+    private static final String AUTH_SUCCESS_URL = "/#authorizationComplete/success";
+    private static final String AUTH_FAILURE_URL = "/#authorizationComplete/failure";
     @Autowired
     private AccessParametersRepo accessParametersRepo;
 
@@ -266,6 +268,21 @@ public class Application extends WebSecurityConfigurerAdapter {
                 }
                 return null;
             }
+
+            String authorizationStatusURL = AUTH_FAILURE_URL;
+            if(response.getType().equals(AuthorizationResponse.Type.AUTHORIZED)){
+
+                authorizationStatusURL = AUTH_SUCCESS_URL;
+            }
+
+            try{
+                servletResponse.sendRedirect(authorizationStatusURL);
+            }
+            catch (IOException e) {
+                e.printStackTrace();
+                throw new ShimException("Error occurred in redirecting to completion URL");
+            }
+
             return response;
         }
     }
@@ -274,8 +291,7 @@ public class Application extends WebSecurityConfigurerAdapter {
      * Endpoint for retrieving data from shims.
      *
      * @param username User ID record for which to retrieve data, if not approved this will throw ShimException.
-     * <p>
-     * TODO: finish javadoc!
+     * todo: finish javadoc!
      * @return The shim data response wrapper with data from the shim.
      */
     @RequestMapping(value = "/data/{shim}/{dataType}", produces = APPLICATION_JSON_VALUE)
@@ -283,9 +299,10 @@ public class Application extends WebSecurityConfigurerAdapter {
             @RequestParam(value = "username") String username,
             @PathVariable("shim") String shim,
             @PathVariable("dataType") String dataTypeKey,
-            @RequestParam(value = "normalize", defaultValue = "true") boolean normalize,
+            @RequestParam(value = "normalize", defaultValue = "") String normalize,
             @RequestParam(value = "dateStart", defaultValue = "") String dateStart,
-            @RequestParam(value = "dateEnd", defaultValue = "") String dateEnd)
+            @RequestParam(value = "dateEnd", defaultValue = "") String dateEnd,
+            @RequestParam(value = "numToReturn", defaultValue = "50") Long numToReturn)
             throws ShimException {
 
         setPassThroughAuthentication(username, shim);
@@ -293,14 +310,18 @@ public class Application extends WebSecurityConfigurerAdapter {
         ShimDataRequest shimDataRequest = new ShimDataRequest();
 
         shimDataRequest.setDataTypeKey(dataTypeKey);
-        shimDataRequest.setNormalize(normalize);
 
-        if (!dateStart.isEmpty()) {
+        if (!normalize.equals("")) {
+            shimDataRequest.setNormalize(Boolean.parseBoolean(normalize));
+        }
+
+        if (!"".equals(dateStart)) {
             shimDataRequest.setStartDateTime(LocalDate.parse(dateStart).atStartOfDay().atOffset(UTC));
         }
-        if (!dateEnd.isEmpty()) {
+        if (!"".equals(dateEnd)) {
             shimDataRequest.setEndDateTime(LocalDate.parse(dateEnd).atStartOfDay().atOffset(UTC));
         }
+        shimDataRequest.setNumToReturn(numToReturn);
 
         AccessParameters accessParameters = accessParametersRepo.findByUsernameAndShimKey(
                 username, shim, new Sort(Sort.Direction.DESC, "dateCreated"));
@@ -309,7 +330,6 @@ public class Application extends WebSecurityConfigurerAdapter {
             throw new ShimException("User '" + username + "' has not authorized shim: '" + shim + "'");
         }
         shimDataRequest.setAccessParameters(accessParameters);
-
         return shimRegistry.getShim(shim).getData(shimDataRequest);
     }
 
