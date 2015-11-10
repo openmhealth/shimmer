@@ -23,13 +23,13 @@ import org.openmhealth.shim.common.mapper.JsonNodeDataPointMapper;
 
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static java.time.ZoneOffset.UTC;
 import static org.openmhealth.schema.domain.omh.DataPointHeader.Builder;
 import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asOptionalLocalDateTime;
 import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asRequiredNode;
@@ -75,14 +75,10 @@ public abstract class FitbitDataPointMapper<T extends SchemaSupport> implements 
     }
 
     /**
-     * Adds a {@link DataPointHeader} to a {@link Measure} object and wraps it as a {@link DataPoint}
-     *
-     * @param measure the body of the data point
-     * @param externalId the identifier of the measure as recorded by the data provider in the JSON data-point
-     * (optional)
-     * @param <T> the measure type (e.g., StepCount, BodyMassIndex)
-     * @return a {@link DataPoint} object containing the body and header that map values from Fitbit API response nodes
-     * to schema objects
+     * @param measure a measure
+     * @param externalId the identifier of the measure used by Fitbit
+     * @param <T> the measure type
+     * @return a new data point whose body is the measure
      */
     protected <T extends Measure> DataPoint<T> newDataPoint(T measure, Long externalId) {
 
@@ -101,10 +97,9 @@ public abstract class FitbitDataPointMapper<T extends SchemaSupport> implements 
 
     /**
      * Takes a Fitbit response JSON node, which contains a date and time property, and then maps those fields into an
-     * {@link OffsetDateTime} object
+     * {@link OffsetDateTime} object.
      *
-     * @return the date and time based on the "date" and "time" properties of the JsonNode parameter, wrapped as an
-     * {@link Optional}
+     * @return the date and time based on the "date" and "time" properties of the JsonNode parameter
      */
     protected Optional<OffsetDateTime> combineDateTimeAndTimezone(JsonNode node) {
 
@@ -113,8 +108,7 @@ public abstract class FitbitDataPointMapper<T extends SchemaSupport> implements 
 
         if (dateTime.isPresent()) {
             // FIXME fix the time zone offset to use the correct offset for the data point once it is fixed by Fitbit
-            offsetDateTime = Optional.ofNullable(OffsetDateTime.of(dateTime.get(), ZoneOffset.UTC));
-
+            offsetDateTime = Optional.ofNullable(OffsetDateTime.of(dateTime.get(), UTC));
         }
 
         return offsetDateTime;
@@ -129,7 +123,7 @@ public abstract class FitbitDataPointMapper<T extends SchemaSupport> implements 
     protected OffsetDateTime combineDateTimeAndTimezone(LocalDateTime dateTime) {
 
         // FIXME fix the time zone offset to use the appropriate offset for the data point once it is fixed by Fitbit
-        return OffsetDateTime.of(dateTime, ZoneOffset.UTC);
+        return OffsetDateTime.of(dateTime, UTC);
     }
 
     /**
