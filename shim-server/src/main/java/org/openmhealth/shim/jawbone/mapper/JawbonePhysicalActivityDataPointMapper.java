@@ -99,7 +99,6 @@ public class JawbonePhysicalActivityDataPointMapper extends JawboneDataPointMapp
 
         PhysicalActivity.Builder builder = new PhysicalActivity.Builder(activityName);
 
-
         asOptionalBigDecimal(workoutNode, "details.meters")
                 .ifPresent(distance -> builder.setDistance(new LengthUnitValue(METER, distance)));
 
