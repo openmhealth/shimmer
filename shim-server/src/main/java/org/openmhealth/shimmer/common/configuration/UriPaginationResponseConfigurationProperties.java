@@ -34,6 +34,10 @@ public class UriPaginationResponseConfigurationProperties implements PaginationR
     private String pagingDirectionality; // Todo: This needs to be broken up to address the 3 types of directionality
     private boolean responseInformationEncoded;
 
+    public boolean providesCompleteUri(){
+        return !getBaseUri().isPresent();
+    }
+
     public Optional<String> getBaseUri() {
         return Optional.ofNullable(baseUri);
     }
@@ -60,17 +64,6 @@ public class UriPaginationResponseConfigurationProperties implements PaginationR
     public String getNextPaginationPropertyIdentifier() {
         return null;
     }
-
-//    @Override
-//    public UriResponsePaginationStrategy createNewResponseStrategyForType() {
-//
-//        if(getBaseUri().isPresent() && !getBaseUri().get().isEmpty()){
-//            return new ConcatUriResponsePaginationStrategy();
-//        }
-//
-//        return new CompleteUriResponsePaginationStrategy();
-//    }
-
 
     @Override
     public String getPagingDirectionality() {

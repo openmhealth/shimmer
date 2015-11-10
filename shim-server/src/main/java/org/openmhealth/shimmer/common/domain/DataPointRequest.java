@@ -16,11 +16,116 @@
 
 package org.openmhealth.shimmer.common.domain;
 
+import com.google.common.collect.Range;
+import org.openmhealth.schema.domain.omh.SchemaVersion;
+import org.openmhealth.shimmer.common.configuration.EndpointConfigurationProperties;
+
+import java.time.OffsetDateTime;
+import java.util.Optional;
+
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Strings.isNullOrEmpty;
+
+
 /**
- * FIXME
+ * TODO: Identify all the properties this object needs
  *
  * @author Emerson Farrugia
  */
 public class DataPointRequest {
 
+
+    private String userId;
+    private String schemaNamespace;
+    private String schemaName;
+    private SchemaVersion schemaVersion;
+    private Range<OffsetDateTime> creationTimestampRange;
+    private Range<OffsetDateTime> effectiveTimestampRange;
+    private String api; // TODO pick a better name, what if it's proxied, "api"?
+
+    private EndpointConfigurationProperties configurationPropertiesForTargetEndpoint;
+
+
+    public DataPointRequest(EndpointConfigurationProperties endpoint, String userId, String schemaNamespace,
+            String schemaName, String schemaVersion) {
+
+        checkNotNull(userId);
+        checkArgument(!isNullOrEmpty(userId));
+
+        checkNotNull(schemaNamespace);
+        checkNotNull(schemaName);
+        // TODO determine how restrictive the search criteria should be
+        checkNotNull(schemaVersion);
+
+        checkNotNull(endpoint);
+
+        this.userId = userId;
+        this.configurationPropertiesForTargetEndpoint = endpoint;
+
+        this.schemaNamespace = schemaNamespace;
+        this.schemaName = schemaName;
+        this.schemaVersion = new SchemaVersion(schemaVersion);
+
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public Optional<Range<OffsetDateTime>> getCreationTimestampRange() {
+        return Optional.ofNullable(creationTimestampRange);
+    }
+
+    public void setCreationTimestampRange(Range<OffsetDateTime> creationTimestampRange) {
+        this.creationTimestampRange = creationTimestampRange;
+    }
+
+    public Optional<Range<OffsetDateTime>> getEffectiveTimestampRange() {
+        return Optional.ofNullable(effectiveTimestampRange);
+    }
+
+    public void setEffectiveTimestampRange(Range<OffsetDateTime> effectiveTimestampRange) {
+        this.effectiveTimestampRange = effectiveTimestampRange;
+    }
+
+    public Optional<String> getApi() {
+        return Optional.ofNullable(api);
+    }
+
+    public void setApi(String api) {
+        this.api = api;
+    }
+
+    public EndpointConfigurationProperties getEndpoint() {
+        return configurationPropertiesForTargetEndpoint;
+    }
+
+    public void setEndpoint(EndpointConfigurationProperties configurationPropertiesForTargetEndpoint) {
+        this.configurationPropertiesForTargetEndpoint = configurationPropertiesForTargetEndpoint;
+    }
+
+    public String getSchemaNamespace() {
+        return schemaNamespace;
+    }
+
+    public void setSchemaNamespace(String schemaNamespace) {
+        this.schemaNamespace = schemaNamespace;
+    }
+
+    public String getSchemaName() {
+        return schemaName;
+    }
+
+    public void setSchemaName(String schemaName) {
+        this.schemaName = schemaName;
+    }
+
+    public SchemaVersion getSchemaVersion() {
+        return schemaVersion;
+    }
+
+    public void setSchemaVersion(SchemaVersion schemaVersion) {
+        this.schemaVersion = schemaVersion;
+    }
 }

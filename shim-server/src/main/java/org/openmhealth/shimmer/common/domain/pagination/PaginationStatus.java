@@ -30,9 +30,10 @@ public interface PaginationStatus {
      */
     public boolean hasMoreData();
 
+    // Todo: Consider renaming so that it also would make sense for
     public Optional<String> getPaginationResponseValue();
 
-    public void setPaginationResponseValue(String paginationNextUriValue);
+    public void setPaginationResponseValue(String nextPageValueFromResponse);
 
 //    public T getResponseStrategy();
 //

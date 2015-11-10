@@ -17,6 +17,7 @@
 package org.openmhealth.shimmer.common.domain;
 
 import com.google.common.collect.Maps;
+import org.openmhealth.shimmer.common.domain.parameters.RequestParameter;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.RequestEntity;
 import org.springframework.util.LinkedMultiValueMap;
@@ -24,7 +25,8 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.util.UriComponentsBuilder;
 import org.springframework.web.util.UriTemplate;
 
-import java.net.URI;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -39,11 +41,13 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public class RequestEntityBuilder<T> {
 
+
     private UriTemplate uriTemplate;
     private HttpMethod httpMethod = HttpMethod.GET;
     private MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
     private MultiValueMap<String, String> queryParameters = new LinkedMultiValueMap<>();
     private Map<String, String> pathParameters = Maps.newHashMap();
+    private boolean finishedAssembling;
 
 
     /**
@@ -61,6 +65,13 @@ public class RequestEntityBuilder<T> {
      */
     public UriTemplate getUriTemplate() {
         return uriTemplate;
+    }
+
+    /**
+     * @param uriTemplate URI template for the builder to use in constructing the request entity
+     */
+    public void setUriTemplate(UriTemplate uriTemplate) {
+        this.uriTemplate = uriTemplate;
     }
 
     /**
@@ -124,8 +135,48 @@ public class RequestEntityBuilder<T> {
         UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromUriString(uriTemplate.toString())
                 .queryParams(queryParameters);
 
-        URI completedUri = uriBuilder.buildAndExpand(pathParameters).encode().toUri();
+        String completedUriString = uriBuilder.buildAndExpand(pathParameters).toString();
 
-        return new RequestEntity(headers, httpMethod, completedUri);
+        try {
+            completedUriString = URLDecoder.decode(completedUriString, "UTF-8");
+        }
+        catch (UnsupportedEncodingException e) {
+
+            // In this case we likely don't have a URI that needs decoding, so we can continue with the uri that was
+            // generated before decoding.
+            e.printStackTrace();
+        }
+        uriBuilder = UriComponentsBuilder.fromUriString(completedUriString);
+
+        return new RequestEntity(headers, httpMethod, uriBuilder.build().encode().toUri());
+    }
+
+    public boolean isFinishedAssembling() {
+        return finishedAssembling;
+    }
+
+    public void setFinishedAssembling(boolean finishedAssembling) {
+        this.finishedAssembling = finishedAssembling;
+    }
+
+    public void addParameterWithValue(RequestParameter parameter, String value) {
+
+        checkNotNull(parameter);
+        checkNotNull(value);
+        checkArgument(!value.isEmpty());
+
+        String parameterName = parameter.getParameterName();
+        switch ( parameter.getRequestParameterLocation() ) {
+
+            case QUERY:
+                addQueryParameter(parameterName, value);
+                break;
+            case PATH:
+                addPathParameter(parameterName, value);
+                break;
+            case HEADER:
+                addHeader(parameterName, value);
+                break;
+        }
     }
 }

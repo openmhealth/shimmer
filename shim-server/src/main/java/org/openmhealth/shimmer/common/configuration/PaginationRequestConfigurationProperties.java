@@ -17,11 +17,14 @@
 package org.openmhealth.shimmer.common.configuration;
 
 import org.openmhealth.shimmer.common.domain.pagination.RequestPaginationScheme;
+import org.openmhealth.shimmer.common.domain.parameters.NumberRequestParameter;
+import org.openmhealth.shimmer.common.domain.parameters.StringRequestParameter;
 
 import java.util.Optional;
 
 
 /**
+ * Todo: Consider combing the pagination request and response config properties into one property
  * @author Chris Schaefbauer
  */
 public interface PaginationRequestConfigurationProperties {
@@ -30,17 +33,22 @@ public interface PaginationRequestConfigurationProperties {
 
     //public boolean isPaginated();
 
-    public Optional<Integer> getPaginationLimitDefault();
+    Optional<Integer> getPaginationLimitDefault();
 
-    public Optional<Integer> getPaginationMaxLimit();
+    Optional<Integer> getPaginationMaxLimit();
 
-    public Optional<String> getLimitQueryParameterName();
+    Optional<String> getLimitQueryParameterName();
 
-    public default boolean hasPaginationLimitDefault(){ return getPaginationLimitDefault().isPresent(); }
+    Optional<StringRequestParameter> getNextPageTokenParameter();
 
-    public default boolean hasPaginationMaxLimit() { return getPaginationMaxLimit().isPresent(); }
+    default boolean hasPaginationLimitDefault(){ return getPaginationLimitDefault().isPresent(); }
+
+    default boolean hasPaginationMaxLimit() { return getPaginationMaxLimit().isPresent(); }
 
     /* Unnecessary for the simplest solution, it supports optimization */
-    public String getOffsetQueryParameterName();
+    String getOffsetQueryParameterName();
 
+    Optional<NumberRequestParameter> getPaginationLimitParameter();
+
+    Optional<NumberRequestParameter> getPaginationOffsetParameter();
 }

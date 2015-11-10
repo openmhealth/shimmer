@@ -21,10 +21,11 @@ package org.openmhealth.shimmer.common.domain.parameters;
  */
 public enum RequestParameterLocation {
 
-    BODY,
+    // Todo: add body, form, and custom parameter locations and support them in different requests
+    //BODY,
     QUERY,
     HEADER,
-    PATH,
-    FORM,
-    CUSTOM
+    PATH
+//    FORM,
+//    CUSTOM
 }

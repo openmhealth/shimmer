@@ -32,6 +32,7 @@ public class ManualPaginationStatus implements PaginationStatus {
 
     // Todo: may want the hasMoreData to take a ResponseConfiguration
 
+    private Integer nextPageOffset;
 
     private ManualPaginationEndCriteria endCriteria;
     private JsonNode responseBody;
@@ -89,13 +90,14 @@ public class ManualPaginationStatus implements PaginationStatus {
     //        this.endCriteria = endCriteria;
     //    }
 
+    // Todo: determine how the next page value for manual paging can be tracked/retrieved
     @Override
     public Optional<String> getPaginationResponseValue() {
-        return null;
+        return Optional.ofNullable(nextPageOffset.toString());
     }
 
     @Override
-    public void setPaginationResponseValue(String paginationNextUriValue) {
-
+    public void setPaginationResponseValue(String nextPageOffsetValue) {
+        nextPageOffset = Integer.parseInt(nextPageOffsetValue);
     }
 }

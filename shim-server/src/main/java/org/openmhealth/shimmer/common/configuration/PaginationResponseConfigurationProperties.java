@@ -33,7 +33,7 @@ public interface PaginationResponseConfigurationProperties<T> {
 
     public boolean isResponseInformationEncoded();
 
-    //public String getNextPaginationPropertyIdentifier();
+    //public String getIdentifierForNextPageProperty();
 
     //public T createNewResponseStrategyForType();
 

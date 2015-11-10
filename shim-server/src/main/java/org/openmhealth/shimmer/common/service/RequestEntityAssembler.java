@@ -31,6 +31,8 @@ public interface RequestEntityAssembler {
      * FIXME Assembles a request entity builder.
      *
      * @param builder the request entity builder to assemble
+     * @param request the generic request that needs to be fulfilled by a request to the third party
+     * be sent
      * @return the builder
      */
     RequestEntityBuilder assemble(RequestEntityBuilder builder, DataPointRequest request);

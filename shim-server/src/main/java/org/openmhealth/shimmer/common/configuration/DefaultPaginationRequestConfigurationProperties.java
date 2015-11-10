@@ -17,6 +17,8 @@
 package org.openmhealth.shimmer.common.configuration;
 
 import org.openmhealth.shimmer.common.domain.pagination.RequestPaginationScheme;
+import org.openmhealth.shimmer.common.domain.parameters.NumberRequestParameter;
+import org.openmhealth.shimmer.common.domain.parameters.StringRequestParameter;
 
 import java.util.Optional;
 
@@ -32,6 +34,9 @@ public class DefaultPaginationRequestConfigurationProperties implements Paginati
     private Integer paginationMaxLimit;
     private String limitQueryParameterName;
     private String offsetQueryParameterName;
+    private StringRequestParameter nextPageTokenParameter;
+    private NumberRequestParameter paginationLimitParameter;
+    private NumberRequestParameter paginationOffsetParameter;
 
     @Override
     public RequestPaginationScheme getRequestPaginationScheme() {
@@ -54,7 +59,61 @@ public class DefaultPaginationRequestConfigurationProperties implements Paginati
     }
 
     @Override
+    public Optional<StringRequestParameter> getNextPageTokenParameter() {
+        return Optional.ofNullable(nextPageTokenParameter);
+    }
+
+    @Override
     public String getOffsetQueryParameterName() {
         return this.offsetQueryParameterName;
+    }
+
+    @Override
+    public Optional<NumberRequestParameter> getPaginationLimitParameter() {
+        return Optional.ofNullable(paginationLimitParameter);
+    }
+
+    @Override
+    public Optional<NumberRequestParameter> getPaginationOffsetParameter() {
+        return Optional.ofNullable(paginationOffsetParameter);
+    }
+
+    public void setPaginationLimitDefault(Integer paginationLimitDefault) {
+        this.paginationLimitDefault = paginationLimitDefault;
+    }
+
+    public void setPaginationMaxLimit(Integer paginationMaxLimit) {
+        this.paginationMaxLimit = paginationMaxLimit;
+    }
+
+    public void setLimitQueryParameterName(String limitQueryParameterName) {
+        this.limitQueryParameterName = limitQueryParameterName;
+    }
+
+    public void setOffsetQueryParameterName(String offsetQueryParameterName) {
+        this.offsetQueryParameterName = offsetQueryParameterName;
+    }
+
+    public void setRequestPaginationScheme(
+            RequestPaginationScheme requestPaginationScheme) {
+        this.requestPaginationScheme = requestPaginationScheme;
+    }
+
+    public void setNextPageTokenParameter(
+            StringRequestParameter nextPageTokenParameter) {
+        this.nextPageTokenParameter = nextPageTokenParameter;
+    }
+
+    public void setPaginationLimitParameter(
+            NumberRequestParameter paginationLimitParameter) {
+
+        this.paginationLimitParameter = paginationLimitParameter;
+        paginationLimitParameter.getDefaultValue().ifPresent(plp -> this.paginationLimitDefault = plp.intValue());
+        paginationLimitParameter.getMaximumValue().ifPresent(pml -> this.paginationMaxLimit = pml.intValue());
+    }
+
+    public void setPaginationOffsetParameter(
+            NumberRequestParameter paginationOffsetParameter) {
+        this.paginationOffsetParameter = paginationOffsetParameter;
     }
 }

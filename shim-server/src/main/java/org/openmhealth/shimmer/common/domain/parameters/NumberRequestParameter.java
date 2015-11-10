@@ -16,25 +16,27 @@
 
 package org.openmhealth.shimmer.common.domain.parameters;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
 
 /**
+ * Todo: Decide the type for this class
  * @author Chris Schaefbauer
  */
 public class NumberRequestParameter extends RequestParameter<Double> {
 
-    private Double maximumValue;
+    private BigDecimal maximumValue;
     private Double minimumValue;
     private List<Double> allowableValues;
 
-    public Optional<Double> getMaximumValue() {
+    public Optional<BigDecimal> getMaximumValue() {
         return Optional.ofNullable(maximumValue);
     }
 
-    public void setMaximumValue(Double maximumValue) {
-        this.maximumValue = maximumValue;
+    public void setMaximumValue(double maximumValue) {
+        this.maximumValue = BigDecimal.valueOf(maximumValue);
     }
 
     public Optional<Double> getMinimumValue() {

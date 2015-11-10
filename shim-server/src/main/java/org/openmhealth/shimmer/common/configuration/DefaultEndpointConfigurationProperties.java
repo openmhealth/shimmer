@@ -31,7 +31,7 @@ public class DefaultEndpointConfigurationProperties implements EndpointConfigura
     private DateTimeQueryConfigurationProperties effectiveDateTimeQuerySettings;
     private DateTimeQueryConfigurationProperties creationDateTimeQuerySettings;
     private DateTimeQueryConfigurationProperties modificationDateTimeQuerySettings;
-    private PaginationRequestConfigurationProperties paginationQuerySettings;
+    private PaginationRequestConfigurationProperties paginationRequestSettings;
     private String apiSourceName;
     private PaginationResponseConfigurationProperties paginationResponseSettings;
 
@@ -91,11 +91,11 @@ public class DefaultEndpointConfigurationProperties implements EndpointConfigura
 
     @Override
     public Optional<PaginationRequestConfigurationProperties> getPaginationRequestConfigurationSettings() {
-        return Optional.ofNullable(this.paginationQuerySettings);
+        return Optional.ofNullable(this.paginationRequestSettings);
     }
 
-    public void setPaginationQuerySettings(PaginationRequestConfigurationProperties settings){
-        this.paginationQuerySettings = settings;
+    public void setPaginationRequestSettings(PaginationRequestConfigurationProperties settings){
+        this.paginationRequestSettings = settings;
     }
 
     @Override
