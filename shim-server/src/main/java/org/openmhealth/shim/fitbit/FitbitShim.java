@@ -27,6 +27,7 @@ import org.openmhealth.schema.domain.omh.DataPoint;
 import org.openmhealth.shim.*;
 import org.openmhealth.shim.fitbit.mapper.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
@@ -61,12 +62,16 @@ public class FitbitShim extends OAuth1ShimBase {
 
     private static final String TOKEN_URL = "https://api.fitbit.com/oauth/access_token";
 
+    @Value("${openmhealth.shim.fitbit.partnerAccess:false}")
+    protected boolean partnerAccess;
+
     @Autowired
     public FitbitShim(ApplicationAccessParametersRepo applicationParametersRepo,
             AuthorizationRequestParametersRepo authorizationRequestParametersRepo,
-            ShimServerConfig shimServerConfig) {
+            ShimServerConfig shimServerConfig,
+            AccessParametersRepo accessParametersRepo) {
 
-        super(applicationParametersRepo, authorizationRequestParametersRepo, shimServerConfig);
+        super(applicationParametersRepo, authorizationRequestParametersRepo, shimServerConfig, accessParametersRepo);
     }
 
     @Override
@@ -123,12 +128,14 @@ public class FitbitShim extends OAuth1ShimBase {
         private String endPoint;
 
         FitbitDataType(String endPoint) {
+
             this.endPoint = endPoint;
         }
 
         public String getEndPoint() {
             return endPoint;
         }
+
     }
 
     @Override
@@ -273,7 +280,12 @@ public class FitbitShim extends OAuth1ShimBase {
 
                 switch ( fitbitDataType ) {
                     case STEPS:
-                        dataPointMapper = new FitbitStepCountDataPointMapper();
+                        if(partnerAccess){
+                            dataPointMapper = new FitbitIntradayStepCountDataPointMapper();
+                        }
+                        else{
+                            dataPointMapper = new FitbitStepCountDataPointMapper();
+                        }
                         break;
                     case ACTIVITY:
                         dataPointMapper = new FitbitPhysicalActivityDataPointMapper();
@@ -363,7 +375,12 @@ public class FitbitShim extends OAuth1ShimBase {
 
                 switch ( fitbitDataType ) {
                     case STEPS:
-                        dataPointMapper = new FitbitStepCountDataPointMapper();
+                        if(partnerAccess){
+                            dataPointMapper = new FitbitIntradayStepCountDataPointMapper();
+                        }
+                        else{
+                            dataPointMapper = new FitbitStepCountDataPointMapper();
+                        }
                         break;
                     case ACTIVITY:
                         dataPointMapper = new FitbitPhysicalActivityDataPointMapper();

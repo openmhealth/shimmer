@@ -22,6 +22,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.impl.client.HttpClients;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpMethod;
 import org.springframework.web.client.HttpClientErrorException;
 
@@ -31,6 +32,9 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.springframework.data.domain.Sort.Direction.DESC;
+
+
 /**
  * Common code for all OAuth1.0 based shims.
  *
@@ -38,30 +42,41 @@ import java.util.Map;
  */
 public abstract class OAuth1ShimBase extends ShimBase implements OAuth1Shim {
 
+    private AccessParametersRepo accessParametersRepo;
+
     protected HttpClient httpClient = HttpClients.createDefault();
 
     private AuthorizationRequestParametersRepo authorizationRequestParametersRepo;
 
     private ShimServerConfig shimServerConfig;
 
-    protected OAuth1ShimBase(ApplicationAccessParametersRepo applicationParametersRepo, 
-                             AuthorizationRequestParametersRepo authorizationRequestParametersRepo,
-                             ShimServerConfig shimServerConfig) {
+    protected OAuth1ShimBase(ApplicationAccessParametersRepo applicationParametersRepo,
+            AuthorizationRequestParametersRepo authorizationRequestParametersRepo,
+            ShimServerConfig shimServerConfig,
+            AccessParametersRepo accessParametersRepo) {
+
         super(applicationParametersRepo);
         this.authorizationRequestParametersRepo = authorizationRequestParametersRepo;
         this.shimServerConfig = shimServerConfig;
+        this.accessParametersRepo = accessParametersRepo;
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public AuthorizationRequestParameters getAuthorizationRequestParameters(
-        String username,
-        Map<String, String> addlParameters
-    ) throws ShimException {
+    public AuthorizationRequestParameters getAuthorizationRequestParameters(String username,
+            Map<String, String> additionalParameters)
+            throws ShimException {
 
         String stateKey = OAuth1Utils.generateStateKey();
+        AccessParameters accessParams = accessParametersRepo
+                .findByUsernameAndShimKey(username, getShimKey(), new Sort(DESC, "dateCreated"));
+
+        if (accessParams != null && accessParams.getAccessToken() != null) {
+            return AuthorizationRequestParameters.authorized();
+        }
 
         HttpRequestBase tokenRequest = null;
+
         try {
             String callbackUrl = shimServerConfig.getCallbackUrl(getShimKey(), stateKey);
 
@@ -71,7 +86,7 @@ public abstract class OAuth1ShimBase extends ShimBase implements OAuth1Shim {
             String initiateAuthUrl = getBaseRequestTokenUrl();
 
             tokenRequest =
-                getRequestTokenRequest(initiateAuthUrl, null, null, requestTokenParameters);
+                    getRequestTokenRequest(initiateAuthUrl, null, null, requestTokenParameters);
 
             HttpResponse httpResponse = httpClient.execute(tokenRequest);
 
@@ -104,14 +119,16 @@ public abstract class OAuth1ShimBase extends ShimBase implements OAuth1Shim {
             authorizationRequestParametersRepo.save(parameters);
 
             return parameters;
-        } catch (HttpClientErrorException e) {
+        }
+        catch (HttpClientErrorException e) {
             e.printStackTrace();
             throw new ShimException("HTTP Error: " + e.getMessage());
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             e.printStackTrace();
-            throw new ShimException("Unable to initiate OAuth1 authorization, " +
-                "could not parse token parameters");
-        } finally {
+            throw new ShimException("Unable to initiate OAuth1 authorization, could not parse token parameters");
+        }
+        finally {
             if (tokenRequest != null) {
                 tokenRequest.releaseConnection();
             }
@@ -126,11 +143,9 @@ public abstract class OAuth1ShimBase extends ShimBase implements OAuth1Shim {
         String requestToken = servletRequest.getParameter(OAuth.OAUTH_TOKEN);
         final String requestVerifier = servletRequest.getParameter(OAuth.OAUTH_VERIFIER);
 
-        AuthorizationRequestParameters authParams =
-            authorizationRequestParametersRepo.findByStateKey(stateKey);
+        AuthorizationRequestParameters authParams = authorizationRequestParametersRepo.findByStateKey(stateKey);
         if (authParams == null) {
-            throw new ShimException("Invalid state, could not find " +
-                "corresponding auth parameters");
+            throw new ShimException("Invalid state, could not find corresponding auth parameters");
         }
 
         // Get the token secret from the original access request.
@@ -140,14 +155,16 @@ public abstract class OAuth1ShimBase extends ShimBase implements OAuth1Shim {
         HttpRequestBase accessTokenRequest = null;
         try {
             accessTokenRequest = getAccessTokenRequest(getBaseTokenUrl(),
-                requestToken, requestTokenSecret, new HashMap<String, String>() {{
-                    put(OAuth.OAUTH_VERIFIER, requestVerifier);
-                }});
+                    requestToken, requestTokenSecret, new HashMap<String, String>() {{
+                        put(OAuth.OAUTH_VERIFIER, requestVerifier);
+                    }});
             response = httpClient.execute(accessTokenRequest);
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             e.printStackTrace();
             throw new ShimException("Could not retrieve response from token URL");
-        } finally {
+        }
+        finally {
             if (accessTokenRequest != null) {
                 accessTokenRequest.releaseConnection();
             }
@@ -175,80 +192,69 @@ public abstract class OAuth1ShimBase extends ShimBase implements OAuth1Shim {
         return AuthorizationResponse.authorized(accessParameters);
     }
 
-    protected void loadAdditionalAccessParameters(
-        HttpServletRequest request,
-        AccessParameters accessParameters
-    ) {
+    protected void loadAdditionalAccessParameters(HttpServletRequest request, AccessParameters accessParameters) {
         //noop, override if additional parameters must be set here
     }
 
-    protected HttpRequestBase getSignedRequest(String unsignedUrl,
-                                               String token,
-                                               String tokenSecret,
-                                               Map<String, String> oauthParams) throws ShimException {
+    protected HttpRequestBase getSignedRequest(String unsignedUrl, String token, String tokenSecret,
+            Map<String, String> oauthParams)
+            throws ShimException {
+
         ApplicationAccessParameters parameters = findApplicationAccessParameters();
-        return OAuth1Utils.getSignedRequest(
-            unsignedUrl,
-            parameters.getClientId(),
-            parameters.getClientSecret(),
-            token, tokenSecret, oauthParams);
+
+        return OAuth1Utils.getSignedRequest(unsignedUrl, parameters.getClientId(), parameters.getClientSecret(), token,
+                tokenSecret, oauthParams);
     }
 
-    protected URL signUrl(String unsignedUrl,
-                          String token,
-                          String tokenSecret,
-                          Map<String, String> oauthParams)
-        throws ShimException {
+    protected URL signUrl(String unsignedUrl, String token, String tokenSecret, Map<String, String> oauthParams)
+            throws ShimException {
+
         ApplicationAccessParameters parameters = findApplicationAccessParameters();
-        return OAuth1Utils.buildSignedUrl(
-            unsignedUrl,
-            parameters.getClientId(),
-            parameters.getClientSecret(),
-            token, tokenSecret, oauthParams);
+
+        return OAuth1Utils.buildSignedUrl(unsignedUrl, parameters.getClientId(), parameters.getClientSecret(), token,
+                tokenSecret, oauthParams);
     }
 
     /**
-     * Some external data providers require POST vs GET.
-     * In which case the signing of the requests may differ.
+     * Some external data providers require POST vs GET. In which case the signing of the requests may differ.
      *
      * @param unsignedUrl - The unsigned URL for the request.
-     * @param token       - The request token or access token.
+     * @param token - The request token or access token.
      * @param tokenSecret - The token secret, if any.
      * @param oauthParams - Any additional Oauth params.
      * @return - The appropriate request, signed.
-     * @throws ShimException
      */
-    protected HttpRequestBase getRequestTokenRequest(String unsignedUrl,
-                                                     String token,
-                                                     String tokenSecret,
-                                                     Map<String, String> oauthParams) throws ShimException {
+    protected HttpRequestBase getRequestTokenRequest(String unsignedUrl, String token, String tokenSecret,
+            Map<String, String> oauthParams)
+            throws ShimException {
+
         if (HttpMethod.GET == getRequestTokenMethod()) {
             return new HttpGet(signUrl(unsignedUrl, token, tokenSecret, oauthParams).toString());
-        } else {
+        }
+        else {
             return getSignedRequest(unsignedUrl, token, tokenSecret, oauthParams);
         }
     }
 
     /**
      * NOTE: Same as getRequestTokenRequest with difference being that this is for access tokens.
-     * <p/>
-     * Some external data providers require POST vs GET.
-     * In which case the signing of the requests may differ.
+     * <p>
+     * Some external data providers require POST vs GET. In which case the signing of the requests may differ.
      *
      * @param unsignedUrl - The unsigned URL for the request.
-     * @param token       - The request token or access token.
+     * @param token - The request token or access token.
      * @param tokenSecret - The token secret, if any.
      * @param oauthParams - Any additional Oauth params.
      * @return - The appropriate request, signed.
-     * @throws ShimException
      */
-    protected HttpRequestBase getAccessTokenRequest(String unsignedUrl,
-                                                    String token,
-                                                    String tokenSecret,
-                                                    Map<String, String> oauthParams) throws ShimException {
+    protected HttpRequestBase getAccessTokenRequest(String unsignedUrl, String token, String tokenSecret,
+            Map<String, String> oauthParams)
+            throws ShimException {
+
         if (HttpMethod.GET == getAccessTokenMethod()) {
             return new HttpGet(signUrl(unsignedUrl, token, tokenSecret, oauthParams).toString());
-        } else {
+        }
+        else {
             return getSignedRequest(unsignedUrl, token, tokenSecret, oauthParams);
         }
     }

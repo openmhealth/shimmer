@@ -27,7 +27,7 @@ import static org.openmhealth.schema.domain.omh.TimeInterval.ofStartDateTimeAndD
 /**
  * @author Chris Schaefbauer
  */
-public class FitbitStepCountDataPointUnitTests extends DataPointMapperUnitTests {
+public class FitbitStepCountDataPointMapperUnitTests extends DataPointMapperUnitTests {
 
     private final FitbitStepCountDataPointMapper mapper = new FitbitStepCountDataPointMapper();
     private JsonNode responseNode;
