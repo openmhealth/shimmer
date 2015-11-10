@@ -5,7 +5,7 @@ buildscript {
     }
 
     ext {
-        springBootVersion = "1.2.6.RELEASE"
+        springBootVersion = "1.2.7.RELEASE"
     }
 
     dependencies {
@@ -48,14 +48,15 @@ dependencyManagement {
 dependencies {
     compile project(':java-shim-sdk')
     compile "commons-io:commons-io:2.4"
-    compile "com.google.code.findbugs:jsr305:3.0.0"
     compile "org.apache.httpcomponents:httpclient"
     compile "org.apache.httpcomponents:httpcore:4.3.3"
+    compile "org.hibernate:hibernate-validator"
     compile "com.fasterxml.jackson.core:jackson-annotations"
     compile "com.fasterxml.jackson.dataformat:jackson-dataformat-xml"
     compile "com.fasterxml.jackson.datatype:jackson-datatype-jsr310"
     compile "com.fasterxml.jackson.datatype:jackson-datatype-jdk8"
     compile "joda-time:joda-time"             // TODO delete this when shims have been migrated
+    compile "com.google.code.findbugs:jsr305:3.0.0"
     compile "org.mongodb:mongo-java-driver"
     compile "org.openmhealth.schema:omh-schema-sdk:${omhSchemaSdkVersion}"
     compile "oauth.signpost:signpost-commonshttp4:${signpostVersion}"
@@ -68,8 +69,7 @@ dependencies {
     compile "org.springframework:spring-web"
     compile "org.springframework:spring-webmvc"
     compile "org.codehaus.woodstox:woodstox-core-asl:4.4.1" // required to print XML
-    compile "javax.validation:validation-api:1.0.0.GA"
-    compile "org.hibernate:hibernate-validator:4.2.0.Final"
+    compile "javax.validation:validation-api:1.1.0.Final"
 
     testCompile 'org.testng:testng:6.8.21' // slowly migrate to TestNG
     testCompile "junit:junit"
