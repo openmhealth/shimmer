@@ -18,12 +18,10 @@ package org.openmhealth.shimmer.common.assembler;
 
 import org.openmhealth.shimmer.common.configuration.EndpointConfigurationProperties;
 import org.openmhealth.shimmer.common.configuration.PaginationSettings;
-import org.openmhealth.shimmer.common.configuration.UriPaginationSettings;
 import org.openmhealth.shimmer.common.domain.DataPointRequest;
 import org.openmhealth.shimmer.common.domain.RequestEntityBuilder;
 import org.openmhealth.shimmer.common.domain.pagination.PaginationStatus;
 import org.openmhealth.shimmer.common.domain.parameters.NumberRequestParameter;
-import org.springframework.web.util.UriTemplate;
 
 import java.util.Optional;
 
@@ -31,7 +29,7 @@ import java.util.Optional;
 /**
  * @author Chris Schaefbauer
  */
-public class PaginationRequestEntityAssembler implements RequestEntityAssembler {
+public abstract class PaginationRequestEntityAssembler implements RequestEntityAssembler {
 
     public static final String ARBITRARILY_LARGE_LIMIT = "10000";
     private PaginationStatus paginationStatus;
@@ -52,57 +50,7 @@ public class PaginationRequestEntityAssembler implements RequestEntityAssembler 
                 the configs are used to create a pagination status. */
                 //                PaginationSettings paginationResponseConfiguration =
                 //                        endpoint.getPaginationSettings().get();
-
-                switch ( paginationSettings.getResponseType() ) {
-                    // Todo: replace with pagination response to request strategies, which allows custom code injection
-                    case URI:
-                        UriPaginationSettings uriPaginationResponseConfiguration =
-                                (UriPaginationSettings) paginationSettings;
-
-                        if (uriPaginationResponseConfiguration.providesCompleteUri()) {
-
-                            builder.setUriTemplate(
-                                    new UriTemplate(paginationStatus.getPaginationResponseValue().get()));
-                            builder.setFinishedAssembling(true);
-                        }
-                        else {
-
-                            builder.setUriTemplate(
-                                    new UriTemplate(uriPaginationResponseConfiguration.getBaseUri().get()));
-                            builder.addPathParameter("paginationResponse",
-                                    paginationStatus.getPaginationResponseValue().get());
-                        }
-                        break;
-
-                    case TOKEN:
-                        if (paginationSettings.getNextPageTokenParameter().isPresent()) {
-
-                            builder.addParameterWithValue(paginationSettings.getNextPageTokenParameter().get(),
-                                    paginationStatus.getPaginationResponseValue().get());
-
-                        }
-                        else {
-                            // Todo: Throw a pagination configuration missing exception
-                        }
-                        break;
-
-                    case MANUAL:
-                        if (paginationSettings.getPaginationOffsetParameter().isPresent()) {
-                            NumberRequestParameter paginationOffsetParameter =
-                                    paginationSettings.getPaginationOffsetParameter().get();
-                            builder.addParameterWithValue(paginationOffsetParameter,
-                                    paginationStatus.getPaginationResponseValue().get());
-                        }
-                        else {
-                            // Todo: Throw a pagination configuration missing exception
-                        }
-
-                        break;
-
-                    case CUSTOM:
-                        // Todo: Determine how to inject custom pagination
-
-                }
+                builder = assembleForResponseType(builder, paginationSettings, paginationStatus);
 
             }
 
@@ -129,6 +77,9 @@ public class PaginationRequestEntityAssembler implements RequestEntityAssembler 
 
         return builder;
     }
+
+    protected abstract RequestEntityBuilder assembleForResponseType(RequestEntityBuilder builder,
+            PaginationSettings paginationSettings, PaginationStatus paginationStatus);
 
     public Optional<PaginationStatus> getPaginationStatus() {
         return Optional.ofNullable(paginationStatus);

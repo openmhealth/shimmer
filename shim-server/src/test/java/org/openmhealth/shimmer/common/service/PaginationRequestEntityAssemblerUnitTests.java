@@ -16,6 +16,9 @@
 
 package org.openmhealth.shimmer.common.service;
 
+import org.openmhealth.shimmer.common.assembler.PaginationRequestEntityAssembler;
+import org.openmhealth.shimmer.common.assembler.TokenPaginationRequestEntityAssembler;
+import org.openmhealth.shimmer.common.assembler.UriPaginationRequestEntityAssembler;
 import org.openmhealth.shimmer.common.configuration.*;
 import org.openmhealth.shimmer.common.domain.DataPointRequest;
 import org.openmhealth.shimmer.common.domain.RequestEntityBuilder;
@@ -54,7 +57,7 @@ public class PaginationRequestEntityAssemblerUnitTests {
         DefaultEndpointConfigurationProperties configProperties = new DefaultEndpointConfigurationProperties();
         configProperties.setPaginationSettings(new UriPaginationSettings());
 
-        PaginationRequestEntityAssembler assembler = new PaginationRequestEntityAssembler();
+        PaginationRequestEntityAssembler assembler = new UriPaginationRequestEntityAssembler();
 
         PaginationStatus paginationStatus = new UriPaginationStatus();
         paginationStatus.setPaginationResponseValue("https://api.ihealthlabs.com:8443/openapiv2/fullUri");
@@ -109,7 +112,7 @@ public class PaginationRequestEntityAssemblerUnitTests {
         tokenPaginationSettings.setNextPageTokenParameter(createNextPageTokenParameter(QUERY));
         configProperties.setPaginationSettings(tokenPaginationSettings);
 
-        PaginationRequestEntityAssembler assembler = new PaginationRequestEntityAssembler();
+        PaginationRequestEntityAssembler assembler = new TokenPaginationRequestEntityAssembler();
 
         PaginationStatus paginationStatus = new TokenPaginationStatus();
         paginationStatus.setPaginationResponseValue("1436566038006058105");
@@ -139,7 +142,7 @@ public class PaginationRequestEntityAssemblerUnitTests {
         settings.setNextPageTokenParameter(createNextPageTokenParameter(PATH));
         configProperties.setPaginationSettings(settings);
 
-        PaginationRequestEntityAssembler assembler = new PaginationRequestEntityAssembler();
+        PaginationRequestEntityAssembler assembler = new TokenPaginationRequestEntityAssembler();
 
         PaginationStatus paginationStatus = new TokenPaginationStatus();
         paginationStatus.setPaginationResponseValue("1436566038006058105");
@@ -206,7 +209,7 @@ public class PaginationRequestEntityAssemblerUnitTests {
         paginationSettings.setBaseUri("https://jawbone.com/{paginationResponse}");
         configProperties.setPaginationSettings(paginationSettings);
 
-        PaginationRequestEntityAssembler assembler = new PaginationRequestEntityAssembler();
+        PaginationRequestEntityAssembler assembler = new UriPaginationRequestEntityAssembler();
 
         PaginationStatus paginationStatus = new UriPaginationStatus();
         paginationStatus.setPaginationResponseValue(partialUriFromResponse);
@@ -230,7 +233,7 @@ public class PaginationRequestEntityAssemblerUnitTests {
                 new RequestEntityBuilder(
                         new UriTemplate(baseUriTemplate));
 
-        PaginationRequestEntityAssembler assembler = new PaginationRequestEntityAssembler();
+        PaginationRequestEntityAssembler assembler = new UriPaginationRequestEntityAssembler();
 
         DefaultEndpointConfigurationProperties configProperties = new DefaultEndpointConfigurationProperties();
         BasePaginationSettings paginationSettings = new TokenPaginationSettings();
