@@ -1,4 +1,3 @@
-<link rel="stylesheet" href="//code.jquery.com/ui/1.10.2/themes/smoothness/jquery-ui.css">
 
 <div class="container">
 
@@ -12,70 +11,122 @@
 
       <li class="list-group-item">
 
-        <span class="parameter-label">API</span>
-        <span class="parameter-dropdown">
-          <ui-select ng-model="requests.parameters.shim" ng-change="requests.updateUrl()">
-            <ui-select-match placeholder="Select an API">
-              {{$select.selected.value.name}}
-            </ui-select-match>
-            <ui-select-choices repeat="shim.value as (key, shim) in requests.shims">
-              {{shim.value.name}}
-            </ui-select-choices>
-          </ui-select>
-        </span>
+        <div class="row">
 
-        <span class="parameter-label">schema</span>
-        <span class="parameter-dropdown">
-          <ui-select ng-model="requests.parameters.schema" ng-change="requests.updateUrl()">
-            <ui-select-match placeholder="Select a schema">
-              {{$select.selected.namespace}}:{{$select.selected.name}}:{{$select.selected.version}}
-            </ui-select-match>
-            <ui-select-choices repeat="schema in requests.parameters.shim.schemas">
-              {{schema.namespace}}:{{schema.name}}:{{schema.version}}
-            </ui-select-choices>
-          </ui-select>
-        </span>
+          <div class="parameter col-sm-4 clearfix">
+            <span class="parameter-label">API</span>
+            <span class="parameter-dropdown">
+              <ui-select ng-model="requests.parameters.shim" ng-change="requests.updateUrl()">
+                <ui-select-match placeholder="Select an API">
+                  {{$select.selected.value.name}}
+                </ui-select-match>
+                <ui-select-choices repeat="shim.value as (key, shim) in requests.shims" ui-disable-choice="!requests.schemaAvailable(shim.value.name)">
+                  {{shim.value.name}}
+                </ui-select-choices>
+              </ui-select>
+            </span>
+          </div>
 
-      </li>
+          <div class="parameter col-sm-4 clearfix">
+            <span class="parameter-label">schema</span>
+            <span class="parameter-dropdown">
+              <ui-select ng-model="requests.parameters.schema" ng-change="requests.updateUrl()">
+                <ui-select-match placeholder="Select a schema">
+                  {{$select.selected.namespace}}:{{$select.selected.name}}:{{$select.selected.version}}
+                </ui-select-match>
+                <ui-select-choices repeat="schema in requests.parameters.shim.schemas">
+                  {{schema.namespace}}:{{schema.name}}:{{schema.version}}
+                </ui-select-choices>
+              </ui-select>
+            </span>
+          </div>
 
-      <li class="list-group-item">
-
-        <span class="parameter-label">dates:</span>
-        <span class="parameter-dropdown">
-          <ui-select ng-model="requests.parameters.dateType" ng-change="requests.updateUrl()">
-            <ui-select-match placeholder="Select an date type">
-              {{$select.selected}}
-            </ui-select-match>
-            <ui-select-choices repeat="dateType in requests.dateTypes">
-              {{dateType}}
-            </ui-select-choices>
-          </ui-select>
-        </span>
-
-        <span class="parameter-label">start:</span>
-        <span class="parameter-date">
-          <input ui-date="requests.dateOptions" name="startDate" ng-model="requests.parameters.startDate" ng-change="requests.updateUrl()">
-        </span>
-
-        <span class="parameter-label">end:</span>
-        <span class="parameter-date">
-          <input ui-date="requests.dateOptions" name="endDate" ng-model="requests.parameters.endDate" ng-change="requests.updateUrl()">
-        </span>
+        </div>
 
       </li>
 
       <li class="list-group-item">
-        <span class="parameter-label url">URL:</span>
-        <span class="parameter-text">
-          <input type="text" name="url" ng-model="requests.parameters.url">
-        </span>
-        <span class="parameter-button">
-          <button type="button" class="btn btn-default btn-xs" ng-click="requests.getData()">send request</button>
-        </span>
+
+        <div class="row">
+
+          <div class="parameter col-md-4">
+            <span class="parameter-label">dates</span>
+            <span class="parameter-dropdown">
+              <ui-select ng-model="requests.parameters.dateType" ng-change="requests.updateUrl()">
+                <ui-select-match placeholder="Select an date type">
+                  {{$select.selected}}
+                </ui-select-match>
+                <ui-select-choices repeat="dateType in requests.dateTypes">
+                  {{dateType}}
+                </ui-select-choices>
+              </ui-select>
+            </span>
+          </div>
+
+          <div class="parameter col-md-4">
+            <span class="parameter-label">start</span>
+            <span class="parameter-date">
+              <datetimepicker
+                    min-date="minDate"
+                    ng-model="requests.parameters.startDate"
+                    show-meridian="showMeridian" 
+                    date-format="yyyy-MM-dd"
+                    readonly-date="false"
+                    hidden-time="false"
+                    hidden-date="false" 
+                    show-spinners="false"
+                    readonly-time="false"
+                    ng-change="requests.updateUrl()">
+              </datetimepicker>
+            </span>
+          </div>
+
+          <div class="parameter col-md-4">
+            <span class="parameter-label">end</span>
+            <span class="parameter-date">
+              <datetimepicker
+                    min-date="minDate"
+                    ng-model="requests.parameters.endDate"
+                    show-meridian="showMeridian" 
+                    date-format="yyyy-MM-dd"
+                    readonly-date="false"
+                    hidden-time="false"
+                    hidden-date="false" 
+                    show-spinners="false"
+                    readonly-time="false"
+                    ng-change="requests.updateUrl()">
+              </datetimepicker>
+            </span>
+          </div>
+
+        </div>
+
+      </li>
+
+      <li class="list-group-item">
+        <div class="row">
+          <div class="parameter col-sm-12">
+            <span class="parameter-label url">url</span>
+            <span class="parameter-group">
+              <span class="parameter-button">
+                <button type="button" class="btn btn-default btn-xs" ng-click="requests.getData()">send request</button>
+              </span>
+              <span class="parameter-text">
+                <input class="form-control" type="text" name="url" ng-model="requests.parameters.url">
+              </span>
+            </span>
+          </div>
+        </div>
       </li>
 
     </ul>
 
   </form>
 
+  <div class="chart-container">
+      <svg class="response-chart"></svg>
+  </div>
+
 </div>
+
+

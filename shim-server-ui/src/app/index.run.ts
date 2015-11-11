@@ -47,105 +47,16 @@ export function runMock($httpBackend: angular.IHttpBackendService) {
         shimName: 'withings',
         schemas: <Schema[]>[
             <Schema>{
-                    'namespace': 'granola',
-                    name: 'schema-name',
-                    version: '1.x',
-                    measures: [
-                      'distance',
-                      'pies eaten'
-                    ]
-                },
+                'namespace': 'omh',
+                name: 'body-weight',
+                version: '1.0',
+            },
             <Schema>{
-                    'namespace': 'omh',
-                    name: 'schema-name',
-                    version: '1.2',
-                    measures: [
-                        'step count',
-                        'meatball index'
-                    ]
-                },
-            <Schema>{
-                    'namespace': 'omh',
-                    name: 'schema-name',
-                    version: '1.1',
-                    measures: [
-                        'step count',
-                        'melbatoast index'
-                    ]
-                },
-            <Schema>{
-                    'namespace': 'omh',
-                    name: 'schema-name',
-                    version: '1.2',
-                    measures: [
-                        'step count',
-                        'meatball index'
-                    ]
-                },
-            <Schema>{
-                    'namespace': 'omh',
-                    name: 'schema-with-name',
-                    version: '1.11',
-                    measures: [
-                        'step count',
-                        'melbatoast index'
-                    ]
-                },
-            <Schema>{
-                    'namespace': 'omh',
-                    name: 'schema-schema-name',
-                    version: '1.2',
-                    measures: [
-                        'step count',
-                        'meatball index'
-                    ]
-                },
-                <Schema>{
-                    'namespace': 'omh',
-                    name: 'schema-other-name',
-                    version: '1.1',
-                    measures: [
-                        'step count',
-                        'melbatoast index'
-                    ]
-                },
-                <Schema>{
-                    'namespace': 'omh',
-                    name: 'schema-name',
-                    version: '1.2',
-                    measures: [
-                        'step count',
-                        'meatball index'
-                    ]
-                },
-                <Schema>{
-                    'namespace': 'omh',
-                    name: 'schema-name-also',
-                    version: '1.1',
-                    measures: [
-                        'step count',
-                        'melbatoast index'
-                    ]
-                },
-                <Schema>{
-                    'namespace': 'omh',
-                    name: 'schemas-name',
-                    version: '1.2',
-                    measures: [
-                        'step count',
-                        'meatball index'
-                    ]
-                },
-                <Schema>{
-                    'namespace': 'granola',
-                    name: 'schema-name',
-                    version: '1.1',
-                    measures: [
-                        'step count',
-                        'melbatoast index'
-                    ]
-                }
-              ]
+                'namespace': 'omh',
+                name: 'heart-rate',
+                version: '1.0',
+            }
+        ]
       };
 
     // returns the current list of configurations
@@ -162,6 +73,7 @@ export function runMock($httpBackend: angular.IHttpBackendService) {
 
     $httpBackend.whenGET(/^\/api\/[.+\/]?authorizations/).passThrough();
     $httpBackend.whenGET(/^\/api\/[.+\/]?authorize/).passThrough();
+    $httpBackend.whenGET(/^\/api\/data\/.+/).passThrough();
     $httpBackend.whenDELETE(/^\/api\/[.+\/]?de-authorize\/.+/).passThrough();
     $httpBackend.whenGET(/app\//).passThrough();
 

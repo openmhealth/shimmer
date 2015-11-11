@@ -17,7 +17,7 @@ declare var moment: moment.MomentStatic;
 module webApp {
   'use strict';
 
-  angular.module('webApp', ['ngAnimate', 'ngCookies', 'ngTouch', 'ngSanitize', 'ngMessages', 'ngAria', 'ngResource', 'ui.router', 'ui.bootstrap', 'ui.select', 'ui.date', 'ngMockE2E'])
+  angular.module('webApp', ['ngAnimate', 'ngCookies', 'ngTouch', 'ngSanitize', 'ngMessages', 'ngAria', 'ngResource', 'ui.router', 'ui.bootstrap', 'ui.select', 'ui.bootstrap.datetimepicker', 'ngMockE2E'])
     .run(runMock)
     .constant('moment', moment)
     .config(config)

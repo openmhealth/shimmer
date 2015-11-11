@@ -102,11 +102,11 @@ export class ShimmerService {
       schemas['googlefit']['step_count'] = 'omh:step-count';
       schemas['googlefit']['calories_burned'] = 'omh:calories-burned';
       schemas['jawbone']['activity'] = 'omh:physical-activity';
-      schemas['jawbone']['weight2'] = 'omh:body-weight';
-      schemas['jawbone']['body_mass_index2'] = 'omh:body-mass-index';
+      schemas['jawbone']['weight'] = 'omh:body-weight';
+      schemas['jawbone']['body_mass_index'] = 'omh:body-mass-index';
       schemas['jawbone']['steps'] = 'omh:step-count';
       schemas['jawbone']['sleep'] = 'omh:sleep-duration';
-      schemas['jawbone']['heart_rate2'] = 'omh:heart-rate';
+      schemas['jawbone']['heart_rate'] = 'omh:heart-rate';
       schemas['misfit']['activities'] = 'omh:physical-activity';
       schemas['misfit']['steps'] = 'omh:step-count';
       schemas['misfit']['sleep'] = 'omh:sleep-duration';
@@ -116,13 +116,14 @@ export class ShimmerService {
       schemas['withings']['body_height'] = 'omh:body-height';
       schemas['withings']['body_weight'] = 'omh:body-weight';
       schemas['withings']['heart_rate'] = 'omh:heart-rate';
-      schemas['withings']['steps3'] = 'omh:step-count';
-      schemas['withings']['calories3'] = 'omh:calories-burned';
-      schemas['withings']['sleep4'] = 'omh:sleep-duration';
+      schemas['withings']['steps'] = 'omh:step-count';
+      schemas['withings']['calories'] = 'omh:calories-burned';
+      schemas['withings']['sleep'] = 'omh:sleep-duration';
 
       for (var shim in schemas) {
           for (var endpoint in schemas[shim]) {
-              this.endpoints[schemas[shim][endpoint]] = { shim: shim, endpoint: endpoint };
+              this.endpoints[schemas[shim][endpoint]] = [];
+              this.endpoints[schemas[shim][endpoint]][shim]= endpoint;
           }
       }
 
@@ -299,8 +300,8 @@ export class ShimmerService {
     }
 
     private getEndpoint( parameters: RequestParameters ): string{
-        console.log(parameters.schema.namespace + ':' + parameters.schema.name + ' = ' + this.endpoints[parameters.schema.namespace + ':' + parameters.schema.name]);
-        return this.endpoints[parameters.schema.namespace + ':' + parameters.schema.name];
+        console.log(parameters.schema.namespace + ':' + parameters.schema.name + ' = ' + this.endpoints[parameters.schema.namespace + ':' + parameters.schema.name][parameters.shim.name]);
+        return this.endpoints[parameters.schema.namespace + ':' + parameters.schema.name][parameters.shim.name];
     }
     private getShimKey( parameters: RequestParameters ): string{
         return parameters.shim.name.toLowerCase();

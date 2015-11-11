@@ -5,13 +5,9 @@ import { UserSearchBarService } from '../components/userSearchBar/userSearchBar.
 
 export class RequestsController {
 
+  private chart;
   public shims: ShimMap;
   public parameters: RequestParameters;
-  public dateOptions = {
-    changeYear: true,
-    changeMonth: true,
-    yearRange: '1900:-0'
-  };
 
   public dateTypes = [
     'effective_timeframe',
@@ -25,28 +21,80 @@ export class RequestsController {
 
     // if the list of shims changes, update the panel states
     // to include any new shims
+    var defaultShim = userSearchBar.selectedUser && userSearchBar.selectedUser.authorizations[0] ? this.shims[userSearchBar.selectedUser.authorizations[0]] : undefined;
     $scope.$watchCollection('requests.shims', ((shims: ShimMap) => {
         if( shims ){
           this.parameters = {
-            shim: this.shims[Object.keys(this.shims)[0]],
+            shim: defaultShim,
             schema: undefined,
-            url: undefined,
             dateType: undefined,
-            startDate: new Date(),
-            endDate: new Date()
+            startDate: undefined,
+            endDate: undefined,
+            url: ''
           };
           console.log(shims)
         }
     }).bind(this));
 
+    $scope.$watchCollection('requests.userSearchBar.selectedUser', ((user: User) => {
+      if (user) {
+        this.updateUrl();
+      }
+    }).bind(this));
+
+    $scope.$watch('requests.parameters.startDate', ((date: Date) => {
+      if (date) {
+        this.updateUrl();
+      }
+    }).bind(this));
+
+    $scope.$watch('requests.parameters.endDate', ((date: Date) => {
+      if (date) {
+        this.updateUrl();
+      }
+    }).bind(this));
+
   }
 
   public getData(){
-    this.shimmer.getData( this.parameters );
+    var self = this;
+    this.shimmer.getData( this.parameters ).then( function(response){
+      if (this.chart) {
+          console.info('chart', this.chart);
+          this.chart.destroy();
+      }
+      var options = {
+        measures: {
+          heart_rate: {
+            chart: {
+              thresholds: {}
+            }
+          },
+          body_weight: {
+            chart: {
+              thresholds: {}
+            }
+          }
+        }
+      };
+      this.chart = new OMHWebVisualizations.Chart(response.data.body, $('.chart-container'), self.parameters.schema.name.replace('-','_'), options);
+      this.chart.renderTo($('svg.response-chart')[0]);
+    });
   }
 
   public updateUrl(){
-    this.parameters.url = this.shimmer.getRequestUrl(this.userSearchBar.selectedUser, this.parameters);
+    var parametersReady = true;
+    for (var parameterName in this.parameters) {
+      parametersReady = parametersReady && (this.parameters[parameterName] != undefined);
+    }
+    if (parametersReady){
+      this.parameters.url = this.shimmer.getRequestUrl(this.userSearchBar.selectedUser, this.parameters);
+    }
+  }
+
+  public schemaAvailable( shimName: string ){
+    var schemaAvailable = this.userSearchBar.selectedUser ? this.userSearchBar.selectedUser.authorizations.indexOf(shimName) >= 0 : false;
+    return schemaAvailable;
   }
 
 }

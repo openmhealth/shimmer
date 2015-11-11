@@ -80,19 +80,21 @@ body{
   padding: 20px;
 }
 
-.btn-xs{
+button.btn-xs{
   padding-top: 0;
   padding-bottom: 2px;
+  font-weight: 700;
+  color: $text-color;
+}
+.form-control {
+  @extend .btn-xs;
+  height: 25px;
 }
 .form-validation-message{
   color: maroon;
   margin-top: 2px;
 }
 .ui-select-bootstrap {
-  .form-control {
-    @extend .btn-xs;
-    height: 25px;
-  }
   .btn-default-focus {
     outline: none;
     box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
@@ -249,46 +251,110 @@ body{
   }
 }
 
-
+$parameter-input-width: 100%;
 .list-group.request-parameters {
   border-bottom: 1px solid $list-line-divider-color;
   border-top: 1px solid $list-line-divider-color;
   .list-group-item {
-    height: 70px;
+    min-height: 70px;
     padding-top: 22px;
     border: none;
     border-radius: none;
     border-top: 1px solid $list-line-divider-color;
-    span.parameter-label,
-    span.parameter-dropdown,
-    span.parameter-date,
-    span.parameter-button
-    {
-      display: inline-block;
-    }
-    span.parameter-dropdown{
-      margin-right: 10px;
-    }
-    span.parameter-label{
-      &.url{
-        width: 5%;
+    
+    .parameter {
+      position: relative;
+      span.parameter-label,
+      span.parameter-dropdown,
+      span.parameter-date,
+      span.parameter-text,
+      span.parameter-group,
+      span.parameter-button
+      {
+        width: auto;
+        text-align: left;
+        display: block;
+        margin-left: 60px;
+        input {
+          width: $parameter-input-width;
+        }
       }
-    }
-    span.parameter-date{
-    }
-    span.parameter-text{
-      input{
-        width: 70%;
+      span.parameter-group {
+        margin-left: 0;
+        span.parameter-button{
+          margin-left: 0;
+          width:auto;
+          float: right;
+        }
+        span.parameter-text{
+          width:auto;
+          overflow: hidden;
+        }
       }
-    }
-    .ui-select-bootstrap {
-      width: 300px;
-      display: inline-block;
-      margin-left: 5px;
-      vertical-align: middle;
+      .datetimepicker-wrapper:first-child{
+        width: 100%;
+        input{
+          width: 100%;
+        }
+      }
+      .datetimepicker-wrapper:last-child{
+        position: absolute;
+        display: block !important;
+        top: 0;
+        right: 20px;
+      }
+      span.parameter-dropdown{
+        .ui-select-bootstrap {
+          width: $parameter-input-width;
+          display: inline-block;
+          vertical-align: middle;
+        }
+        .ui-select-choices-row.disabled {
+          position: relative;
+          &:after {
+            content: "disconnected";
+            display: block;
+            position: absolute;
+            right: 10px;
+            top: 3px;
+            font-style: italic;
+            color: $table-border-color;
+          }
+        }
+      }
+      span.parameter-label{
+        margin: 0;
+        text-align: right;
+        width: 60px;
+        position:absolute;
+        top: 0;
+        left: 10px;
+        font-weight: 700;
+        color: #757475;
+      }
+      span.parameter-date{
+        input {
+          width: auto;
+        }
+      }
+      span.parameter-text{
+        width: auto;
+        input{
+          width: 100%;
+        }
+      }
     }
 
   }
+}
+
+.response-chart {
+    width: 100%;
+    height: 450px;
+    margin-top: 20px;
+}
+.response-chart .table {
+    margin-bottom: 0;
 }
 
 /**

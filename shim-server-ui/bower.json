@@ -20,7 +20,9 @@
     "angular": "~1.4.5",
     "open-sans-fontface": "~1.4.2",
     "ui-select": "angular-ui-select#~0.13.2",
-    "angular-ui-date": "~0.0.8"
+    "angular-ui-date": "~0.0.8",
+    "omh-web-visualizations": "~1.1.2",
+    "angular-ui-bootstrap-datetimepicker": "~0.14.0"
   },
   "devDependencies": {
     "angular-mocks": "~1.4.2"
@@ -42,6 +44,6 @@
   },
   "resolutions": {
     "jquery": "~2.1.4",
-    "angular": "~1.4.2"
+    "angular": "~1.4.5"
   }
 }

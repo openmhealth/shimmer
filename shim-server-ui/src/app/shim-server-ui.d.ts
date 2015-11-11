@@ -88,7 +88,7 @@ interface RequestParameters {
     shim: Shim;
     schema: Schema;
     dateType: string;
-    startDate: Date,
+    startDate: string,
     endDate: Date,
     url: string;
 }
