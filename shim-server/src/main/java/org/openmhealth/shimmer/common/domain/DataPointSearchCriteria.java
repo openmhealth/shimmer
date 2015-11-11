@@ -17,7 +17,7 @@
 package org.openmhealth.shimmer.common.domain;
 
 import com.google.common.collect.Range;
-import org.openmhealth.schema.domain.omh.SchemaVersion;
+import org.openmhealth.shimmer.common.validation.ValidDataPointSearchCriteria;
 import org.openmhealth.shimmer.common.validation.ValidSchemaName;
 import org.openmhealth.shimmer.common.validation.ValidSchemaNamespace;
 
@@ -32,14 +32,14 @@ import java.util.Optional;
  *
  * @author Emerson Farrugia
  */
+@ValidDataPointSearchCriteria
 public class DataPointSearchCriteria {
 
     private String userId;
     private String schemaNamespace;
     private String schemaName;
-    private SchemaVersion schemaVersion;
-    private Range<OffsetDateTime> creationTimestampRange;
-    private Range<OffsetDateTime> effectiveTimestampRange;
+    private Range<OffsetDateTime> creationTimestampRange = Range.all();
+    private Range<OffsetDateTime> effectiveTimestampRange = Range.all();
     private String acquisitionSourceId; // TODO confirm if we want to run with this name
 
 
@@ -83,32 +83,31 @@ public class DataPointSearchCriteria {
     }
 
     /**
-     * @return the schema version of the body of the data points
+     * @return the creation timestamp range of the data points
      */
-    public Optional<SchemaVersion> getSchemaVersion() {
-        return Optional.ofNullable(schemaVersion);
-    }
-
-    public void setSchemaVersion(SchemaVersion schemaVersion) {
-        this.schemaVersion = schemaVersion;
-    }
-
-    public Optional<Range<OffsetDateTime>> getCreationTimestampRange() {
-        return Optional.ofNullable(creationTimestampRange);
+    @NotNull
+    public Range<OffsetDateTime> getCreationTimestampRange() {
+        return creationTimestampRange;
     }
 
     public void setCreationTimestampRange(Range<OffsetDateTime> creationTimestampRange) {
         this.creationTimestampRange = creationTimestampRange;
     }
 
-    public Optional<Range<OffsetDateTime>> getEffectiveTimestampRange() {
-        return Optional.ofNullable(effectiveTimestampRange);
+    /**
+     * @return the effective timestamp range of the data points
+     */
+    public Range<OffsetDateTime> getEffectiveTimestampRange() {
+        return effectiveTimestampRange;
     }
 
     public void setEffectiveTimestampRange(Range<OffsetDateTime> effectiveTimestampRange) {
         this.effectiveTimestampRange = effectiveTimestampRange;
     }
 
+    /**
+     * @return the identifier of the acquisition source
+     */
     @Size(min = 1)
     public Optional<String> getAcquisitionSourceId() {
         return Optional.ofNullable(acquisitionSourceId);

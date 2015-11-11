@@ -25,6 +25,11 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.empty;
+
 
 /**
  * @author Emerson Farrugia
@@ -51,5 +56,16 @@ public abstract class ValidationUnitTests {
         ValidatorFactory factory = configuration.failFast(true).buildValidatorFactory();
 
         validator = factory.getValidator();
+    }
+
+    protected void assertThatBeanIsValid(Object bean) {
+
+        assertThat(getValidator().validate(bean), is(empty()));
+
+    }
+
+    protected void assertThatBeanIsNotValid(Object bean) {
+
+        assertThat(getValidator().validate(bean), is(not(empty())));
     }
 }

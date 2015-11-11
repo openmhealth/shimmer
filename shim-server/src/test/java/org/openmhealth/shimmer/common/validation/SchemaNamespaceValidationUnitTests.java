@@ -18,11 +18,6 @@ package org.openmhealth.shimmer.common.validation;
 
 import org.testng.annotations.Test;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.empty;
-
 
 /**
  * @author Emerson Farrugia
@@ -47,18 +42,18 @@ public class SchemaNamespaceValidationUnitTests extends ValidationUnitTests {
     @Test
     public void validateShouldFailOnEmptyString() {
 
-        assertThat(getValidator().validate(new Wrapper("")), is(not(empty())));
+        assertThatBeanIsNotValid(new Wrapper(""));
     }
 
     @Test
     public void validateShouldFailOnIllegalCharacter() {
 
-        assertThat(getValidator().validate(new Wrapper("abc%")), is(not(empty())));
+        assertThatBeanIsNotValid(new Wrapper("abc%"));
     }
 
     @Test
     public void validateShouldPassOnValidString() {
 
-        assertThat(getValidator().validate(new Wrapper("a.bc")), is(empty()));
+        assertThatBeanIsValid(new Wrapper("a.bc"));
     }
 }
