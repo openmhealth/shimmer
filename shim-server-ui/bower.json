@@ -22,7 +22,8 @@
     "ui-select": "angular-ui-select#~0.13.2",
     "angular-ui-date": "~0.0.8",
     "omh-web-visualizations": "~1.1.2",
-    "angular-ui-bootstrap-datetimepicker": "~0.14.0"
+    "angular-ui-bootstrap-datetimepicker": "~0.14.0",
+    "angular-ui-ace": "bower"
   },
   "devDependencies": {
     "angular-mocks": "~1.4.2"
@@ -38,8 +39,13 @@
         "assets/fonts/bootstrap/glyphicons-halflings-regular.woff2"
       ]
     },
-    "angular-ui-date": {
-      "styles": "../jquery-ui/themes/smoothness/jquery-ui.css"
+    "ace-builds": {
+      "main": [
+        "src-min-noconflict/ace.js",
+        "src-min-noconflict/mode-json.js",
+        "src-min-noconflict/theme-idle_fingers.js",
+        "src-min-noconflict/worker-json.js"
+      ]
     }
   },
   "resolutions": {

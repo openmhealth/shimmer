@@ -8,6 +8,9 @@ export class RequestsController {
   private chart;
   public shims: ShimMap;
   public parameters: RequestParameters;
+  public responseData: string;
+  public editor: any;
+  public editorOptions;
 
   public dateTypes = [
     'effective_timeframe',
@@ -18,6 +21,15 @@ export class RequestsController {
   /* @ngInject */
   constructor(private $scope:angular.IScope, private shimmer: ShimmerService, private userSearchBar: UserSearchBarService) {
     this.shims = shimmer.shims;
+    this.editor = undefined;
+    this.editorOptions = {
+      useWrapMode: true,
+      showGutter: true,
+      mode: 'json',
+      firstLineNumber: 1,
+      onLoad: this.aceLoaded.bind(this),
+      onChange: this.aceChanged
+    };
 
     // if the list of shims changes, update the panel states
     // to include any new shims
@@ -77,9 +89,23 @@ export class RequestsController {
           }
         }
       };
-      this.chart = new OMHWebVisualizations.Chart(response.data.body, $('.chart-container'), self.parameters.schema.name.replace('-','_'), options);
+      this.chart = new OMHWebVisualizations.Chart(response.data.body, $('.chart-container'), this.parameters.schema.name.replace('-','_'), options);
       this.chart.renderTo($('svg.response-chart')[0]);
-    });
+      console.log( this.chart.getComponents() );
+      var tooltipShowFunction = this.chart.getComponents().tooltip.show;
+      this.chart.getComponents().tooltip.show = function( data, target ){
+        tooltipShowFunction(data, target);
+        console.log(data);
+        self.scrollToString(data.omhDatum.header.id);
+      }
+      var replacer = function(key:string, value:any):any {
+        if (key == 'groupName') {
+          return undefined;
+        }
+        else return value;
+      }
+      this.responseData = JSON.stringify(response.data, replacer, '\t');
+    }.bind(this));
   }
 
   public updateUrl(){
@@ -96,5 +122,21 @@ export class RequestsController {
     var schemaAvailable = this.userSearchBar.selectedUser ? this.userSearchBar.selectedUser.authorizations.indexOf(shimName) >= 0 : false;
     return schemaAvailable;
   }
+
+  public aceLoaded(_editor:any) {
+    console.log(this);
+    this.editor = _editor;
+    console.info('loaded ace', this.editor);
+    _editor.setReadOnly(true);
+  };
+
+  public aceChanged(e:any) {
+  };
+
+  public scrollToString(string: string){
+    console.log(this.editor.find(string,{},true));
+    // this.editor.gotoLine(this.editor.find(string).startRow, 0, true);
+  }
+
 
 }
