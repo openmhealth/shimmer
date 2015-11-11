@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.openmhealth.shimmer.common.service;
+package org.openmhealth.shimmer.common.assembler;
 
 import org.openmhealth.shimmer.common.configuration.EndpointConfigurationProperties;
 import org.openmhealth.shimmer.common.configuration.PaginationSettings;

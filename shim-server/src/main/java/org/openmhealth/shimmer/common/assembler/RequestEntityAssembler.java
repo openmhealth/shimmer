@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.openmhealth.shimmer.common.service;
+package org.openmhealth.shimmer.common.assembler;
 
 import org.openmhealth.shimmer.common.domain.DataPointRequest;
 import org.openmhealth.shimmer.common.domain.RequestEntityBuilder;
