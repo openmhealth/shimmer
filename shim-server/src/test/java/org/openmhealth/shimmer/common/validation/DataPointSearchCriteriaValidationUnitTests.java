@@ -16,7 +16,6 @@
 
 package org.openmhealth.shimmer.common.validation;
 
-import com.google.common.collect.Range;
 import org.openmhealth.shimmer.common.domain.DataPointSearchCriteria;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -41,8 +40,8 @@ public class DataPointSearchCriteriaValidationUnitTests extends ValidationUnitTe
         searchCriteria.setSchemaNamespace("someNamespace");
         searchCriteria.setSchemaName("someName");
         searchCriteria.setAcquisitionSourceId("someSourceId");
-        searchCriteria.setCreationTimestampRange(Range.all());
-        searchCriteria.setEffectiveTimestampRange(Range.closedOpen(now().minusDays(1), now().minusHours(23)));
+        searchCriteria.setOnOrAfterEffectiveTimestamp(now().minusDays(1));
+        searchCriteria.setOnOrAfterEffectiveTimestamp(now().minusHours(23));
     }
 
     @Test
@@ -131,29 +130,15 @@ public class DataPointSearchCriteriaValidationUnitTests extends ValidationUnitTe
         assertThatBeanIsNotValid(searchCriteria);
     }
 
-    // TODO look up how to order class-level validators after property level validators
-    @Test(enabled = false)
-    public void validateShouldFailOnUndefinedEffectiveTimestampRange() {
-
-        searchCriteria.setEffectiveTimestampRange(null);
-
-        assertThatBeanIsNotValid(searchCriteria);
-    }
-
-    // TODO look up how to order class-level validators after property level validators
-    @Test
-    public void validateShouldFailOnUndefinedCreationTimestampRange() {
-
-        searchCriteria.setCreationTimestampRange(null);
-
-        assertThatBeanIsNotValid(searchCriteria);
-    }
+    // TODO add tests for reversed time range bounds
 
     @Test
     public void validateShouldPassOnUnrestrictedEffectiveRangeAndRestrictedCreationRange() {
 
-        searchCriteria.setEffectiveTimestampRange(Range.all());
-        searchCriteria.setCreationTimestampRange(Range.closedOpen(now().minusDays(1), now().minusHours(23)));
+        searchCriteria.setOnOrAfterEffectiveTimestamp(null);
+        searchCriteria.setBeforeEffectiveTimestamp(null);
+        searchCriteria.setOnOrAfterCreationTimestamp(now().minusDays(1));
+        searchCriteria.setBeforeCreationTimestamp(now().minusHours(23));
 
         assertThatBeanIsValid(searchCriteria);
     }
@@ -161,8 +146,10 @@ public class DataPointSearchCriteriaValidationUnitTests extends ValidationUnitTe
     @Test
     public void validateShouldPassOnRestrictedEffectiveRangeAndUnrestrictedCreationRange() {
 
-        searchCriteria.setEffectiveTimestampRange(Range.closedOpen(now().minusDays(1), now().minusHours(23)));
-        searchCriteria.setCreationTimestampRange(Range.all());
+        searchCriteria.setOnOrAfterEffectiveTimestamp(now().minusDays(1));
+        searchCriteria.setBeforeEffectiveTimestamp(now().minusHours(23));
+        searchCriteria.setOnOrAfterCreationTimestamp(null);
+        searchCriteria.setBeforeCreationTimestamp(null);
 
         assertThatBeanIsValid(searchCriteria);
     }
@@ -170,8 +157,10 @@ public class DataPointSearchCriteriaValidationUnitTests extends ValidationUnitTe
     @Test
     public void validateShouldFailOnUnrestrictedTimestampRange() {
 
-        searchCriteria.setEffectiveTimestampRange(Range.all());
-        searchCriteria.setCreationTimestampRange(Range.all());
+        searchCriteria.setOnOrAfterCreationTimestamp(null);
+        searchCriteria.setBeforeCreationTimestamp(null);
+        searchCriteria.setOnOrAfterEffectiveTimestamp(null);
+        searchCriteria.setBeforeEffectiveTimestamp(null);
 
         assertThatBeanIsNotValid(searchCriteria);
     }

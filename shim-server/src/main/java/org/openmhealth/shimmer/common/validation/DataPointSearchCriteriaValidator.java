@@ -32,6 +32,7 @@ public class DataPointSearchCriteriaValidator
     public void initialize(ValidDataPointSearchCriteria constraintAnnotation) {
     }
 
+    // TODO add constraint violations if valuable
     @SuppressWarnings("RedundantIfStatement")
     @Override
     public boolean isValid(DataPointSearchCriteria value, ConstraintValidatorContext context) {
@@ -40,12 +41,13 @@ public class DataPointSearchCriteriaValidator
             return true;
         }
 
+        // TODO implement checks for reversed bounds
+
         if (!value.getCreationTimestampRange().hasLowerBound()
                 && !value.getCreationTimestampRange().hasUpperBound()
                 && !value.getEffectiveTimestampRange().hasLowerBound()
                 && !value.getEffectiveTimestampRange().hasUpperBound()) {
 
-            // TODO add constraint violation if valuable
             return false;
         }
 
