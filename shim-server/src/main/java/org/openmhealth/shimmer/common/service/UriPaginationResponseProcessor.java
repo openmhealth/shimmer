@@ -17,7 +17,7 @@
 package org.openmhealth.shimmer.common.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import org.openmhealth.shimmer.common.configuration.UriPaginationResponseConfigurationProperties;
+import org.openmhealth.shimmer.common.configuration.UriPaginationSettings;
 import org.openmhealth.shimmer.common.domain.pagination.PaginationStatus;
 import org.openmhealth.shimmer.common.domain.pagination.UriPaginationStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,12 +27,12 @@ import org.springframework.http.ResponseEntity;
  * @author Chris Schaefbauer
  */
 public class UriPaginationResponseProcessor
-        extends PaginationResponseProcessor<UriPaginationResponseConfigurationProperties> {
+        extends PaginationResponseProcessor<UriPaginationSettings> {
 
 
     @Override
     public PaginationStatus processPaginationResponse(
-            UriPaginationResponseConfigurationProperties paginationResponseProperties,
+            UriPaginationSettings paginationResponseProperties,
             ResponseEntity<JsonNode> responseEntity) {
 
         UriPaginationStatus paginationStatus = new UriPaginationStatus();

@@ -50,7 +50,7 @@ public class UriPaginationStatus implements PaginationStatus {
 
 //    @Override
 //    public UriResponsePaginationStrategy createNewResponseStrategyForType(
-//            UriPaginationResponseConfigurationProperties configuration) {
+//            UriPaginationSettings configuration) {
 //
 //        if(configuration.getBaseUri().isPresent() && !configuration.getBaseUri().get().isEmpty()){
 //            return new ConcatUriResponsePaginationStrategy();

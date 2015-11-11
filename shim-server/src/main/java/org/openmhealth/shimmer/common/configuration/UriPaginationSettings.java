@@ -27,7 +27,7 @@ import static org.openmhealth.shimmer.common.domain.pagination.PaginationRespons
 /**
  * @author Chris Schaefbauer
  */
-public class UriPaginationResponseConfigurationProperties implements PaginationResponseConfigurationProperties {
+public class UriPaginationSettings extends BasePaginationSettings {
 
     private String baseUri;
 

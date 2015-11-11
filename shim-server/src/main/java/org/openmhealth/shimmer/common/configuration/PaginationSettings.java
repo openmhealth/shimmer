@@ -16,28 +16,37 @@
 
 package org.openmhealth.shimmer.common.configuration;
 
-import org.openmhealth.shimmer.common.domain.pagination.RequestPaginationScheme;
+import org.openmhealth.shimmer.common.domain.ResponseLocation;
+import org.openmhealth.shimmer.common.domain.pagination.PaginationResponseType;
 import org.openmhealth.shimmer.common.domain.parameters.NumberRequestParameter;
 import org.openmhealth.shimmer.common.domain.parameters.StringRequestParameter;
 
+import java.math.BigDecimal;
 import java.util.Optional;
 
 
 /**
- * Todo: Consider combing the pagination request and response config properties into one property
  * @author Chris Schaefbauer
  */
-public interface PaginationRequestConfigurationProperties {
+public interface PaginationSettings {
 
-    RequestPaginationScheme getRequestPaginationScheme();
+    PaginationResponseType getResponseType();
 
-    //public boolean isPaginated();
+    String getPagingDirectionality();
 
-    Optional<Integer> getPaginationLimitDefault();
+    ResponseLocation getPaginationResponseLocation();
 
-    Optional<Integer> getPaginationMaxLimit();
+    boolean isResponseInformationEncoded();
+
+    Optional<BigDecimal> getPaginationLimitDefault();
+
+    Optional<BigDecimal> getPaginationMaxLimit();
 
     Optional<String> getLimitQueryParameterName();
+
+    Optional<NumberRequestParameter> getPaginationLimitParameter();
+
+    Optional<NumberRequestParameter> getPaginationOffsetParameter();
 
     Optional<StringRequestParameter> getNextPageTokenParameter();
 
@@ -46,9 +55,13 @@ public interface PaginationRequestConfigurationProperties {
     default boolean hasPaginationMaxLimit() { return getPaginationMaxLimit().isPresent(); }
 
     /* Unnecessary for the simplest solution, it supports optimization */
-    String getOffsetQueryParameterName();
+    // String getOffsetQueryParameterName();
 
-    Optional<NumberRequestParameter> getPaginationLimitParameter();
+    //public String getIdentifierForNextPageProperty();
 
-    Optional<NumberRequestParameter> getPaginationOffsetParameter();
+    //public T createNewResponseStrategyForType();
+
+    // RequestPaginationScheme getRequestPaginationScheme();
+
+
 }

@@ -16,14 +16,11 @@
 
 package org.openmhealth.shimmer.common.transformer;
 
-import com.google.common.collect.Maps;
-import org.openmhealth.shimmer.common.configuration.PaginationRequestConfigurationProperties;
+import org.openmhealth.shimmer.common.configuration.PaginationSettings;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static java.util.Collections.singletonList;
 
 
 /**
@@ -33,34 +30,35 @@ public class OffsetPaginationQueryParameterTransformer implements PaginationQuer
 
     @Override
     public Map<String, List<String>> transformPaginationParameters(
-            PaginationRequestConfigurationProperties configurationProperties, Integer inputSkipValue,
+            PaginationSettings paginationSettings, Integer inputSkipValue,
             Integer inputLimitValue) {
 
-        HashMap<String, List<String>> paginationParameters = Maps.newHashMap();
-
-        paginationParameters.put(configurationProperties.getLimitQueryParameterName().get(),
-                singletonList(Integer.toString(inputLimitValue)));
-
-        if (configurationProperties.getRequestPaginationScheme().getRequestSchemeDetail("offset-type") == "page") {
-
-
-            Integer pageNumberFromSkipAndLimit = getDesiredPageNumberFromSkipAndLimit(inputSkipValue,
-                    inputLimitValue, Integer.parseInt(
-                            configurationProperties.getRequestPaginationScheme()
-                                    .getRequestSchemeDetail("offset-page-start")));
-
-            paginationParameters.put(configurationProperties.getOffsetQueryParameterName(),
-                    singletonList(pageNumberFromSkipAndLimit.toString())); // TODO: this needs testing
-
-
-        }
-        else if (configurationProperties.getRequestPaginationScheme().getRequestSchemeDetail("offset-type") == "raw") {
-            paginationParameters
-                    .put(configurationProperties.getOffsetQueryParameterName(),
-                            singletonList(inputSkipValue.toString()));
-        }
-
-        return paginationParameters;
+//        HashMap<String, List<String>> paginationParameters = Maps.newHashMap();
+//
+//        paginationParameters.put(paginationSettings.getLimitQueryParameterName().get(),
+//                singletonList(Integer.toString(inputLimitValue)));
+//
+//        if (paginationSettings.getRequestPaginationScheme().getRequestSchemeDetail("offset-type") == "page") {
+//
+//
+//            Integer pageNumberFromSkipAndLimit = getDesiredPageNumberFromSkipAndLimit(inputSkipValue,
+//                    inputLimitValue, Integer.parseInt(
+//                            configurationProperties.getRequestPaginationScheme()
+//                                    .getRequestSchemeDetail("offset-page-start")));
+//
+//            paginationParameters.put(configurationProperties.getOffsetQueryParameterName(),
+//                    singletonList(pageNumberFromSkipAndLimit.toString())); // TODO: this needs testing
+//
+//
+//        }
+//        else if (configurationProperties.getRequestPaginationScheme().getRequestSchemeDetail("offset-type") == "raw") {
+//            paginationParameters
+//                    .put(configurationProperties.getOffsetQueryParameterName(),
+//                            singletonList(inputSkipValue.toString()));
+//        }
+//
+//        return paginationParameters;
+        return new HashMap<>();
 
     }
 

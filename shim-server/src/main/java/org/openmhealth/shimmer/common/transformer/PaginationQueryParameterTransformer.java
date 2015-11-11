@@ -16,7 +16,7 @@
 
 package org.openmhealth.shimmer.common.transformer;
 
-import org.openmhealth.shimmer.common.configuration.PaginationRequestConfigurationProperties;
+import org.openmhealth.shimmer.common.configuration.PaginationSettings;
 
 import java.util.List;
 import java.util.Map;
@@ -31,6 +31,6 @@ import java.util.Map;
 public interface PaginationQueryParameterTransformer {
 
     public Map<String, List<String>> transformPaginationParameters(
-            PaginationRequestConfigurationProperties configurationProperties, Integer inputSkipValue,
+            PaginationSettings paginationSettings, Integer inputSkipValue,
             Integer inputLimitValue);
 }

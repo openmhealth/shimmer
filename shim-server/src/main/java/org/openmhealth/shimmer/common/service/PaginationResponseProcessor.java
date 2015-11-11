@@ -17,7 +17,7 @@
 package org.openmhealth.shimmer.common.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import org.openmhealth.shimmer.common.configuration.PaginationResponseConfigurationProperties;
+import org.openmhealth.shimmer.common.configuration.PaginationSettings;
 import org.openmhealth.shimmer.common.decoder.PaginationResponseDecoder;
 import org.openmhealth.shimmer.common.domain.pagination.PaginationStatus;
 import org.openmhealth.shimmer.common.extractor.PaginationResponseExtractor;
@@ -29,7 +29,7 @@ import java.util.Optional;
 /**
  * @author Chris Schaefbauer
  */
-public abstract class PaginationResponseProcessor<T extends PaginationResponseConfigurationProperties> {
+public abstract class PaginationResponseProcessor<T extends PaginationSettings> {
 
     PaginationResponseExtractor responseExtractor;
 

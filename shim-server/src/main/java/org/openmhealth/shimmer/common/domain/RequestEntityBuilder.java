@@ -25,8 +25,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.util.UriComponentsBuilder;
 import org.springframework.web.util.UriTemplate;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
+import java.net.URI;
 import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -132,23 +131,26 @@ public class RequestEntityBuilder<T> {
      */
     public RequestEntity<T> build() {
 
-        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromUriString(uriTemplate.toString())
-                .queryParams(queryParameters);
+        String uriWithPathParams =
+                UriComponentsBuilder.fromUriString(uriTemplate.toString()).buildAndExpand(pathParameters).toUriString();
+        //.queryParams(queryParameters);
 
-        String completedUriString = uriBuilder.buildAndExpand(pathParameters).toString();
+//        try {
+//            // This decoding addresses the issue when
+//            uriWithPathParams = URLDecoder.decode(uriWithPathParams, "UTF-8");
+//        }
+//        catch (UnsupportedEncodingException e) {
+//
+//            // In this case we likely don't have a URI that needs decoding, so we can continue with the uri that was
+//            // generated before decoding.
+//            e.printStackTrace();
+//        }
 
-        try {
-            completedUriString = URLDecoder.decode(completedUriString, "UTF-8");
-        }
-        catch (UnsupportedEncodingException e) {
+        //String completedUriString = uriBuilder.buildAndExpand(pathParameters).toString();
+        URI uri = UriComponentsBuilder.fromUriString(uriWithPathParams).queryParams(queryParameters).build().encode()
+                .toUri();
 
-            // In this case we likely don't have a URI that needs decoding, so we can continue with the uri that was
-            // generated before decoding.
-            e.printStackTrace();
-        }
-        uriBuilder = UriComponentsBuilder.fromUriString(completedUriString);
-
-        return new RequestEntity(headers, httpMethod, uriBuilder.build().encode().toUri());
+        return new RequestEntity(headers, httpMethod, uri);
     }
 
     public boolean isFinishedAssembling() {

@@ -78,23 +78,18 @@ public interface EndpointConfigurationProperties {
     }
 
     /**
-     * @return the settings used by this endpoint to handle pagination in the request
-     */
-    Optional<PaginationRequestConfigurationProperties> getPaginationRequestConfigurationSettings();
-
-    /**
      * @return true if this endpoint supports sending pagination information in requests
      */
-    default boolean supportsPaginationInRequests() { return getPaginationRequestConfigurationSettings().isPresent(); }
+    default boolean supportsPagination() { return getPaginationSettings().isPresent(); }
 
     /**
      * @return the settings used by this endpoint to handle pagination responses
      */
-    Optional<PaginationResponseConfigurationProperties> getPaginationResponseConfigurationSettings();
+    Optional<PaginationSettings> getPaginationSettings();
 
     /**
      * @return true if this endpoint provides pagination information in its responses
      */
-    default boolean supportsPaginationInResponses() { return getPaginationResponseConfigurationSettings().isPresent(); }
+    default boolean supportsPaginationInResponses() { return getPaginationSettings().isPresent(); }
 
 }

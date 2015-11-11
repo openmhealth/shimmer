@@ -25,7 +25,7 @@ import java.util.Optional;
  * Todo: Decide the type for this class
  * @author Chris Schaefbauer
  */
-public class NumberRequestParameter extends RequestParameter<Double> {
+public class NumberRequestParameter extends RequestParameter<BigDecimal> {
 
     private BigDecimal maximumValue;
     private Double minimumValue;

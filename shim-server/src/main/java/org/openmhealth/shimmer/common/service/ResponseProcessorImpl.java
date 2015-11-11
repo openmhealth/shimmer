@@ -53,7 +53,7 @@ public class ResponseProcessorImpl<T> implements ResponseProcessor<T> {
         //
         if (endpointProperties.supportsPaginationInResponses()) {
             PaginationResponseProcessor paginationProcessor;
-            switch ( endpointProperties.getPaginationResponseConfigurationSettings().get().getResponseType() ) {
+            switch ( endpointProperties.getPaginationSettings().get().getResponseType() ) {
                 case URI:
                     paginationProcessor = new UriPaginationResponseProcessor();
                     break;
@@ -71,7 +71,7 @@ public class ResponseProcessorImpl<T> implements ResponseProcessor<T> {
             }
 
             PaginationStatus paginationStatus = paginationProcessor.processPaginationResponse(
-                    endpointProperties.getPaginationResponseConfigurationSettings().get(),
+                    endpointProperties.getPaginationSettings().get(),
                     responseEntity);
 
             processedResponse.setPaginationStatus(paginationStatus);

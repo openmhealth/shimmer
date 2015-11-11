@@ -17,7 +17,7 @@
 package org.openmhealth.shimmer.common.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import org.openmhealth.shimmer.common.configuration.TokenPaginationResponseConfigurationProperties;
+import org.openmhealth.shimmer.common.configuration.TokenPaginationSettings;
 import org.openmhealth.shimmer.common.domain.pagination.PaginationStatus;
 import org.openmhealth.shimmer.common.domain.pagination.TokenPaginationStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,11 +27,11 @@ import org.springframework.http.ResponseEntity;
  * @author Chris Schaefbauer
  */
 public class TokenPaginationResponseProcessor
-        extends PaginationResponseProcessor<TokenPaginationResponseConfigurationProperties> {
+        extends PaginationResponseProcessor<TokenPaginationSettings> {
 
     @Override
     public PaginationStatus processPaginationResponse(
-            TokenPaginationResponseConfigurationProperties paginationResponseProperties,
+            TokenPaginationSettings paginationResponseProperties,
             ResponseEntity<JsonNode> responseEntity) {
 
         TokenPaginationStatus paginationStatus =

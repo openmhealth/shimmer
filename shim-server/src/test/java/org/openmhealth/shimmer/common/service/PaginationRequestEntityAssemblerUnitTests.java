@@ -29,6 +29,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import org.springframework.web.util.UriTemplate;
 import org.testng.annotations.Test;
 
+import java.math.BigDecimal;
 import java.net.URI;
 
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -51,8 +52,7 @@ public class PaginationRequestEntityAssemblerUnitTests {
                         new UriTemplate("https://api.ihealthlabs.com:8443/openapiv2/user/{userid}/{endpoint-name}"));
 
         DefaultEndpointConfigurationProperties configProperties = new DefaultEndpointConfigurationProperties();
-        configProperties.setPaginationRequestSettings(new DefaultPaginationRequestConfigurationProperties());
-        configProperties.setPaginationResponseSettings(new UriPaginationResponseConfigurationProperties());
+        configProperties.setPaginationSettings(new UriPaginationSettings());
 
         PaginationRequestEntityAssembler assembler = new PaginationRequestEntityAssembler();
 
@@ -69,36 +69,31 @@ public class PaginationRequestEntityAssemblerUnitTests {
     }
 
     @Test
-    public void returnsBuilderWithCorrectUriWhenEndpointProvidesPartialUriInResponseThatIsAppendedToTheEnd() {
+    public void returnsBuilderWithCorrectUriWhenEndpointResponseProvidesPartialUriContainingAnInternalQueryParameter() {
 
-        RequestEntityBuilder builder =
-                new RequestEntityBuilder(
-                        new UriTemplate("https://jawbone.com/nudge/api/v.1.1/users/@me/{endpoint}"));
+        assertThatPartialUriIsAssembledCorrectlyWhen("/nudge/api/v.1.1/users/VB0mNZWqiOUDWkkl72vgRQ/moves?page_token" +
+                        "=1440077820&limit=3",
+                "https://jawbone.com/nudge/api/v.1.1/users/VB0mNZWqiOUDWkkl72vgRQ/moves?page_token=1440077820&limit=3",
+                null);
+    }
 
-        DefaultEndpointConfigurationProperties configProperties = new DefaultEndpointConfigurationProperties();
-        configProperties.setPaginationRequestSettings(new DefaultPaginationRequestConfigurationProperties());
+    @Test
+    public void returnsBuilderWithCorrectUriWhenEndpointResponseProvidesPartialUriWithoutInternalQueryParameter() {
 
-        UriPaginationResponseConfigurationProperties paginationResponseConfig =
-                new UriPaginationResponseConfigurationProperties();
-        paginationResponseConfig.setBaseUri("https://jawbone.com/{paginationResponse}");
-        configProperties.setPaginationResponseSettings(paginationResponseConfig);
+        assertThatPartialUriIsAssembledCorrectlyWhen(
+                "/nudge/api/v.1.1/users/VB0mNZWqiOUDWkkl72vgRQ/1436566038006058105",
+                "https://jawbone.com/nudge/api/v.1.1/users/VB0mNZWqiOUDWkkl72vgRQ/1436566038006058105", null);
+    }
 
-        PaginationRequestEntityAssembler assembler = new PaginationRequestEntityAssembler();
+    @Test
+    public void returnsBuilderWithCorrectUriWhenEndpointResponseProvidesPartialUriAndRequiresLimitQueryParameter() {
 
-        PaginationStatus paginationStatus = new UriPaginationStatus();
-        paginationStatus.setPaginationResponseValue("/nudge/api/v.1.1/users/VB0mNZWqiOUDWkkl72vgRQ/moves?page_token" +
-                "=1440077820&limit=3");
-        assembler.setPaginationStatus(paginationStatus);
+        NumberRequestParameter limitRequestParameter = createNumberRequestParameter("limit", QUERY, 10, 20);
 
-        RequestEntityBuilder assembledBuilder =
-                assembler.assemble(builder, createTestDataPointRequest(configProperties));
-
-        URI expectedUri = UriComponentsBuilder.fromUriString(
-                "https://jawbone.com/nudge/api/v.1.1/users/VB0mNZWqiOUDWkkl72vgRQ/moves?page_token=1440077820&limit=3")
-                .build().encode().toUri();
-
-        assertThat(assembledBuilder.build().getUrl(), equalTo(expectedUri));
-        assertThat(assembledBuilder.isFinishedAssembling(), is(false));
+        assertThatPartialUriIsAssembledCorrectlyWhen("/nudge/api/v.1.1/users/VB0mNZWqiOUDWkkl72vgRQ/moves?page_token" +
+                        "=1440077820",
+                "https://jawbone.com/nudge/api/v.1.1/users/VB0mNZWqiOUDWkkl72vgRQ/moves?page_token=1440077820&limit=20",
+                limitRequestParameter);
     }
 
     @Test
@@ -110,12 +105,9 @@ public class PaginationRequestEntityAssemblerUnitTests {
 
         DefaultEndpointConfigurationProperties configProperties = new DefaultEndpointConfigurationProperties();
 
-        DefaultPaginationRequestConfigurationProperties paginationRequestConfig =
-                new DefaultPaginationRequestConfigurationProperties();
-        paginationRequestConfig.setNextPageTokenParameter(createNextPageTokenParameter(QUERY));
-        configProperties.setPaginationRequestSettings(paginationRequestConfig);
-
-        configProperties.setPaginationResponseSettings(new TokenPaginationResponseConfigurationProperties());
+        TokenPaginationSettings tokenPaginationSettings = new TokenPaginationSettings();
+        tokenPaginationSettings.setNextPageTokenParameter(createNextPageTokenParameter(QUERY));
+        configProperties.setPaginationSettings(tokenPaginationSettings);
 
         PaginationRequestEntityAssembler assembler = new PaginationRequestEntityAssembler();
 
@@ -143,12 +135,9 @@ public class PaginationRequestEntityAssemblerUnitTests {
 
         DefaultEndpointConfigurationProperties configProperties = new DefaultEndpointConfigurationProperties();
 
-        DefaultPaginationRequestConfigurationProperties paginationRequestConfig =
-                new DefaultPaginationRequestConfigurationProperties();
-        paginationRequestConfig.setNextPageTokenParameter(createNextPageTokenParameter(PATH));
-        configProperties.setPaginationRequestSettings(paginationRequestConfig);
-
-        configProperties.setPaginationResponseSettings(new TokenPaginationResponseConfigurationProperties());
+        TokenPaginationSettings settings = new TokenPaginationSettings();
+        settings.setNextPageTokenParameter(createNextPageTokenParameter(PATH));
+        configProperties.setPaginationSettings(settings);
 
         PaginationRequestEntityAssembler assembler = new PaginationRequestEntityAssembler();
 
@@ -196,6 +185,44 @@ public class PaginationRequestEntityAssemblerUnitTests {
                 25, null);
     }
 
+    /* Helper classes */
+
+    private void assertThatPartialUriIsAssembledCorrectlyWhen(String partialUriFromResponse, String expectedUriString,
+            NumberRequestParameter limitParameter) {
+
+        RequestEntityBuilder builder =
+                new RequestEntityBuilder(
+                        new UriTemplate("https://jawbone.com/nudge/api/v.1.1/users/@me/{endpoint}"));
+
+        DefaultEndpointConfigurationProperties configProperties = new DefaultEndpointConfigurationProperties();
+
+        UriPaginationSettings paginationSettings =
+                new UriPaginationSettings();
+
+        if (limitParameter != null) {
+            paginationSettings.setPaginationLimitParameter(limitParameter);
+        }
+
+        paginationSettings.setBaseUri("https://jawbone.com/{paginationResponse}");
+        configProperties.setPaginationSettings(paginationSettings);
+
+        PaginationRequestEntityAssembler assembler = new PaginationRequestEntityAssembler();
+
+        PaginationStatus paginationStatus = new UriPaginationStatus();
+        paginationStatus.setPaginationResponseValue(partialUriFromResponse);
+        assembler.setPaginationStatus(paginationStatus);
+
+        RequestEntityBuilder assembledBuilder =
+                assembler.assemble(builder, createTestDataPointRequest(configProperties));
+
+        URI expectedUri = UriComponentsBuilder.fromUriString(
+                expectedUriString)
+                .build().encode().toUri();
+
+        assertThat(assembledBuilder.build().getUrl(), equalTo(expectedUri));
+        assertThat(assembledBuilder.isFinishedAssembling(), is(false));
+    }
+
     private void assertThatLimitParameterIsSetCorrectlyWhen(RequestParameterLocation location, String baseUriTemplate,
             String finalUri, Integer defaultValue, Integer maxValue) {
 
@@ -206,22 +233,13 @@ public class PaginationRequestEntityAssemblerUnitTests {
         PaginationRequestEntityAssembler assembler = new PaginationRequestEntityAssembler();
 
         DefaultEndpointConfigurationProperties configProperties = new DefaultEndpointConfigurationProperties();
-        DefaultPaginationRequestConfigurationProperties paginationRequestConfigs =
-                new DefaultPaginationRequestConfigurationProperties();
-        NumberRequestParameter numberRequestParameter = new NumberRequestParameter();
+        BasePaginationSettings paginationSettings = new TokenPaginationSettings();
 
-        if (maxValue != null) {
-            numberRequestParameter.setMaximumValue(maxValue);
-        }
+        NumberRequestParameter numberRequestParameter =
+                createNumberRequestParameter("limit", location, defaultValue, maxValue);
 
-        if (defaultValue != null) {
-            numberRequestParameter.setDefaultValue(defaultValue.doubleValue());
-        }
-
-        numberRequestParameter.setRequestParameterLocation(location);
-        numberRequestParameter.setParameterName("limit");
-        paginationRequestConfigs.setPaginationLimitParameter(numberRequestParameter);
-        configProperties.setPaginationRequestSettings(paginationRequestConfigs);
+        paginationSettings.setPaginationLimitParameter(numberRequestParameter);
+        configProperties.setPaginationSettings(paginationSettings);
 
         RequestEntityBuilder assembledBuilder =
                 assembler.assemble(builder, createTestDataPointRequest(configProperties));
@@ -233,6 +251,25 @@ public class PaginationRequestEntityAssemblerUnitTests {
         assertThat(assembledBuilder.build().getUrl(), equalTo(expectedUri));
     }
 
+    private NumberRequestParameter createNumberRequestParameter(String parameterName, RequestParameterLocation location,
+            Integer defaultLimit,
+            Integer maxLimit) {
+
+        NumberRequestParameter numberRequestParameter = new NumberRequestParameter();
+
+        numberRequestParameter.setParameterName(parameterName);
+        numberRequestParameter.setRequestParameterLocation(location);
+
+        if (defaultLimit != null) {
+            numberRequestParameter.setDefaultValue(BigDecimal.valueOf(defaultLimit));
+        }
+
+        if (maxLimit != null) {
+            numberRequestParameter.setMaximumValue(maxLimit.doubleValue());
+        }
+
+        return numberRequestParameter;
+    }
 
     private StringRequestParameter createNextPageTokenParameter(RequestParameterLocation location) {
 

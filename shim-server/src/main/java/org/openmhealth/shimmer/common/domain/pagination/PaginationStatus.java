@@ -39,7 +39,7 @@ public interface PaginationStatus {
 //
 //    public void setResponseStrategy(T paginationResponseStrategy);
 
-    //public T createNewResponseStrategyForType(PaginationResponseConfigurationProperties configuration);
+    //public T createNewResponseStrategyForType(PaginationSettings configuration);
 
 
 

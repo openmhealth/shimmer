@@ -17,14 +17,12 @@
 package org.openmhealth.shimmer.common.service;
 
 import org.openmhealth.shimmer.common.configuration.EndpointConfigurationProperties;
-import org.openmhealth.shimmer.common.configuration.PaginationRequestConfigurationProperties;
-import org.openmhealth.shimmer.common.configuration.PaginationResponseConfigurationProperties;
-import org.openmhealth.shimmer.common.configuration.UriPaginationResponseConfigurationProperties;
+import org.openmhealth.shimmer.common.configuration.PaginationSettings;
+import org.openmhealth.shimmer.common.configuration.UriPaginationSettings;
 import org.openmhealth.shimmer.common.domain.DataPointRequest;
 import org.openmhealth.shimmer.common.domain.RequestEntityBuilder;
 import org.openmhealth.shimmer.common.domain.pagination.PaginationStatus;
 import org.openmhealth.shimmer.common.domain.parameters.NumberRequestParameter;
-import org.openmhealth.shimmer.common.domain.parameters.StringRequestParameter;
 import org.springframework.web.util.UriTemplate;
 
 import java.util.Optional;
@@ -43,24 +41,23 @@ public class PaginationRequestEntityAssembler implements RequestEntityAssembler 
 
         EndpointConfigurationProperties endpoint = request.getEndpoint();
 
-        if (endpoint.supportsPaginationInRequests()) {
+        if (endpoint.supportsPagination()) {
 
-            PaginationRequestConfigurationProperties paginationRequestConfiguration =
-                    endpoint.getPaginationRequestConfigurationSettings().get();
+            PaginationSettings paginationSettings = endpoint.getPaginationSettings().get();
 
             if (getPaginationStatus().isPresent() && getPaginationStatus().get().hasMoreData()) {
 
                 /*  If there is pagination status present, then we know there has to be pagination response configs
                 since
                 the configs are used to create a pagination status. */
-                PaginationResponseConfigurationProperties paginationResponseConfiguration =
-                        endpoint.getPaginationResponseConfigurationSettings().get();
+                //                PaginationSettings paginationResponseConfiguration =
+                //                        endpoint.getPaginationSettings().get();
 
-                switch ( paginationResponseConfiguration.getResponseType() ) {
+                switch ( paginationSettings.getResponseType() ) {
                     // Todo: replace with pagination response to request strategies, which allows custom code injection
                     case URI:
-                        UriPaginationResponseConfigurationProperties uriPaginationResponseConfiguration =
-                                (UriPaginationResponseConfigurationProperties) paginationResponseConfiguration;
+                        UriPaginationSettings uriPaginationResponseConfiguration =
+                                (UriPaginationSettings) paginationSettings;
 
                         if (uriPaginationResponseConfiguration.providesCompleteUri()) {
 
@@ -78,12 +75,9 @@ public class PaginationRequestEntityAssembler implements RequestEntityAssembler 
                         break;
 
                     case TOKEN:
-                        if (paginationRequestConfiguration.getNextPageTokenParameter().isPresent()) {
+                        if (paginationSettings.getNextPageTokenParameter().isPresent()) {
 
-                            StringRequestParameter nextPageTokenParameter =
-                                    paginationRequestConfiguration.getNextPageTokenParameter().get();
-
-                            builder.addParameterWithValue(nextPageTokenParameter,
+                            builder.addParameterWithValue(paginationSettings.getNextPageTokenParameter().get(),
                                     paginationStatus.getPaginationResponseValue().get());
 
                         }
@@ -93,9 +87,9 @@ public class PaginationRequestEntityAssembler implements RequestEntityAssembler 
                         break;
 
                     case MANUAL:
-                        if (paginationRequestConfiguration.getPaginationOffsetParameter().isPresent()) {
+                        if (paginationSettings.getPaginationOffsetParameter().isPresent()) {
                             NumberRequestParameter paginationOffsetParameter =
-                                    paginationRequestConfiguration.getPaginationOffsetParameter().get();
+                                    paginationSettings.getPaginationOffsetParameter().get();
                             builder.addParameterWithValue(paginationOffsetParameter,
                                     paginationStatus.getPaginationResponseValue().get());
                         }
@@ -115,14 +109,14 @@ public class PaginationRequestEntityAssembler implements RequestEntityAssembler 
             if (!builder.isFinishedAssembling()) {
 
                 // Now set the limit parameter if we need to
-                if (paginationRequestConfiguration.hasPaginationLimitDefault()) {
+                if (paginationSettings.hasPaginationLimitDefault()) {
 
                     NumberRequestParameter paginationLimitParameter =
-                            paginationRequestConfiguration.getPaginationLimitParameter().get();
+                            paginationSettings.getPaginationLimitParameter().get();
 
                     String limitValueString = ARBITRARILY_LARGE_LIMIT; // Set the value to something arbitrarily large
 
-                    if (paginationRequestConfiguration.hasPaginationMaxLimit()) {
+                    if (paginationSettings.hasPaginationMaxLimit()) {
 
                         limitValueString =
                                 Integer.toString(paginationLimitParameter.getMaximumValue().get().intValue());

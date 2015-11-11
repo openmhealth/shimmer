@@ -17,6 +17,7 @@
 package org.openmhealth.shimmer.common.configuration;
 
 import org.openmhealth.shimmer.common.domain.ResponseLocation;
+import org.openmhealth.shimmer.common.domain.pagination.ManualPaginationEndCriteria;
 import org.openmhealth.shimmer.common.domain.pagination.PaginationResponseType;
 
 import static org.openmhealth.shimmer.common.domain.pagination.PaginationResponseType.*;
@@ -25,15 +26,14 @@ import static org.openmhealth.shimmer.common.domain.pagination.PaginationRespons
 /**
  * @author Chris Schaefbauer
  */
-public class TokenPaginationResponseConfigurationProperties
-        implements PaginationResponseConfigurationProperties {
+public class ManualPaginationSettings extends BasePaginationSettings {
 
-
+    private ManualPaginationEndCriteria paginationEndCriteria;
     private boolean responseInformationEncoded;
 
     @Override
     public PaginationResponseType getResponseType() {
-        return TOKEN;
+        return MANUAL;
     }
 
     @Override
@@ -48,20 +48,22 @@ public class TokenPaginationResponseConfigurationProperties
 
     @Override
     public boolean isResponseInformationEncoded() {
-        return responseInformationEncoded;
+        return false;
     }
 
+    public ManualPaginationEndCriteria getPaginationEndCriteria() {
+        return paginationEndCriteria;
+    }
 
-    public String getNextPaginationPropertyIdentifier() {
+    public String getEndPaginationPropertyIdentifier() {
         return null;
     }
 
-    public void setResponseInformationEncoded(boolean responseInformationEncoded) {
-        this.responseInformationEncoded = responseInformationEncoded;
+    public void setPaginationEndCriteria(ManualPaginationEndCriteria paginationEndCriteria) {
+        this.paginationEndCriteria = paginationEndCriteria;
     }
 
-    //    @Override
-//    public TokenResponsePaginationStrategy createNewResponseStrategyForType() {
-//        return null;
-//    }
+    public void setResponseInformationEncoded(boolean isResponseInformationEncoded) {
+        this.responseInformationEncoded = isResponseInformationEncoded;
+    }
 }

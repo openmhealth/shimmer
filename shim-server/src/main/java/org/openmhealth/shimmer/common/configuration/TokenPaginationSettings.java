@@ -17,7 +17,6 @@
 package org.openmhealth.shimmer.common.configuration;
 
 import org.openmhealth.shimmer.common.domain.ResponseLocation;
-import org.openmhealth.shimmer.common.domain.pagination.ManualPaginationEndCriteria;
 import org.openmhealth.shimmer.common.domain.pagination.PaginationResponseType;
 
 import static org.openmhealth.shimmer.common.domain.pagination.PaginationResponseType.*;
@@ -26,14 +25,14 @@ import static org.openmhealth.shimmer.common.domain.pagination.PaginationRespons
 /**
  * @author Chris Schaefbauer
  */
-public class ManualPaginationResponseConfigurationProperties implements PaginationResponseConfigurationProperties {
+public class TokenPaginationSettings extends BasePaginationSettings {
 
-    private ManualPaginationEndCriteria paginationEndCriteria;
+
     private boolean responseInformationEncoded;
 
     @Override
     public PaginationResponseType getResponseType() {
-        return MANUAL;
+        return TOKEN;
     }
 
     @Override
@@ -48,22 +47,20 @@ public class ManualPaginationResponseConfigurationProperties implements Paginati
 
     @Override
     public boolean isResponseInformationEncoded() {
-        return false;
+        return responseInformationEncoded;
     }
 
-    public ManualPaginationEndCriteria getPaginationEndCriteria() {
-        return paginationEndCriteria;
-    }
 
-    public String getEndPaginationPropertyIdentifier() {
+    public String getNextPaginationPropertyIdentifier() {
         return null;
     }
 
-    public void setPaginationEndCriteria(ManualPaginationEndCriteria paginationEndCriteria) {
-        this.paginationEndCriteria = paginationEndCriteria;
+    public void setResponseInformationEncoded(boolean responseInformationEncoded) {
+        this.responseInformationEncoded = responseInformationEncoded;
     }
 
-    public void setResponseInformationEncoded(boolean isResponseInformationEncoded) {
-        this.responseInformationEncoded = isResponseInformationEncoded;
-    }
+    //    @Override
+//    public TokenResponsePaginationStrategy createNewResponseStrategyForType() {
+//        return null;
+//    }
 }
