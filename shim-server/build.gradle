@@ -51,7 +51,6 @@ dependencies {
     compile "com.fasterxml.jackson.dataformat:jackson-dataformat-xml"
     compile "com.fasterxml.jackson.datatype:jackson-datatype-jsr310"
     compile "com.fasterxml.jackson.datatype:jackson-datatype-jdk8"
-    compile "joda-time:joda-time"             // TODO delete this when shims have been migrated
     compile "com.google.code.findbugs:jsr305:3.0.0"
     compile "org.mongodb:mongo-java-driver"
     compile "org.openmhealth.schema:omh-schema-sdk:${omhSchemaSdkVersion}"
