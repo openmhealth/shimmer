@@ -49,10 +49,10 @@ public abstract class DateTimeRequestEntityAssembler implements RequestEntityAss
             DateTimeQueryConfigurationProperties effectiveTimeFrameConfigurationProperties =
                     endpoint.getEffectiveDateTimeQuerySettings().get();
 
-            if(effectiveTimeRange.hasLowerBound()){
+            if (effectiveTimeRange.hasLowerBound()) {
 
 
-                if(!effectiveTimeFrameConfigurationProperties.getStartDateTimeParameter().isPresent()) {
+                if (!effectiveTimeFrameConfigurationProperties.getStartDateTimeParameter().isPresent()) {
                     // Todo: throw configuration error
                 }
 
@@ -65,7 +65,7 @@ public abstract class DateTimeRequestEntityAssembler implements RequestEntityAss
                         effectiveTimeRange.lowerEndpoint()));
             }
 
-            if(effectiveTimeFrameConfigurationProperties.getEndDateTimeParameter().isPresent()){
+            if (effectiveTimeFrameConfigurationProperties.getEndDateTimeParameter().isPresent()) {
 
                 // Todo: implement end effective time frame
 
