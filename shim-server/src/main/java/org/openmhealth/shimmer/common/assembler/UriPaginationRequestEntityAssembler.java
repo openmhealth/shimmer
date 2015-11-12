@@ -32,21 +32,17 @@ public class UriPaginationRequestEntityAssembler extends PaginationRequestEntity
     protected RequestEntityBuilder assembleForResponseType(RequestEntityBuilder builder,
             PaginationSettings paginationSettings, PaginationStatus paginationStatus) {
 
-        UriPaginationSettings uriPaginationResponseConfiguration =
-                (UriPaginationSettings) paginationSettings;
+        UriPaginationSettings uriPaginationResponseConfiguration = (UriPaginationSettings) paginationSettings;
 
         if (uriPaginationResponseConfiguration.providesCompleteUri()) {
 
-            builder.setUriTemplate(
-                    new UriTemplate(paginationStatus.getPaginationResponseValue().get()));
+            builder.setUriTemplate(new UriTemplate(paginationStatus.getPaginationResponseValue().get()));
             builder.setFinishedAssembling(true);
         }
         else {
 
-            builder.setUriTemplate(
-                    new UriTemplate(uriPaginationResponseConfiguration.getBaseUri().get()));
-            builder.addPathParameter("paginationResponse",
-                    paginationStatus.getPaginationResponseValue().get());
+            builder.setUriTemplate(new UriTemplate(uriPaginationResponseConfiguration.getBaseUri().get()));
+            builder.addPathParameter("paginationResponse", paginationStatus.getPaginationResponseValue().get());
         }
 
         return builder;
