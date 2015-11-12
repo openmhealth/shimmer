@@ -5,7 +5,7 @@ buildscript {
     }
 
     ext {
-        springBootVersion = "1.2.7.RELEASE"
+        springBootVersion = "1.3.0.RC1"
     }
 
     dependencies {
@@ -29,11 +29,7 @@ bootRepackage {
 
 ext {
     signpostVersion = '1.2.1.2'
-    springSecurityOAuthVersion = '2.0.7.RELEASE'
 }
-
-ext['jackson.version'] = '2.5.3'
-ext["spring-data-releasetrain.version"] = "Fowler-SR2"
 
 configurations {
     compile.exclude module: "spring-boot-starter-tomcat"
@@ -50,7 +46,7 @@ dependencies {
     compile "commons-io:commons-io:2.4"
     compile "org.hibernate:hibernate-validator"
     compile "org.apache.httpcomponents:httpclient"
-    compile "org.apache.httpcomponents:httpcore:4.3.3"
+    compile "org.apache.httpcomponents:httpcore"
     compile "com.fasterxml.jackson.core:jackson-annotations"
     compile "com.fasterxml.jackson.dataformat:jackson-dataformat-xml"
     compile "com.fasterxml.jackson.datatype:jackson-datatype-jsr310"
@@ -64,8 +60,8 @@ dependencies {
     compile "org.springframework.boot:spring-boot-autoconfigure"
     compile "org.springframework.boot:spring-boot-starter-jetty"
     compile "org.springframework.data:spring-data-mongodb"
-    compile "org.springframework.security.oauth:spring-security-oauth:${springSecurityOAuthVersion}"
-    compile "org.springframework.security.oauth:spring-security-oauth2:${springSecurityOAuthVersion}"
+    compile "org.springframework.security.oauth:spring-security-oauth"
+    compile "org.springframework.security.oauth:spring-security-oauth2"
     compile "org.springframework:spring-web"
     compile "org.springframework:spring-webmvc"
     compile "javax.validation:validation-api:1.1.0.Final"
@@ -76,6 +72,7 @@ dependencies {
     testCompile "org.mockito:mockito-core"
     testCompile "org.springframework.boot:spring-boot-starter-test"
 
+    runtime "org.glassfish:javax.el"
     runtime 'org.slf4j:jcl-over-slf4j'
     runtime 'org.slf4j:log4j-over-slf4j'
     runtime 'ch.qos.logback:logback-classic'
