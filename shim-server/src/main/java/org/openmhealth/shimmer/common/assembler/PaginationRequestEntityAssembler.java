@@ -23,8 +23,6 @@ import org.openmhealth.shimmer.common.domain.RequestEntityBuilder;
 import org.openmhealth.shimmer.common.domain.pagination.PaginationStatus;
 import org.openmhealth.shimmer.common.domain.parameters.NumberRequestParameter;
 
-import java.util.Optional;
-
 
 /**
  * @author Chris Schaefbauer
@@ -32,7 +30,6 @@ import java.util.Optional;
 public abstract class PaginationRequestEntityAssembler implements RequestEntityAssembler {
 
     public static final String ARBITRARILY_LARGE_LIMIT = "10000";
-    private PaginationStatus paginationStatus;
 
     @Override
     public RequestEntityBuilder assemble(RequestEntityBuilder builder, DataPointRequest request) {
@@ -43,14 +40,14 @@ public abstract class PaginationRequestEntityAssembler implements RequestEntityA
 
             PaginationSettings paginationSettings = endpoint.getPaginationSettings().get();
 
-            if (getPaginationStatus().isPresent() && getPaginationStatus().get().hasMoreData()) {
+            if (request.getPaginationStatus().isPresent() && request.getPaginationStatus().get().hasMoreData()) {
 
                 /*  If there is pagination status present, then we know there has to be pagination response configs
                 since
                 the configs are used to create a pagination status. */
                 //                PaginationSettings paginationResponseConfiguration =
                 //                        endpoint.getPaginationSettings().get();
-                builder = assembleForResponseType(builder, paginationSettings, paginationStatus);
+                builder = assembleForResponseType(builder, paginationSettings, request.getPaginationStatus().get());
 
             }
 
@@ -81,11 +78,4 @@ public abstract class PaginationRequestEntityAssembler implements RequestEntityA
     protected abstract RequestEntityBuilder assembleForResponseType(RequestEntityBuilder builder,
             PaginationSettings paginationSettings, PaginationStatus paginationStatus);
 
-    public Optional<PaginationStatus> getPaginationStatus() {
-        return Optional.ofNullable(paginationStatus);
-    }
-
-    public void setPaginationStatus(PaginationStatus paginationStatus) {
-        this.paginationStatus = paginationStatus;
-    }
 }

@@ -19,6 +19,7 @@ package org.openmhealth.shimmer.common.domain;
 import com.google.common.collect.Range;
 import org.openmhealth.schema.domain.omh.SchemaVersion;
 import org.openmhealth.shimmer.common.configuration.EndpointConfigurationProperties;
+import org.openmhealth.shimmer.common.domain.pagination.PaginationStatus;
 
 import java.time.OffsetDateTime;
 import java.util.Optional;
@@ -45,7 +46,7 @@ public class DataPointRequest {
     private String api; // TODO pick a better name, what if it's proxied, "api"?
 
     private EndpointConfigurationProperties configurationPropertiesForTargetEndpoint;
-
+    private PaginationStatus paginationStatus;
 
     public DataPointRequest(EndpointConfigurationProperties endpoint, String userId, String schemaNamespace,
             String schemaName, String schemaVersion) {
@@ -127,5 +128,13 @@ public class DataPointRequest {
 
     public void setSchemaVersion(SchemaVersion schemaVersion) {
         this.schemaVersion = schemaVersion;
+    }
+
+    public Optional<PaginationStatus> getPaginationStatus() {
+        return Optional.ofNullable(paginationStatus);
+    }
+
+    public void setPaginationStatus(PaginationStatus paginationStatus) {
+        this.paginationStatus = paginationStatus;
     }
 }

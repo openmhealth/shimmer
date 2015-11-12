@@ -61,10 +61,10 @@ public class PaginationRequestEntityAssemblerUnitTests {
 
         PaginationStatus paginationStatus = new UriPaginationStatus();
         paginationStatus.setPaginationResponseValue("https://api.ihealthlabs.com:8443/openapiv2/fullUri");
-        assembler.setPaginationStatus(paginationStatus);
+
 
         RequestEntityBuilder assembledBuilder =
-                assembler.assemble(builder, createTestDataPointRequest(configProperties));
+                assembler.assemble(builder, createTestDataPointRequest(configProperties, paginationStatus));
 
         assertThat(assembledBuilder.build().getUrl().toString(),
                 equalTo(paginationStatus.getPaginationResponseValue().get()));
@@ -116,10 +116,10 @@ public class PaginationRequestEntityAssemblerUnitTests {
 
         PaginationStatus paginationStatus = new TokenPaginationStatus();
         paginationStatus.setPaginationResponseValue("1436566038006058105");
-        assembler.setPaginationStatus(paginationStatus);
+
 
         RequestEntityBuilder assembledBuilder =
-                assembler.assemble(builder, createTestDataPointRequest(configProperties));
+                assembler.assemble(builder, createTestDataPointRequest(configProperties, paginationStatus));
 
         URI expectedUri = UriComponentsBuilder.fromUriString(
                 "https://www.googleapis.com/fitness/v1/endpointInfo?pageToken=1436566038006058105")
@@ -146,10 +146,9 @@ public class PaginationRequestEntityAssemblerUnitTests {
 
         PaginationStatus paginationStatus = new TokenPaginationStatus();
         paginationStatus.setPaginationResponseValue("1436566038006058105");
-        assembler.setPaginationStatus(paginationStatus);
 
         RequestEntityBuilder assembledBuilder =
-                assembler.assemble(builder, createTestDataPointRequest(configProperties));
+                assembler.assemble(builder, createTestDataPointRequest(configProperties, paginationStatus));
 
         URI expectedUri = UriComponentsBuilder.fromUriString(
                 "https://www.googleapis.com/fitness/v1/1436566038006058105/endpointInfo")
@@ -213,10 +212,9 @@ public class PaginationRequestEntityAssemblerUnitTests {
 
         PaginationStatus paginationStatus = new UriPaginationStatus();
         paginationStatus.setPaginationResponseValue(partialUriFromResponse);
-        assembler.setPaginationStatus(paginationStatus);
 
         RequestEntityBuilder assembledBuilder =
-                assembler.assemble(builder, createTestDataPointRequest(configProperties));
+                assembler.assemble(builder, createTestDataPointRequest(configProperties, paginationStatus));
 
         URI expectedUri = UriComponentsBuilder.fromUriString(
                 expectedUriString)
@@ -245,7 +243,7 @@ public class PaginationRequestEntityAssemblerUnitTests {
         configProperties.setPaginationSettings(paginationSettings);
 
         RequestEntityBuilder assembledBuilder =
-                assembler.assemble(builder, createTestDataPointRequest(configProperties));
+                assembler.assemble(builder, createTestDataPointRequest(configProperties, null));
 
 
         URI expectedUri = UriComponentsBuilder.fromUriString(finalUri)
@@ -284,9 +282,17 @@ public class PaginationRequestEntityAssemblerUnitTests {
         return nextPageTokenParameter;
     }
 
-    public DataPointRequest createTestDataPointRequest(EndpointConfigurationProperties configurationProperties) {
+    public DataPointRequest createTestDataPointRequest(EndpointConfigurationProperties configurationProperties,
+            PaginationStatus paginationStatus) {
 
-        return new DataPointRequest(configurationProperties, "testUser", "testNamespace", "testSchemaName", "1.0");
+        DataPointRequest dataPointRequest =
+                new DataPointRequest(configurationProperties, "testUser", "testNamespace", "testSchemaName", "1.0");
+
+        if (paginationStatus != null) {
+            dataPointRequest.setPaginationStatus(paginationStatus);
+        }
+
+        return dataPointRequest;
     }
 
 }
