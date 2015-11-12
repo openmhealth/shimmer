@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 
-package org.openmhealth.shimmer.common.domain.parameters;
-
-import org.openmhealth.shimmer.common.translator.DateTimeFormatTranslator;
+package org.openmhealth.shimmer.common.translator;
 
 import java.time.OffsetDateTime;
 
@@ -24,17 +22,7 @@ import java.time.OffsetDateTime;
 /**
  * @author Chris Schaefbauer
  */
-public class DateTimeRequestParameter extends RequestParameter<OffsetDateTime> {
+public interface DateTimeFormatTranslator {
 
-    // TODO unix time?
-    // TODO how do we parse?
-    private DateTimeFormatTranslator dateTimeTranslator;
-
-    public DateTimeFormatTranslator getDateTimeFormat() {
-        return dateTimeTranslator;
-    }
-
-    public void setDateTimeFormat(DateTimeFormatTranslator dateTimeTranslator) {
-        this.dateTimeTranslator = dateTimeTranslator;
-    }
+    String translate(OffsetDateTime dateTimeValue);
 }

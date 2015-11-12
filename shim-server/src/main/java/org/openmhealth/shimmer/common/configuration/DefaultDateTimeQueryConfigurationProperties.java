@@ -18,6 +18,7 @@ package org.openmhealth.shimmer.common.configuration;
 
 import org.openmhealth.shimmer.common.domain.DateTimeQueryReferenceFrame;
 import org.openmhealth.shimmer.common.domain.DateTimeQueryTimeZoneRestriction;
+import org.openmhealth.shimmer.common.domain.parameters.DateTimeRequestParameter;
 
 import java.time.Duration;
 import java.time.ZoneId;
@@ -37,6 +38,8 @@ public class DefaultDateTimeQueryConfigurationProperties implements DateTimeQuer
     private ZoneId fixedTimeZone;
     private Duration minimumDuration;
     private Duration maximumDuration;
+    private DateTimeRequestParameter startDateTimeParameter;
+    private DateTimeRequestParameter endDateTimeParameter;
 
 
     @Override
@@ -80,7 +83,27 @@ public class DefaultDateTimeQueryConfigurationProperties implements DateTimeQuer
         return Optional.ofNullable(maximumDuration);
     }
 
+    @Override
+    public Optional<DateTimeRequestParameter> getStartDateTimeParameter() {
+        return Optional.ofNullable(startDateTimeParameter);
+    }
+
+    @Override
+    public Optional<DateTimeRequestParameter> getEndDateTimeParameter() {
+        return Optional.ofNullable(endDateTimeParameter);
+    }
+
     public void setMaximumDuration(Duration maximumDuration) {
         this.maximumDuration = maximumDuration;
+    }
+
+    public void setStartDateTimeParameter(
+            DateTimeRequestParameter startDateTimeParameter) {
+        this.startDateTimeParameter = startDateTimeParameter;
+    }
+
+    public void setEndDateTimeParameter(
+            DateTimeRequestParameter endDateTimeParameter) {
+        this.endDateTimeParameter = endDateTimeParameter;
     }
 }

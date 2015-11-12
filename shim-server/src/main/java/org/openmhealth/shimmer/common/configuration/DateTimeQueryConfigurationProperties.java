@@ -18,6 +18,7 @@ package org.openmhealth.shimmer.common.configuration;
 
 import org.openmhealth.shimmer.common.domain.DateTimeQueryReferenceFrame;
 import org.openmhealth.shimmer.common.domain.DateTimeQueryTimeZoneRestriction;
+import org.openmhealth.shimmer.common.domain.parameters.DateTimeRequestParameter;
 
 import java.time.Duration;
 import java.time.ZoneId;
@@ -53,4 +54,14 @@ public interface DateTimeQueryConfigurationProperties {
      * @return the maximum amount of time between the query bounds
      */
     Optional<Duration> getMaximumDuration();
+
+    /**
+     * @return the parameter used to specify the start of the request time range
+     */
+    Optional<DateTimeRequestParameter> getStartDateTimeParameter();
+
+    /**
+     * @return the parameter used to specify the start of the request time range
+     */
+    Optional<DateTimeRequestParameter> getEndDateTimeParameter();
 }
