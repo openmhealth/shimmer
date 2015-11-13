@@ -24,7 +24,7 @@ import java.util.Optional;
 /**
  * @author Emerson Farrugia
  */
-public interface EndpointConfigurationProperties {
+public interface EndpointSettings {
 
     /**
      * @return the identifier of this endpoint
@@ -44,7 +44,7 @@ public interface EndpointConfigurationProperties {
     /**
      * @return the settings used by this endpoint to handle creation date time range queries
      */
-    Optional<DateTimeQueryConfigurationProperties> getCreationDateTimeQuerySettings();
+    Optional<DateTimeQuerySettings> getCreationDateTimeQuerySettings();
 
     /**
      * @return true if this endpoint supports creation data time range queries
@@ -56,7 +56,7 @@ public interface EndpointConfigurationProperties {
     /**
      * @return the settings used by this endpoint to handle effective date time range queries
      */
-    Optional<DateTimeQueryConfigurationProperties> getEffectiveDateTimeQuerySettings();
+    Optional<DateTimeQuerySettings> getEffectiveDateTimeQuerySettings();
 
     /**
      * @return true if this endpoint supports effective data time range queries
@@ -68,7 +68,7 @@ public interface EndpointConfigurationProperties {
     /**
      * @return the settings used by this endpoint to handle modification date time range queries
      */
-    Optional<DateTimeQueryConfigurationProperties> getModificationDateTimeQuerySettings();
+    Optional<DateTimeQuerySettings> getModificationDateTimeQuerySettings();
 
     /**
      * @return true if this endpoint supports modification data time range queries

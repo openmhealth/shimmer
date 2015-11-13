@@ -28,7 +28,7 @@ import java.util.Optional;
 /**
  * @author Emerson Farrugia
  */
-public interface DateTimeQueryConfigurationProperties {
+public interface DateTimeQuerySettings {
 
     /**
      * @return the frame of reference that the bounds are expressed in
