@@ -1,11 +1,11 @@
 /*
- * Copyright 2014 Open mHealth
+ * Copyright 2015 Open mHealth
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * 	http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,12 +17,11 @@
 package org.openmhealth.shim;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
-import org.springframework.stereotype.Repository;
+
 
 /**
  * @author Danilo Bonilla
  */
-@Repository
 public interface ApplicationAccessParametersRepo extends MongoRepository<ApplicationAccessParameters, String> {
 
     ApplicationAccessParameters findByShimKey(String shimKey);

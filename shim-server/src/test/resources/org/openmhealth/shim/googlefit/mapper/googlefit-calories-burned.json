@@ -1,0 +1,43 @@
+{
+    "minStartTimeNs": "1436260400000000000",
+    "maxEndTimeNs": "1436369400000000000",
+    "dataSourceId": "derived:com.google.calories.expended:com.google.android.gms:merge_calories_expended",
+    "point": [
+        {
+            "startTimeNanos": "1436275800000000000",
+            "endTimeNanos": "1436277600000000000",
+            "dataTypeName": "com.google.calories.expended",
+            "originDataSourceId": "raw:com.google.calories.expended:com.google.android.apps.fitness:user_input",
+            "value": [
+                {
+                    "fpVal": 200.0
+                }
+            ],
+            "modifiedTimeMillis": "1436325507434"
+        },
+        {
+            "startTimeNanos": "1436277600000000000",
+            "endTimeNanos": "1436364000000000000",
+            "dataTypeName": "com.google.calories.expended",
+            "originDataSourceId": "derived:com.google.calories.expended:com.google.android.gms:from_bmr",
+            "value": [
+                {
+                    "fpVal": 1672.50634765625
+                }
+            ],
+            "modifiedTimeMillis": "1436398592117"
+        },
+        {
+            "startTimeNanos": "1436366629730000000",
+            "endTimeNanos": "1436366847809000000",
+            "dataTypeName": "com.google.calories.expended",
+            "originDataSourceId": "derived:com.google.calories.expended:com.google.android.gms:from_activities",
+            "value": [
+                {
+                    "fpVal": 4.221510410308838
+                }
+            ],
+            "modifiedTimeMillis": "1436370179985"
+        }
+    ]
+}

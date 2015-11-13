@@ -1,0 +1,31 @@
+{
+    "meta": {
+        "user_xid": "6xl39CsoVp2KirfHwVq_Fx",
+        "message": "OK",
+        "code": 200,
+        "time": 1382377526
+    },
+    "data": {
+        "items": [
+            {
+                "xid": "40F7_htRRnT8Vo7nRBZO1X",
+                "title": "My resting heart rate on December 10th, 2014",
+                "time_created": 1384963500,
+                "time_updated": 1385049599,
+                "date": 20141210,
+                "place_lat": "37.451572",
+                "place_lon": "-122.184435",
+                "place_acc": 10,
+                "place_name": "",
+                "resting_heartrate": 55,
+                "details": {
+                    "tz": "America/Los_Angeles"
+                }
+            }
+        ],
+        "links": {
+            "next": "/nudge/api/v.1.1/users/6xl39CsoVp2KirfHwVq_Fx/heartrates?page_token=1384390680"
+        },
+        "size": 1
+    }
+}

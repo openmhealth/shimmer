@@ -1,0 +1,70 @@
+{
+    "data": {
+        "items": [
+            {
+                "bmi": null,
+                "body_fat": null,
+                "date": 20150811,
+                "details": {
+                    "tz": "GMT-0600"
+                },
+                "image": "",
+                "lean_mass": null,
+                "note": "First weight",
+                "shared": false,
+                "time_created": 1439354240,
+                "time_updated": 1439354240,
+                "title": null,
+                "type": "body",
+                "waistline": null,
+                "weight": 86.0010436535,
+                "xid": "QkfTizSpRdubVXHaj3iZk6Vd3qqdl_RJ"
+            },
+            {
+                "bmi": 24,
+                "body_fat": null,
+                "date": 20150811,
+                "details": {
+                    "tz": "GMT-0600"
+                },
+                "image": "",
+                "lean_mass": null,
+                "note": null,
+                "shared": true,
+                "time_created": 1439354238,
+                "time_updated": 1439454238,
+                "title": null,
+                "type": "body",
+                "waistline": null,
+                "weight": 86.5010436535,
+                "xid": "QkfTizSpRdukQY3ns4PYbkucZTM5yPMg"
+            },
+            {
+                "bmi": 25.2,
+                "body_fat": null,
+                "date": 20150806,
+                "details": {
+                    "tz": "GMT-0600"
+                },
+                "image": "",
+                "lean_mass": null,
+                "note": null,
+                "shared": false,
+                "time_created": 1438925817,
+                "time_updated": 1438925817,
+                "title": null,
+                "type": "body",
+                "waistline": null,
+                "weight": null,
+                "xid": "QkfTizSpRdt6MGLRxULIlVTscmwD_cPJ"
+            }
+        ],
+        "size": 3
+    },
+    "meta": {
+        "code": 200,
+        "message": "OK",
+        "time": 1439865418,
+        "user_xid": "VB0mNZWqiOUDWkkl72vgRQ"
+    }
+}

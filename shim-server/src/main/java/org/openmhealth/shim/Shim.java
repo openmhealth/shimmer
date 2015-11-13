@@ -1,11 +1,11 @@
 /*
- * Copyright 2014 Open mHealth
+ * Copyright 2015 Open mHealth
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * 	http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -36,18 +36,11 @@ public interface Shim {
     String getShimKey();
 
     /**
-     * Secret code provided by the external data provider.
+     * Parameters (such as client ID and secret) provided by the external data provider.
      *
-     * @return - String value
+     * @return - the parameters for this shim
      */
-    String getClientSecret();
-
-    /**
-     * Client id provided by the external data provider.
-     *
-     * @return - String value
-     */
-    String getClientId();
+    ApplicationAccessParameters findApplicationAccessParameters();
 
     /**
      * Base of the URL to which the user will
@@ -117,4 +110,12 @@ public interface Shim {
      * @return Generic object wrapper including timestamp, shim, and results
      */
     ShimDataResponse getData(final ShimDataRequest shimDataRequest) throws ShimException;
+
+
+    /**
+     * Check if this shim is properly configured.
+     *
+     * @return true if this shim is properly configured.
+     */
+    boolean isConfigured();
 }

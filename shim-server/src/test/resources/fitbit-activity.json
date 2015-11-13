@@ -1,172 +1,80 @@
-{"shim": null, "timeStamp": 1408647736, "body": [
-    {
-        "result": {
-            "date": "2014-08-19",
-            "content": {
-                "activities": [],
-                "summary": {
-                    "activeScore": -1,
-                    "activityCalories": 0,
-                    "caloriesBMR": 1286,
-                    "caloriesOut": 1286,
-                    "distances": [
-                        {
-                            "activity": "total",
-                            "distance": 0
-                        },
-                        {
-                            "activity": "tracker",
-                            "distance": 0
-                        },
-                        {
-                            "activity": "loggedActivities",
-                            "distance": 0
-                        },
-                        {
-                            "activity": "veryActive",
-                            "distance": 0
-                        },
-                        {
-                            "activity": "moderatelyActive",
-                            "distance": 0
-                        },
-                        {
-                            "activity": "lightlyActive",
-                            "distance": 0
-                        },
-                        {
-                            "activity": "sedentaryActive",
-                            "distance": 0
-                        }
-                    ],
-                    "elevation": 0,
-                    "fairlyActiveMinutes": 0,
-                    "floors": 0,
-                    "lightlyActiveMinutes": 0,
-                    "marginalCalories": 0,
-                    "sedentaryMinutes": 1440,
-                    "steps": 0,
-                    "veryActiveMinutes": 0
+{
+    "result": {
+        "date": "2015-04-28",
+        "content": {
+            "activities": [
+                {
+                    "activityId": 58001,
+                    "activityParentId": 90024,
+                    "activityParentName": "Swimming",
+                    "calories": 141,
+                    "description": "less than 25 yards/min",
+                    "distance": 0.48,
+                    "duration": 1800000,
+                    "hasStartTime": true,
+                    "isFavorite": false,
+                    "lastModified": "2015-04-30T00:45:22.290-07:00",
+                    "logId": 207756316,
+                    "name": "Swimming",
+                    "startDate": "2015-04-28",
+                    "startTime": "21:30"
                 }
-            }
-        }
-    },
-    {
-        "result": {
-            "date": "2014-08-20",
-            "content": {
-                "activities": [],
-                "goals": {
-                    "activeMinutes": 30,
-                    "caloriesOut": 2175,
-                    "distance": 8.05,
-                    "floors": 10,
-                    "steps": 10000
-                },
-                "summary": {
-                    "activeScore": -1,
-                    "activityCalories": 628,
-                    "caloriesBMR": 1286,
-                    "caloriesOut": 1683,
-                    "distances": [
-                        {
-                            "activity": "total",
-                            "distance": 3.05
-                        },
-                        {
-                            "activity": "tracker",
-                            "distance": 3.05
-                        },
-                        {
-                            "activity": "loggedActivities",
-                            "distance": 0
-                        },
-                        {
-                            "activity": "veryActive",
-                            "distance": 0
-                        },
-                        {
-                            "activity": "moderatelyActive",
-                            "distance": 1.2
-                        },
-                        {
-                            "activity": "lightlyActive",
-                            "distance": 1.83
-                        },
-                        {
-                            "activity": "sedentaryActive",
-                            "distance": 0.01
-                        }
-                    ],
-                    "elevation": 48.77,
-                    "fairlyActiveMinutes": 41,
-                    "floors": 16,
-                    "lightlyActiveMinutes": 215,
-                    "marginalCalories": 344,
-                    "sedentaryMinutes": 607,
-                    "steps": 4332,
-                    "veryActiveMinutes": 0
-                }
-            }
-        }
-    },
-    {
-        "result": {
-            "date": "2014-08-21",
-            "content": {
-                "activities": [],
-                "goals": {
-                    "activeMinutes": 30,
-                    "caloriesOut": 2175,
-                    "distance": 8.05,
-                    "floors": 10,
-                    "steps": 10000
-                },
-                "summary": {
-                    "activeScore": -1,
-                    "activityCalories": 265,
-                    "caloriesBMR": 751,
-                    "caloriesOut": 917,
-                    "distances": [
-                        {
-                            "activity": "total",
-                            "distance": 1.37
-                        },
-                        {
-                            "activity": "tracker",
-                            "distance": 1.37
-                        },
-                        {
-                            "activity": "loggedActivities",
-                            "distance": 0
-                        },
-                        {
-                            "activity": "veryActive",
-                            "distance": 0
-                        },
-                        {
-                            "activity": "moderatelyActive",
-                            "distance": 0.31
-                        },
-                        {
-                            "activity": "lightlyActive",
-                            "distance": 1.05
-                        },
-                        {
-                            "activity": "sedentaryActive",
-                            "distance": 0.01
-                        }
-                    ],
-                    "elevation": 30.48,
-                    "fairlyActiveMinutes": 12,
-                    "floors": 10,
-                    "lightlyActiveMinutes": 99,
-                    "marginalCalories": 142,
-                    "sedentaryMinutes": 457,
-                    "steps": 1944,
-                    "veryActiveMinutes": 0
-                }
+            ],
+            "goals": {
+                "activeMinutes": 30,
+                "caloriesOut": 0,
+                "distance": 8.05,
+                "floors": 30,
+                "steps": 10000
+            },
+            "summary": {
+                "activeScore": -1,
+                "activityCalories": 1024,
+                "caloriesBMR": 1688,
+                "caloriesOut": 2484,
+                "distances": [
+                    {
+                        "activity": "total",
+                        "distance": 5.8
+                    },
+                    {
+                        "activity": "tracker",
+                        "distance": 5.8
+                    },
+                    {
+                        "activity": "loggedActivities",
+                        "distance": 0.48
+                    },
+                    {
+                        "activity": "veryActive",
+                        "distance": 4.01
+                    },
+                    {
+                        "activity": "moderatelyActive",
+                        "distance": 0.3
+                    },
+                    {
+                        "activity": "lightlyActive",
+                        "distance": 1.49
+                    },
+                    {
+                        "activity": "sedentaryActive",
+                        "distance": 0
+                    },
+                    {
+                        "activity": "Swimming",
+                        "distance": 0.48
+                    }
+                ],
+                "elevation": 85.34,
+                "fairlyActiveMinutes": 37,
+                "floors": 28,
+                "lightlyActiveMinutes": 109,
+                "marginalCalories": 649,
+                "sedentaryMinutes": 740,
+                "steps": 7551,
+                "veryActiveMinutes": 48
             }
         }
     }
-]}
+}

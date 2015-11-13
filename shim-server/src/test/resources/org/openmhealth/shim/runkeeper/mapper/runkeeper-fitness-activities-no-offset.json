@@ -1,0 +1,17 @@
+{
+    "items": [
+        {
+            "duration": 3522,
+            "start_time": "Sun, 24 Jan 2010 10:00:36",
+            "total_calories": 747.501013824121,
+            "tracking_mode": "outdoor",
+            "total_distance": 10000,
+            "entry_mode": "Web",
+            "has_path": false,
+            "source": "RunKeeper",
+            "type": "Running",
+            "uri": "/fitnessActivities/4928696"
+        }
+    ],
+    "size": 1
+}
