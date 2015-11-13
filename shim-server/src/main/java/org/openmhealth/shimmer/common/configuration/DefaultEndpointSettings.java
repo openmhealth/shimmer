@@ -24,13 +24,13 @@ import java.util.Optional;
 /**
  * @author Emerson Farrugia
  */
-public class DefaultEndpointConfigurationProperties implements EndpointConfigurationProperties {
+public class DefaultEndpointSettings implements EndpointSettings {
 
     private String id;
     private UriTemplate uriTemplate;
-    private DateTimeQueryConfigurationProperties effectiveDateTimeQuerySettings;
-    private DateTimeQueryConfigurationProperties creationDateTimeQuerySettings;
-    private DateTimeQueryConfigurationProperties modificationDateTimeQuerySettings;
+    private DateTimeQuerySettings effectiveDateTimeQuerySettings;
+    private DateTimeQuerySettings creationDateTimeQuerySettings;
+    private DateTimeQuerySettings modificationDateTimeQuerySettings;
 
     @Override
     public String getId() {
@@ -51,29 +51,29 @@ public class DefaultEndpointConfigurationProperties implements EndpointConfigura
     }
 
     @Override
-    public Optional<DateTimeQueryConfigurationProperties> getEffectiveDateTimeQuerySettings() {
+    public Optional<DateTimeQuerySettings> getEffectiveDateTimeQuerySettings() {
         return Optional.ofNullable(effectiveDateTimeQuerySettings);
     }
 
-    public void setEffectiveDateTimeQuerySettings(DateTimeQueryConfigurationProperties settings) {
+    public void setEffectiveDateTimeQuerySettings(DateTimeQuerySettings settings) {
         this.effectiveDateTimeQuerySettings = settings;
     }
 
     @Override
-    public Optional<DateTimeQueryConfigurationProperties> getCreationDateTimeQuerySettings() {
+    public Optional<DateTimeQuerySettings> getCreationDateTimeQuerySettings() {
         return Optional.ofNullable(creationDateTimeQuerySettings);
     }
 
-    public void setCreationDateTimeQuerySettings(DateTimeQueryConfigurationProperties settings) {
+    public void setCreationDateTimeQuerySettings(DateTimeQuerySettings settings) {
         this.creationDateTimeQuerySettings = settings;
     }
 
     @Override
-    public Optional<DateTimeQueryConfigurationProperties> getModificationDateTimeQuerySettings() {
+    public Optional<DateTimeQuerySettings> getModificationDateTimeQuerySettings() {
         return Optional.ofNullable(modificationDateTimeQuerySettings);
     }
 
-    public void setModificationDateTimeQuerySettings(DateTimeQueryConfigurationProperties settings) {
+    public void setModificationDateTimeQuerySettings(DateTimeQuerySettings settings) {
         this.modificationDateTimeQuerySettings = settings;
     }
 }

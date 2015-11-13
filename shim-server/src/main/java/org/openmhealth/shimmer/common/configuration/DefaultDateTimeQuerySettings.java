@@ -30,7 +30,7 @@ import static org.openmhealth.shimmer.common.domain.DateTimeQueryTimeZoneRestric
 /**
  * @author Emerson Farrugia
  */
-public class DefaultDateTimeQueryConfigurationProperties implements DateTimeQueryConfigurationProperties {
+public class DefaultDateTimeQuerySettings implements DateTimeQuerySettings {
 
     private DateTimeQueryReferenceFrame referenceFrame = TIME_ZONES;
     private DateTimeQueryTimeZoneRestriction timeZoneRestriction = ANY_TIME_ZONE;
