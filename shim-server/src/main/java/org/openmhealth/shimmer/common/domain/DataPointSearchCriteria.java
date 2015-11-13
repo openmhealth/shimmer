@@ -38,10 +38,10 @@ public class DataPointSearchCriteria {
     private String userId;
     private String schemaNamespace;
     private String schemaName;
-    private OffsetDateTime onOrAfterCreationTimestamp;
-    private OffsetDateTime beforeCreationTimestamp;
-    private OffsetDateTime onOrAfterEffectiveTimestamp;
-    private OffsetDateTime beforeEffectiveTimestamp;
+    private OffsetDateTime createdOnOrAfter;
+    private OffsetDateTime createdBefore;
+    private OffsetDateTime effectiveOnOrAfter;
+    private OffsetDateTime effectiveBefore;
     private String acquisitionSourceId; // TODO confirm if we want to run with this name
 
 
@@ -87,59 +87,59 @@ public class DataPointSearchCriteria {
     /**
      * @return the oldest creation timestamp of the data points
      */
-    public Optional<OffsetDateTime> getOnOrAfterCreationTimestamp() {
-        return Optional.ofNullable(onOrAfterCreationTimestamp);
+    public Optional<OffsetDateTime> getCreatedOnOrAfter() {
+        return Optional.ofNullable(createdOnOrAfter);
     }
 
-    public void setOnOrAfterCreationTimestamp(OffsetDateTime onOrAfterCreationTimestamp) {
-        this.onOrAfterCreationTimestamp = onOrAfterCreationTimestamp;
+    public void setCreatedOnOrAfter(OffsetDateTime createdOnOrAfter) {
+        this.createdOnOrAfter = createdOnOrAfter;
     }
 
     /**
      * @return the newest creation timestamp of the data points
      */
-    public Optional<OffsetDateTime> getBeforeCreationTimestamp() {
-        return Optional.ofNullable(beforeCreationTimestamp);
+    public Optional<OffsetDateTime> getCreatedBefore() {
+        return Optional.ofNullable(createdBefore);
     }
 
-    public void setBeforeCreationTimestamp(OffsetDateTime beforeCreationTimestamp) {
-        this.beforeCreationTimestamp = beforeCreationTimestamp;
+    public void setCreatedBefore(OffsetDateTime createdBefore) {
+        this.createdBefore = createdBefore;
     }
 
     /**
      * @return the oldest effective timestamp of the data points
      */
-    public Optional<OffsetDateTime> getOnOrAfterEffectiveTimestamp() {
-        return Optional.ofNullable(onOrAfterEffectiveTimestamp);
+    public Optional<OffsetDateTime> getEffectiveOnOrAfter() {
+        return Optional.ofNullable(effectiveOnOrAfter);
     }
 
-    public void setOnOrAfterEffectiveTimestamp(OffsetDateTime onOrAfterEffectiveTimestamp) {
-        this.onOrAfterEffectiveTimestamp = onOrAfterEffectiveTimestamp;
+    public void setEffectiveOnOrAfter(OffsetDateTime effectiveOnOrAfter) {
+        this.effectiveOnOrAfter = effectiveOnOrAfter;
     }
 
     /**
      * @return the newest effective timestamp of the data points
      */
-    public Optional<OffsetDateTime> getBeforeEffectiveTimestamp() {
-        return Optional.ofNullable(beforeEffectiveTimestamp);
+    public Optional<OffsetDateTime> getEffectiveBefore() {
+        return Optional.ofNullable(effectiveBefore);
     }
 
-    public void setBeforeEffectiveTimestamp(OffsetDateTime beforeEffectiveTimestamp) {
-        this.beforeEffectiveTimestamp = beforeEffectiveTimestamp;
+    public void setEffectiveBefore(OffsetDateTime effectiveBefore) {
+        this.effectiveBefore = effectiveBefore;
     }
 
     /**
      * @return the creation timestamp range of the data points
      */
     public Range<OffsetDateTime> getCreationTimestampRange() {
-        return asRange(onOrAfterCreationTimestamp, beforeCreationTimestamp);
+        return asRange(createdOnOrAfter, createdBefore);
     }
 
     /**
      * @return the effective timestamp range of the data points
      */
     public Range<OffsetDateTime> getEffectiveTimestampRange() {
-        return asRange(onOrAfterEffectiveTimestamp, beforeEffectiveTimestamp);
+        return asRange(effectiveOnOrAfter, effectiveBefore);
     }
 
     /**

@@ -40,8 +40,8 @@ public class DataPointSearchCriteriaValidationUnitTests extends ValidationUnitTe
         searchCriteria.setSchemaNamespace("someNamespace");
         searchCriteria.setSchemaName("someName");
         searchCriteria.setAcquisitionSourceId("someSourceId");
-        searchCriteria.setOnOrAfterEffectiveTimestamp(now().minusDays(1));
-        searchCriteria.setOnOrAfterEffectiveTimestamp(now().minusHours(23));
+        searchCriteria.setEffectiveOnOrAfter(now().minusDays(1));
+        searchCriteria.setEffectiveOnOrAfter(now().minusHours(23));
     }
 
     @Test
@@ -135,10 +135,10 @@ public class DataPointSearchCriteriaValidationUnitTests extends ValidationUnitTe
     @Test
     public void validateShouldPassOnUnrestrictedEffectiveRangeAndRestrictedCreationRange() {
 
-        searchCriteria.setOnOrAfterEffectiveTimestamp(null);
-        searchCriteria.setBeforeEffectiveTimestamp(null);
-        searchCriteria.setOnOrAfterCreationTimestamp(now().minusDays(1));
-        searchCriteria.setBeforeCreationTimestamp(now().minusHours(23));
+        searchCriteria.setEffectiveOnOrAfter(null);
+        searchCriteria.setEffectiveBefore(null);
+        searchCriteria.setCreatedOnOrAfter(now().minusDays(1));
+        searchCriteria.setCreatedBefore(now().minusHours(23));
 
         assertThatBeanIsValid(searchCriteria);
     }
@@ -146,10 +146,10 @@ public class DataPointSearchCriteriaValidationUnitTests extends ValidationUnitTe
     @Test
     public void validateShouldPassOnRestrictedEffectiveRangeAndUnrestrictedCreationRange() {
 
-        searchCriteria.setOnOrAfterEffectiveTimestamp(now().minusDays(1));
-        searchCriteria.setBeforeEffectiveTimestamp(now().minusHours(23));
-        searchCriteria.setOnOrAfterCreationTimestamp(null);
-        searchCriteria.setBeforeCreationTimestamp(null);
+        searchCriteria.setEffectiveOnOrAfter(now().minusDays(1));
+        searchCriteria.setEffectiveBefore(now().minusHours(23));
+        searchCriteria.setCreatedOnOrAfter(null);
+        searchCriteria.setCreatedBefore(null);
 
         assertThatBeanIsValid(searchCriteria);
     }
@@ -157,10 +157,10 @@ public class DataPointSearchCriteriaValidationUnitTests extends ValidationUnitTe
     @Test
     public void validateShouldFailOnUnrestrictedTimestampRange() {
 
-        searchCriteria.setOnOrAfterCreationTimestamp(null);
-        searchCriteria.setBeforeCreationTimestamp(null);
-        searchCriteria.setOnOrAfterEffectiveTimestamp(null);
-        searchCriteria.setBeforeEffectiveTimestamp(null);
+        searchCriteria.setCreatedOnOrAfter(null);
+        searchCriteria.setCreatedBefore(null);
+        searchCriteria.setEffectiveOnOrAfter(null);
+        searchCriteria.setEffectiveBefore(null);
 
         assertThatBeanIsNotValid(searchCriteria);
     }
