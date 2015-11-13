@@ -16,7 +16,6 @@
 
 package org.openmhealth.shimmer.common.assembler;
 
-import org.openmhealth.shimmer.common.configuration.EndpointConfigurationProperties;
 import org.openmhealth.shimmer.common.configuration.PaginationSettings;
 import org.openmhealth.shimmer.common.domain.DataPointRequest;
 import org.openmhealth.shimmer.common.domain.RequestEntityBuilder;
@@ -34,48 +33,54 @@ public abstract class PaginationRequestEntityAssembler implements RequestEntityA
     @Override
     public RequestEntityBuilder assemble(RequestEntityBuilder builder, DataPointRequest request) {
 
-        EndpointConfigurationProperties endpoint = request.getEndpoint();
+        //EndpointConfigurationProperties endpoint = request.getEndpoint();
 
-        if (endpoint.supportsPagination()) {
+        //if (endpoint.supportsPagination()) {
 
-            PaginationSettings paginationSettings = endpoint.getPaginationSettings().get();
 
-            if (request.getPaginationStatus().isPresent() && request.getPaginationStatus().get().hasMoreData()) {
+        PaginationSettings paginationSettings = getPaginationSettings();
+        // The children implement a getPaginationSettings object with the correct type, the configuration is
+        // passed in with the right type
+        //  PaginationSettings paginationSettings = endpoint.getPaginationSettings().get();
+
+        if (request.getPaginationStatus().isPresent() && request.getPaginationStatus().get().hasMoreData()) {
 
                 /*  If there is pagination status present, then we know there has to be pagination response configs
                 since
                 the configs are used to create a pagination status. */
-                //                PaginationSettings paginationResponseConfiguration =
-                //                        endpoint.getPaginationSettings().get();
-                builder = assembleForResponseType(builder, paginationSettings, request.getPaginationStatus().get());
+            //                PaginationSettings paginationResponseConfiguration =
+            //                        endpoint.getPaginationSettings().get();
+            builder = assembleForResponseType(builder, request.getPaginationStatus().get());
 
-            }
+        }
 
-            if (!builder.isFinishedAssembling()) {
 
-                // Now set the limit parameter if we need to
-                if (paginationSettings.hasPaginationLimitDefault()) {
+        if (!builder.isFinishedAssembling()) {
 
-                    NumberRequestParameter paginationLimitParameter =
-                            paginationSettings.getPaginationLimitParameter().get();
+            // Now set the limit parameter if we need to
+            if (paginationSettings.hasPaginationLimitDefault()) {
 
-                    String limitValueString = ARBITRARILY_LARGE_LIMIT; // Set the value to something arbitrarily large
+                NumberRequestParameter paginationLimitParameter =
+                        paginationSettings.getPaginationLimitParameter().get();
 
-                    if (paginationSettings.hasPaginationMaxLimit()) {
+                String limitValueString = ARBITRARILY_LARGE_LIMIT; // Set the value to something arbitrarily large
 
-                        limitValueString =
-                                Integer.toString(paginationLimitParameter.getMaximumValue().get().intValue());
-                    }
+                if (paginationSettings.hasPaginationMaxLimit()) {
 
-                    builder.addParameterWithValue(paginationLimitParameter, limitValueString);
+                    limitValueString =
+                            Integer.toString(paginationLimitParameter.getMaximumValue().get().intValue());
                 }
+
+                builder.addParameterWithValue(paginationLimitParameter, limitValueString);
             }
         }
+
 
         return builder;
     }
 
     protected abstract RequestEntityBuilder assembleForResponseType(RequestEntityBuilder builder,
-            PaginationSettings paginationSettings, PaginationStatus paginationStatus);
+            PaginationStatus paginationStatus);
 
+    public abstract PaginationSettings getPaginationSettings();
 }

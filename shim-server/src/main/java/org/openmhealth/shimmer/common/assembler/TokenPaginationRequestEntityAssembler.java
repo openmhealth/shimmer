@@ -17,6 +17,7 @@
 package org.openmhealth.shimmer.common.assembler;
 
 import org.openmhealth.shimmer.common.configuration.PaginationSettings;
+import org.openmhealth.shimmer.common.configuration.TokenPaginationSettings;
 import org.openmhealth.shimmer.common.domain.RequestEntityBuilder;
 import org.openmhealth.shimmer.common.domain.pagination.PaginationStatus;
 
@@ -26,9 +27,16 @@ import org.openmhealth.shimmer.common.domain.pagination.PaginationStatus;
  */
 public class TokenPaginationRequestEntityAssembler extends PaginationRequestEntityAssembler {
 
+    private TokenPaginationSettings paginationSettings;
+
+    public TokenPaginationRequestEntityAssembler(TokenPaginationSettings paginationSettings) {
+
+        this.paginationSettings = paginationSettings;
+    }
+
     @Override
     protected RequestEntityBuilder assembleForResponseType(RequestEntityBuilder builder,
-            PaginationSettings paginationSettings, PaginationStatus paginationStatus) {
+            PaginationStatus paginationStatus) {
 
         if (paginationSettings.getNextPageTokenParameter().isPresent()) {
 
@@ -40,5 +48,10 @@ public class TokenPaginationRequestEntityAssembler extends PaginationRequestEnti
             // Todo: Throw a pagination configuration missing exception
         }
         return builder;
+    }
+
+    @Override
+    public PaginationSettings getPaginationSettings() {
+        return paginationSettings;
     }
 }

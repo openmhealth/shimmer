@@ -18,7 +18,6 @@ package org.openmhealth.shimmer.common.assembler;
 
 import com.google.common.collect.Range;
 import org.openmhealth.shimmer.common.configuration.DateTimeQueryConfigurationProperties;
-import org.openmhealth.shimmer.common.configuration.EndpointConfigurationProperties;
 import org.openmhealth.shimmer.common.domain.DataPointRequest;
 import org.openmhealth.shimmer.common.domain.RequestEntityBuilder;
 import org.openmhealth.shimmer.common.domain.parameters.DateTimeRequestParameter;
@@ -30,59 +29,46 @@ import java.time.OffsetDateTime;
 /**
  * @author Chris Schaefbauer
  */
-public abstract class DateTimeRequestEntityAssembler implements RequestEntityAssembler {
+public class DateTimeRequestEntityAssembler implements RequestEntityAssembler {
+
+
+    private final Range<OffsetDateTime> timeRange;
+    private DateTimeQueryConfigurationProperties querySettings;
+
+    public DateTimeRequestEntityAssembler(DateTimeQueryConfigurationProperties querySettings,
+            Range<OffsetDateTime> timeRange) {
+
+        this.querySettings = querySettings;
+        this.timeRange = timeRange;
+    }
 
     @Override
     public RequestEntityBuilder assemble(RequestEntityBuilder builder, DataPointRequest request) {
 
-        EndpointConfigurationProperties endpoint = request.getEndpoint();
-
-        if (request.getEffectiveTimestampRange().isPresent()) {
-
-            Range<OffsetDateTime> effectiveTimeRange = request.getEffectiveTimestampRange().get();
+        //EndpointConfigurationProperties endpoint = request.getEndpoint();
 
 
-            if (!endpoint.getEffectiveDateTimeQuerySettings().isPresent()) {
-                // Todo: Throw configuration error
+        if (timeRange.hasLowerBound()) {
+
+            if (!querySettings.getStartDateTimeParameter().isPresent()) {
+                // Todo: throw configuration error
             }
 
-            DateTimeQueryConfigurationProperties effectiveTimeFrameConfigurationProperties =
-                    endpoint.getEffectiveDateTimeQuerySettings().get();
+            DateTimeRequestParameter startRequestParameter =
+                    querySettings.getStartDateTimeParameter().get();
 
-            if (effectiveTimeRange.hasLowerBound()) {
+            DateTimeFormatTranslator formatTranslator = startRequestParameter.getDateTimeFormat();
 
+            builder.addParameterWithValue(startRequestParameter, formatTranslator.translate(
+                    timeRange.lowerEndpoint()));
+        }
 
-                if (!effectiveTimeFrameConfigurationProperties.getStartDateTimeParameter().isPresent()) {
-                    // Todo: throw configuration error
-                }
+        if (querySettings.getEndDateTimeParameter().isPresent()) {
 
-                DateTimeRequestParameter startRequestParameter =
-                        effectiveTimeFrameConfigurationProperties.getStartDateTimeParameter().get();
-
-                DateTimeFormatTranslator formatTranslator = startRequestParameter.getDateTimeFormat();
-
-                builder.addParameterWithValue(startRequestParameter, formatTranslator.translate(
-                        effectiveTimeRange.lowerEndpoint()));
-            }
-
-            if (effectiveTimeFrameConfigurationProperties.getEndDateTimeParameter().isPresent()) {
-
-                // Todo: implement end effective time frame
-
-            }
-
+            // Todo: implement end effective time frame
 
         }
 
-        if (request.getCreationTimestampRange().isPresent()) {
-
-            //Todo: implement creation time frame assembling
-
-            if (!endpoint.getCreationDateTimeQuerySettings().isPresent()) {
-                // Todo: Throw configuration error
-            }
-
-        }
 
         return builder;
     }

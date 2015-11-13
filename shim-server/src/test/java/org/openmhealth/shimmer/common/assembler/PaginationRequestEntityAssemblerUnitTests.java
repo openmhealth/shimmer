@@ -16,10 +16,10 @@
 
 package org.openmhealth.shimmer.common.assembler;
 
-import org.openmhealth.shimmer.common.assembler.PaginationRequestEntityAssembler;
-import org.openmhealth.shimmer.common.assembler.TokenPaginationRequestEntityAssembler;
-import org.openmhealth.shimmer.common.assembler.UriPaginationRequestEntityAssembler;
-import org.openmhealth.shimmer.common.configuration.*;
+import org.openmhealth.shimmer.common.configuration.DefaultEndpointConfigurationProperties;
+import org.openmhealth.shimmer.common.configuration.EndpointConfigurationProperties;
+import org.openmhealth.shimmer.common.configuration.TokenPaginationSettings;
+import org.openmhealth.shimmer.common.configuration.UriPaginationSettings;
 import org.openmhealth.shimmer.common.domain.DataPointRequest;
 import org.openmhealth.shimmer.common.domain.RequestEntityBuilder;
 import org.openmhealth.shimmer.common.domain.pagination.PaginationStatus;
@@ -47,6 +47,7 @@ import static org.openmhealth.shimmer.common.domain.parameters.RequestParameterL
  */
 public class PaginationRequestEntityAssemblerUnitTests {
 
+
     @Test
     public void returnsBuilderWithCorrectUriWhenEndpointProvidesFullPaginationUriInResponse() {
 
@@ -57,14 +58,14 @@ public class PaginationRequestEntityAssemblerUnitTests {
         DefaultEndpointConfigurationProperties configProperties = new DefaultEndpointConfigurationProperties();
         configProperties.setPaginationSettings(new UriPaginationSettings());
 
-        PaginationRequestEntityAssembler assembler = new UriPaginationRequestEntityAssembler();
+        UriPaginationRequestEntityAssembler uriAssembler =
+                new UriPaginationRequestEntityAssembler(new UriPaginationSettings());
 
         PaginationStatus paginationStatus = new UriPaginationStatus();
         paginationStatus.setPaginationResponseValue("https://api.ihealthlabs.com:8443/openapiv2/fullUri");
 
-
         RequestEntityBuilder assembledBuilder =
-                assembler.assemble(builder, createTestDataPointRequest(configProperties, paginationStatus));
+                uriAssembler.assemble(builder, createTestDataPointRequest(configProperties, paginationStatus));
 
         assertThat(assembledBuilder.build().getUrl().toString(),
                 equalTo(paginationStatus.getPaginationResponseValue().get()));
@@ -112,14 +113,14 @@ public class PaginationRequestEntityAssemblerUnitTests {
         tokenPaginationSettings.setNextPageTokenParameter(createNextPageTokenParameter(QUERY));
         configProperties.setPaginationSettings(tokenPaginationSettings);
 
-        PaginationRequestEntityAssembler assembler = new TokenPaginationRequestEntityAssembler();
-
         PaginationStatus paginationStatus = new TokenPaginationStatus();
         paginationStatus.setPaginationResponseValue("1436566038006058105");
 
+        TokenPaginationRequestEntityAssembler tokenAssembler =
+                new TokenPaginationRequestEntityAssembler(tokenPaginationSettings);
 
         RequestEntityBuilder assembledBuilder =
-                assembler.assemble(builder, createTestDataPointRequest(configProperties, paginationStatus));
+                tokenAssembler.assemble(builder, createTestDataPointRequest(configProperties, paginationStatus));
 
         URI expectedUri = UriComponentsBuilder.fromUriString(
                 "https://www.googleapis.com/fitness/v1/endpointInfo?pageToken=1436566038006058105")
@@ -142,13 +143,14 @@ public class PaginationRequestEntityAssemblerUnitTests {
         settings.setNextPageTokenParameter(createNextPageTokenParameter(PATH));
         configProperties.setPaginationSettings(settings);
 
-        PaginationRequestEntityAssembler assembler = new TokenPaginationRequestEntityAssembler();
-
         PaginationStatus paginationStatus = new TokenPaginationStatus();
         paginationStatus.setPaginationResponseValue("1436566038006058105");
 
+        TokenPaginationRequestEntityAssembler tokenAssembler =
+                new TokenPaginationRequestEntityAssembler(settings);
+
         RequestEntityBuilder assembledBuilder =
-                assembler.assemble(builder, createTestDataPointRequest(configProperties, paginationStatus));
+                tokenAssembler.assemble(builder, createTestDataPointRequest(configProperties, paginationStatus));
 
         URI expectedUri = UriComponentsBuilder.fromUriString(
                 "https://www.googleapis.com/fitness/v1/1436566038006058105/endpointInfo")
@@ -208,17 +210,15 @@ public class PaginationRequestEntityAssemblerUnitTests {
         paginationSettings.setBaseUri("https://jawbone.com/{paginationResponse}");
         configProperties.setPaginationSettings(paginationSettings);
 
-        PaginationRequestEntityAssembler assembler = new UriPaginationRequestEntityAssembler();
-
         PaginationStatus paginationStatus = new UriPaginationStatus();
         paginationStatus.setPaginationResponseValue(partialUriFromResponse);
 
-        RequestEntityBuilder assembledBuilder =
-                assembler.assemble(builder, createTestDataPointRequest(configProperties, paginationStatus));
+        UriPaginationRequestEntityAssembler uriAssembler = new UriPaginationRequestEntityAssembler(paginationSettings);
 
-        URI expectedUri = UriComponentsBuilder.fromUriString(
-                expectedUriString)
-                .build().encode().toUri();
+        RequestEntityBuilder assembledBuilder =
+                uriAssembler.assemble(builder, createTestDataPointRequest(configProperties, paginationStatus));
+
+        URI expectedUri = UriComponentsBuilder.fromUriString(expectedUriString).build().encode().toUri();
 
         assertThat(assembledBuilder.build().getUrl(), equalTo(expectedUri));
         assertThat(assembledBuilder.isFinishedAssembling(), is(false));
@@ -231,10 +231,8 @@ public class PaginationRequestEntityAssemblerUnitTests {
                 new RequestEntityBuilder(
                         new UriTemplate(baseUriTemplate));
 
-        PaginationRequestEntityAssembler assembler = new UriPaginationRequestEntityAssembler();
-
         DefaultEndpointConfigurationProperties configProperties = new DefaultEndpointConfigurationProperties();
-        BasePaginationSettings paginationSettings = new TokenPaginationSettings();
+        UriPaginationSettings paginationSettings = new UriPaginationSettings();
 
         NumberRequestParameter numberRequestParameter =
                 createNumberRequestParameter("limit", location, defaultValue, maxValue);
@@ -242,8 +240,10 @@ public class PaginationRequestEntityAssemblerUnitTests {
         paginationSettings.setPaginationLimitParameter(numberRequestParameter);
         configProperties.setPaginationSettings(paginationSettings);
 
+        UriPaginationRequestEntityAssembler uriAssembler = new UriPaginationRequestEntityAssembler(paginationSettings);
+
         RequestEntityBuilder assembledBuilder =
-                assembler.assemble(builder, createTestDataPointRequest(configProperties, null));
+                uriAssembler.assemble(builder, createTestDataPointRequest(configProperties, null));
 
 
         URI expectedUri = UriComponentsBuilder.fromUriString(finalUri)

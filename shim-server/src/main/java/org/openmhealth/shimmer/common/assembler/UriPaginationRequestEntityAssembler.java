@@ -28,9 +28,16 @@ import org.springframework.web.util.UriTemplate;
  */
 public class UriPaginationRequestEntityAssembler extends PaginationRequestEntityAssembler {
 
+    private UriPaginationSettings paginationSettings;
+
+    public UriPaginationRequestEntityAssembler(UriPaginationSettings paginationSettings) {
+
+        this.paginationSettings = paginationSettings;
+    }
+
     @Override
     protected RequestEntityBuilder assembleForResponseType(RequestEntityBuilder builder,
-            PaginationSettings paginationSettings, PaginationStatus paginationStatus) {
+            PaginationStatus paginationStatus) {
 
         UriPaginationSettings uriPaginationResponseConfiguration = (UriPaginationSettings) paginationSettings;
 
@@ -46,5 +53,10 @@ public class UriPaginationRequestEntityAssembler extends PaginationRequestEntity
         }
 
         return builder;
+    }
+
+    @Override
+    public PaginationSettings getPaginationSettings() {
+        return paginationSettings;
     }
 }
