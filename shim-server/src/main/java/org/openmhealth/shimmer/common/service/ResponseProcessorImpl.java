@@ -17,7 +17,7 @@
 package org.openmhealth.shimmer.common.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import org.openmhealth.shimmer.common.configuration.EndpointConfigurationProperties;
+import org.openmhealth.shimmer.common.configuration.EndpointSettings;
 import org.openmhealth.shimmer.common.domain.ProcessedResponse;
 import org.openmhealth.shimmer.common.domain.pagination.PaginationStatus;
 import org.springframework.http.HttpStatus;
@@ -30,7 +30,7 @@ import org.springframework.http.ResponseEntity;
 public class ResponseProcessorImpl<T> implements ResponseProcessor<T> {
 
     @Override
-    public ProcessedResponse processResponse(EndpointConfigurationProperties endpointProperties,
+    public ProcessedResponse processResponse(EndpointSettings endpointProperties,
             ResponseEntity<JsonNode> responseEntity) {
 
         ProcessedResponse processedResponse = new ProcessedResponse();

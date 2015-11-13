@@ -16,8 +16,8 @@
 
 package org.openmhealth.shimmer.common.assembler;
 
-import org.openmhealth.shimmer.common.configuration.DefaultEndpointConfigurationProperties;
-import org.openmhealth.shimmer.common.configuration.EndpointConfigurationProperties;
+import org.openmhealth.shimmer.common.configuration.DefaultEndpointSettings;
+import org.openmhealth.shimmer.common.configuration.EndpointSettings;
 import org.openmhealth.shimmer.common.configuration.TokenPaginationSettings;
 import org.openmhealth.shimmer.common.configuration.UriPaginationSettings;
 import org.openmhealth.shimmer.common.domain.DataPointRequest;
@@ -55,7 +55,7 @@ public class PaginationRequestEntityAssemblerUnitTests {
                 new RequestEntityBuilder(
                         new UriTemplate("https://api.ihealthlabs.com:8443/openapiv2/user/{userid}/{endpoint-name}"));
 
-        DefaultEndpointConfigurationProperties configProperties = new DefaultEndpointConfigurationProperties();
+        DefaultEndpointSettings configProperties = new DefaultEndpointSettings();
         configProperties.setPaginationSettings(new UriPaginationSettings());
 
         UriPaginationRequestEntityAssembler uriAssembler =
@@ -107,7 +107,7 @@ public class PaginationRequestEntityAssemblerUnitTests {
                 new RequestEntityBuilder(
                         new UriTemplate("https://www.googleapis.com/fitness/v1/endpointInfo"));
 
-        DefaultEndpointConfigurationProperties configProperties = new DefaultEndpointConfigurationProperties();
+        DefaultEndpointSettings configProperties = new DefaultEndpointSettings();
 
         TokenPaginationSettings tokenPaginationSettings = new TokenPaginationSettings();
         tokenPaginationSettings.setNextPageTokenParameter(createNextPageTokenParameter(QUERY));
@@ -137,7 +137,7 @@ public class PaginationRequestEntityAssemblerUnitTests {
                 new RequestEntityBuilder(
                         new UriTemplate("https://www.googleapis.com/fitness/v1/{pageToken}/endpointInfo"));
 
-        DefaultEndpointConfigurationProperties configProperties = new DefaultEndpointConfigurationProperties();
+        DefaultEndpointSettings configProperties = new DefaultEndpointSettings();
 
         TokenPaginationSettings settings = new TokenPaginationSettings();
         settings.setNextPageTokenParameter(createNextPageTokenParameter(PATH));
@@ -198,7 +198,7 @@ public class PaginationRequestEntityAssemblerUnitTests {
                 new RequestEntityBuilder(
                         new UriTemplate("https://jawbone.com/nudge/api/v.1.1/users/@me/{endpoint}"));
 
-        DefaultEndpointConfigurationProperties configProperties = new DefaultEndpointConfigurationProperties();
+        DefaultEndpointSettings configProperties = new DefaultEndpointSettings();
 
         UriPaginationSettings paginationSettings =
                 new UriPaginationSettings();
@@ -231,7 +231,7 @@ public class PaginationRequestEntityAssemblerUnitTests {
                 new RequestEntityBuilder(
                         new UriTemplate(baseUriTemplate));
 
-        DefaultEndpointConfigurationProperties configProperties = new DefaultEndpointConfigurationProperties();
+        DefaultEndpointSettings configProperties = new DefaultEndpointSettings();
         UriPaginationSettings paginationSettings = new UriPaginationSettings();
 
         NumberRequestParameter numberRequestParameter =
@@ -282,7 +282,7 @@ public class PaginationRequestEntityAssemblerUnitTests {
         return nextPageTokenParameter;
     }
 
-    public DataPointRequest createTestDataPointRequest(EndpointConfigurationProperties configurationProperties,
+    public DataPointRequest createTestDataPointRequest(EndpointSettings configurationProperties,
             PaginationStatus paginationStatus) {
 
         DataPointRequest dataPointRequest =

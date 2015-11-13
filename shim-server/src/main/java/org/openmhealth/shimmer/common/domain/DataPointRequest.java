@@ -18,7 +18,7 @@ package org.openmhealth.shimmer.common.domain;
 
 import com.google.common.collect.Range;
 import org.openmhealth.schema.domain.omh.SchemaVersion;
-import org.openmhealth.shimmer.common.configuration.EndpointConfigurationProperties;
+import org.openmhealth.shimmer.common.configuration.EndpointSettings;
 import org.openmhealth.shimmer.common.domain.pagination.PaginationStatus;
 
 import java.time.OffsetDateTime;
@@ -30,7 +30,7 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 
 
 /**
- * TODO: Identify all the properties this object needs
+ * TODO identify all the properties this object needs and add Javadoc
  *
  * @author Emerson Farrugia
  */
@@ -45,10 +45,10 @@ public class DataPointRequest {
     private Range<OffsetDateTime> effectiveTimestampRange;
     private String api; // TODO pick a better name, what if it's proxied, "api"?
 
-    private EndpointConfigurationProperties configurationPropertiesForTargetEndpoint;
+    private EndpointSettings endpointSettings;
     private PaginationStatus paginationStatus;
 
-    public DataPointRequest(EndpointConfigurationProperties endpoint, String userId, String schemaNamespace,
+    public DataPointRequest(EndpointSettings endpoint, String userId, String schemaNamespace,
             String schemaName, String schemaVersion) {
 
         checkNotNull(userId);
@@ -62,7 +62,7 @@ public class DataPointRequest {
         checkNotNull(endpoint);
 
         this.userId = userId;
-        this.configurationPropertiesForTargetEndpoint = endpoint;
+        this.endpointSettings = endpoint;
 
         this.schemaNamespace = schemaNamespace;
         this.schemaName = schemaName;
@@ -90,6 +90,7 @@ public class DataPointRequest {
         this.effectiveTimestampRange = effectiveTimestampRange;
     }
 
+    // TODO rename this
     public Optional<String> getApi() {
         return Optional.ofNullable(api);
     }
@@ -98,12 +99,12 @@ public class DataPointRequest {
         this.api = api;
     }
 
-    public EndpointConfigurationProperties getEndpoint() {
-        return configurationPropertiesForTargetEndpoint;
+    public EndpointSettings getEndpointSettings() {
+        return endpointSettings;
     }
 
-    public void setEndpoint(EndpointConfigurationProperties configurationPropertiesForTargetEndpoint) {
-        this.configurationPropertiesForTargetEndpoint = configurationPropertiesForTargetEndpoint;
+    public void setEndpoint(EndpointSettings endpointSettings) {
+        this.endpointSettings = endpointSettings;
     }
 
     public String getSchemaNamespace() {

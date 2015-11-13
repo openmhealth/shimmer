@@ -17,7 +17,7 @@
 package org.openmhealth.shimmer.common.assembler;
 
 import com.google.common.collect.Range;
-import org.openmhealth.shimmer.common.configuration.DateTimeQueryConfigurationProperties;
+import org.openmhealth.shimmer.common.configuration.DateTimeQuerySettings;
 import org.openmhealth.shimmer.common.domain.DataPointRequest;
 import org.openmhealth.shimmer.common.domain.RequestEntityBuilder;
 import org.openmhealth.shimmer.common.domain.parameters.DateTimeRequestParameter;
@@ -33,10 +33,10 @@ public class DateTimeRequestEntityAssembler implements RequestEntityAssembler {
 
 
     private final Range<OffsetDateTime> timeRange;
-    private DateTimeQueryConfigurationProperties querySettings;
+    private DateTimeQuerySettings querySettings;
 
-    public DateTimeRequestEntityAssembler(DateTimeQueryConfigurationProperties querySettings,
-            Range<OffsetDateTime> timeRange) {
+
+    public DateTimeRequestEntityAssembler(DateTimeQuerySettings querySettings, Range<OffsetDateTime> timeRange) {
 
         this.querySettings = querySettings;
         this.timeRange = timeRange;
@@ -45,7 +45,7 @@ public class DateTimeRequestEntityAssembler implements RequestEntityAssembler {
     @Override
     public RequestEntityBuilder assemble(RequestEntityBuilder builder, DataPointRequest request) {
 
-        //EndpointConfigurationProperties endpoint = request.getEndpoint();
+        //EndpointSettings endpoint = request.getEndpointSettings();
 
 
         if (timeRange.hasLowerBound()) {

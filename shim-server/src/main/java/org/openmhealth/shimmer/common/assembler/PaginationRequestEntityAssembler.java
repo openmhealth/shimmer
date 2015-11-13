@@ -33,7 +33,7 @@ public abstract class PaginationRequestEntityAssembler implements RequestEntityA
     @Override
     public RequestEntityBuilder assemble(RequestEntityBuilder builder, DataPointRequest request) {
 
-        //EndpointConfigurationProperties endpoint = request.getEndpoint();
+        //EndpointSettings endpoint = request.getEndpointSettings();
 
         //if (endpoint.supportsPagination()) {
 
