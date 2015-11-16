@@ -1,7 +1,18 @@
 ### still a rough draft
 
+# general
+docs main page: https://dev.fitbit.com/docs
+
+# getting started on Fitbit
+
+1. Create a Fitbit account to use for development at https://www.fitbit.com/login
+1. Create a new app from https://dev.fitbit.com/apps/new
+  1. take note of the "Client Id" and "App Secret"
+1. If you would like to access intraday activity data, email api@fitbit.com to make the request
+
 # api
-api url: https://api.fitbit.com
+- api url: https://api.fitbit.com
+- version: 1
 
 ## authentication
 
@@ -9,11 +20,14 @@ api url: https://api.fitbit.com
 - protocol: OAuth 1.0a for production environments
 - reference: https://dev.fitbit.com/docs/oauth1/
 - authorization URL: https://www.fitbit.com/oauth/authorize
- -request token: https://www.api.fitbit.com/oauth/request_token
--access token: https://www.api.fitbit.com/oauth/access_token
+ - request token: https://www.api.fitbit.com/oauth/request_token
+- access token: https://www.api.fitbit.com/oauth/access_token
+- location: auth_header
+- method: HMAC-SHA1
 
 ### OAuth 2.0
--protocol: OAuth 2.0 currently in beta
+- protocol: OAuth 2.0
+- status: Recently exited beta status, will be supported in a future shimmer release
 
 # pagination
 - supported: Mostly no, however newer api calls (currently in beta) are adding support, such as activities list
@@ -26,42 +40,87 @@ api url: https://api.fitbit.com
 - next reset time header: Fitbit-Rate-Limit-Remaining (seconds until reset)
 
 # time zone and time representation
-- time zone information is not captured for dates and times; it is not possible to infer timezone through any means
+- time zone information is not captured for dates and times; it is not possible to infer timezone through any means and therefore it is impossible to know the point in time that any activity or measurement occurred
 
 # endpoints
 
 ## get user info
-- Uri: https://api.fitbit.com/<api-version>/user/<user-id>/profile.<response-format> (api version is currently 1)
-- Reference: https://wiki.fitbit.com/display/API/API-Get-User-Info
+- Uri: https://api.fitbit.com/{api-version}/user/{user-id}/profile.json
+- Reference: https://dev.fitbit.com/docs/user/
 
 Returns information from the user’s profile in the form of a json object “user” with properties ranging from “city” and  “dateOfBirth” to “gender” and “weight”, and “timezone”. Unfortunately the timezone is not related to the data points from other endpoints, so it should not be used to set the timezone for timestamps in data points. 
 
 ## get activities
-- Uri: https://api.fitbit.com/<api-version>/user/<user-id>/activities/date/<date>.<response-format> (api version is currently 1)
-- Reference: https://wiki.fitbit.com/display/API/API-Get-Activities
-- Measures: step count, physical activity
+- Uri: https://api.fitbit.com/{api-version}/user/{user-id}/activities/date/{date}.json
+- Reference: https://dev.fitbit.com/docs/activity/
 
+### measures
+- physical activity: mapped
+- calories burned: not mapped, uncertainty around the different calorie values
+
+### description
 Returns all the activities for a user on a specified day and contains a list of activities, goals, and summary of the day. The request takes an optional request header of Accept-Language, which can be used to specify the measurement unit system for the values. By default, uses metric system. “activities” is a JSON array of activity JSON objects with details about each activity logged on that day. “goals” is a JSON object with activity-oriented goals - “caloriesOut”, “distance”, “floors”, “steps”. “summary” is a JSON object that summarizes key outcomes aggregated over all activities for that day  - “activityCalories”, “activityOut”, “elevation”, etc, and an array “distances,” which breaks down the distances of various activities completed that day.  
 
+## get daily step count summary
+- Endpoint: /activities/steps/date/{date-parameters}
+- Reference: https://dev.fitbit.com/docs/activity/#get-activity-time-series
+
+### date parameters:
+1. {start-date}/{end-date}.json
+1. {end-date}/{period}.json
+
+### measures
+- step count: mapped
+
+### description
+Retrieves a series of step count summaries for each of the dates within the specified date parameters.
+
+## get intraday step count 
+- Endpoint: https://api.fitbit.com/1/user/-/activities/steps/date/{date-parameters}
+- Reference: https://dev.fitbit.com/docs/activity/#get-activity-intraday-time-series
+
+### date parameters
+1. {date}/1d/{detail-level}.json - used by shimmer currently
+1. {date}/{date}/{detail-level}.json
+1. {date}/{date}/{detail-level}/time/{start-time}/{end-time}.json
+1. {date}/1d/{detail-level}/time/{start-time}/{end-time}.json
+ 
+Detail-level represents the granularity of the intraday data to return. By default it uses 1min. It can be set explicitly to either 1min or 15min.
+
+Start-time and end-time use the format HH:mm and are interpreted as local time when retrieving data from the API.
+
+### measures
+- step count: mapped
+
+### description
+Retrieves a series of step counts that occurred within a single day. It can be at the granularity of every 1 minute or every 15 minutes. Requires special approval from Fitbit that can be acquired by submitting a request to api@fitbit.com.
 
 ## get body weight
-- Uris:
-https://api.fitbit.com/<api-version>/user/-/body/log/weight/date/<date>.<response-format> (Where api version is currently 1)
-https://api.fitbit.com/<api-version>/user/-/body/log/weight/date/<base-date>/<period>.<response-format>
-https://api.fitbit.com/<api-version>/user/-/body/log/weight/date/<base-date>/<end-date>.<response-format>
-- Reference: https://wiki.fitbit.com/display/API/API-Get-Body-Weight
-- Measures: body weight, body mass index
+- Uri: https://api.fitbit.com/{api-version}/user/-/body/log/weight/date/{date-parameters}
+- Reference: https://dev.Fitbit.com/docs/body/#weight
 
-Returns the body weight entries for a user for the time frames specified in the request. The date formats are either (1) a single day with given format YYYY-mm-dd, (2) <base-date> with format YYYY-mm-dd and <period> as one of the enumeration [1d, 7d, 30d, 1w, 1m], or (3) <base-date> with format YYYY-mm-dd and <end-date> with format YYYY-mm-dd that contains a period no longer than 31 days. We use the base-date/end-date format when shimmer requests are made for more than one day and use the single date format when only a single day is requested.
+### date parameters
+1. {date}.json
+1. {end-date}/{period}.json
+1. {start-date}/{end-date}.json
+
+### measures
+- body weight: mapped
+- body mass index: mapped
+
+### description
+Returns the body weight entries for a user for the time frames specified in the request. The date formats are either (1) a single day with given format YYYY-mm-dd, (2) {base-date} with format YYYY-mm-dd and <period> as one of the enumeration [1d, 7d, 30d, 1w, 1m], or (3) {base-date} with format YYYY-mm-dd and {end-date} with format YYYY-mm-dd. We use the base-date/end-date format when shimmer requests are made for more than one day and use the single date format when only a single day is requested.
 
 The weight entries are returned as, “weight”, an array of JSON objects, each corresponding to a body weight entry within the time period. Each has a date, time, logId, weight, and bmi property. 
 
 The request takes an optional request header of Accept-Language, which can be used to specify the measurement unit system for the values. By default, uses metric system. 
 
 ## get sleep
-- Uri: https://api.fitbit.com/<api-version>/user/<user-id>/sleep/date/<date>.<response-format> (Where api version is currently 1)
-- Reference: https://wiki.fitbit.com/display/API/API-Get-Sleep
-- Measure: sleep duration
+- Uri: https://api.fitbit.com/{api-version}/user/{user-id}/sleep/date/{date}.json
+- Reference: https://dev.fitbit.com/docs/sleep/#get-sleep-logs
+
+### measures
+- sleep duration: mapped
 
 Sleep data points are retrieved in requests for the date in which they ended. If an individual went to bed at 9:00p on 8/22/2015 and woke up at 8:00a on 8/23/2015 (in the same time zone), then this datapoint would be returned in the request for data on 2015-08-23, but NOT on the request for data on 2015-08-22. 
 
