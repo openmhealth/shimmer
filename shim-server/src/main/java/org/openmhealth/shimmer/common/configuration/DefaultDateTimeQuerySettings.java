@@ -40,6 +40,7 @@ public class DefaultDateTimeQuerySettings implements DateTimeQuerySettings {
     private Duration maximumDuration;
     private DateTimeRequestParameter startDateTimeParameter;
     private DateTimeRequestParameter endDateTimeParameter;
+    private DateTimeRequestParameter dateTimeParameter;
 
 
     @Override
@@ -88,22 +89,30 @@ public class DefaultDateTimeQuerySettings implements DateTimeQuerySettings {
         return Optional.ofNullable(startDateTimeParameter);
     }
 
+    public void setStartDateTimeParameter(DateTimeRequestParameter startDateTimeParameter) {
+        this.startDateTimeParameter = startDateTimeParameter;
+    }
+
     @Override
     public Optional<DateTimeRequestParameter> getEndDateTimeParameter() {
         return Optional.ofNullable(endDateTimeParameter);
+    }
+
+    public void setEndDateTimeParameter(DateTimeRequestParameter endDateTimeParameter) {
+        this.endDateTimeParameter = endDateTimeParameter;
+    }
+
+    @Override
+    public Optional<DateTimeRequestParameter> getDateTimeParameter() {
+        return Optional.ofNullable(dateTimeParameter);
+    }
+
+    public void setDateTimeParameter(DateTimeRequestParameter dateTimeParameter) {
+        this.dateTimeParameter = dateTimeParameter;
     }
 
     public void setMaximumDuration(Duration maximumDuration) {
         this.maximumDuration = maximumDuration;
     }
 
-    public void setStartDateTimeParameter(
-            DateTimeRequestParameter startDateTimeParameter) {
-        this.startDateTimeParameter = startDateTimeParameter;
-    }
-
-    public void setEndDateTimeParameter(
-            DateTimeRequestParameter endDateTimeParameter) {
-        this.endDateTimeParameter = endDateTimeParameter;
-    }
 }

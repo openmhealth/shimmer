@@ -56,12 +56,20 @@ public interface DateTimeQuerySettings {
     Optional<Duration> getMaximumDuration();
 
     /**
+     * This method returns empty when getDateTimeParameter returns non-empty
      * @return the parameter used to specify the start of the request time range
      */
     Optional<DateTimeRequestParameter> getStartDateTimeParameter();
 
     /**
+     * This method returns empty when getDateTimeParameter returns non-empty
      * @return the parameter used to specify the start of the request time range
      */
     Optional<DateTimeRequestParameter> getEndDateTimeParameter();
+
+    /**
+     * This method returns empty when getStartDateTimeParameter and/or getEndDateTimeParameter return non-empty
+     * @return the parameter used to specify a single datetime, instead of a range to the third party API
+     */
+    Optional<DateTimeRequestParameter> getDateTimeParameter();
 }

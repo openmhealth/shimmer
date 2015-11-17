@@ -21,7 +21,6 @@ import org.openmhealth.shimmer.common.configuration.DateTimeQuerySettings;
 import org.openmhealth.shimmer.common.domain.DataPointRequest;
 import org.openmhealth.shimmer.common.domain.RequestEntityBuilder;
 import org.openmhealth.shimmer.common.domain.parameters.DateTimeRequestParameter;
-import org.openmhealth.shimmer.common.translator.DateTimeFormatTranslator;
 
 import java.time.OffsetDateTime;
 
@@ -47,28 +46,66 @@ public class DateTimeRequestEntityAssembler implements RequestEntityAssembler {
 
         //EndpointSettings endpoint = request.getEndpointSettings();
 
+        if (querySettings.getDateTimeParameter().isPresent()) {
 
-        if (timeRange.hasLowerBound()) {
+            OffsetDateTime valueForRequest = OffsetDateTime.now();
 
-            if (!querySettings.getStartDateTimeParameter().isPresent()) {
-                // Todo: throw configuration error
+            if (!timeRange.hasLowerBound()) {
+
+                valueForRequest = timeRange.upperEndpoint();
+            }
+            else if (!timeRange.hasUpperBound()) {
+
+                valueForRequest = timeRange.lowerEndpoint();
+            }
+            else if (timeRange.lowerEndpoint().isEqual(timeRange.upperEndpoint())) {
+
+                valueForRequest = timeRange.lowerEndpoint();
+            }
+            // Todo: Consider making the upper bound on single days (begin of day -> end of day) to be same localdate
+            else if (timeRange.lowerEndpoint().toLocalDate().isEqual(timeRange.upperEndpoint().toLocalDate()) ||
+                    timeRange.lowerEndpoint().toLocalDate().isEqual(
+                            timeRange.upperEndpoint().minusMinutes(1).toLocalDate())) {
+
+                valueForRequest = timeRange.lowerEndpoint();
+            }
+            else {
+                // Todo: throw invalid time range exception
             }
 
-            DateTimeRequestParameter startRequestParameter =
-                    querySettings.getStartDateTimeParameter().get();
-
-            DateTimeFormatTranslator formatTranslator = startRequestParameter.getDateTimeFormat();
-
-            builder.addParameterWithValue(startRequestParameter, formatTranslator.translate(
-                    timeRange.lowerEndpoint()));
-        }
-
-        if (querySettings.getEndDateTimeParameter().isPresent()) {
-
-            // Todo: implement end effective time frame
+            DateTimeRequestParameter dateTimeParameter = querySettings.getDateTimeParameter().get();
+            builder.addParameterWithValue(dateTimeParameter,
+                    dateTimeParameter.getDateTimeFormat().translate(valueForRequest));
 
         }
+        else {
 
+            if (timeRange.hasLowerBound()) {
+
+                if (!querySettings.getStartDateTimeParameter().isPresent()) {
+                    // Todo: throw configuration exception
+                }
+
+                DateTimeRequestParameter startRequestParameter =
+                        querySettings.getStartDateTimeParameter().get();
+
+                builder.addParameterWithValue(startRequestParameter,
+                        startRequestParameter.getDateTimeFormat().translate(timeRange.lowerEndpoint()));
+            }
+
+            if (timeRange.hasUpperBound()) {
+
+                if (!querySettings.getEndDateTimeParameter().isPresent()) {
+                    // Todo: throw configuration exception
+                }
+
+                DateTimeRequestParameter endRequestParameter =
+                        querySettings.getEndDateTimeParameter().get();
+
+                builder.addParameterWithValue(endRequestParameter,
+                        endRequestParameter.getDateTimeFormat().translate(timeRange.lowerEndpoint()));
+            }
+        }
 
         return builder;
     }
