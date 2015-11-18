@@ -85,8 +85,8 @@ public class IHealthPhysicalActivityDataPointMapperUnitTests extends IHealthData
         PhysicalActivity.Builder expectedPhysicalActivityBuilder = new PhysicalActivity.Builder("Running")
                 .setEffectiveTimeFrame(
                         TimeInterval.ofStartDateTimeAndEndDateTime(
-                                OffsetDateTime.parse("2015-09-22T20:43:03-06:00"),
-                                OffsetDateTime.parse("2015-09-22T21:13:03-06:00")));
+                                OffsetDateTime.parse("2015-09-22T20:43:03+01:00"),
+                                OffsetDateTime.parse("2015-09-22T21:13:03+01:00")));
 
         assertThat(dataPoints.get(1).getBody(), equalTo(expectedPhysicalActivityBuilder.build()));
 

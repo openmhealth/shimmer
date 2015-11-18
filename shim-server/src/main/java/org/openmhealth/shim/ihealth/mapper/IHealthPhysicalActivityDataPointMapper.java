@@ -59,9 +59,16 @@ public class IHealthPhysicalActivityDataPointMapper extends IHealthDataPointMapp
 
         if (startTimeUnixEpochSecs.isPresent() && endTimeUnixEpochSecs.isPresent() && timeZoneOffset.isPresent()) {
 
+            Integer timeZoneOffsetValue = timeZoneOffset.get();
+            String timeZoneString = timeZoneOffsetValue.toString();
+
+            if(timeZoneOffsetValue>=0){
+                timeZoneString = "+"+timeZoneOffsetValue.toString();
+            }
+
             physicalActivityBuilder.setEffectiveTimeFrame(TimeInterval.ofStartDateTimeAndEndDateTime(
-                    getDateTimeWithCorrectOffset(startTimeUnixEpochSecs.get(), timeZoneOffset.get().toString()),
-                    getDateTimeWithCorrectOffset(endTimeUnixEpochSecs.get(), timeZoneOffset.get().toString())));
+                    getDateTimeWithCorrectOffset(startTimeUnixEpochSecs.get(), timeZoneString),
+                    getDateTimeWithCorrectOffset(endTimeUnixEpochSecs.get(), timeZoneString)));
         }
 
         PhysicalActivity physicalActivity = physicalActivityBuilder.build();
