@@ -117,12 +117,29 @@ public abstract class IHealthDataPointMapper<T> implements DataPointMapper<T, Js
         if (optionalOffsetDateTime.isPresent()) {
 
             // Todo: Revisit after clarification from iHealth on how time zones are set
-            Optional<String> timeZoneString = asOptionalString(listNode, "TimeZone");
+            Optional<String> timeZone = asOptionalString(listNode, "TimeZone");
 
-            if (timeZoneString.isPresent()) {
+            if (timeZone.isPresent() && !timeZone.get().isEmpty()) {
 
                 OffsetDateTime offsetDateTimeCorrectOffset =
-                        getDateTimeWithCorrectOffset(optionalOffsetDateTime.get(), timeZoneString.get());
+                        getDateTimeWithCorrectOffset(optionalOffsetDateTime.get(), timeZone.get());
+                builder.setEffectiveTimeFrame(offsetDateTimeCorrectOffset);
+            }
+
+            else if (asOptionalLong(listNode, "TimeZone").isPresent()) {
+
+                Long timeZoneOffsetValue = asOptionalLong(listNode, "TimeZone").get();
+                String timeZoneString = timeZoneOffsetValue.toString();
+
+
+                if(timeZoneOffsetValue>=0){
+                    timeZoneString = "+"+timeZoneOffsetValue.toString();
+                }
+
+                OffsetDateTime offsetDateTimeCorrectOffset =
+                        getDateTimeWithCorrectOffset(optionalOffsetDateTime.get(),
+                                timeZoneString);
+
                 builder.setEffectiveTimeFrame(offsetDateTimeCorrectOffset);
             }
 
