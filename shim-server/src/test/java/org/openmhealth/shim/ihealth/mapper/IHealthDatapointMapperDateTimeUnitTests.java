@@ -18,6 +18,7 @@ package org.openmhealth.shim.ihealth.mapper;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.openmhealth.schema.domain.omh.HeartRate;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
@@ -34,10 +35,16 @@ import static org.hamcrest.core.IsNull.notNullValue;
  */
 public class IHealthDatapointMapperDateTimeUnitTests extends IHealthDataPointMapperUnitTests {
 
+    HeartRate.Builder builder;
+
+    @BeforeMethod
+    public void initializeBuilder(){
+
+        builder = new HeartRate.Builder(45);
+    }
+
     @Test
     public void setEffectiveTimeFrameShouldNotAddTimeFrameWhenTimeZoneIsMissing() throws IOException {
-
-        HeartRate.Builder builder = new HeartRate.Builder(45);
 
         JsonNode timeInfoNode = createResponseNodeWithTimeZone(null);
         IHealthDataPointMapper.setEffectiveTimeFrameIfExists(timeInfoNode, builder);
@@ -46,29 +53,61 @@ public class IHealthDatapointMapperDateTimeUnitTests extends IHealthDataPointMap
     }
 
     @Test
-    public void setEffectiveTimeFrameReturnsTimeFrameInUtcWhenTimeZoneEqualsZero() throws IOException {
-
-        HeartRate.Builder builder = new HeartRate.Builder(45);
-
-        JsonNode timeInfoNode = createResponseNodeWithTimeZone("0");
-
-        IHealthDataPointMapper.setEffectiveTimeFrameIfExists(timeInfoNode, builder);
-
-        assertThat(builder.build().getEffectiveTimeFrame(), notNullValue());
-        assertThat(builder.build().getEffectiveTimeFrame().getDateTime(), equalTo(
-                OffsetDateTime.parse("2015-11-17T18:24:23Z")));
-    }
-
-    @Test
     public void setEffectiveTimeFrameShouldNotAddTimeFrameWhenTimeZoneIsEmpty() throws IOException{
-
-        HeartRate.Builder builder = new HeartRate.Builder(45);
 
         JsonNode timeInfoNode = createResponseNodeWithTimeZone("\"\"");
 
         IHealthDataPointMapper.setEffectiveTimeFrameIfExists(timeInfoNode, builder);
 
         assertThat(builder.build().getEffectiveTimeFrame(), nullValue());
+    }
+
+    @Test
+    public void setEffectiveTimeFrameReturnsTimeFrameInUtcWhenTimeZoneEqualsZero() throws IOException {
+
+        testTimeFrameWhenItShouldBeSetCorrectly("0", "2015-11-17T18:24:23Z");
+    }
+
+    @Test
+    public void setEffectiveTimeFrameShouldAddCorrectTimeFrameWhenTimeZoneIsPositiveInteger() throws IOException {
+
+        testTimeFrameWhenItShouldBeSetCorrectly("1", "2015-11-17T18:24:23+01:00");
+    }
+
+    @Test
+    public void setEffectiveTimeFrameShouldAddCorrectTimeFrameWhenTimeZoneIsNegativeInteger() throws IOException {
+
+        testTimeFrameWhenItShouldBeSetCorrectly("-8", "2015-11-17T18:24:23-08:00");
+    }
+
+    @Test
+    public void setEffectiveTimeFrameShouldAddCorrectTimeFrameWhenTimeZoneIsPositiveOffsetString() throws IOException {
+
+        testTimeFrameWhenItShouldBeSetCorrectly("\"+0100\"", "2015-11-17T18:24:23+01:00");
+    }
+
+
+    @Test
+    public void setEffectiveTimeFrameShouldAddCorrectTimeFrameWhenTimeZoneIsNegativeOffsetString() throws IOException {
+
+        testTimeFrameWhenItShouldBeSetCorrectly("\"-0700\"", "2015-11-17T18:24:23-07:00");
+    }
+
+    @Test
+    public void setEffectiveTimeFrameShouldAddTimeInUtcWhenTimeZoneIsZeroOffsetString() throws IOException {
+
+        testTimeFrameWhenItShouldBeSetCorrectly("\"+0000\"", "2015-11-17T18:24:23Z");
+    }
+
+    public void testTimeFrameWhenItShouldBeSetCorrectly(String timezoneString, String expectedDateTime)
+            throws IOException {
+
+        JsonNode timeInfoNode = createResponseNodeWithTimeZone(timezoneString);
+        IHealthDataPointMapper.setEffectiveTimeFrameIfExists(timeInfoNode, builder);
+
+        assertThat(builder.build().getEffectiveTimeFrame(), notNullValue());
+        assertThat(builder.build().getEffectiveTimeFrame().getDateTime(), equalTo(
+                OffsetDateTime.parse(expectedDateTime)));
     }
 
     public JsonNode createResponseNodeWithTimeZone(String timezoneString) throws IOException {
