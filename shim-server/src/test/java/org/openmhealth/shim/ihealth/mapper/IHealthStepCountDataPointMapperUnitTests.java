@@ -65,7 +65,7 @@ public class IHealthStepCountDataPointMapperUnitTests extends IHealthDataPointMa
         List<DataPoint<StepCount>> dataPoints = mapper.asDataPoints(singletonList(responseNode));
 
 
-        StepCount.Builder expectedStepCountBuilder = new StepCount.Builder(21.0);
+        StepCount.Builder expectedStepCountBuilder = new StepCount.Builder(21);
 
         expectedStepCountBuilder.setEffectiveTimeFrame(
                 TimeInterval.ofStartDateTimeAndDuration(OffsetDateTime.parse("2015-11-16T00:00:00+05:00"),

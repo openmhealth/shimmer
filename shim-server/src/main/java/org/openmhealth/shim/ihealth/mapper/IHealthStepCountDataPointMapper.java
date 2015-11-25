@@ -19,6 +19,7 @@ package org.openmhealth.shim.ihealth.mapper;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.openmhealth.schema.domain.omh.*;
 
+import java.math.BigDecimal;
 import java.time.*;
 import java.util.Optional;
 
@@ -43,9 +44,9 @@ public class IHealthStepCountDataPointMapper extends IHealthDataPointMapper<Step
     @Override
     protected Optional<DataPoint<StepCount>> asDataPoint(JsonNode listEntryNode, Integer measureUnitMagicNumber) {
 
-        Double steps = asRequiredDouble(listEntryNode, "Steps");
+        BigDecimal steps = asRequiredBigDecimal(listEntryNode, "Steps");
 
-        if (steps == 0) {
+        if (steps.intValue() == 0) {
             return Optional.empty();
         }
 
