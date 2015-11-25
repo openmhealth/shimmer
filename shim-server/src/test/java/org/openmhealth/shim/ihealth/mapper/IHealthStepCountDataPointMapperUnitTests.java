@@ -17,6 +17,7 @@
 package org.openmhealth.shim.ihealth.mapper;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import org.hamcrest.Matchers;
 import org.openmhealth.schema.domain.omh.*;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -64,14 +65,36 @@ public class IHealthStepCountDataPointMapperUnitTests extends IHealthDataPointMa
 
         List<DataPoint<StepCount>> dataPoints = mapper.asDataPoints(singletonList(responseNode));
 
-
         StepCount.Builder expectedStepCountBuilder = new StepCount.Builder(21);
 
         expectedStepCountBuilder.setEffectiveTimeFrame(
                 TimeInterval.ofStartDateTimeAndDuration(OffsetDateTime.parse("2015-11-16T00:00:00+05:00"),
                         new DurationUnitValue(DurationUnit.DAY, 1)));
 
-        StepCount stepCount = expectedStepCountBuilder.build();
-        assertThat(dataPoints.get(0).getBody(), equalTo(stepCount));
+        assertThat(dataPoints.get(0).getBody(), equalTo(expectedStepCountBuilder.build()));
+
+        testDataPointHeader(dataPoints.get(0).getHeader(), StepCount.SCHEMA_ID, DataPointModality.SENSED,
+                "ac67c4ccf64af669d92569af85d19f59", OffsetDateTime.parse("2015-11-17T19:23:21Z"));
+    }
+
+    @Test
+    public void asDataPointsShouldReturnDataPointWithUserNoteWhenNoteIsPresent() {
+
+        List<DataPoint<StepCount>> dataPoints = mapper.asDataPoints(singletonList(responseNode));
+
+        StepCount.Builder expectedStepCountBuilder = new StepCount.Builder(4398);
+
+        expectedStepCountBuilder.setEffectiveTimeFrame(
+                TimeInterval.ofStartDateTimeAndDuration(OffsetDateTime.parse("2015-11-18T00:00:00Z"),
+                        new DurationUnitValue(DurationUnit.DAY, 1))).setUserNotes("Great steps");
+
+        assertThat(dataPoints.get(1).getBody(), Matchers.equalTo(expectedStepCountBuilder.build()));
+    }
+
+    @Test
+    public void asDataPointsShouldReturnSensedDataPointWhenManuallyEntered() {
+
+        assertThat(mapper.asDataPoints(singletonList(responseNode)).get(1).getHeader().getAcquisitionProvenance()
+                .getModality(), equalTo(DataPointModality.SELF_REPORTED));
     }
 }

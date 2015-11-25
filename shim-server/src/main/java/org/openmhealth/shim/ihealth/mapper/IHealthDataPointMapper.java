@@ -117,7 +117,6 @@ public abstract class IHealthDataPointMapper<T> implements DataPointMapper<T, Js
 
         if (optionalOffsetDateTime.isPresent()) {
 
-            // Todo: Revisit after clarification from iHealth on how time zones are set
             Optional<String> timeZone = asOptionalString(listNode, "TimeZone");
 
             if (timeZone.isPresent() && !timeZone.get().isEmpty()) {
@@ -162,6 +161,18 @@ public abstract class IHealthDataPointMapper<T> implements DataPointMapper<T, Js
                 ZoneId.of("Z"));
 
         return offsetDateTimeFromOffsetInstant.toLocalDateTime().atOffset(ZoneOffset.of(timeZoneString));
+    }
+
+    protected static OffsetDateTime getDateTimeAtStartOfDayWithCorrectOffset(
+            Long dateTimeInUnixSecondsWithLocalTimeOffset, String timeZoneString) {
+
+        // Since the timestamps are in local time, we can use the local date time provided by rendering the timestamp
+        // in UTC, then translating that local time to the appropriate offset.
+        OffsetDateTime dateTimeFromOffsetInstant =
+                OffsetDateTime.ofInstant(Instant.ofEpochSecond(dateTimeInUnixSecondsWithLocalTimeOffset),
+                        ZoneId.of("Z"));
+
+        return dateTimeFromOffsetInstant.toLocalDate().atStartOfDay().atOffset(ZoneOffset.of(timeZoneString));
     }
 
     protected static void setUserNoteIfExists(JsonNode listNode, Builder builder) {

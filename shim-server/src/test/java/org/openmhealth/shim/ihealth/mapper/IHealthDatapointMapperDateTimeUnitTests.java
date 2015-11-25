@@ -38,7 +38,7 @@ public class IHealthDatapointMapperDateTimeUnitTests extends IHealthDataPointMap
     HeartRate.Builder builder;
 
     @BeforeMethod
-    public void initializeBuilder(){
+    public void initializeBuilder() {
 
         builder = new HeartRate.Builder(45);
     }
@@ -53,7 +53,7 @@ public class IHealthDatapointMapperDateTimeUnitTests extends IHealthDataPointMap
     }
 
     @Test
-    public void setEffectiveTimeFrameShouldNotAddTimeFrameWhenTimeZoneIsEmpty() throws IOException{
+    public void setEffectiveTimeFrameShouldNotAddTimeFrameWhenTimeZoneIsEmpty() throws IOException {
 
         JsonNode timeInfoNode = createResponseNodeWithTimeZone("\"\"");
 
@@ -99,6 +99,28 @@ public class IHealthDatapointMapperDateTimeUnitTests extends IHealthDataPointMap
         testTimeFrameWhenItShouldBeSetCorrectly("\"+0000\"", "2015-11-17T18:24:23Z");
     }
 
+    @Test
+    public void getDateTimeAtStartOfDayWithCorrectOffsetShouldReturnCorrectDateTimeWhenTimeIsAtStartOfDay() {
+
+        long startOfDayEpochSecond = OffsetDateTime.parse("2015-11-12T00:00:00Z").toEpochSecond();
+
+        OffsetDateTime dateTimeAtStartOfDay =
+                IHealthDataPointMapper.getDateTimeAtStartOfDayWithCorrectOffset(startOfDayEpochSecond, "-0100");
+
+        assertThat(dateTimeAtStartOfDay, equalTo(OffsetDateTime.parse("2015-11-12T00:00:00-01:00")));
+    }
+
+    @Test
+    public void getDateTimeAtStartOfDayWithCorrectOffsetShouldReturnCorrectDateTimeWhenTimeIsAtEndOfDay() {
+
+        long startOfDayEpochSecond = OffsetDateTime.parse("2015-11-12T23:59:59Z").toEpochSecond();
+
+        OffsetDateTime dateTimeAtStartOfDay =
+                IHealthDataPointMapper.getDateTimeAtStartOfDayWithCorrectOffset(startOfDayEpochSecond, "+0100");
+
+        assertThat(dateTimeAtStartOfDay, equalTo(OffsetDateTime.parse("2015-11-12T00:00:00+01:00")));
+    }
+
     public void testTimeFrameWhenItShouldBeSetCorrectly(String timezoneString, String expectedDateTime)
             throws IOException {
 
@@ -112,14 +134,14 @@ public class IHealthDatapointMapperDateTimeUnitTests extends IHealthDataPointMap
 
     public JsonNode createResponseNodeWithTimeZone(String timezoneString) throws IOException {
 
-        if(timezoneString == null){
+        if (timezoneString == null) {
             return objectMapper.readTree("{\"MDate\": 1447784663,\n" +
                     "            \"Steps\": 100}\n");
         }
-        else{
+        else {
             return objectMapper.readTree("{\"MDate\": 1447784663,\n" +
                     "            \"Steps\": 100,\n" +
-                    "\"TimeZone\": "+timezoneString+"}\n");
+                    "\"TimeZone\": " + timezoneString + "}\n");
         }
     }
 }

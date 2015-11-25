@@ -20,7 +20,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import org.openmhealth.schema.domain.omh.*;
 
 import java.math.BigDecimal;
-import java.time.*;
 import java.util.Optional;
 
 import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.*;
@@ -60,11 +59,8 @@ public class IHealthStepCountDataPointMapper extends IHealthDataPointMapper<Step
 
             if (timeZone.isPresent()) {
 
-                OffsetDateTime startDateTime =
-                        OffsetDateTime.ofInstant(Instant.ofEpochSecond(dateTimeString.get()), ZoneId.of("Z"))
-                                .toLocalDate().atStartOfDay().atOffset(ZoneOffset.of(timeZone.get()));
-
-                stepCountBuilder.setEffectiveTimeFrame(TimeInterval.ofStartDateTimeAndDuration(startDateTime,
+                stepCountBuilder.setEffectiveTimeFrame(TimeInterval.ofStartDateTimeAndDuration(
+                        getDateTimeAtStartOfDayWithCorrectOffset(dateTimeString.get(), timeZone.get()),
                         new DurationUnitValue(DurationUnit.DAY, 1)));
             }
         }
