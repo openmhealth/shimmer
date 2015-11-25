@@ -30,6 +30,7 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.core.Is.is;
+import static org.openmhealth.schema.domain.omh.DataPointModality.*;
 
 
 /**
@@ -61,7 +62,7 @@ public class IHealthStepCountDataPointMapperUnitTests extends IHealthDataPointMa
     }
 
     @Test
-    public void asDataPointsShouldReturnCorrectDeviceGeneratedDataPoints() {
+    public void asDataPointsShouldReturnCorrectDataPointsWhenSensed() {
 
         List<DataPoint<StepCount>> dataPoints = mapper.asDataPoints(singletonList(responseNode));
 
@@ -73,7 +74,7 @@ public class IHealthStepCountDataPointMapperUnitTests extends IHealthDataPointMa
 
         assertThat(dataPoints.get(0).getBody(), equalTo(expectedStepCountBuilder.build()));
 
-        testDataPointHeader(dataPoints.get(0).getHeader(), StepCount.SCHEMA_ID, DataPointModality.SENSED,
+        testDataPointHeader(dataPoints.get(0).getHeader(), StepCount.SCHEMA_ID, SENSED,
                 "ac67c4ccf64af669d92569af85d19f59", OffsetDateTime.parse("2015-11-17T19:23:21Z"));
     }
 
@@ -95,6 +96,6 @@ public class IHealthStepCountDataPointMapperUnitTests extends IHealthDataPointMa
     public void asDataPointsShouldReturnSensedDataPointWhenManuallyEntered() {
 
         assertThat(mapper.asDataPoints(singletonList(responseNode)).get(1).getHeader().getAcquisitionProvenance()
-                .getModality(), equalTo(DataPointModality.SELF_REPORTED));
+                .getModality(), equalTo(SELF_REPORTED));
     }
 }
