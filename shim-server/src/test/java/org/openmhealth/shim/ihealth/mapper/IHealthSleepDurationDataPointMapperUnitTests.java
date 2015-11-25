@@ -30,7 +30,9 @@ import java.util.List;
 
 import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.empty;
 import static org.openmhealth.schema.domain.omh.DataPointModality.SELF_REPORTED;
 import static org.openmhealth.schema.domain.omh.DataPointModality.SENSED;
 import static org.openmhealth.schema.domain.omh.DurationUnit.MINUTE;
@@ -109,5 +111,13 @@ public class IHealthSleepDurationDataPointMapperUnitTests extends IHealthDataPoi
     public void asDataPointsShouldReturnCorrectDataPointsWhenManuallyEntered() {
 
         assertThat(dataPoints.get(2).getHeader().getAcquisitionProvenance().getModality(), equalTo(SELF_REPORTED));
+    }
+
+    @Test
+    public void asDataPointsShouldReturnEmptyListWhenEmptyIHealthResponse() {
+
+        JsonNode emptyNode = asJsonNode("/org/openmhealth/shim/ihealth/mapper/ihealth-empty-sleep.json");
+
+        assertThat(mapper.asDataPoints(singletonList(emptyNode)), is(empty()));
     }
 }

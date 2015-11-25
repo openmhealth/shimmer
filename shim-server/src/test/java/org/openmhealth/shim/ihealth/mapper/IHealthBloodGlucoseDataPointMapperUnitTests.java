@@ -28,7 +28,9 @@ import java.util.List;
 
 import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.empty;
 import static org.openmhealth.schema.domain.omh.BloodGlucose.SCHEMA_ID;
 import static org.openmhealth.schema.domain.omh.DataPointModality.SELF_REPORTED;
 import static org.openmhealth.schema.domain.omh.DataPointModality.SENSED;
@@ -99,11 +101,10 @@ public class IHealthBloodGlucoseDataPointMapperUnitTests extends IHealthDataPoin
     public void asDataPointsShouldReturnNoDataPointsWhenBloodGlucoseListIsEmpty() throws IOException {
 
         ClassPathResource resource =
-                new ClassPathResource("/org/openmhealth/shim/ihealth/mapper/ihealth-blood-glucose-empty-list.json");
+                new ClassPathResource("/org/openmhealth/shim/ihealth/mapper/ihealth-empty-glucose.json");
         JsonNode emptyListResponseNode = objectMapper.readTree(resource.getInputStream());
 
-        List<DataPoint<BloodGlucose>> dataPoints = mapper.asDataPoints(singletonList(emptyListResponseNode));
-        assertThat(dataPoints.size(), equalTo(0));
+        assertThat(mapper.asDataPoints(singletonList(emptyListResponseNode)), is(empty()));
     }
 
     @Test

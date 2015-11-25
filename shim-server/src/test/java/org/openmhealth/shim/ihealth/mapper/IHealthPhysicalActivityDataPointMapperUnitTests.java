@@ -97,7 +97,7 @@ public class IHealthPhysicalActivityDataPointMapperUnitTests extends IHealthData
     public void asDataPointsReturnsNoDataPointsForAnEmptyList() throws IOException {
 
         ClassPathResource resource =
-                new ClassPathResource("/org/openmhealth/shim/ihealth/mapper/ihealth-sports-activity-empty-list.json");
+                new ClassPathResource("/org/openmhealth/shim/ihealth/mapper/ihealth-empty-sports-activity.json");
         JsonNode emptyListResponseNode = objectMapper.readTree(resource.getInputStream());
 
         List<DataPoint<PhysicalActivity>> dataPoints = mapper.asDataPoints(singletonList(emptyListResponseNode));

@@ -28,8 +28,10 @@ import java.util.List;
 
 import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.empty;
 import static org.openmhealth.schema.domain.omh.DataPointModality.SELF_REPORTED;
 import static org.openmhealth.schema.domain.omh.DataPointModality.SENSED;
 
@@ -49,8 +51,6 @@ public class IHealthBloodPressureDataPointMapperUnitTests extends IHealthDataPoi
                 new ClassPathResource("org/openmhealth/shim/ihealth/mapper/ihealth-blood-pressure.json");
         responseNode = objectMapper.readTree(resource.getInputStream());
     }
-
-    // TODO: Test/handle datapoints that have zero values for BP (awaiting response from iHealth)
 
     @Test
     public void asDataPointsShouldReturnCorrectNumberOfDataPoints() {
@@ -108,6 +108,13 @@ public class IHealthBloodPressureDataPointMapperUnitTests extends IHealthDataPoi
         assertThat(dataPoints.get(1).getBody().getUserNotes(), equalTo("BP on the up and up."));
     }
 
+    @Test
+    public void asDataPointsShouldReturnEmptyListWhenEmptyIHealthResponse() {
+
+        JsonNode emptyNode = asJsonNode("org/openmhealth/shim/ihealth/mapper/ihealth-empty-blood-pressure.json");
+
+        assertThat(mapper.asDataPoints(singletonList(emptyNode)), is(empty()));
+    }
 
     @Test
     public void getBloodPressureValueInMmHgReturnsCorrectValueForMmHgUnit() {

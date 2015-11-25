@@ -98,4 +98,12 @@ public class IHealthStepCountDataPointMapperUnitTests extends IHealthDataPointMa
         assertThat(mapper.asDataPoints(singletonList(responseNode)).get(1).getHeader().getAcquisitionProvenance()
                 .getModality(), equalTo(SELF_REPORTED));
     }
+
+    @Test
+    public void asDataPointsShouldReturnEmptyListWhenEmptyIHealthResponse() {
+
+        JsonNode emptyNode = asJsonNode("/org/openmhealth/shim/ihealth/mapper/ihealth-empty-activity-response.json");
+
+        assertThat(mapper.asDataPoints(singletonList(emptyNode)), is(empty()));
+    }
 }

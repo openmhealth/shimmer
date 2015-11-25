@@ -73,7 +73,6 @@ public class IHealthBodyWeightDataPointMapperUnitTests extends IHealthDataPointM
         DataPointHeader dataPointHeader = dataPoints.get(0).getHeader();
         testDataPointHeader(dataPointHeader, BodyWeight.SCHEMA_ID, SENSED, "5fe5893c418b48cd8da7954f8b6c2f36",
                 OffsetDateTime.parse("2015-09-17T20:04:17Z"));
-
     }
 
     @Test
@@ -117,7 +116,7 @@ public class IHealthBodyWeightDataPointMapperUnitTests extends IHealthDataPointM
     public void asDataPointsShouldReturnNoDataPointsWhenWeightListIsEmpty() throws IOException {
 
         ClassPathResource resource =
-                new ClassPathResource("org/openmhealth/shim/ihealth/mapper/ihealth-body-weight-empty-list.json");
+                new ClassPathResource("org/openmhealth/shim/ihealth/mapper/ihealth-empty-body-weight.json");
         JsonNode emptyListNode = objectMapper.readTree(resource.getInputStream());
 
         List<DataPoint<BodyWeight>> dataPoints = mapper.asDataPoints(singletonList(emptyListNode));

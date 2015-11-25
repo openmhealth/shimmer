@@ -29,8 +29,10 @@ import java.util.List;
 
 import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.empty;
 import static org.openmhealth.schema.domain.omh.DataPointModality.SELF_REPORTED;
 import static org.openmhealth.schema.domain.omh.DataPointModality.SENSED;
 
@@ -106,5 +108,14 @@ public class IHealthBloodOxygenEndpointHeartRateDataPointMapperUnitTests extends
         List<DataPoint<HeartRate>> dataPoints = mapper.asDataPoints(singletonList(noHeartRateBloodOxygenNode));
 
         assertThat(dataPoints.size(), equalTo(0));
+    }
+
+    @Test
+    public void asDataPointsShouldReturnEmptyListWhenEmptyIHealthResponse() {
+
+        JsonNode emptyNode = asJsonNode("/org/openmhealth/shim/ihealth/mapper/ihealth-empty-blood-oxygen.json");
+
+        assertThat(mapper.asDataPoints(singletonList(emptyNode)), is(empty()));
+
     }
 }
