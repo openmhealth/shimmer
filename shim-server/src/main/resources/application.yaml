@@ -7,7 +7,7 @@ spring:
       enabled: false
   data:
     mongodb:
-      uri: mongodb://127.0.0.1:27017/omh_dsu
+      uri: mongodb://mongo:27017/omh_dsu
   jackson:
     serialization:
       indent_output: true
@@ -25,6 +25,7 @@ openmhealth:
       callbackUrlBase: http://localhost:8083
 
     #NOTE: Un-comment and fill in with your credentials if you're not using the UI
+    #NOTE: Un-comment and set partnerAccess to true if your credentials for a given API have partner access
     ihealth:
       serialValues:
         sportSC: "4627a40e37104fb98af95c91ae4201e0"
@@ -39,6 +40,7 @@ openmhealth:
         bloodGlucoseSV: "cd44c9fd42444b729757b69e88be2eb7"
 
     #fitbit:
+    #  partnerAccess: true
     #  clientId: [YOUR_CLIENT_ID]
     #  clientSecret: [YOUR_CLIENT_SECRET]
     #fatsecret:
@@ -56,7 +58,7 @@ openmhealth:
     #  clientId: [YOUR_CLIENT_ID]
     #  clientSecret: [YOUR_CLIENT_SECRET]
     #withings:
-    #  partner_access: true
+    #  partnerAccess: true
     #  clientId: [YOUR_CLIENT_ID]
     #  clientSecret: [YOUR_CLIENT_SECRET]
     #healthvault:

@@ -311,7 +311,7 @@ public class Application extends WebSecurityConfigurerAdapter {
 
         shimDataRequest.setDataTypeKey(dataTypeKey);
 
-        if(!normalize.equals("")){
+        if (!normalize.equals("")) {
             shimDataRequest.setNormalize(Boolean.parseBoolean(normalize));
         }
 

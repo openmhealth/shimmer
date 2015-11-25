@@ -2,61 +2,60 @@
     "data": {
         "items": [
             {
+                "lean_mass": null,
+                "time_updated": 1444096371,
+                "xid": "JM2JlMHcHlVJUd597YY3Lnny5eEku5Ll",
+                "weight": 64,
+                "title": null,
+                "body_fat": 10.5,
+                "image": "",
                 "bmi": null,
-                "body_fat": null,
-                "date": 20150811,
-                "details": {
-                    "tz": "GMT-0600"
-                },
-                "image": "",
-                "lean_mass": null,
+                "time_created": 1444009961,
                 "note": "First weight",
-                "shared": false,
-                "time_created": 1439354240,
-                "time_updated": 1439354240,
-                "title": null,
-                "type": "body",
+                "details": {
+                    "tz": "America/Denver"
+                },
                 "waistline": null,
-                "weight": 86.0010436535,
-                "xid": "QkfTizSpRdubVXHaj3iZk6Vd3qqdl_RJ"
+                "date": 20151004,
+                "shared": false,
+                "type": "body"
             },
             {
-                "bmi": 24,
+                "lean_mass": null,
+                "time_updated": 1444096372,
+                "xid": "JM2JlMHcHlUP2mAvWWVlwwNFFVo_4CfQ",
+                "weight": 74.5,
+                "title": null,
                 "body_fat": null,
-                "date": 20150811,
+                "image": "",
+                "bmi": 23,
+                "time_created": 1444096372,
+                "note": null,
                 "details": {
                     "tz": "GMT-0600"
                 },
-                "image": "",
-                "lean_mass": null,
-                "note": null,
+                "waistline": null,
+                "date": 20151005,
                 "shared": true,
-                "time_created": 1439354238,
-                "time_updated": 1439454238,
-                "title": null,
-                "type": "body",
-                "waistline": null,
-                "weight": 86.5010436535,
-                "xid": "QkfTizSpRdukQY3ns4PYbkucZTM5yPMg"
+                "type": "body"
             },
             {
-                "bmi": 25.2,
-                "body_fat": null,
-                "date": 20150806,
-                "details": {
-                    "tz": "GMT-0600"
-                },
-                "image": "",
-                "lean_mass": null,
-                "note": null,
-                "shared": false,
-                "time_created": 1438925817,
-                "time_updated": 1438925817,
+                "lean_mass": 0,
+                "time_updated": 1444160342,
+                "xid": "JM2JlMHcHlVYbz0vvV-tzteoDrIYcQ7k",
+                "weight": 74.8,
                 "title": null,
-                "type": "body",
+                "body_fat": 0,
+                "image": "",
+                "bmi": 22,
+                "time_created": 1444160341,
+                "note": null,
+                "details": {
+                    "tz": null
+                },
                 "waistline": null,
-                "weight": null,
-                "xid": "QkfTizSpRdt6MGLRxULIlVTscmwD_cPJ"
+                "date": 20151006,
+                "type": "body"
             }
         ],
         "size": 3
@@ -64,7 +63,7 @@
     "meta": {
         "code": 200,
         "message": "OK",
-        "time": 1439865418,
-        "user_xid": "VB0mNZWqiOUDWkkl72vgRQ"
+        "time": 1444170383,
+        "user_xid": "VB0mNZWqiOWj26_3mxlZjg"
     }
 }
