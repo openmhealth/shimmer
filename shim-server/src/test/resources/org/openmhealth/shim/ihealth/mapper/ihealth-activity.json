@@ -1,0 +1,37 @@
+{
+    "ARDataList": [
+        {
+            "Calories": 1571,
+            "DataID": "ac67c4ccf64af669d92569af85d19f59",
+            "DataSource": "FromDevice",
+            "DistanceTraveled": 0.01743,
+            "LastChangeTime": 1447788201,
+            "Lat": 0,
+            "Lon": 0,
+            "MDate": 1447698000,
+            "Note": "",
+            "Steps": 21,
+            "TimeZone": "+0500"
+        },
+        {
+            "Calories": 713,
+            "DataID": "a1c7ec7c4d75cf1fdb15e0d8acc4f83c",
+            "DataSource": "Manual",
+            "DistanceTraveled": 0,
+            "LastChangeTime": 1447827935,
+            "Lat": 0,
+            "Lon": 0,
+            "MDate": 1447831200,
+            "Note": "Great steps",
+            "Steps": 4398,
+            "TimeZone": "+0000"
+        }
+    ],
+    "CurrentRecordCount": 2,
+    "DistanceUnit": 0,
+    "NextPageUrl": "",
+    "PageLength": 50,
+    "PageNumber": 1,
+    "PrevPageUrl": "",
+    "RecordCount": 2
+}

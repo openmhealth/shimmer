@@ -21,6 +21,7 @@ import org.openmhealth.schema.domain.omh.*;
 
 import java.util.Optional;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asRequiredDouble;
 
 
@@ -29,7 +30,7 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asRequir
  */
 public class IHealthBloodPressureDataPointMapper extends IHealthDataPointMapper<BloodPressure> {
 
-    // documentation: http://www.ncbi.nlm.nih.gov/pmc/articles/PMC1603212/
+    // Reference for conversion: http://www.ncbi.nlm.nih.gov/pmc/articles/PMC1603212/
     static final double KPA_TO_MMHG_CONVERSION_RATE = 7.50;
 
     static final int MMHG_UNIT_MAGIC_NUMBER = 0;
@@ -47,6 +48,8 @@ public class IHealthBloodPressureDataPointMapper extends IHealthDataPointMapper<
 
     @Override
     protected Optional<DataPoint<BloodPressure>> asDataPoint(JsonNode listNode, Integer bloodPressureUnit) {
+
+        checkNotNull(bloodPressureUnit);
 
         double systolicValue = getBloodPressureValueInMmHg(asRequiredDouble(listNode, "HP"), bloodPressureUnit);
         SystolicBloodPressure systolicBloodPressure =

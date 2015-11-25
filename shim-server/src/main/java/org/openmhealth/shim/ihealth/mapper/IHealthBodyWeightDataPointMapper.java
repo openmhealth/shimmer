@@ -24,6 +24,7 @@ import org.openmhealth.schema.domain.omh.MassUnitValue;
 
 import java.util.Optional;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asRequiredDouble;
 
 
@@ -32,7 +33,7 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asRequir
  */
 public class IHealthBodyWeightDataPointMapper extends IHealthDataPointMapper<BodyWeight> {
 
-    // Reference: https://en.wikipedia.org/wiki/Stone_(unit)
+    // Reference for conversion: https://en.wikipedia.org/wiki/Stone_(unit)
     private static final double STONE_TO_KG_FACTOR = 6.3503;
 
     @Override
@@ -47,6 +48,8 @@ public class IHealthBodyWeightDataPointMapper extends IHealthDataPointMapper<Bod
 
     @Override
     protected Optional<DataPoint<BodyWeight>> asDataPoint(JsonNode listNode, Integer measureUnitMagicNumber) {
+
+        checkNotNull(measureUnitMagicNumber);
 
         IHealthBodyWeightUnit bodyWeightUnitType = IHealthBodyWeightUnit.fromIntegerValue(measureUnitMagicNumber);
         MassUnit bodyWeightUnit = bodyWeightUnitType.getOmhUnit();

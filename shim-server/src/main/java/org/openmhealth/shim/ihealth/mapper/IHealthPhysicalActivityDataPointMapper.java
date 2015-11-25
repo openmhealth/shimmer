@@ -62,8 +62,8 @@ public class IHealthPhysicalActivityDataPointMapper extends IHealthDataPointMapp
             Integer timeZoneOffsetValue = timeZoneOffset.get();
             String timeZoneString = timeZoneOffsetValue.toString();
 
-            if(timeZoneOffsetValue>=0){
-                timeZoneString = "+"+timeZoneOffsetValue.toString();
+            if (timeZoneOffsetValue >= 0) {
+                timeZoneString = "+" + timeZoneOffsetValue.toString();
             }
 
             physicalActivityBuilder.setEffectiveTimeFrame(TimeInterval.ofStartDateTimeAndEndDateTime(

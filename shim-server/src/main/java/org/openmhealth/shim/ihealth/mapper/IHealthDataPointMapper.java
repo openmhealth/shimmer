@@ -35,6 +35,7 @@ import java.util.UUID;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.openmhealth.schema.domain.omh.DataPointModality.SELF_REPORTED;
 import static org.openmhealth.schema.domain.omh.DataPointModality.SENSED;
+import static org.openmhealth.schema.domain.omh.Measure.*;
 import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.*;
 
 
@@ -110,7 +111,7 @@ public abstract class IHealthDataPointMapper<T> implements DataPointMapper<T, Js
 
     }
 
-    protected static void setEffectiveTimeFrameIfExists(JsonNode listNode, Measure.Builder builder) {
+    protected static void setEffectiveTimeFrameIfExists(JsonNode listNode, Builder builder) {
 
         Optional<Long> optionalOffsetDateTime = asOptionalLong(listNode, "MDate");
 
@@ -132,8 +133,8 @@ public abstract class IHealthDataPointMapper<T> implements DataPointMapper<T, Js
                 String timeZoneString = timeZoneOffsetValue.toString();
 
 
-                if(timeZoneOffsetValue>=0){
-                    timeZoneString = "+"+timeZoneOffsetValue.toString();
+                if (timeZoneOffsetValue >= 0) {
+                    timeZoneString = "+" + timeZoneOffsetValue.toString();
                 }
 
                 OffsetDateTime offsetDateTimeCorrectOffset =
@@ -163,7 +164,7 @@ public abstract class IHealthDataPointMapper<T> implements DataPointMapper<T, Js
         return offsetDateTimeFromOffsetInstant.toLocalDateTime().atOffset(ZoneOffset.of(timeZoneString));
     }
 
-    protected static void setUserNoteIfExists(JsonNode listNode, Measure.Builder builder) {
+    protected static void setUserNoteIfExists(JsonNode listNode, Builder builder) {
 
         Optional<String> note = asOptionalString(listNode, "Note");
 
