@@ -117,7 +117,9 @@ public class IHealthShim extends OAuth2ShimBase {
                 IHealthDataTypes.BLOOD_PRESSURE,
                 IHealthDataTypes.BODY_WEIGHT,
                 IHealthDataTypes.BODY_MASS_INDEX,
-                IHealthDataTypes.HEART_RATE
+                IHealthDataTypes.HEART_RATE,
+                IHealthDataTypes.STEP_COUNT,
+                IHealthDataTypes.SLEEP_DURATION
         };
     }
 
@@ -143,7 +145,9 @@ public class IHealthShim extends OAuth2ShimBase {
         BLOOD_PRESSURE(singletonList("bp.json")),
         BODY_WEIGHT(singletonList("weight.json")),
         BODY_MASS_INDEX(singletonList("weight.json")),
-        HEART_RATE(Lists.newArrayList("bp.json", "spo2.json"));
+        HEART_RATE(Lists.newArrayList("bp.json", "spo2.json")),
+        STEP_COUNT(singletonList("activity.json")),
+        SLEEP_DURATION(singletonList("sleep.json"));
 
         private List<String> endPoint;
 
@@ -181,7 +185,7 @@ public class IHealthShim extends OAuth2ShimBase {
 
 
         // SC and SV values are client-based keys that are unique to each endpoint within a project
-        List<String> scValues = getScValues(dataType);
+        String scValue = getScValue();
         List<String> svValues = getSvValues(dataType);
 
         List<JsonNode> responseEntities = Lists.newArrayList();
@@ -215,7 +219,7 @@ public class IHealthShim extends OAuth2ShimBase {
                     .queryParam("start_time", startDate.toEpochSecond())
                     .queryParam("end_time", endDate.toEpochSecond())
                     .queryParam("locale", "default")
-                    .queryParam("sc", scValues.get(i))
+                    .queryParam("sc", scValue)
                     .queryParam("sv", svValues.get(i));
 
             ResponseEntity<JsonNode> responseEntity;
@@ -251,6 +255,12 @@ public class IHealthShim extends OAuth2ShimBase {
                     case BODY_MASS_INDEX:
                         mapper = new IHealthBodyMassIndexDataPointMapper();
                         break;
+                    case STEP_COUNT:
+                        mapper = new IHealthStepCountDataPointMapper();
+                        break;
+                    case SLEEP_DURATION:
+                        mapper = new IHealthSleepDurationDataPointMapper();
+                        break;
                     case HEART_RATE:
                         // there are two different mappers for heart rate because the data can come from two endpoints
                         if (endPoint == "bp.json") {
@@ -280,24 +290,9 @@ public class IHealthShim extends OAuth2ShimBase {
                 ShimDataResponse.result(SHIM_KEY, responseEntities));
     }
 
-    private List<String> getScValues(IHealthDataTypes dataType) {
+    private String getScValue() {
 
-        switch ( dataType ) {
-            case PHYSICAL_ACTIVITY:
-                return singletonList(serialValues.get("sportSC"));
-            case BODY_WEIGHT:
-                return singletonList(serialValues.get("weightSC"));
-            case BODY_MASS_INDEX:
-                return singletonList(serialValues.get("weightSC")); // body mass index comes from the weight endpoint
-            case BLOOD_PRESSURE:
-                return singletonList(serialValues.get("bloodPressureSC"));
-            case BLOOD_GLUCOSE:
-                return singletonList(serialValues.get("bloodGlucoseSC"));
-            case HEART_RATE:
-                return Lists.newArrayList(serialValues.get("bloodPressureSC"), serialValues.get("spo2SC"));
-            default:
-                throw new UnsupportedOperationException();
-        }
+        return serialValues.get("SC");
     }
 
     private List<String> getSvValues(IHealthDataTypes dataType) {
@@ -313,6 +308,10 @@ public class IHealthShim extends OAuth2ShimBase {
                 return singletonList(serialValues.get("bloodPressureSV"));
             case BLOOD_GLUCOSE:
                 return singletonList(serialValues.get("bloodGlucoseSV"));
+            case STEP_COUNT:
+                return singletonList(serialValues.get("activitySV"));
+            case SLEEP_DURATION:
+                return singletonList(serialValues.get("sleepSV"));
             case HEART_RATE:
                 return Lists.newArrayList(serialValues.get("bloodPressureSV"), serialValues.get("spo2SV"));
             default:
