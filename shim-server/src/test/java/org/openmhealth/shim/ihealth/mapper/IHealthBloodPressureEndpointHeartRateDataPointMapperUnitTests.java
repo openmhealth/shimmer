@@ -30,8 +30,10 @@ import java.util.List;
 
 import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.collection.IsEmptyCollection.empty;
 import static org.openmhealth.schema.domain.omh.DataPointModality.SELF_REPORTED;
 import static org.openmhealth.schema.domain.omh.DataPointModality.SENSED;
 
@@ -104,12 +106,9 @@ public class IHealthBloodPressureEndpointHeartRateDataPointMapperUnitTests exten
     @Test
     public void asDataPointsShouldReturnNoDataPointWhenHeartRateDataIsNotPresent() throws IOException {
 
-        ClassPathResource resource = new ClassPathResource(
+        JsonNode noHeartRateBloodPressureNode = asJsonNode(
                 "org/openmhealth/shim/ihealth/mapper/ihealth-blood-pressure-missing-heart-rate.json");
-        JsonNode noHeartRateBloodPressureNode = objectMapper.readTree(resource.getInputStream());
 
-        List<DataPoint<HeartRate>> dataPoints = mapper.asDataPoints(singletonList(noHeartRateBloodPressureNode));
-        assertThat(dataPoints.size(), equalTo(0));
-
+        assertThat(mapper.asDataPoints(singletonList(noHeartRateBloodPressureNode)), is(empty()));
     }
 }

@@ -28,6 +28,7 @@ import java.util.List;
 
 import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.core.Is.is;
@@ -95,6 +96,9 @@ public class IHealthStepCountDataPointMapperUnitTests extends IHealthDataPointMa
                         new DurationUnitValue(DurationUnit.DAY, 1))).setUserNotes("Great steps");
 
         assertThat(dataPoints.get(1).getBody(), Matchers.equalTo(expectedStepCountBuilder.build()));
+
+        assertThat(dataPoints.get(0).getBody().getUserNotes(), nullValue());
+        assertThat(dataPoints.get(1).getBody().getUserNotes(), equalTo("Great steps"));
     }
 
     @Test

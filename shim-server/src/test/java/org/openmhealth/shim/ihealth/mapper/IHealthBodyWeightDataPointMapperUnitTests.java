@@ -28,8 +28,10 @@ import java.util.List;
 
 import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.collection.IsEmptyCollection.empty;
 import static org.openmhealth.schema.domain.omh.DataPointModality.SELF_REPORTED;
 import static org.openmhealth.schema.domain.omh.DataPointModality.SENSED;
 import static org.openmhealth.shim.ihealth.mapper.IHealthBodyWeightDataPointMapper.IHealthBodyWeightUnit;
@@ -105,8 +107,7 @@ public class IHealthBodyWeightDataPointMapperUnitTests extends IHealthDataPointM
         JsonNode zeroValueNode =
                 asJsonNode("org/openmhealth/shim/ihealth/mapper/ihealth-missing-body-weight-value.json");
 
-        List<DataPoint<BodyWeight>> dataPoints = mapper.asDataPoints(singletonList(zeroValueNode));
-        assertThat(dataPoints.size(), equalTo(0));
+        assertThat(mapper.asDataPoints(singletonList(zeroValueNode)), is(empty()));
     }
 
     @Test
@@ -114,8 +115,7 @@ public class IHealthBodyWeightDataPointMapperUnitTests extends IHealthDataPointM
 
         JsonNode emptyListNode = asJsonNode("org/openmhealth/shim/ihealth/mapper/ihealth-empty-body-weight.json");
 
-        List<DataPoint<BodyWeight>> dataPoints = mapper.asDataPoints(singletonList(emptyListNode));
-        assertThat(dataPoints.size(), equalTo(0));
+        assertThat(mapper.asDataPoints(singletonList(emptyListNode)), is(empty()));
     }
 
     @Test

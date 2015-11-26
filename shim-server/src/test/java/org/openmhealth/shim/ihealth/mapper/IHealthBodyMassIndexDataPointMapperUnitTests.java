@@ -17,8 +17,10 @@
 package org.openmhealth.shim.ihealth.mapper;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import org.openmhealth.schema.domain.omh.*;
-import org.springframework.core.io.ClassPathResource;
+import org.openmhealth.schema.domain.omh.BodyMassIndex;
+import org.openmhealth.schema.domain.omh.BodyMassIndexUnit;
+import org.openmhealth.schema.domain.omh.DataPoint;
+import org.openmhealth.schema.domain.omh.TypedUnitValue;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -29,9 +31,12 @@ import java.util.List;
 
 import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.openmhealth.schema.domain.omh.BodyMassIndex.*;
-import static org.openmhealth.schema.domain.omh.DataPointModality.*;
+import static org.hamcrest.Matchers.empty;
+import static org.openmhealth.schema.domain.omh.BodyMassIndex.SCHEMA_ID;
+import static org.openmhealth.schema.domain.omh.DataPointModality.SELF_REPORTED;
+import static org.openmhealth.schema.domain.omh.DataPointModality.SENSED;
 
 
 /**
@@ -91,23 +96,18 @@ public class IHealthBodyMassIndexDataPointMapperUnitTests extends IHealthDataPoi
     @Test
     public void asDataPointsShouldReturnNoDataPointsWhenBodyMassIndexValueIsZero() throws IOException {
 
-        ClassPathResource resource =
-                new ClassPathResource("org/openmhealth/shim/ihealth/mapper/ihealth-missing-body-weight-value.json");
-        JsonNode zeroValueNode = objectMapper.readTree(resource.getInputStream());
+        JsonNode zeroValueNode =
+                asJsonNode("org/openmhealth/shim/ihealth/mapper/ihealth-missing-body-weight-value.json");
 
-        List<DataPoint<BodyMassIndex>> dataPoints = mapper.asDataPoints(singletonList(zeroValueNode));
-        assertThat(dataPoints.size(), equalTo(0));
+        assertThat(mapper.asDataPoints(singletonList(zeroValueNode)), is(empty()));
     }
 
     @Test
     public void asDataPointsShouldReturnNoDataPointsWhenWeightListIsEmpty() throws IOException {
 
-        ClassPathResource resource =
-                new ClassPathResource("org/openmhealth/shim/ihealth/mapper/ihealth-empty-body-weight.json");
-        JsonNode emptyListNode = objectMapper.readTree(resource.getInputStream());
+        JsonNode emptyListNode = asJsonNode("org/openmhealth/shim/ihealth/mapper/ihealth-empty-body-weight.json");
 
-        List<DataPoint<BodyMassIndex>> dataPoints = mapper.asDataPoints(singletonList(emptyListNode));
-        assertThat(dataPoints.size(), equalTo(0));
+        assertThat(mapper.asDataPoints(singletonList(emptyListNode)), is(empty()));
     }
 
 }

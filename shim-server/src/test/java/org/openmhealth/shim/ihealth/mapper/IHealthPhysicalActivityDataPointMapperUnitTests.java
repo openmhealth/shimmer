@@ -30,7 +30,9 @@ import java.util.List;
 
 import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.empty;
 import static org.openmhealth.schema.domain.omh.DataPointModality.SELF_REPORTED;
 import static org.openmhealth.schema.domain.omh.DataPointModality.SENSED;
 import static org.openmhealth.schema.domain.omh.PhysicalActivity.SCHEMA_ID;
@@ -99,8 +101,7 @@ public class IHealthPhysicalActivityDataPointMapperUnitTests extends IHealthData
         JsonNode emptyListResponseNode =
                 asJsonNode("/org/openmhealth/shim/ihealth/mapper/ihealth-empty-sports-activity.json");
 
-        List<DataPoint<PhysicalActivity>> dataPoints = mapper.asDataPoints(singletonList(emptyListResponseNode));
-        assertThat(dataPoints.size(), equalTo(0));
+        assertThat(mapper.asDataPoints(singletonList(emptyListResponseNode)), is(empty()));
     }
 
 }
