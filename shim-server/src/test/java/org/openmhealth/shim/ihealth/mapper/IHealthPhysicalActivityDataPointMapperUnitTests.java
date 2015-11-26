@@ -20,7 +20,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import org.openmhealth.schema.domain.omh.DataPoint;
 import org.openmhealth.schema.domain.omh.PhysicalActivity;
 import org.openmhealth.schema.domain.omh.TimeInterval;
-import org.springframework.core.io.ClassPathResource;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -44,32 +44,35 @@ public class IHealthPhysicalActivityDataPointMapperUnitTests extends IHealthData
 
     private JsonNode responseNode;
     private IHealthPhysicalActivityDataPointMapper mapper = new IHealthPhysicalActivityDataPointMapper();
+    List<DataPoint<PhysicalActivity>> dataPoints;
 
     @BeforeTest
     public void initializeResponseNode() throws IOException {
 
-        ClassPathResource resource =
-                new ClassPathResource("/org/openmhealth/shim/ihealth/mapper/ihealth-sports-activity.json");
-        responseNode = objectMapper.readTree(resource.getInputStream());
+        responseNode = asJsonNode("/org/openmhealth/shim/ihealth/mapper/ihealth-sports-activity.json");
+    }
+
+    @BeforeMethod
+    public void initializeDataPoints() {
+
+        dataPoints = mapper.asDataPoints(singletonList(responseNode));
     }
 
     @Test
     public void asDataPointsShouldReturnTheCorrectNumberOfDataPoints() {
 
-        List<DataPoint<PhysicalActivity>> dataPoints = mapper.asDataPoints(singletonList(responseNode));
         assertThat(dataPoints.size(), equalTo(2));
     }
 
     @Test
     public void asDataPointsShouldReturnCorrectSensedDataPoints() {
 
-        List<DataPoint<PhysicalActivity>> dataPoints = mapper.asDataPoints(singletonList(responseNode));
-
         PhysicalActivity.Builder expectedPhysicalActivityBuilder =
                 new PhysicalActivity.Builder("Swimming, breaststroke")
                         .setEffectiveTimeFrame(TimeInterval.ofStartDateTimeAndEndDateTime(
                                 OffsetDateTime.parse("2015-09-17T20:02:28-08:00"),
                                 OffsetDateTime.parse("2015-09-17T20:32:28-08:00")));
+
         assertThat(dataPoints.get(0).getBody(), equalTo(expectedPhysicalActivityBuilder.build()));
 
         testDataPointHeader(dataPoints.get(0).getHeader(), SCHEMA_ID, SENSED,
@@ -78,9 +81,6 @@ public class IHealthPhysicalActivityDataPointMapperUnitTests extends IHealthData
 
     @Test
     public void asDataPointsShouldReturnCorrectSelfReportedDataPoints() {
-
-        List<DataPoint<PhysicalActivity>> dataPoints = mapper.asDataPoints(singletonList(responseNode));
-
 
         PhysicalActivity.Builder expectedPhysicalActivityBuilder = new PhysicalActivity.Builder("Running")
                 .setEffectiveTimeFrame(
@@ -96,9 +96,8 @@ public class IHealthPhysicalActivityDataPointMapperUnitTests extends IHealthData
     @Test
     public void asDataPointsReturnsNoDataPointsForAnEmptyList() throws IOException {
 
-        ClassPathResource resource =
-                new ClassPathResource("/org/openmhealth/shim/ihealth/mapper/ihealth-empty-sports-activity.json");
-        JsonNode emptyListResponseNode = objectMapper.readTree(resource.getInputStream());
+        JsonNode emptyListResponseNode =
+                asJsonNode("/org/openmhealth/shim/ihealth/mapper/ihealth-empty-sports-activity.json");
 
         List<DataPoint<PhysicalActivity>> dataPoints = mapper.asDataPoints(singletonList(emptyListResponseNode));
         assertThat(dataPoints.size(), equalTo(0));

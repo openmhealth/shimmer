@@ -20,6 +20,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import org.hamcrest.Matchers;
 import org.openmhealth.schema.domain.omh.*;
 import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.time.OffsetDateTime;
@@ -40,6 +41,8 @@ public class IHealthStepCountDataPointMapperUnitTests extends IHealthDataPointMa
 
     private JsonNode responseNode;
     private IHealthStepCountDataPointMapper mapper = new IHealthStepCountDataPointMapper();
+    List<DataPoint<StepCount>> dataPoints;
+
 
     @BeforeClass
     public void initializeResponseNode() {
@@ -47,12 +50,18 @@ public class IHealthStepCountDataPointMapperUnitTests extends IHealthDataPointMa
         responseNode = asJsonNode("org/openmhealth/shim/ihealth/mapper/ihealth-activity.json");
     }
 
+    @BeforeMethod
+    public void initializeDataPoints() {
+
+        dataPoints = mapper.asDataPoints(singletonList(responseNode));
+    }
+
     @Test
     public void asDataPointsShouldNotMapDataPointsWithZeroSteps() {
 
         JsonNode nodeWithNoSteps = asJsonNode("org/openmhealth/shim/ihealth/mapper/ihealth-activity-no-steps.json");
-        List<DataPoint<StepCount>> dataPoints = mapper.asDataPoints(singletonList(nodeWithNoSteps));
-        assertThat(dataPoints, is(empty()));
+
+        assertThat(mapper.asDataPoints(singletonList(nodeWithNoSteps)), is(empty()));
     }
 
     @Test
@@ -63,8 +72,6 @@ public class IHealthStepCountDataPointMapperUnitTests extends IHealthDataPointMa
 
     @Test
     public void asDataPointsShouldReturnCorrectDataPointsWhenSensed() {
-
-        List<DataPoint<StepCount>> dataPoints = mapper.asDataPoints(singletonList(responseNode));
 
         StepCount.Builder expectedStepCountBuilder = new StepCount.Builder(21);
 
@@ -80,8 +87,6 @@ public class IHealthStepCountDataPointMapperUnitTests extends IHealthDataPointMa
 
     @Test
     public void asDataPointsShouldReturnDataPointWithUserNoteWhenNoteIsPresent() {
-
-        List<DataPoint<StepCount>> dataPoints = mapper.asDataPoints(singletonList(responseNode));
 
         StepCount.Builder expectedStepCountBuilder = new StepCount.Builder(4398);
 

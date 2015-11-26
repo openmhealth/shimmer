@@ -18,7 +18,7 @@ package org.openmhealth.shim.ihealth.mapper;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.openmhealth.schema.domain.omh.*;
-import org.springframework.core.io.ClassPathResource;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -27,9 +27,7 @@ import java.time.OffsetDateTime;
 import java.util.List;
 
 import static java.util.Collections.singletonList;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
 import static org.openmhealth.schema.domain.omh.DataPointModality.SELF_REPORTED;
@@ -43,26 +41,28 @@ public class IHealthBloodPressureDataPointMapperUnitTests extends IHealthDataPoi
 
     private JsonNode responseNode;
     private IHealthBloodPressureDataPointMapper mapper = new IHealthBloodPressureDataPointMapper();
+    List<DataPoint<BloodPressure>> dataPoints;
 
     @BeforeTest
     public void initializeResponseNode() throws IOException {
 
-        ClassPathResource resource =
-                new ClassPathResource("org/openmhealth/shim/ihealth/mapper/ihealth-blood-pressure.json");
-        responseNode = objectMapper.readTree(resource.getInputStream());
+        responseNode = asJsonNode("org/openmhealth/shim/ihealth/mapper/ihealth-blood-pressure.json");
+    }
+
+    @BeforeMethod
+    public void initializeDataPoints() {
+
+        dataPoints = mapper.asDataPoints(singletonList(responseNode));
     }
 
     @Test
     public void asDataPointsShouldReturnCorrectNumberOfDataPoints() {
 
-        List<DataPoint<BloodPressure>> dataPoints = mapper.asDataPoints(singletonList(responseNode));
         assertThat(dataPoints.size(), equalTo(2));
     }
 
     @Test
     public void asDataPointsShouldReturnCorrectSensedDataPoints() {
-
-        List<DataPoint<BloodPressure>> dataPoints = mapper.asDataPoints(singletonList(responseNode));
 
         BloodPressure expectedBloodPressure = new BloodPressure.Builder(
                 new SystolicBloodPressure(BloodPressureUnit.MM_OF_MERCURY, 120),
@@ -82,8 +82,6 @@ public class IHealthBloodPressureDataPointMapperUnitTests extends IHealthDataPoi
     @Test
     public void asDataPointsShouldReturnCorrectSelfReportedDataPoints() {
 
-        List<DataPoint<BloodPressure>> dataPoints = mapper.asDataPoints(singletonList(responseNode));
-
         BloodPressure expectedBloodPressure = new BloodPressure.Builder(
                 new SystolicBloodPressure(BloodPressureUnit.MM_OF_MERCURY, 130),
                 new DiastolicBloodPressure(BloodPressureUnit.MM_OF_MERCURY, 95))
@@ -101,8 +99,6 @@ public class IHealthBloodPressureDataPointMapperUnitTests extends IHealthDataPoi
 
     @Test
     public void asDataPointsShouldReturnCorrectUserNotesWithDataPoints() {
-
-        List<DataPoint<BloodPressure>> dataPoints = mapper.asDataPoints(singletonList(responseNode));
 
         assertThat(dataPoints.get(0).getBody().getUserNotes(), nullValue());
         assertThat(dataPoints.get(1).getBody().getUserNotes(), equalTo("BP on the up and up."));

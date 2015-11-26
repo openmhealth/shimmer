@@ -19,7 +19,7 @@ package org.openmhealth.shim.ihealth.mapper;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.openmhealth.schema.domain.omh.DataPoint;
 import org.openmhealth.schema.domain.omh.HeartRate;
-import org.springframework.core.io.ClassPathResource;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -28,9 +28,7 @@ import java.time.OffsetDateTime;
 import java.util.List;
 
 import static java.util.Collections.singletonList;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
 import static org.openmhealth.schema.domain.omh.DataPointModality.SELF_REPORTED;
@@ -43,28 +41,32 @@ import static org.openmhealth.schema.domain.omh.DataPointModality.SENSED;
 public class IHealthBloodOxygenEndpointHeartRateDataPointMapperUnitTests extends IHealthDataPointMapperUnitTests {
 
     JsonNode responseNode;
+
     private IHealthBloodOxygenEndpointHeartRateDataPointMapper mapper =
             new IHealthBloodOxygenEndpointHeartRateDataPointMapper();
+
+    List<DataPoint<HeartRate>> dataPoints;
 
     @BeforeTest
     public void initializeResponseNode() throws IOException {
 
-        ClassPathResource resource =
-                new ClassPathResource("/org/openmhealth/shim/ihealth/mapper/ihealth-blood-oxygen.json");
-        responseNode = objectMapper.readTree(resource.getInputStream());
+        responseNode = asJsonNode("/org/openmhealth/shim/ihealth/mapper/ihealth-blood-oxygen.json");
+    }
+
+    @BeforeMethod
+    public void initializeDataPoints() {
+
+        dataPoints = mapper.asDataPoints(singletonList(responseNode));
     }
 
     @Test
     public void asDataPointsShouldReturnCorrectNumberOfDataPoints() {
 
-        List<DataPoint<HeartRate>> dataPoints = mapper.asDataPoints(singletonList(responseNode));
         assertThat(dataPoints.size(), equalTo(2));
     }
 
     @Test
     public void asDataPointsShouldReturnCorrectSensedDataPoints() {
-
-        List<DataPoint<HeartRate>> dataPoints = mapper.asDataPoints(singletonList(responseNode));
 
         HeartRate.Builder expectedHeartRateBuilder = new HeartRate.Builder(80)
                 .setEffectiveTimeFrame(OffsetDateTime.parse("2015-09-23T15:46:00-06:00"));
@@ -78,8 +80,6 @@ public class IHealthBloodOxygenEndpointHeartRateDataPointMapperUnitTests extends
     @Test
     public void asDataPointsShouldReturnCorrectSelfReportedDataPoints() {
 
-        List<DataPoint<HeartRate>> dataPoints = mapper.asDataPoints(singletonList(responseNode));
-
         HeartRate.Builder expectedHeartRateBuilder = new HeartRate.Builder(65)
                 .setEffectiveTimeFrame(OffsetDateTime.parse("2015-09-24T15:03:00-06:00"))
                 .setUserNotes("Satch on satch ");
@@ -92,8 +92,6 @@ public class IHealthBloodOxygenEndpointHeartRateDataPointMapperUnitTests extends
     @Test
     public void asDataPointsShouldReturnCorrectUserNotesWithDataPoints() {
 
-        List<DataPoint<HeartRate>> dataPoints = mapper.asDataPoints(singletonList(responseNode));
-
         assertThat(dataPoints.get(0).getBody().getUserNotes(), nullValue());
         assertThat(dataPoints.get(1).getBody().getUserNotes(), equalTo("Satch on satch "));
     }
@@ -101,13 +99,10 @@ public class IHealthBloodOxygenEndpointHeartRateDataPointMapperUnitTests extends
     @Test
     public void asDataPointsShouldReturnNoDataPointWhenHeartRateDataIsNotPresent() throws IOException {
 
-        ClassPathResource resource = new ClassPathResource(
+        JsonNode noHeartRateBloodOxygenNode = asJsonNode(
                 "org/openmhealth/shim/ihealth/mapper/ihealth-blood-oxygen-missing-heart-rate.json");
-        JsonNode noHeartRateBloodOxygenNode = objectMapper.readTree(resource.getInputStream());
 
-        List<DataPoint<HeartRate>> dataPoints = mapper.asDataPoints(singletonList(noHeartRateBloodOxygenNode));
-
-        assertThat(dataPoints.size(), equalTo(0));
+        assertThat(mapper.asDataPoints(singletonList(noHeartRateBloodOxygenNode)), is(empty()));
     }
 
     @Test

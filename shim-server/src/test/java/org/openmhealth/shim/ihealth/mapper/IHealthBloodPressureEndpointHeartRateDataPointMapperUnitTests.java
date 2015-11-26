@@ -46,6 +46,8 @@ public class IHealthBloodPressureEndpointHeartRateDataPointMapperUnitTests exten
     private IHealthBloodPressureEndpointHeartRateDataPointMapper mapper =
             new IHealthBloodPressureEndpointHeartRateDataPointMapper();
 
+    List<DataPoint<HeartRate>> dataPoints;
+
     @BeforeTest
     public void initializeResponseNodes() throws IOException {
 

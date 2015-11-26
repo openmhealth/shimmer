@@ -18,7 +18,7 @@ package org.openmhealth.shim.ihealth.mapper;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.openmhealth.schema.domain.omh.*;
-import org.springframework.core.io.ClassPathResource;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -42,26 +42,28 @@ public class IHealthBodyWeightDataPointMapperUnitTests extends IHealthDataPointM
 
     protected JsonNode responseNode;
     IHealthBodyWeightDataPointMapper mapper = new IHealthBodyWeightDataPointMapper();
+    List<DataPoint<BodyWeight>> dataPoints;
 
     @BeforeTest
     public void initializeResponseNode() throws IOException {
 
-        ClassPathResource resource =
-                new ClassPathResource("org/openmhealth/shim/ihealth/mapper/ihealth-body-weight.json");
-        responseNode = objectMapper.readTree(resource.getInputStream());
+        responseNode = asJsonNode("org/openmhealth/shim/ihealth/mapper/ihealth-body-weight.json");
+    }
+
+    @BeforeMethod
+    public void initializeDataPoints() {
+
+        dataPoints = mapper.asDataPoints(singletonList(responseNode));
     }
 
     @Test
     public void asDataPointsShouldReturnCorrectNumberOfDataPoints() {
 
-        List<DataPoint<BodyWeight>> dataPoints = mapper.asDataPoints(singletonList(responseNode));
         assertThat(dataPoints.size(), equalTo(2));
     }
 
     @Test
     public void asDataPointsShouldReturnCorrectSensedDataPoints() {
-
-        List<DataPoint<BodyWeight>> dataPoints = mapper.asDataPoints(singletonList(responseNode));
 
         BodyWeight.Builder expectedBodyWeightBuilder = new BodyWeight.Builder(
                 new MassUnitValue(MassUnit.KILOGRAM, 77.5643875134944))
@@ -78,8 +80,6 @@ public class IHealthBodyWeightDataPointMapperUnitTests extends IHealthDataPointM
     @Test
     public void asDataPointsShouldReturnCorrectSelfReportedDataPoints() {
 
-        List<DataPoint<BodyWeight>> dataPoints = mapper.asDataPoints(singletonList(responseNode));
-
         BodyWeight.Builder expectedBodyWeightBuilder =
                 new BodyWeight.Builder(new MassUnitValue(MassUnit.KILOGRAM, 77.56438446044922))
                         .setEffectiveTimeFrame(OffsetDateTime.parse("2015-09-17T14:07:57-06:00"))
@@ -95,8 +95,6 @@ public class IHealthBodyWeightDataPointMapperUnitTests extends IHealthDataPointM
     @Test
     public void asDataPointsShouldReturnCorrectUserNotes() {
 
-        List<DataPoint<BodyWeight>> dataPoints = mapper.asDataPoints(singletonList(responseNode));
-
         assertThat(dataPoints.get(0).getBody().getUserNotes(), nullValue());
         assertThat(dataPoints.get(1).getBody().getUserNotes(), equalTo("Weight so good, look at me now"));
     }
@@ -104,9 +102,8 @@ public class IHealthBodyWeightDataPointMapperUnitTests extends IHealthDataPointM
     @Test
     public void asDataPointsShouldReturnNoDataPointsWhenWeightValueEqualsZero() throws IOException {
 
-        ClassPathResource resource =
-                new ClassPathResource("org/openmhealth/shim/ihealth/mapper/ihealth-missing-body-weight-value.json");
-        JsonNode zeroValueNode = objectMapper.readTree(resource.getInputStream());
+        JsonNode zeroValueNode =
+                asJsonNode("org/openmhealth/shim/ihealth/mapper/ihealth-missing-body-weight-value.json");
 
         List<DataPoint<BodyWeight>> dataPoints = mapper.asDataPoints(singletonList(zeroValueNode));
         assertThat(dataPoints.size(), equalTo(0));
@@ -115,9 +112,7 @@ public class IHealthBodyWeightDataPointMapperUnitTests extends IHealthDataPointM
     @Test
     public void asDataPointsShouldReturnNoDataPointsWhenWeightListIsEmpty() throws IOException {
 
-        ClassPathResource resource =
-                new ClassPathResource("org/openmhealth/shim/ihealth/mapper/ihealth-empty-body-weight.json");
-        JsonNode emptyListNode = objectMapper.readTree(resource.getInputStream());
+        JsonNode emptyListNode = asJsonNode("org/openmhealth/shim/ihealth/mapper/ihealth-empty-body-weight.json");
 
         List<DataPoint<BodyWeight>> dataPoints = mapper.asDataPoints(singletonList(emptyListNode));
         assertThat(dataPoints.size(), equalTo(0));

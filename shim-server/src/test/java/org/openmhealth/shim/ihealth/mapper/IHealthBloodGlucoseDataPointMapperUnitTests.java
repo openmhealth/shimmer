@@ -19,6 +19,7 @@ package org.openmhealth.shim.ihealth.mapper;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.openmhealth.schema.domain.omh.*;
 import org.springframework.core.io.ClassPathResource;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -43,26 +44,28 @@ public class IHealthBloodGlucoseDataPointMapperUnitTests extends IHealthDataPoin
 
     private JsonNode responseNode;
     private IHealthBloodGlucoseDataPointMapper mapper = new IHealthBloodGlucoseDataPointMapper();
+    List<DataPoint<BloodGlucose>> dataPoints;
 
     @BeforeTest
     public void initializeResponseNode() throws IOException {
 
-        ClassPathResource resource =
-                new ClassPathResource("/org/openmhealth/shim/ihealth/mapper/ihealth-blood-glucose.json");
-        responseNode = objectMapper.readTree(resource.getInputStream());
+        responseNode = asJsonNode("/org/openmhealth/shim/ihealth/mapper/ihealth-blood-glucose.json");
+    }
+
+    @BeforeMethod
+    public void initializeDataPoints() {
+
+        dataPoints = mapper.asDataPoints(singletonList(responseNode));
     }
 
     @Test
     public void asDataPointsShouldReturnCorrectNumberOfDataPoints() {
 
-        List<DataPoint<BloodGlucose>> dataPoints = mapper.asDataPoints(singletonList(responseNode));
         assertThat(dataPoints.size(), equalTo(2));
     }
 
     @Test
     public void asDataPointsShouldReturnCorrectSensedDataPoints() {
-
-        List<DataPoint<BloodGlucose>> dataPoints = mapper.asDataPoints(singletonList(responseNode));
 
         BloodGlucose.Builder expectedBloodGlucoseBuilder = new BloodGlucose.Builder(
                 new TypedUnitValue<>(BloodGlucoseUnit.MILLIGRAMS_PER_DECILITER, 60))
@@ -81,8 +84,6 @@ public class IHealthBloodGlucoseDataPointMapperUnitTests extends IHealthDataPoin
 
     @Test
     public void asDataPointsShouldReturnCorrectSelfReportedDataPoints() {
-
-        List<DataPoint<BloodGlucose>> dataPoints = mapper.asDataPoints(singletonList(responseNode));
 
         BloodGlucose.Builder expectedBloodGlucoseBuilder =
                 new BloodGlucose.Builder(new TypedUnitValue<>(BloodGlucoseUnit.MILLIGRAMS_PER_DECILITER, 70))

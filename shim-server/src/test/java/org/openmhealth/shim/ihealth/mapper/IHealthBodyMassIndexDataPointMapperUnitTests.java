@@ -19,6 +19,7 @@ package org.openmhealth.shim.ihealth.mapper;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.openmhealth.schema.domain.omh.*;
 import org.springframework.core.io.ClassPathResource;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -40,26 +41,28 @@ public class IHealthBodyMassIndexDataPointMapperUnitTests extends IHealthDataPoi
 
     private JsonNode responseNode;
     private IHealthBodyMassIndexDataPointMapper mapper = new IHealthBodyMassIndexDataPointMapper();
+    List<DataPoint<BodyMassIndex>> dataPoints;
 
     @BeforeTest
     public void initializeResponse() throws IOException {
 
-        ClassPathResource resource =
-                new ClassPathResource("org/openmhealth/shim/ihealth/mapper/ihealth-body-weight.json");
-        responseNode = objectMapper.readTree(resource.getInputStream());
+        responseNode = asJsonNode("org/openmhealth/shim/ihealth/mapper/ihealth-body-weight.json");
+    }
+
+    @BeforeMethod
+    public void initializeDataPoints() {
+
+        dataPoints = mapper.asDataPoints(singletonList(responseNode));
     }
 
     @Test
     public void asDataPointsShouldReturnCorrectNumberOfDataPoints() {
 
-        List<DataPoint<BodyMassIndex>> dataPoints = mapper.asDataPoints(singletonList(responseNode));
         assertThat(dataPoints.size(), equalTo(2));
     }
 
     @Test
     public void asDataPointsShouldReturnCorrectSensedDataPoints() {
-
-        List<DataPoint<BodyMassIndex>> dataPoints = mapper.asDataPoints(singletonList(responseNode));
 
         BodyMassIndex.Builder expectedBodyMassIndexBuilder = new BodyMassIndex.Builder(new TypedUnitValue<>(
                 BodyMassIndexUnit.KILOGRAMS_PER_SQUARE_METER, 22.56052563257619))
@@ -73,8 +76,6 @@ public class IHealthBodyMassIndexDataPointMapperUnitTests extends IHealthDataPoi
 
     @Test
     public void asDataPointsShouldReturnCorrectSelfReportedDataPoints() {
-
-        List<DataPoint<BodyMassIndex>> dataPoints = mapper.asDataPoints(singletonList(responseNode));
 
         BodyMassIndex.Builder expectedBodyMassIndexBuilder = new BodyMassIndex.Builder(
                 new TypedUnitValue<>(BodyMassIndexUnit.KILOGRAMS_PER_SQUARE_METER, 22.56052398681641))

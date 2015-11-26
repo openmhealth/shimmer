@@ -32,6 +32,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
  */
 public class IHealthDataPointMapperUnitTests extends DataPointMapperUnitTests {
 
+
     protected void testDataPointHeader(DataPointHeader testHeader, SchemaId schemaId, DataPointModality modality,
             String externalId, OffsetDateTime updatedDateTime) {
 
@@ -44,6 +45,5 @@ public class IHealthDataPointMapperUnitTests extends DataPointMapperUnitTests {
         assertThat(testHeader.getAcquisitionProvenance().getAdditionalProperties().get("source_updated_date_time"),
                 equalTo(updatedDateTime));
     }
-
 
 }
