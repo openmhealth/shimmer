@@ -17,10 +17,7 @@
 package org.openmhealth.shim.ihealth.mapper;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import org.openmhealth.schema.domain.omh.BodyWeight;
-import org.openmhealth.schema.domain.omh.DataPoint;
-import org.openmhealth.schema.domain.omh.MassUnit;
-import org.openmhealth.schema.domain.omh.MassUnitValue;
+import org.openmhealth.schema.domain.omh.*;
 
 import java.util.Optional;
 
@@ -29,7 +26,12 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asRequir
 
 
 /**
+ * A mapper that translates responses from the iHealth /weight.json/ endpoint into {@link BodyWeight} measures.
+ *
+ * @author Emerson Farrugia
  * @author Chris Schaefbauer
+ * @see <a href="http://developer.ihealthlabs.com/dev_documentation_RequestfordataofWeight.htm">
+ * iHealth Body Weight Endpoint Documentation</a>
  */
 public class IHealthBodyWeightDataPointMapper extends IHealthDataPointMapper<BodyWeight> {
 
@@ -47,14 +49,14 @@ public class IHealthBodyWeightDataPointMapper extends IHealthDataPointMapper<Bod
     }
 
     @Override
-    protected Optional<DataPoint<BodyWeight>> asDataPoint(JsonNode listNode, Integer measureUnitMagicNumber) {
+    protected Optional<DataPoint<BodyWeight>> asDataPoint(JsonNode listEntryNode, Integer measureUnitMagicNumber) {
 
         checkNotNull(measureUnitMagicNumber);
 
         IHealthBodyWeightUnit bodyWeightUnitType = IHealthBodyWeightUnit.fromIntegerValue(measureUnitMagicNumber);
         MassUnit bodyWeightUnit = bodyWeightUnitType.getOmhUnit();
 
-        double bodyWeightValue = getBodyWeightValueForUnitType(listNode, bodyWeightUnitType);
+        double bodyWeightValue = getBodyWeightValueForUnitType(listEntryNode, bodyWeightUnitType);
 
         if (bodyWeightValue == 0) {
 
@@ -64,22 +66,33 @@ public class IHealthBodyWeightDataPointMapper extends IHealthDataPointMapper<Bod
         BodyWeight.Builder bodyWeightBuilder =
                 new BodyWeight.Builder(new MassUnitValue(bodyWeightUnit, bodyWeightValue));
 
-        setEffectiveTimeFrameIfExists(listNode, bodyWeightBuilder);
-        setUserNoteIfExists(listNode, bodyWeightBuilder);
+        setEffectiveTimeFrameWithDateTimeIfExists(listEntryNode, bodyWeightBuilder);
+        setUserNoteIfExists(listEntryNode, bodyWeightBuilder);
 
         BodyWeight bodyWeight = bodyWeightBuilder.build();
 
-        return Optional.of(new DataPoint<>(createDataPointHeader(listNode, bodyWeight), bodyWeight));
+        return Optional.of(new DataPoint<>(createDataPointHeader(listEntryNode, bodyWeight), bodyWeight));
     }
 
-
-    protected double getBodyWeightValueForUnitType(JsonNode listNode,
+    /**
+     *
+     * @param listEntryNode A single entry from the response result array.
+     * @param bodyWeightUnitType The unit type for the measure.
+     * @return The body weight value for the list entry that is rendered in the correct unit.
+     */
+    protected double getBodyWeightValueForUnitType(JsonNode listEntryNode,
             IHealthBodyWeightUnit bodyWeightUnitType) {
 
-        Double weightValueFromApi = asRequiredDouble(listNode, "WeightValue");
+        Double weightValueFromApi = asRequiredDouble(listEntryNode, "WeightValue");
         return getBodyWeightValueForUnitType(weightValueFromApi, bodyWeightUnitType);
     }
 
+    /**
+     *
+     * @param bodyWeightValue The body weight value that has been extracted from the list entry node.
+     * @param bodyWeightUnitType The unit type for the measure.
+     * @return A body weight value that is rendered in the correct unit.
+     */
     protected double getBodyWeightValueForUnitType(double bodyWeightValue, IHealthBodyWeightUnit bodyWeightUnitType) {
 
         // iHealth has one unit type that is unsupported by OMH schemas, so we need to convert the value into a unit

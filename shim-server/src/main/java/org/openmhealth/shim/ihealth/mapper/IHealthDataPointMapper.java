@@ -87,21 +87,21 @@ public abstract class IHealthDataPointMapper<T> implements DataPointMapper<T, Js
      * <p>Note: Additional properties within the header come from the iHealth API and are not defined by the data point
      * header schema. Additional properties are subject to change.</p>
      */
-    protected DataPointHeader createDataPointHeader(JsonNode listNode, Measure measure) {
+    protected DataPointHeader createDataPointHeader(JsonNode listEntryNode, Measure measure) {
 
         DataPointAcquisitionProvenance.Builder acquisitionProvenanceBuilder =
                 new DataPointAcquisitionProvenance.Builder(RESOURCE_API_SOURCE_NAME);
 
-        asOptionalString(listNode, "DataSource").ifPresent(
+        asOptionalString(listEntryNode, "DataSource").ifPresent(
                 dataSource -> setAppropriateModality(dataSource, acquisitionProvenanceBuilder));
 
         DataPointAcquisitionProvenance acquisitionProvenance = acquisitionProvenanceBuilder.build();
 
-        asOptionalString(listNode, "DataID")
+        asOptionalString(listEntryNode, "DataID")
                 .ifPresent(externalId -> acquisitionProvenance.setAdditionalProperty("external_id",
                         externalId));
 
-        asOptionalLong(listNode, "LastChangeTime").ifPresent(
+        asOptionalLong(listEntryNode, "LastChangeTime").ifPresent(
                 lastUpdatedInUnixSecs -> acquisitionProvenance.setAdditionalProperty("source_updated_date_time",
                         OffsetDateTime.ofInstant(Instant.ofEpochSecond(lastUpdatedInUnixSecs), ZoneId.of("Z"))));
 
@@ -111,13 +111,22 @@ public abstract class IHealthDataPointMapper<T> implements DataPointMapper<T, Js
 
     }
 
-    protected static void setEffectiveTimeFrameIfExists(JsonNode listNode, Builder builder) {
+    /**
+     * Sets the effective time frame of a measure builder as a single point in time using a date_time. This method does
+     * not set time intervals.
+     *
+     * @param listEntryNode A single node from the response result array that contains the MDate field that needs to
+     * get
+     * mapped as a date_time in the timeframe.
+     * @param builder The measure builder to set the effective time frame.
+     */
+    protected static void setEffectiveTimeFrameWithDateTimeIfExists(JsonNode listEntryNode, Builder builder) {
 
-        Optional<Long> optionalOffsetDateTime = asOptionalLong(listNode, "MDate");
+        Optional<Long> optionalOffsetDateTime = asOptionalLong(listEntryNode, "MDate");
 
         if (optionalOffsetDateTime.isPresent()) {
 
-            Optional<String> timeZone = asOptionalString(listNode, "TimeZone");
+            Optional<String> timeZone = asOptionalString(listEntryNode, "TimeZone");
 
             if (timeZone.isPresent() && !timeZone.get().isEmpty()) {
 
@@ -126,12 +135,13 @@ public abstract class IHealthDataPointMapper<T> implements DataPointMapper<T, Js
                 builder.setEffectiveTimeFrame(offsetDateTimeCorrectOffset);
             }
 
-            else if (asOptionalLong(listNode, "TimeZone").isPresent()) {
+            else if (asOptionalLong(listEntryNode, "TimeZone").isPresent()) {
 
-                Long timeZoneOffsetValue = asOptionalLong(listNode, "TimeZone").get();
+                Long timeZoneOffsetValue = asOptionalLong(listEntryNode, "TimeZone").get();
                 String timeZoneString = timeZoneOffsetValue.toString();
 
 
+                // Zone offset cannot parse a positive string offset that's missing a '+' sign (i.e., "0200" vs "+0200")
                 if (timeZoneOffsetValue >= 0) {
                     timeZoneString = "+" + timeZoneOffsetValue.toString();
                 }
@@ -147,9 +157,9 @@ public abstract class IHealthDataPointMapper<T> implements DataPointMapper<T, Js
     }
 
     /**
-     * This method transforms the unix epoch second timestamps in iHealth responses, which are not in utc but instead
-     * offset to the local time zone of the data point, into an {@link OffsetDateTime} with the correct date/time and
-     * offset.
+     * This method transforms the unix epoch second timestamps in iHealth responses into an {@link OffsetDateTime} with
+     * the correct date/time and offset. The timestamps provided in iHealth responses are not in UTC but instead offset
+     * to the local time zone of the data point.
      */
     protected static OffsetDateTime getDateTimeWithCorrectOffset(Long dateTimeInUnixSecondsWithLocalTimeOffset,
             String timeZoneString) {
@@ -163,6 +173,11 @@ public abstract class IHealthDataPointMapper<T> implements DataPointMapper<T, Js
         return offsetDateTimeFromOffsetInstant.toLocalDateTime().atOffset(ZoneOffset.of(timeZoneString));
     }
 
+    /**
+     * @param dateTimeInUnixSecondsWithLocalTimeOffset A unix epoch timestamp in local time.
+     * @param timeZoneString The time zone offset as a String (e.g., "+0200","-2").
+     * @return The date time with the correct offset.
+     */
     protected static OffsetDateTime getDateTimeAtStartOfDayWithCorrectOffset(
             Long dateTimeInUnixSecondsWithLocalTimeOffset, String timeZoneString) {
 
@@ -175,9 +190,16 @@ public abstract class IHealthDataPointMapper<T> implements DataPointMapper<T, Js
         return dateTimeFromOffsetInstant.toLocalDate().atStartOfDay().atOffset(ZoneOffset.of(timeZoneString));
     }
 
-    protected static void setUserNoteIfExists(JsonNode listNode, Builder builder) {
+    /**
+     * Sets the user note in a measure builder with the value of the note property in the list entry node if that
+     * property exists.
+     *
+     * @param listEntryNode A single entry from the response result array.
+     * @param builder The measure builder to set the user note.
+     */
+    protected static void setUserNoteIfExists(JsonNode listEntryNode, Builder builder) {
 
-        Optional<String> note = asOptionalString(listNode, "Note");
+        Optional<String> note = asOptionalString(listEntryNode, "Note");
 
         if (note.isPresent() && !note.get().isEmpty()) {
 
@@ -185,6 +207,11 @@ public abstract class IHealthDataPointMapper<T> implements DataPointMapper<T, Js
         }
     }
 
+    /**
+     * Sets the correct DataPointModality based on the iHealth value indicating the source of the DataPoint.
+     * @param dataSourceValue The iHealth value in the list entry node indicating the source of the DataPoint.
+     * @param builder The DataPointAcquisitionProvenance builder to set the modality.
+     */
     private void setAppropriateModality(String dataSourceValue, DataPointAcquisitionProvenance.Builder builder) {
 
         if (dataSourceValue.equals(DATA_SOURCE_FROM_DEVICE)) {
@@ -208,11 +235,11 @@ public abstract class IHealthDataPointMapper<T> implements DataPointMapper<T, Js
     protected abstract Optional<String> getMeasureUnitNodeName();
 
     /**
-     * @param listEntryNode a single node from the
+     * @param listEntryNode A single entry from the response result array.
      * @param measureUnitMagicNumber The number representing the units used to render the response, according to
      * iHealth. This is retrieved from the main body of the response node. If the measure type does not use units, then
      * this value is null.
-     * @return the data point mapped from the listEntryNode, unless skipped
+     * @return The data point mapped from the listEntryNode, unless it is skipped.
      */
     protected abstract Optional<DataPoint<T>> asDataPoint(JsonNode listEntryNode, Integer measureUnitMagicNumber);
 }

@@ -26,9 +26,13 @@ import java.util.Optional;
 import static org.openmhealth.schema.domain.omh.BodyMassIndexUnit.KILOGRAMS_PER_SQUARE_METER;
 import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asRequiredDouble;
 
-
 /**
+ * A mapper that translates responses from the iHealth /weight.json/ endpoint into {@link BodyMassIndex} measures.
+ *
+ * @author Emerson Farrugia
  * @author Chris Schaefbauer
+ * @see <a href="http://developer.ihealthlabs.com/dev_documentation_RequestfordataofWeight.htm">
+ * iHealth Body Weight Endpoint Documentation</a>
  */
 public class IHealthBodyMassIndexDataPointMapper extends IHealthDataPointMapper<BodyMassIndex> {
 
@@ -43,9 +47,9 @@ public class IHealthBodyMassIndexDataPointMapper extends IHealthDataPointMapper<
     }
 
     @Override
-    protected Optional<DataPoint<BodyMassIndex>> asDataPoint(JsonNode listNode, Integer measureUnitMagicNumber) {
+    protected Optional<DataPoint<BodyMassIndex>> asDataPoint(JsonNode listEntryNode, Integer measureUnitMagicNumber) {
 
-        Double bmiValue = asRequiredDouble(listNode, "BMI");
+        Double bmiValue = asRequiredDouble(listEntryNode, "BMI");
 
         if (bmiValue == 0) {
             return Optional.empty();
@@ -54,11 +58,11 @@ public class IHealthBodyMassIndexDataPointMapper extends IHealthDataPointMapper<
         BodyMassIndex.Builder bodyMassIndexBuilder =
                 new BodyMassIndex.Builder(new TypedUnitValue<>(KILOGRAMS_PER_SQUARE_METER, bmiValue));
 
-        setEffectiveTimeFrameIfExists(listNode, bodyMassIndexBuilder);
-        setUserNoteIfExists(listNode, bodyMassIndexBuilder);
+        setEffectiveTimeFrameWithDateTimeIfExists(listEntryNode, bodyMassIndexBuilder);
+        setUserNoteIfExists(listEntryNode, bodyMassIndexBuilder);
 
         BodyMassIndex bodyMassIndex = bodyMassIndexBuilder.build();
-        return Optional.of(new DataPoint<>(createDataPointHeader(listNode, bodyMassIndex), bodyMassIndex));
+        return Optional.of(new DataPoint<>(createDataPointHeader(listEntryNode, bodyMassIndex), bodyMassIndex));
 
     }
 }

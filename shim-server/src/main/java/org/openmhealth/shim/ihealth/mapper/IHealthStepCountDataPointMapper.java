@@ -30,7 +30,11 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.*;
 
 
 /**
+ * A mapper that translates responses from the iHealth /activity.json/ endpoint into {@link StepCount} measures.
+ *
  * @author Chris Schaefbauer
+ * @see <a href="http://developer.ihealthlabs.com/dev_documentation_RequestfordataofActivityReport.htm">
+ * iHealth Activity Endpoint Documentation</a>
  */
 public class IHealthStepCountDataPointMapper extends IHealthDataPointMapper<StepCount> {
 
@@ -63,6 +67,8 @@ public class IHealthStepCountDataPointMapper extends IHealthDataPointMapper<Step
 
             if (timeZone.isPresent()) {
 
+                /* iHealth provides daily summaries for step counts and timestamp the datapoint at either the end of
+                the day (23:50) or at the latest time that datapoint was synced */
                 stepCountBuilder.setEffectiveTimeFrame(ofStartDateTimeAndDuration(
                         getDateTimeAtStartOfDayWithCorrectOffset(dateTimeString.get(), timeZone.get()),
                         new DurationUnitValue(DurationUnit.DAY, 1)));

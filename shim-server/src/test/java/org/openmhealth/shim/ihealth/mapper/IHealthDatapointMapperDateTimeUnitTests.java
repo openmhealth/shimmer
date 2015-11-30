@@ -47,7 +47,7 @@ public class IHealthDatapointMapperDateTimeUnitTests extends IHealthDataPointMap
     public void setEffectiveTimeFrameShouldNotAddTimeFrameWhenTimeZoneIsMissing() throws IOException {
 
         JsonNode timeInfoNode = createResponseNodeWithTimeZone(null);
-        IHealthDataPointMapper.setEffectiveTimeFrameIfExists(timeInfoNode, builder);
+        IHealthDataPointMapper.setEffectiveTimeFrameWithDateTimeIfExists(timeInfoNode, builder);
 
         assertThat(builder.build().getEffectiveTimeFrame(), nullValue());
     }
@@ -57,7 +57,7 @@ public class IHealthDatapointMapperDateTimeUnitTests extends IHealthDataPointMap
 
         JsonNode timeInfoNode = createResponseNodeWithTimeZone("\"\"");
 
-        IHealthDataPointMapper.setEffectiveTimeFrameIfExists(timeInfoNode, builder);
+        IHealthDataPointMapper.setEffectiveTimeFrameWithDateTimeIfExists(timeInfoNode, builder);
 
         assertThat(builder.build().getEffectiveTimeFrame(), nullValue());
     }
@@ -125,7 +125,7 @@ public class IHealthDatapointMapperDateTimeUnitTests extends IHealthDataPointMap
             throws IOException {
 
         JsonNode timeInfoNode = createResponseNodeWithTimeZone(timezoneString);
-        IHealthDataPointMapper.setEffectiveTimeFrameIfExists(timeInfoNode, builder);
+        IHealthDataPointMapper.setEffectiveTimeFrameWithDateTimeIfExists(timeInfoNode, builder);
 
         assertThat(builder.build().getEffectiveTimeFrame(), notNullValue());
         assertThat(builder.build().getEffectiveTimeFrame().getDateTime(), equalTo(

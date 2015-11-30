@@ -26,6 +26,9 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asRequir
 
 
 /**
+ * Base class that handles mapping iHealth responses from endpoints containing heart rate information into {@link
+ * HeartRate} measures
+ *
  * @author Chris Schaefbauer
  * @author Emerson Farrugia
  */
@@ -48,7 +51,7 @@ public abstract class IHealthHeartRateDataPointMapper extends IHealthDataPointMa
 
         HeartRate.Builder heartRateBuilder = new HeartRate.Builder(heartRateValue);
 
-        setEffectiveTimeFrameIfExists(listEntryNode, heartRateBuilder);
+        setEffectiveTimeFrameWithDateTimeIfExists(listEntryNode, heartRateBuilder);
         setUserNoteIfExists(listEntryNode, heartRateBuilder);
 
         HeartRate heartRate = heartRateBuilder.build();

@@ -28,7 +28,11 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asRequir
 
 
 /**
+ * A mapper that translates responses from the iHealth /glucose.json/ endpoint into {@link BloodGlucose} measures.
+ *
  * @author Chris Schaefbauer
+ * @see <a href="http://developer.ihealthlabs.com/dev_documentation_RequestfordataofBG.htm">
+ * iHealth Blood Glucose Endpoint Documentation</a>
  */
 public class IHealthBloodGlucoseDataPointMapper extends IHealthDataPointMapper<BloodGlucose> {
 
@@ -79,7 +83,7 @@ public class IHealthBloodGlucoseDataPointMapper extends IHealthDataPointMapper<B
             }
         }
 
-        setEffectiveTimeFrameIfExists(listEntryNode, bloodGlucoseBuilder);
+        setEffectiveTimeFrameWithDateTimeIfExists(listEntryNode, bloodGlucoseBuilder);
         setUserNoteIfExists(listEntryNode, bloodGlucoseBuilder);
 
         BloodGlucose bloodGlucose = bloodGlucoseBuilder.build();
@@ -93,6 +97,10 @@ public class IHealthBloodGlucoseDataPointMapper extends IHealthDataPointMapper<B
         return Optional.of(new DataPoint<>(createDataPointHeader(listEntryNode, bloodGlucose), bloodGlucose));
     }
 
+    /**
+     * Maps strings used by iHealth to represent the relationship between a blood glucose measure and meals to the
+     * values used in OMH schema.
+     */
     private void initializeTemporalRelationshipToFoodMap() {
 
         ImmutableMap.Builder<String, TemporalRelationshipToMeal> relationshipToMealMapBuilder = ImmutableMap.builder();
@@ -109,6 +117,10 @@ public class IHealthBloodGlucoseDataPointMapper extends IHealthDataPointMapper<B
 
     }
 
+    /**
+     * @param measureUnitMagicNumber The number from the iHealth response representing the unit of measure.
+     * @return The corresponding OMH schema unit of measure for blood glucose.
+     */
     protected BloodGlucoseUnit getBloodGlucoseUnitFromMagicNumber(Integer measureUnitMagicNumber) {
 
         switch ( measureUnitMagicNumber ) {

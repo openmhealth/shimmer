@@ -16,8 +16,16 @@
 
 package org.openmhealth.shim.ihealth.mapper;
 
+import org.openmhealth.schema.domain.omh.HeartRate;
+
+
 /**
+ * A mapper that translates responses from the iHealth /bp.json/ endpoint into {@link HeartRate} measures.
+ *
  * @author Emerson Farrugia
+ * @author Chris Schaefbauer
+ * @see <a href="http://developer.ihealthlabs.com/dev_documentation_RequestfordataofBloodPressure.htm">
+ * iHealth Blood Pressure Endpoint Documentation</a>
  */
 public class IHealthBloodPressureEndpointHeartRateDataPointMapper extends IHealthHeartRateDataPointMapper {
 

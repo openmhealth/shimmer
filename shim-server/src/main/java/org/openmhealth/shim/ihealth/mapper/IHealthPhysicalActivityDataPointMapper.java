@@ -27,7 +27,13 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.*;
 
 
 /**
+ * A mapper that translates responses from the iHealth /sport.json/ endpoint into {@link PhysicalActivity} measures.
+ *
+ * @author Emerson Farrugia
  * @author Chris Schaefbauer
+ *
+ * @see <a href="http://developer.ihealthlabs.com/dev_documentation_RequestfordataofSport.htm">
+ * iHealth Sport Endpoint Documentation</a>
  */
 public class IHealthPhysicalActivityDataPointMapper extends IHealthDataPointMapper<PhysicalActivity> {
 
@@ -43,25 +49,28 @@ public class IHealthPhysicalActivityDataPointMapper extends IHealthDataPointMapp
     }
 
     @Override
-    protected Optional<DataPoint<PhysicalActivity>> asDataPoint(JsonNode listNode, Integer measureUnitMagicNumber) {
+    protected Optional<DataPoint<PhysicalActivity>> asDataPoint(JsonNode listEntryNode,
+            Integer measureUnitMagicNumber) {
 
-        String activityName = asRequiredString(listNode, "SportName");
+        String activityName = asRequiredString(listEntryNode, "SportName");
 
         if (activityName.isEmpty()) {
+
             return Optional.empty();
         }
 
         PhysicalActivity.Builder physicalActivityBuilder = new PhysicalActivity.Builder(activityName);
 
-        Optional<Long> startTimeUnixEpochSecs = asOptionalLong(listNode, "SportStartTime");
-        Optional<Long> endTimeUnixEpochSecs = asOptionalLong(listNode, "SportEndTime");
-        Optional<Integer> timeZoneOffset = asOptionalInteger(listNode, "TimeZone");
+        Optional<Long> startTimeUnixEpochSecs = asOptionalLong(listEntryNode, "SportStartTime");
+        Optional<Long> endTimeUnixEpochSecs = asOptionalLong(listEntryNode, "SportEndTime");
+        Optional<Integer> timeZoneOffset = asOptionalInteger(listEntryNode, "TimeZone");
 
         if (startTimeUnixEpochSecs.isPresent() && endTimeUnixEpochSecs.isPresent() && timeZoneOffset.isPresent()) {
 
             Integer timeZoneOffsetValue = timeZoneOffset.get();
             String timeZoneString = timeZoneOffsetValue.toString();
 
+            // Zone offset cannot parse a positive string offset that's missing a '+' sign (i.e., "0200" vs "+0200")
             if (timeZoneOffsetValue >= 0) {
                 timeZoneString = "+" + timeZoneOffsetValue.toString();
             }
@@ -72,6 +81,6 @@ public class IHealthPhysicalActivityDataPointMapper extends IHealthDataPointMapp
         }
 
         PhysicalActivity physicalActivity = physicalActivityBuilder.build();
-        return Optional.of(new DataPoint<>(createDataPointHeader(listNode, physicalActivity), physicalActivity));
+        return Optional.of(new DataPoint<>(createDataPointHeader(listEntryNode, physicalActivity), physicalActivity));
     }
 }

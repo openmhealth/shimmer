@@ -26,7 +26,11 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asRequir
 
 
 /**
+ * A mapper that translates responses from the iHealth /bp.json/ endpoint into {@link BloodPressure} measures.
+ *
  * @author Chris Schaefbauer
+ * @see <a href="http://developer.ihealthlabs.com/dev_documentation_RequestfordataofBloodPressure.htm">
+ * iHealth Blood Pressure Endpoint Documentation</a>
  */
 public class IHealthBloodPressureDataPointMapper extends IHealthDataPointMapper<BloodPressure> {
 
@@ -47,31 +51,35 @@ public class IHealthBloodPressureDataPointMapper extends IHealthDataPointMapper<
     }
 
     @Override
-    protected Optional<DataPoint<BloodPressure>> asDataPoint(JsonNode listNode, Integer bloodPressureUnit) {
+    protected Optional<DataPoint<BloodPressure>> asDataPoint(JsonNode listEntryNode, Integer measureUnitMagicNumber) {
 
-        checkNotNull(bloodPressureUnit);
+        checkNotNull(measureUnitMagicNumber);
 
-        double systolicValue = getBloodPressureValueInMmHg(asRequiredDouble(listNode, "HP"), bloodPressureUnit);
+        double systolicValue = getBloodPressureValueInMmHg(asRequiredDouble(listEntryNode, "HP"), measureUnitMagicNumber);
         SystolicBloodPressure systolicBloodPressure =
                 new SystolicBloodPressure(BloodPressureUnit.MM_OF_MERCURY, systolicValue);
 
-        double diastolicValue = getBloodPressureValueInMmHg(asRequiredDouble(listNode, "LP"), bloodPressureUnit);
+        double diastolicValue = getBloodPressureValueInMmHg(asRequiredDouble(listEntryNode, "LP"), measureUnitMagicNumber);
         DiastolicBloodPressure diastolicBloodPressure =
                 new DiastolicBloodPressure(BloodPressureUnit.MM_OF_MERCURY, diastolicValue);
 
         BloodPressure.Builder bloodPressureBuilder =
                 new BloodPressure.Builder(systolicBloodPressure, diastolicBloodPressure);
 
-        setEffectiveTimeFrameIfExists(listNode, bloodPressureBuilder);
-        setUserNoteIfExists(listNode, bloodPressureBuilder);
+        setEffectiveTimeFrameWithDateTimeIfExists(listEntryNode, bloodPressureBuilder);
+        setUserNoteIfExists(listEntryNode, bloodPressureBuilder);
 
         BloodPressure bloodPressure = bloodPressureBuilder.build();
-        return Optional.of(new DataPoint<>(createDataPointHeader(listNode, bloodPressure), bloodPressure));
+        return Optional.of(new DataPoint<>(createDataPointHeader(listEntryNode, bloodPressure), bloodPressure));
     }
 
-    protected double getBloodPressureValueInMmHg(double rawBpValue, Integer bloodPressureUnit) {
+    /**
+     * @param measureUnitMagicNumber The number from the iHealth response representing the unit of measure.
+     * @return The corresponding OMH schema unit of measure for blood pressure.
+     */
+    protected double getBloodPressureValueInMmHg(double rawBpValue, Integer measureUnitMagicNumber) {
 
-        switch ( bloodPressureUnit ) {
+        switch ( measureUnitMagicNumber ) {
             case MMHG_UNIT_MAGIC_NUMBER:
                 return rawBpValue;
             case KPA_UNIT_MAGIC_NUMBER:
