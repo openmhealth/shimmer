@@ -44,6 +44,7 @@ import java.util.List;
 import java.util.Map;
 
 import static java.util.Collections.singletonList;
+import static org.openmhealth.shim.ihealth.IHealthShim.IHealthDataTypes.*;
 import static org.slf4j.LoggerFactory.getLogger;
 
 
@@ -112,19 +113,19 @@ public class IHealthShim extends OAuth2ShimBase {
     @Override
     public ShimDataType[] getShimDataTypes() {
         return new ShimDataType[] {
-                IHealthDataTypes.PHYSICAL_ACTIVITY,
-                IHealthDataTypes.BLOOD_GLUCOSE,
-                IHealthDataTypes.BLOOD_PRESSURE,
-                IHealthDataTypes.BODY_WEIGHT,
-                IHealthDataTypes.BODY_MASS_INDEX,
-                IHealthDataTypes.HEART_RATE,
-                IHealthDataTypes.STEP_COUNT,
-                IHealthDataTypes.SLEEP_DURATION
+                PHYSICAL_ACTIVITY,
+                BLOOD_GLUCOSE,
+                BLOOD_PRESSURE,
+                BODY_WEIGHT,
+                BODY_MASS_INDEX,
+                HEART_RATE,
+                STEP_COUNT,
+                SLEEP_DURATION
         };
     }
 
     /**
-     * Map of values auto-configured from the application properties yaml.
+     * Map of values auto-configured from the application.yaml.
      */
     Map<String, String> serialValues;
 
@@ -168,7 +169,7 @@ public class IHealthShim extends OAuth2ShimBase {
 
         final IHealthDataTypes dataType;
         try {
-            dataType = IHealthDataTypes.valueOf(
+            dataType = valueOf(
                     shimDataRequest.getDataTypeKey().trim().toUpperCase());
         }
         catch (NullPointerException | IllegalArgumentException e) {
@@ -183,6 +184,14 @@ public class IHealthShim extends OAuth2ShimBase {
         OffsetDateTime endDate = shimDataRequest.getEndDateTime() == null ?
                 now.plusDays(1) : shimDataRequest.getEndDateTime();
 
+        /*
+            The physical activity point handles start and end datetimes differently than the other endpoints. It
+            requires use to include the range until the beginning of the next day.
+         */
+        if (dataType == PHYSICAL_ACTIVITY) {
+
+            endDate = endDate.plusDays(1);
+        }
 
         // SC and SV values are client-based keys that are unique to each endpoint within a project
         String scValue = getScValue();
