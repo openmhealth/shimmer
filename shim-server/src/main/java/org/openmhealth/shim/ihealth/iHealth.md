@@ -1,3 +1,5 @@
+### This is currently a work in progress
+
 # api
 api url: https://api.ihealthlabs.com:8443/openapiv2/user/{userid}
 
@@ -13,7 +15,6 @@ api reference: http://developer.ihealthlabs.com/dev_documentation_openapidoc.htm
 - flows: authorization code
   - authorization URL: https://api.ihealthlabs.com:8443/OpenApiV2/OAuthv2/userauthorization/
   - access token:  https://api.ihealthlabs.com:8443/OpenApiV2/OAuthv2/userauthorization/
-     - May be a bit off of standard OAuth token uri here
 - supports refresh tokens: yes
   - refresh token: https://api.ihealthlabs.com:8443/OpenApiV2/OAuthv2/userauthorization/
     - response_type=refresh_token
@@ -33,7 +34,7 @@ api reference: http://developer.ihealthlabs.com/dev_documentation_openapidoc.htm
 # pagination
 - supported: yes, responses will have a “NextPageUrl” property if there is more data to be retrieved that is the URI for the endpoint uri for the next page. The next page url is endcoded such that it is in what appears to be an unusable in its current form, so it would need to be decoded in some way. However, there is a “page_index” parameter that can be incremented to step through pages of size 50 and reach all of the data. page_index = 1, 2, 3, 4, etc. 
 
-- The limit is set at 50 and there is no ability to control page size or limit the number of responses.
+- The limit is set at 50 and there is no ability to control page size or change the limit of the number of responses.
 
 # rate limit 
 - 5000 requests per hour per user
@@ -45,7 +46,7 @@ api reference: http://developer.ihealthlabs.com/dev_documentation_openapidoc.htm
 - unsupported
 
 # time zone and time representation
-- Each datapoint contains a “timezone” property, which is a utc-offset in the form “-0800”
+- Each datapoint contains a “timezone” property, which is a utc-offset in the form of a string (“-0800” or "0800") or integer (-8 or 8)
 - Timestamps are represented as unix epoch seconds offset by the zone offset found in the “timezone” property, so the timestamps are, in essence, in local time
 - Requests take unix epoch seconds and match on local time
 
@@ -60,8 +61,7 @@ api reference: http://developer.ihealthlabs.com/dev_documentation_openapidoc.htm
   - sv: A unique identifier for the client’s use of the specific endpoint (one for each endpoint per project) 
 
 - Optional parameters
-  - start_time:  the unix epoch second to constrain the search, when it is empty, the data would start from one year ago 
-  - page_index:  First page The page index of data, which starts from 1
+  - start_time:  the unix epoch second to start the search for datapoints to return, when it is empty, the data would start from one year ago.   
   - locale: Default (example in Appendix) Set the locale / units returned 
   - end_time: the Unix epoch second to constrain the end of the search when the Activity data ends, it must be later than start_time
 
@@ -87,9 +87,9 @@ It appears that the value is zero when it is missing, so zero values are not act
 
 All data in the response are rendered using the same unit, though it can change per response. The unit is contained in a property “WeightUnit” and is an integer between 0 - 2 corresponding to the following enum: {kg : 0}, {lbs : 1}, {stone : 2}.
 
-### measures mapped
-omh:body-weight
-omh:body-mass-index
+### measures 
+body-weight: mapped
+body-mass-index: mapped
 
 ## get blood pressure
 - endpoint: /bp.json/
@@ -140,8 +140,8 @@ The response contains meta information in the body, such as page length, record 
 
 All data in the response are rendered using the same unit, though it can change per response. The unit is contained in a property “BGUnit” and is an integer between 0 - 1 corresponding to the following enum: {mg/dl : 0}, {mmol/l : 1}
 
-### measures mapped
-omh:blood-glucose
+### measures
+- blood-glucose: mapped
 
 ## get oxygen saturation
 - endpoint: /spo2.json/
@@ -161,8 +161,9 @@ The response contains meta information in the body, such as page length, record 
 - DataSource: ( Manual | FromDevice )
 - TimeZone: Time zone of measurement location
 
-### measures mapped
-omh:heart-rate
+### measures
+heart-rate: mapped
+oxygen-saturation: not mapped, schema and schema-sdk support is in development 
 
 ## get sports activities
 - endpoint: /sport.json/
@@ -170,6 +171,9 @@ omh:heart-rate
 
 ### description
 Retrieves the physical activities an individual has engaged in from the iHealth API
+
+### request
+A note on the sport activity request: the start and end 
 
 ### response
 The response contains meta information in the body, such as page length, record count, etc, as well as an array property “SPORTDataList,” which contains the data. Each item in the list contains a set of properties describing a unique physical activity:
@@ -183,8 +187,52 @@ The response contains meta information in the body, such as page length, record 
 - LastChangeTime: Time of last change (UTC)
 - DataSource: ( Manual | FromDevice )
 
-### measures mapped
-omh:physical-activity
+### measures
+- physical-activity: mapped
+
+## get activity
+- endpoint: /activity.json/
+- reference: http://developer.ihealthlabs.com/dev_documentation_RequestfordataofActivityReport.htm
+
+### description
+Retrieves daily summaries of activity information (steps, calories, etc) that comes from an iHealth activity tracker device. 
+
+### response
+The response contains meta information in the body, such as page length, record count, etc, as well as an array property “ARDataList,” which contains the data. Each item in the list contains a set of properties describing a daily summary of activities for a given day:
+
+Calories: The total number of calories burned including BMR and activity calories
+Steps: The total number of steps counted by the device
+MDate: the datetime that this entry was last updated with new information or the end of the day on the date that this entry represents (if the day has already completed)
+TimeZone: Time zone of measurement location
+DataID: the unique identity
+LastChangeTime: Time of last change (UTC)
+DataSource: ( Manual | FromDevice )
+
+### measures 
+- step-count: mapped
+- calories-burned: not mapped because activity calories are combined with BMR
+
+## get sleep
+- endpoint: /sleep.json/
+- reference: http://developer.ihealthlabs.com/dev_documentation_RequestfordataofSleepReport.htm
+
+### description
+Returns a list of sleep activities for the user, including sleep summary information.
+
+### response
+The response contains meta information in the body, such as page length, record count, etc, as well as an array property “SRDataList,” which contains the data. Each item in the list contains a set of properties describing the sleep event:
+
+“Awaken” - Number of times awoken 
+“Fallsleep” - Time until asleep 
+“HoursSlept” - The length of the sleep in minutes
+“SleepEfficiency” - Sleep efficiency - unspecified
+“StartTime” - Start time of sleep (in unix epoch probably)
+“EndTime” - End time of sleep (in unix epoch probably)
+DataSource: ( Manual | FromDevice )
+“TimeZone” - Time zone of measurement location
+
+### measures 
+sleep-duration: mapped
 
 ## future endpoint support
-We hope to support step-count and sleep-duration measures from the activity and sleep endpoints in iHealth, however we are unable to ascertain the time frame on step data from the documentation and also need real device data to test uncertainties and ambiguities in these endpoints that are not clear from the documentation.
+We hope to support oxygen-saturation from the spo2 endpoint in iHealth, however we are finalizing a schema and schema-sdk support to represent that data. 
