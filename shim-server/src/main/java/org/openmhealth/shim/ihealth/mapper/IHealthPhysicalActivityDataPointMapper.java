@@ -19,10 +19,10 @@ package org.openmhealth.shim.ihealth.mapper;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.openmhealth.schema.domain.omh.DataPoint;
 import org.openmhealth.schema.domain.omh.PhysicalActivity;
-import org.openmhealth.schema.domain.omh.TimeInterval;
 
 import java.util.Optional;
 
+import static org.openmhealth.schema.domain.omh.TimeInterval.ofStartDateTimeAndEndDateTime;
 import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.*;
 
 
@@ -75,7 +75,7 @@ public class IHealthPhysicalActivityDataPointMapper extends IHealthDataPointMapp
                 timeZoneString = "+" + timeZoneOffsetValue.toString();
             }
 
-            physicalActivityBuilder.setEffectiveTimeFrame(TimeInterval.ofStartDateTimeAndEndDateTime(
+            physicalActivityBuilder.setEffectiveTimeFrame(ofStartDateTimeAndEndDateTime(
                     getDateTimeWithCorrectOffset(startTimeUnixEpochSecs.get(), timeZoneString),
                     getDateTimeWithCorrectOffset(endTimeUnixEpochSecs.get(), timeZoneString)));
         }

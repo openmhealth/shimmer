@@ -27,14 +27,13 @@ import java.time.OffsetDateTime;
 import java.util.List;
 
 import static java.util.Collections.singletonList;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsEmptyCollection.empty;
+import static org.openmhealth.schema.domain.omh.BodyWeight.*;
 import static org.openmhealth.schema.domain.omh.DataPointModality.SELF_REPORTED;
 import static org.openmhealth.schema.domain.omh.DataPointModality.SENSED;
-import static org.openmhealth.shim.ihealth.mapper.IHealthBodyWeightDataPointMapper.IHealthBodyWeightUnit;
+import static org.openmhealth.shim.ihealth.mapper.IHealthBodyWeightDataPointMapper.*;
 
 
 /**
@@ -75,7 +74,7 @@ public class IHealthBodyWeightDataPointMapperUnitTests extends IHealthDataPointM
 
 
         DataPointHeader dataPointHeader = dataPoints.get(0).getHeader();
-        testDataPointHeader(dataPointHeader, BodyWeight.SCHEMA_ID, SENSED, "5fe5893c418b48cd8da7954f8b6c2f36",
+        testDataPointHeader(dataPointHeader, SCHEMA_ID, SENSED, "5fe5893c418b48cd8da7954f8b6c2f36",
                 OffsetDateTime.parse("2015-09-17T20:04:17Z"));
     }
 
@@ -89,7 +88,7 @@ public class IHealthBodyWeightDataPointMapperUnitTests extends IHealthDataPointM
 
         assertThat(dataPoints.get(1).getBody(), equalTo(expectedBodyWeightBuilder.build()));
 
-        testDataPointHeader(dataPoints.get(1).getHeader(), BodyWeight.SCHEMA_ID, SELF_REPORTED,
+        testDataPointHeader(dataPoints.get(1).getHeader(), SCHEMA_ID, SELF_REPORTED,
                 "b702a3a5e998f2fca268df6daaa69871", OffsetDateTime.parse("2015-09-17T20:08:00Z"));
 
     }
@@ -121,17 +120,20 @@ public class IHealthBodyWeightDataPointMapperUnitTests extends IHealthDataPointM
     @Test
     public void getBodyWeightValueForUnitTypeShouldReturnCorrectValueForOmhCompatibleTypes() {
 
-        double bodyWeightValueForUnitType = mapper.getBodyWeightValueForUnitType(66.3, IHealthBodyWeightUnit.kg);
+        double bodyWeightValueForUnitType = mapper.getBodyWeightValueForUnitType(66.3,
+                IHealthBodyWeightUnit.KG);
         assertThat(bodyWeightValueForUnitType, equalTo(66.3));
 
-        bodyWeightValueForUnitType = mapper.getBodyWeightValueForUnitType(100.5, IHealthBodyWeightUnit.lb);
+        bodyWeightValueForUnitType = mapper.getBodyWeightValueForUnitType(100.5,
+                IHealthBodyWeightUnit.LB);
         assertThat(bodyWeightValueForUnitType, equalTo(100.5));
     }
 
     @Test
     public void getBodyWeightValueForUnitTypeShouldReturnCorrectValueForOmhIncompatibleTypes() {
 
-        double bodyWeightValueForUnitType = mapper.getBodyWeightValueForUnitType(12.4, IHealthBodyWeightUnit.stone);
+        double bodyWeightValueForUnitType = mapper.getBodyWeightValueForUnitType(12.4,
+                IHealthBodyWeightUnit.STONE);
         assertThat(bodyWeightValueForUnitType, equalTo(78.74372));
 
     }
@@ -139,9 +141,9 @@ public class IHealthBodyWeightDataPointMapperUnitTests extends IHealthDataPointM
     @Test
     public void getOmhUnitInBodyWeightUnitTypeShouldReturnCorrectMassUnits() {
 
-        assertThat(IHealthBodyWeightUnit.kg.getOmhUnit(), equalTo(MassUnit.KILOGRAM));
-        assertThat(IHealthBodyWeightUnit.lb.getOmhUnit(), equalTo(MassUnit.POUND));
-        assertThat(IHealthBodyWeightUnit.stone.getOmhUnit(), equalTo(MassUnit.KILOGRAM));
+        assertThat(IHealthBodyWeightUnit.KG.getOmhUnit(), equalTo(MassUnit.KILOGRAM));
+        assertThat(IHealthBodyWeightUnit.LB.getOmhUnit(), equalTo(MassUnit.POUND));
+        assertThat(IHealthBodyWeightUnit.STONE.getOmhUnit(), equalTo(MassUnit.KILOGRAM));
     }
 
 

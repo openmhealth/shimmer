@@ -37,6 +37,7 @@ import static org.hamcrest.Matchers.empty;
 import static org.openmhealth.schema.domain.omh.DataPointModality.SELF_REPORTED;
 import static org.openmhealth.schema.domain.omh.DataPointModality.SENSED;
 import static org.openmhealth.schema.domain.omh.DurationUnit.MINUTE;
+import static org.openmhealth.schema.domain.omh.SleepDuration.*;
 import static org.openmhealth.schema.domain.omh.TimeInterval.ofStartDateTimeAndEndDateTime;
 
 
@@ -79,7 +80,7 @@ public class IHealthSleepDurationDataPointMapperUnitTests extends IHealthDataPoi
 
         assertThat(dataPoints.get(0).getBody(), equalTo(expectedSleepDurationBuilder.build()));
 
-        testDataPointHeader(dataPoints.get(0).getHeader(), SleepDuration.SCHEMA_ID, SENSED,
+        testDataPointHeader(dataPoints.get(0).getHeader(), SCHEMA_ID, SENSED,
                 "7eb7292b90d710ae7b7f61b75f9425cf", OffsetDateTime.parse("2015-11-15T16:19:10Z"));
     }
 

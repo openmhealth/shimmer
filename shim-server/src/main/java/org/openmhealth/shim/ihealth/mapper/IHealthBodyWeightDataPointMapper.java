@@ -107,12 +107,12 @@ public class IHealthBodyWeightDataPointMapper extends IHealthDataPointMapper<Bod
 
             ValueIntoSchema = ValueFromApi * Conversion
 
-            We map stone into kg because it is the SI unit for mass and the most widely accepted for measuring human
+            We map STONE into KG because it is the SI unit for mass and the most widely accepted for measuring human
             body weight in a clinical/scientific context.
         */
-        kg(0, MassUnit.KILOGRAM, 1),
-        lb(1, MassUnit.POUND, 1),
-        stone(2, MassUnit.KILOGRAM, STONE_TO_KG_FACTOR);
+        KG(0, MassUnit.KILOGRAM, 1),
+        LB(1, MassUnit.POUND, 1),
+        STONE(2, MassUnit.KILOGRAM, STONE_TO_KG_FACTOR);
 
         private final MassUnit omhUnit;
         private final double conversionFactorToOmh;

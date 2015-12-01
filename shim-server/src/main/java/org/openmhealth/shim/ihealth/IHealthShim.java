@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
 import org.openmhealth.shim.*;
 import org.openmhealth.shim.ihealth.mapper.*;
 import org.slf4j.Logger;
@@ -43,6 +42,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import static com.google.common.collect.Lists.newArrayList;
 import static java.util.Collections.singletonList;
 import static org.openmhealth.shim.ihealth.IHealthShim.IHealthDataTypes.*;
 import static org.slf4j.LoggerFactory.getLogger;
@@ -146,7 +146,7 @@ public class IHealthShim extends OAuth2ShimBase {
         BLOOD_PRESSURE(singletonList("bp.json")),
         BODY_WEIGHT(singletonList("weight.json")),
         BODY_MASS_INDEX(singletonList("weight.json")),
-        HEART_RATE(Lists.newArrayList("bp.json", "spo2.json")),
+        HEART_RATE(newArrayList("bp.json", "spo2.json")),
         STEP_COUNT(singletonList("activity.json")),
         SLEEP_DURATION(singletonList("sleep.json"));
 
@@ -197,7 +197,7 @@ public class IHealthShim extends OAuth2ShimBase {
         String scValue = getScValue();
         List<String> svValues = getSvValues(dataType);
 
-        List<JsonNode> responseEntities = Lists.newArrayList();
+        List<JsonNode> responseEntities = newArrayList();
 
         int i = 0;
 
@@ -322,7 +322,7 @@ public class IHealthShim extends OAuth2ShimBase {
             case SLEEP_DURATION:
                 return singletonList(serialValues.get("sleepSV"));
             case HEART_RATE:
-                return Lists.newArrayList(serialValues.get("bloodPressureSV"), serialValues.get("spo2SV"));
+                return newArrayList(serialValues.get("bloodPressureSV"), serialValues.get("spo2SV"));
             default:
                 throw new UnsupportedOperationException();
         }

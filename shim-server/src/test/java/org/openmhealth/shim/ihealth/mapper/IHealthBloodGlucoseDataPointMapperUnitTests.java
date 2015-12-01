@@ -33,8 +33,10 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
 import static org.openmhealth.schema.domain.omh.BloodGlucose.SCHEMA_ID;
+import static org.openmhealth.schema.domain.omh.BloodGlucoseUnit.*;
 import static org.openmhealth.schema.domain.omh.DataPointModality.SELF_REPORTED;
 import static org.openmhealth.schema.domain.omh.DataPointModality.SENSED;
+import static org.openmhealth.schema.domain.omh.TemporalRelationshipToMeal.*;
 
 
 /**
@@ -68,9 +70,9 @@ public class IHealthBloodGlucoseDataPointMapperUnitTests extends IHealthDataPoin
     public void asDataPointsShouldReturnCorrectSensedDataPoints() {
 
         BloodGlucose.Builder expectedBloodGlucoseBuilder = new BloodGlucose.Builder(
-                new TypedUnitValue<>(BloodGlucoseUnit.MILLIGRAMS_PER_DECILITER, 60))
+                new TypedUnitValue<>(MILLIGRAMS_PER_DECILITER, 60))
                 .setEffectiveTimeFrame(OffsetDateTime.parse("2015-09-17T12:03:27-08:00"))
-                .setTemporalRelationshipToMeal(TemporalRelationshipToMeal.BEFORE_BREAKFAST)
+                .setTemporalRelationshipToMeal(BEFORE_BREAKFAST)
                 .setUserNotes("Such glucose, much blood.");
 
         assertThat(dataPoints.get(0).getBody(), equalTo(expectedBloodGlucoseBuilder.build()));
@@ -86,8 +88,8 @@ public class IHealthBloodGlucoseDataPointMapperUnitTests extends IHealthDataPoin
     public void asDataPointsShouldReturnCorrectSelfReportedDataPoints() {
 
         BloodGlucose.Builder expectedBloodGlucoseBuilder =
-                new BloodGlucose.Builder(new TypedUnitValue<>(BloodGlucoseUnit.MILLIGRAMS_PER_DECILITER, 70))
-                        .setTemporalRelationshipToMeal(TemporalRelationshipToMeal.AFTER_BREAKFAST)
+                new BloodGlucose.Builder(new TypedUnitValue<>(MILLIGRAMS_PER_DECILITER, 70))
+                        .setTemporalRelationshipToMeal(AFTER_BREAKFAST)
                         .setEffectiveTimeFrame(OffsetDateTime.parse("2015-09-24T14:44:40-06:00"));
 
         assertThat(dataPoints.get(1).getBody(), equalTo(expectedBloodGlucoseBuilder.build()));
@@ -111,8 +113,8 @@ public class IHealthBloodGlucoseDataPointMapperUnitTests extends IHealthDataPoin
     @Test
     public void getBloodGlucoseUnitFromMagicNumberShouldReturnCorrectBloodGlucoseUnit() {
 
-        assertThat(mapper.getBloodGlucoseUnitFromMagicNumber(0), equalTo(BloodGlucoseUnit.MILLIGRAMS_PER_DECILITER));
-        assertThat(mapper.getBloodGlucoseUnitFromMagicNumber(1), equalTo(BloodGlucoseUnit.MILLIMOLES_PER_LITER));
+        assertThat(mapper.getBloodGlucoseUnitFromMagicNumber(0), equalTo(MILLIGRAMS_PER_DECILITER));
+        assertThat(mapper.getBloodGlucoseUnitFromMagicNumber(1), equalTo(MILLIMOLES_PER_LITER));
     }
 
     @Test(expectedExceptions = UnsupportedOperationException.class)

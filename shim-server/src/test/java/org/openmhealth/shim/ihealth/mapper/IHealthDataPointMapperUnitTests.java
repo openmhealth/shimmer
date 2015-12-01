@@ -25,6 +25,7 @@ import java.time.OffsetDateTime;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.openmhealth.shim.ihealth.mapper.IHealthDataPointMapper.*;
 
 
 /**
@@ -38,7 +39,7 @@ public class IHealthDataPointMapperUnitTests extends DataPointMapperUnitTests {
         assertThat(testHeader.getBodySchemaId(), equalTo(schemaId));
         assertThat(testHeader.getAcquisitionProvenance().getModality(), equalTo(modality));
         assertThat(testHeader.getAcquisitionProvenance().getSourceName(),
-                equalTo(IHealthDataPointMapper.RESOURCE_API_SOURCE_NAME));
+                equalTo(RESOURCE_API_SOURCE_NAME));
         assertThat(testHeader.getAcquisitionProvenance().getAdditionalProperties().get("external_id"), equalTo(
                 externalId));
         assertThat(testHeader.getAcquisitionProvenance().getAdditionalProperties().get("source_updated_date_time"),

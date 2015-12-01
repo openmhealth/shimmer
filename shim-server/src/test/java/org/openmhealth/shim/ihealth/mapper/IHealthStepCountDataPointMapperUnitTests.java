@@ -33,6 +33,8 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.core.Is.is;
 import static org.openmhealth.schema.domain.omh.DataPointModality.*;
+import static org.openmhealth.schema.domain.omh.DurationUnit.*;
+import static org.openmhealth.schema.domain.omh.StepCount.*;
 
 
 /**
@@ -78,11 +80,11 @@ public class IHealthStepCountDataPointMapperUnitTests extends IHealthDataPointMa
 
         expectedStepCountBuilder.setEffectiveTimeFrame(
                 TimeInterval.ofStartDateTimeAndDuration(OffsetDateTime.parse("2015-11-16T00:00:00+05:00"),
-                        new DurationUnitValue(DurationUnit.DAY, 1)));
+                        new DurationUnitValue(DAY, 1)));
 
         assertThat(dataPoints.get(0).getBody(), equalTo(expectedStepCountBuilder.build()));
 
-        testDataPointHeader(dataPoints.get(0).getHeader(), StepCount.SCHEMA_ID, SENSED,
+        testDataPointHeader(dataPoints.get(0).getHeader(), SCHEMA_ID, SENSED,
                 "ac67c4ccf64af669d92569af85d19f59", OffsetDateTime.parse("2015-11-17T19:23:21Z"));
     }
 
@@ -93,7 +95,7 @@ public class IHealthStepCountDataPointMapperUnitTests extends IHealthDataPointMa
 
         expectedStepCountBuilder.setEffectiveTimeFrame(
                 TimeInterval.ofStartDateTimeAndDuration(OffsetDateTime.parse("2015-11-18T00:00:00Z"),
-                        new DurationUnitValue(DurationUnit.DAY, 1))).setUserNotes("Great steps");
+                        new DurationUnitValue(DAY, 1))).setUserNotes("Great steps");
 
         assertThat(dataPoints.get(1).getBody(), Matchers.equalTo(expectedStepCountBuilder.build()));
 

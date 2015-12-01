@@ -18,7 +18,6 @@ package org.openmhealth.shim.ihealth.mapper;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.openmhealth.schema.domain.omh.BodyMassIndex;
-import org.openmhealth.schema.domain.omh.BodyMassIndexUnit;
 import org.openmhealth.schema.domain.omh.DataPoint;
 import org.openmhealth.schema.domain.omh.TypedUnitValue;
 import org.testng.annotations.BeforeMethod;
@@ -35,6 +34,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
 import static org.openmhealth.schema.domain.omh.BodyMassIndex.SCHEMA_ID;
+import static org.openmhealth.schema.domain.omh.BodyMassIndexUnit.KILOGRAMS_PER_SQUARE_METER;
 import static org.openmhealth.schema.domain.omh.DataPointModality.SELF_REPORTED;
 import static org.openmhealth.schema.domain.omh.DataPointModality.SENSED;
 
@@ -70,7 +70,7 @@ public class IHealthBodyMassIndexDataPointMapperUnitTests extends IHealthDataPoi
     public void asDataPointsShouldReturnCorrectSensedDataPoints() {
 
         BodyMassIndex.Builder expectedBodyMassIndexBuilder = new BodyMassIndex.Builder(new TypedUnitValue<>(
-                BodyMassIndexUnit.KILOGRAMS_PER_SQUARE_METER, 22.56052563257619))
+                KILOGRAMS_PER_SQUARE_METER, 22.56052563257619))
                 .setEffectiveTimeFrame(OffsetDateTime.parse("2015-09-17T12:04:09-08:00"));
 
         assertThat(dataPoints.get(0).getBody(), equalTo(expectedBodyMassIndexBuilder.build()));
@@ -83,7 +83,7 @@ public class IHealthBodyMassIndexDataPointMapperUnitTests extends IHealthDataPoi
     public void asDataPointsShouldReturnCorrectSelfReportedDataPoints() {
 
         BodyMassIndex.Builder expectedBodyMassIndexBuilder = new BodyMassIndex.Builder(
-                new TypedUnitValue<>(BodyMassIndexUnit.KILOGRAMS_PER_SQUARE_METER, 22.56052398681641))
+                new TypedUnitValue<>(KILOGRAMS_PER_SQUARE_METER, 22.56052398681641))
                 .setEffectiveTimeFrame(OffsetDateTime.parse("2015-09-17T14:07:57-06:00"))
                 .setUserNotes("Weight so good, look at me now");
 

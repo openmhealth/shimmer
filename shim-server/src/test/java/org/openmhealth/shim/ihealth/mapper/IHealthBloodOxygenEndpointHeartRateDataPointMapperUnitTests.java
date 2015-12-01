@@ -33,6 +33,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
 import static org.openmhealth.schema.domain.omh.DataPointModality.SELF_REPORTED;
 import static org.openmhealth.schema.domain.omh.DataPointModality.SENSED;
+import static org.openmhealth.schema.domain.omh.HeartRate.*;
 
 
 /**
@@ -73,7 +74,7 @@ public class IHealthBloodOxygenEndpointHeartRateDataPointMapperUnitTests extends
 
         assertThat(dataPoints.get(0).getBody(), equalTo(expectedHeartRateBuilder.build()));
 
-        testDataPointHeader(dataPoints.get(0).getHeader(), HeartRate.SCHEMA_ID, SENSED,
+        testDataPointHeader(dataPoints.get(0).getHeader(), SCHEMA_ID, SENSED,
                 "d7fb9db14b0fc3e8e1635720c28bda64", OffsetDateTime.parse("2015-09-23T21:46:00Z"));
     }
 

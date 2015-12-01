@@ -24,7 +24,8 @@ import java.util.Map;
 import java.util.Optional;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.openmhealth.schema.domain.omh.BloodGlucoseUnit.*;
+import static org.openmhealth.schema.domain.omh.BloodGlucoseUnit.MILLIGRAMS_PER_DECILITER;
+import static org.openmhealth.schema.domain.omh.BloodGlucoseUnit.MILLIMOLES_PER_LITER;
 import static org.openmhealth.schema.domain.omh.TemporalRelationshipToMeal.*;
 import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asOptionalString;
 import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asRequiredDouble;

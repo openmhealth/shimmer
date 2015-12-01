@@ -20,7 +20,7 @@ package org.openmhealth.shim.ihealth.mapper;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.openmhealth.schema.domain.omh.DataPoint;
 import org.openmhealth.schema.domain.omh.HeartRate;
-import org.springframework.core.io.ClassPathResource;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -29,13 +29,12 @@ import java.time.OffsetDateTime;
 import java.util.List;
 
 import static java.util.Collections.singletonList;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsEmptyCollection.empty;
 import static org.openmhealth.schema.domain.omh.DataPointModality.SELF_REPORTED;
 import static org.openmhealth.schema.domain.omh.DataPointModality.SENSED;
+import static org.openmhealth.schema.domain.omh.HeartRate.SCHEMA_ID;
 
 
 /**
@@ -53,37 +52,36 @@ public class IHealthBloodPressureEndpointHeartRateDataPointMapperUnitTests exten
     @BeforeTest
     public void initializeResponseNodes() throws IOException {
 
-        ClassPathResource resource =
-                new ClassPathResource("/org/openmhealth/shim/ihealth/mapper/ihealth-blood-pressure.json");
-        responseNode = objectMapper.readTree(resource.getInputStream());
-
+        responseNode = asJsonNode("/org/openmhealth/shim/ihealth/mapper/ihealth-blood-pressure.json");
     }
+
+    @BeforeMethod
+    public void initializeDataPoints() {
+
+        dataPoints = mapper.asDataPoints(singletonList(responseNode));
+    }
+
 
     @Test
     public void asDataPointsShouldReturnCorrectNumberOfDataPoints() {
 
-        List<DataPoint<HeartRate>> dataPoints = mapper.asDataPoints(singletonList(responseNode));
         assertThat(dataPoints.size(), equalTo(2));
     }
 
     @Test
     public void asDataPointsShouldReturnCorrectSensedDataPoints() {
 
-        List<DataPoint<HeartRate>> dataPoints = mapper.asDataPoints(singletonList(responseNode));
-
         HeartRate.Builder expectedHeartRateBuilder = new HeartRate.Builder(100)
                 .setEffectiveTimeFrame(OffsetDateTime.parse("2015-09-17T12:04:23-08:00"));
         HeartRate expectedSensedHeartRate = expectedHeartRateBuilder.build();
         assertThat(dataPoints.get(0).getBody(), equalTo(expectedSensedHeartRate));
 
-        testDataPointHeader(dataPoints.get(0).getHeader(), HeartRate.SCHEMA_ID, SENSED,
+        testDataPointHeader(dataPoints.get(0).getHeader(), SCHEMA_ID, SENSED,
                 "c62b84d9d4b7480a8ff2aef1465aa454", OffsetDateTime.parse("2015-09-17T20:04:30Z"));
     }
 
     @Test
     public void asDataPointsShouldReturnCorrectSelfReportedDataPoints() {
-
-        List<DataPoint<HeartRate>> dataPoints = mapper.asDataPoints(singletonList(responseNode));
 
         HeartRate expectedHeartRate = new HeartRate.Builder(75)
                 .setEffectiveTimeFrame(OffsetDateTime.parse("2015-09-17T14:07:45-06:00"))
@@ -96,8 +94,6 @@ public class IHealthBloodPressureEndpointHeartRateDataPointMapperUnitTests exten
 
     @Test
     public void asDataPointsShouldReturnCorrectUserNotesWithDataPoints() {
-
-        List<DataPoint<HeartRate>> dataPoints = mapper.asDataPoints(singletonList(responseNode));
 
         assertThat(dataPoints.get(0).getBody().getUserNotes(), nullValue());
         assertThat(dataPoints.get(1).getBody().getUserNotes(), equalTo("BP on the up and up."));

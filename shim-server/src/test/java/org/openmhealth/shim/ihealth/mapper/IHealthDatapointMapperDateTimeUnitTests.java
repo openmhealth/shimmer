@@ -28,6 +28,7 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsNull.notNullValue;
+import static org.openmhealth.shim.ihealth.mapper.IHealthDataPointMapper.*;
 
 
 /**
@@ -47,7 +48,7 @@ public class IHealthDatapointMapperDateTimeUnitTests extends IHealthDataPointMap
     public void setEffectiveTimeFrameShouldNotAddTimeFrameWhenTimeZoneIsMissing() throws IOException {
 
         JsonNode timeInfoNode = createResponseNodeWithTimeZone(null);
-        IHealthDataPointMapper.setEffectiveTimeFrameWithDateTimeIfExists(timeInfoNode, builder);
+        setEffectiveTimeFrameWithDateTimeIfExists(timeInfoNode, builder);
 
         assertThat(builder.build().getEffectiveTimeFrame(), nullValue());
     }
@@ -57,7 +58,7 @@ public class IHealthDatapointMapperDateTimeUnitTests extends IHealthDataPointMap
 
         JsonNode timeInfoNode = createResponseNodeWithTimeZone("\"\"");
 
-        IHealthDataPointMapper.setEffectiveTimeFrameWithDateTimeIfExists(timeInfoNode, builder);
+        setEffectiveTimeFrameWithDateTimeIfExists(timeInfoNode, builder);
 
         assertThat(builder.build().getEffectiveTimeFrame(), nullValue());
     }
@@ -104,8 +105,7 @@ public class IHealthDatapointMapperDateTimeUnitTests extends IHealthDataPointMap
 
         long startOfDayEpochSecond = OffsetDateTime.parse("2015-11-12T00:00:00Z").toEpochSecond();
 
-        OffsetDateTime dateTimeAtStartOfDay =
-                IHealthDataPointMapper.getDateTimeAtStartOfDayWithCorrectOffset(startOfDayEpochSecond, "-0100");
+        OffsetDateTime dateTimeAtStartOfDay = getDateTimeAtStartOfDayWithCorrectOffset(startOfDayEpochSecond, "-0100");
 
         assertThat(dateTimeAtStartOfDay, equalTo(OffsetDateTime.parse("2015-11-12T00:00:00-01:00")));
     }
@@ -116,7 +116,7 @@ public class IHealthDatapointMapperDateTimeUnitTests extends IHealthDataPointMap
         long startOfDayEpochSecond = OffsetDateTime.parse("2015-11-12T23:59:59Z").toEpochSecond();
 
         OffsetDateTime dateTimeAtStartOfDay =
-                IHealthDataPointMapper.getDateTimeAtStartOfDayWithCorrectOffset(startOfDayEpochSecond, "+0100");
+                getDateTimeAtStartOfDayWithCorrectOffset(startOfDayEpochSecond, "+0100");
 
         assertThat(dateTimeAtStartOfDay, equalTo(OffsetDateTime.parse("2015-11-12T00:00:00+01:00")));
     }
@@ -125,7 +125,7 @@ public class IHealthDatapointMapperDateTimeUnitTests extends IHealthDataPointMap
             throws IOException {
 
         JsonNode timeInfoNode = createResponseNodeWithTimeZone(timezoneString);
-        IHealthDataPointMapper.setEffectiveTimeFrameWithDateTimeIfExists(timeInfoNode, builder);
+        setEffectiveTimeFrameWithDateTimeIfExists(timeInfoNode, builder);
 
         assertThat(builder.build().getEffectiveTimeFrame(), notNullValue());
         assertThat(builder.build().getEffectiveTimeFrame().getDateTime(), equalTo(

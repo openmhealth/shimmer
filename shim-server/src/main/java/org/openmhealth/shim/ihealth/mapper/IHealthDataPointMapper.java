@@ -24,7 +24,6 @@ import org.openmhealth.schema.domain.omh.DataPointHeader;
 import org.openmhealth.schema.domain.omh.Measure;
 import org.openmhealth.shim.common.mapper.DataPointMapper;
 
-import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
@@ -33,9 +32,11 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static java.time.Instant.ofEpochSecond;
+import static java.time.OffsetDateTime.ofInstant;
 import static org.openmhealth.schema.domain.omh.DataPointModality.SELF_REPORTED;
 import static org.openmhealth.schema.domain.omh.DataPointModality.SENSED;
-import static org.openmhealth.schema.domain.omh.Measure.*;
+import static org.openmhealth.schema.domain.omh.Measure.Builder;
 import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.*;
 
 
@@ -102,7 +103,7 @@ public abstract class IHealthDataPointMapper<T> implements DataPointMapper<T, Js
 
         asOptionalLong(listEntryNode, "LastChangeTime").ifPresent(
                 lastUpdatedInUnixSecs -> acquisitionProvenance.setAdditionalProperty("source_updated_date_time",
-                        OffsetDateTime.ofInstant(Instant.ofEpochSecond(lastUpdatedInUnixSecs), ZoneId.of("Z"))));
+                        ofInstant(ofEpochSecond(lastUpdatedInUnixSecs), ZoneId.of("Z"))));
 
         return new DataPointHeader.Builder(UUID.randomUUID().toString(), measure.getSchemaId())
                 .setAcquisitionProvenance(acquisitionProvenance)
@@ -164,8 +165,8 @@ public abstract class IHealthDataPointMapper<T> implements DataPointMapper<T, Js
 
         // Since the timestamps are in local time, we can use the local date time provided by rendering the timestamp
         // in UTC, then translating that local time to the appropriate offset.
-        OffsetDateTime offsetDateTimeFromOffsetInstant = OffsetDateTime.ofInstant(
-                Instant.ofEpochSecond(dateTimeInUnixSecondsWithLocalTimeOffset),
+        OffsetDateTime offsetDateTimeFromOffsetInstant = ofInstant(
+                ofEpochSecond(dateTimeInUnixSecondsWithLocalTimeOffset),
                 ZoneId.of("Z"));
 
         return offsetDateTimeFromOffsetInstant.toLocalDateTime().atOffset(ZoneOffset.of(timeZoneString));
@@ -182,7 +183,7 @@ public abstract class IHealthDataPointMapper<T> implements DataPointMapper<T, Js
         // Since the timestamps are in local time, we can use the local date time provided by rendering the timestamp
         // in UTC, then translating that local time to the appropriate offset.
         OffsetDateTime dateTimeFromOffsetInstant =
-                OffsetDateTime.ofInstant(Instant.ofEpochSecond(dateTimeInUnixSecondsWithLocalTimeOffset),
+                ofInstant(ofEpochSecond(dateTimeInUnixSecondsWithLocalTimeOffset),
                         ZoneId.of("Z"));
 
         return dateTimeFromOffsetInstant.toLocalDate().atStartOfDay().atOffset(ZoneOffset.of(timeZoneString));

@@ -30,6 +30,8 @@ import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
+import static org.openmhealth.schema.domain.omh.BloodPressure.*;
+import static org.openmhealth.schema.domain.omh.BloodPressureUnit.*;
 import static org.openmhealth.schema.domain.omh.DataPointModality.SELF_REPORTED;
 import static org.openmhealth.schema.domain.omh.DataPointModality.SENSED;
 
@@ -65,8 +67,8 @@ public class IHealthBloodPressureDataPointMapperUnitTests extends IHealthDataPoi
     public void asDataPointsShouldReturnCorrectSensedDataPoints() {
 
         BloodPressure expectedBloodPressure = new BloodPressure.Builder(
-                new SystolicBloodPressure(BloodPressureUnit.MM_OF_MERCURY, 120),
-                new DiastolicBloodPressure(BloodPressureUnit.MM_OF_MERCURY, 90))
+                new SystolicBloodPressure(MM_OF_MERCURY, 120),
+                new DiastolicBloodPressure(MM_OF_MERCURY, 90))
                 .setEffectiveTimeFrame(OffsetDateTime.parse("2015-09-17T12:04:23-08:00"))
                 .build();
 
@@ -74,7 +76,7 @@ public class IHealthBloodPressureDataPointMapperUnitTests extends IHealthDataPoi
 
         DataPointHeader testHeader = dataPoints.get(0).getHeader();
 
-        testDataPointHeader(testHeader, BloodPressure.SCHEMA_ID, SENSED, "c62b84d9d4b7480a8ff2aef1465aa454",
+        testDataPointHeader(testHeader, SCHEMA_ID, SENSED, "c62b84d9d4b7480a8ff2aef1465aa454",
                 OffsetDateTime.parse("2015-09-17T20:04:30Z"));
 
     }
@@ -83,8 +85,8 @@ public class IHealthBloodPressureDataPointMapperUnitTests extends IHealthDataPoi
     public void asDataPointsShouldReturnCorrectSelfReportedDataPoints() {
 
         BloodPressure expectedBloodPressure = new BloodPressure.Builder(
-                new SystolicBloodPressure(BloodPressureUnit.MM_OF_MERCURY, 130),
-                new DiastolicBloodPressure(BloodPressureUnit.MM_OF_MERCURY, 95))
+                new SystolicBloodPressure(MM_OF_MERCURY, 130),
+                new DiastolicBloodPressure(MM_OF_MERCURY, 95))
                 .setEffectiveTimeFrame(OffsetDateTime.parse("2015-09-17T14:07:45-06:00"))
                 .setUserNotes("BP on the up and up.")
                 .build();
