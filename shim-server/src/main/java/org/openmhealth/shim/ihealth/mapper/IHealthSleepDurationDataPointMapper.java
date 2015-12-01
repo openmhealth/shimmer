@@ -24,12 +24,14 @@ import java.util.Optional;
 import static org.openmhealth.schema.domain.omh.TimeInterval.*;
 import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.*;
 
+
 /**
- * A mapper that translates responses from the iHealth /sleep.json/ endpoint into {@link SleepDuration} measures.
+ * A mapper that translates responses from the iHealth <code>/sleep.json</code> endpoint into {@link SleepDuration}
+ * measures.
  *
  * @author Chris Schaefbauer
- * @see <a href="http://developer.ihealthlabs.com/dev_documentation_RequestfordataofSleepReport.htm">
- * iHealth Sleep Endpoint Documentation</a>
+ * @see <a href="http://developer.ihealthlabs.com/dev_documentation_RequestfordataofSleepReport.htm">endpoint
+ * documentation</a>
  */
 public class IHealthSleepDurationDataPointMapper extends IHealthDataPointMapper<SleepDuration> {
 

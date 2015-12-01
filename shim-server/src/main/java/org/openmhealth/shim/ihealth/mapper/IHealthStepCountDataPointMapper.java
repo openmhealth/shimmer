@@ -30,11 +30,12 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.*;
 
 
 /**
- * A mapper that translates responses from the iHealth /activity.json/ endpoint into {@link StepCount} measures.
+ * A mapper that translates responses from the iHealth <code>/activity.json</code> endpoint into {@link StepCount}
+ * measures.
  *
  * @author Chris Schaefbauer
- * @see <a href="http://developer.ihealthlabs.com/dev_documentation_RequestfordataofActivityReport.htm">
- * iHealth Activity Endpoint Documentation</a>
+ * @see <a href="http://developer.ihealthlabs.com/dev_documentation_RequestfordataofActivityReport.htm">endpoint
+ * documentation</a>
  */
 public class IHealthStepCountDataPointMapper extends IHealthDataPointMapper<StepCount> {
 

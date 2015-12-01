@@ -53,8 +53,7 @@ public abstract class IHealthDataPointMapper<T> implements DataPointMapper<T, Js
 
     /**
      * Maps a JSON response with individual data points contained in a JSON array to a list of {@link  DataPoint}
-     * objects with the appropriate measure. Splits individual nodes and then iteratively maps the nodes in
-     * the list.
+     * objects with the appropriate measure. Splits individual nodes and then iteratively maps the nodes in the list.
      */
     @Override
     public List<DataPoint<T>> asDataPoints(List<JsonNode> responseNodes) {
@@ -84,8 +83,8 @@ public abstract class IHealthDataPointMapper<T> implements DataPointMapper<T, Js
     /**
      * Creates a data point header with information describing the data point created around the measure.
      * <p>
-     * <p>Note: Additional properties within the header come from the iHealth API and are not defined by the data point
-     * header schema. Additional properties are subject to change.</p>
+     * Note: Additional properties within the header come from the iHealth API and are not defined by the data point
+     * header schema. Additional properties are subject to change.
      */
     protected DataPointHeader createDataPointHeader(JsonNode listEntryNode, Measure measure) {
 
@@ -115,8 +114,7 @@ public abstract class IHealthDataPointMapper<T> implements DataPointMapper<T, Js
      * Sets the effective time frame of a measure builder as a single point in time using a date_time. This method does
      * not set time intervals.
      *
-     * @param listEntryNode A single node from the response result array that contains the MDate field that needs to
-     * get
+     * @param listEntryNode A single node from the response result array that contains the MDate field that needs to get
      * mapped as a date_time in the timeframe.
      * @param builder The measure builder to set the effective time frame.
      */
@@ -124,35 +122,35 @@ public abstract class IHealthDataPointMapper<T> implements DataPointMapper<T, Js
 
         Optional<Long> optionalOffsetDateTime = asOptionalLong(listEntryNode, "MDate");
 
-        if (optionalOffsetDateTime.isPresent()) {
+        if (!optionalOffsetDateTime.isPresent()) {
+            return;
+        }
 
-            Optional<String> timeZone = asOptionalString(listEntryNode, "TimeZone");
+        Optional<String> timeZone = asOptionalString(listEntryNode, "TimeZone");
 
-            if (timeZone.isPresent() && !timeZone.get().isEmpty()) {
+        if (timeZone.isPresent() && !timeZone.get().isEmpty()) {
 
-                OffsetDateTime offsetDateTimeCorrectOffset =
-                        getDateTimeWithCorrectOffset(optionalOffsetDateTime.get(), timeZone.get());
-                builder.setEffectiveTimeFrame(offsetDateTimeCorrectOffset);
+            OffsetDateTime offsetDateTimeCorrectOffset =
+                    getDateTimeWithCorrectOffset(optionalOffsetDateTime.get(), timeZone.get());
+            builder.setEffectiveTimeFrame(offsetDateTimeCorrectOffset);
+        }
+
+        else if (asOptionalLong(listEntryNode, "TimeZone").isPresent()) {
+
+            Long timeZoneOffsetValue = asOptionalLong(listEntryNode, "TimeZone").get();
+            String timeZoneString = timeZoneOffsetValue.toString();
+
+
+            // Zone offset cannot parse a positive string offset that's missing a '+' sign (i.e., "0200" vs "+0200")
+            if (timeZoneOffsetValue >= 0) {
+                timeZoneString = "+" + timeZoneOffsetValue.toString();
             }
 
-            else if (asOptionalLong(listEntryNode, "TimeZone").isPresent()) {
+            OffsetDateTime offsetDateTimeCorrectOffset =
+                    getDateTimeWithCorrectOffset(optionalOffsetDateTime.get(),
+                            timeZoneString);
 
-                Long timeZoneOffsetValue = asOptionalLong(listEntryNode, "TimeZone").get();
-                String timeZoneString = timeZoneOffsetValue.toString();
-
-
-                // Zone offset cannot parse a positive string offset that's missing a '+' sign (i.e., "0200" vs "+0200")
-                if (timeZoneOffsetValue >= 0) {
-                    timeZoneString = "+" + timeZoneOffsetValue.toString();
-                }
-
-                OffsetDateTime offsetDateTimeCorrectOffset =
-                        getDateTimeWithCorrectOffset(optionalOffsetDateTime.get(),
-                                timeZoneString);
-
-                builder.setEffectiveTimeFrame(offsetDateTimeCorrectOffset);
-            }
-
+            builder.setEffectiveTimeFrame(offsetDateTimeCorrectOffset);
         }
     }
 
@@ -209,6 +207,7 @@ public abstract class IHealthDataPointMapper<T> implements DataPointMapper<T, Js
 
     /**
      * Sets the correct DataPointModality based on the iHealth value indicating the source of the DataPoint.
+     *
      * @param dataSourceValue The iHealth value in the list entry node indicating the source of the DataPoint.
      * @param builder The DataPointAcquisitionProvenance builder to set the modality.
      */
@@ -228,9 +227,9 @@ public abstract class IHealthDataPointMapper<T> implements DataPointMapper<T, Js
     protected abstract String getListNodeName();
 
     /**
-     * @return The name of the JSON property whose value indicates the unit of measure used to render the values in
-     * the response. This is different per endpoint and some endpoints do not provide any units, in which case, the
-     * value should be an empty Optional.
+     * @return The name of the JSON property whose value indicates the unit of measure used to render the values in the
+     * response. This is different per endpoint and some endpoints do not provide any units, in which case, the value
+     * should be an empty Optional.
      */
     protected abstract Optional<String> getMeasureUnitNodeName();
 

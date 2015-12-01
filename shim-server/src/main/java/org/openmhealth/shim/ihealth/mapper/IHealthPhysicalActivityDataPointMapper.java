@@ -27,13 +27,13 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.*;
 
 
 /**
- * A mapper that translates responses from the iHealth /sport.json/ endpoint into {@link PhysicalActivity} measures.
+ * A mapper that translates responses from the iHealth <code>/sport.json</code> endpoint into {@link PhysicalActivity}
+ * measures.
  *
- * @author Emerson Farrugia
  * @author Chris Schaefbauer
- *
- * @see <a href="http://developer.ihealthlabs.com/dev_documentation_RequestfordataofSport.htm">
- * iHealth Sport Endpoint Documentation</a>
+ * @author Emerson Farrugia
+ * @see <a href="http://developer.ihealthlabs.com/dev_documentation_RequestfordataofSport.htm">endpoint
+ * documentation</a>
  */
 public class IHealthPhysicalActivityDataPointMapper extends IHealthDataPointMapper<PhysicalActivity> {
 

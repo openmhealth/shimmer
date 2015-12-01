@@ -26,12 +26,13 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asRequir
 
 
 /**
- * A mapper that translates responses from the iHealth /weight.json/ endpoint into {@link BodyWeight} measures.
+ * A mapper that translates responses from the iHealth <code>/weight.json</code> endpoint into {@link BodyWeight}
+ * measures.
  *
- * @author Emerson Farrugia
  * @author Chris Schaefbauer
- * @see <a href="http://developer.ihealthlabs.com/dev_documentation_RequestfordataofWeight.htm">
- * iHealth Body Weight Endpoint Documentation</a>
+ * @author Emerson Farrugia
+ * @see <a href="http://developer.ihealthlabs.com/dev_documentation_RequestfordataofWeight.htm">endpoint
+ * documentation</a>
  */
 public class IHealthBodyWeightDataPointMapper extends IHealthDataPointMapper<BodyWeight> {
 
@@ -75,7 +76,6 @@ public class IHealthBodyWeightDataPointMapper extends IHealthDataPointMapper<Bod
     }
 
     /**
-     *
      * @param listEntryNode A single entry from the response result array.
      * @param bodyWeightUnitType The unit type for the measure.
      * @return The body weight value for the list entry that is rendered in the correct unit.
@@ -88,7 +88,6 @@ public class IHealthBodyWeightDataPointMapper extends IHealthDataPointMapper<Bod
     }
 
     /**
-     *
      * @param bodyWeightValue The body weight value that has been extracted from the list entry node.
      * @param bodyWeightUnitType The unit type for the measure.
      * @return A body weight value that is rendered in the correct unit.

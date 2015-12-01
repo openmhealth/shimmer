@@ -22,15 +22,17 @@ import org.openmhealth.schema.domain.omh.*;
 import java.util.Optional;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.openmhealth.schema.domain.omh.BloodPressureUnit.MM_OF_MERCURY;
 import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asRequiredDouble;
 
 
 /**
- * A mapper that translates responses from the iHealth /bp.json/ endpoint into {@link BloodPressure} measures.
+ * A mapper that translates responses from the iHealth <code>/bp.json</code> endpoint into {@link BloodPressure}
+ * measures.
  *
  * @author Chris Schaefbauer
- * @see <a href="http://developer.ihealthlabs.com/dev_documentation_RequestfordataofBloodPressure.htm">
- * iHealth Blood Pressure Endpoint Documentation</a>
+ * @see <a href="http://developer.ihealthlabs.com/dev_documentation_RequestfordataofBloodPressure.htm">endpoint
+ * documentation</a>
  */
 public class IHealthBloodPressureDataPointMapper extends IHealthDataPointMapper<BloodPressure> {
 
@@ -55,13 +57,13 @@ public class IHealthBloodPressureDataPointMapper extends IHealthDataPointMapper<
 
         checkNotNull(measureUnitMagicNumber);
 
-        double systolicValue = getBloodPressureValueInMmHg(asRequiredDouble(listEntryNode, "HP"), measureUnitMagicNumber);
-        SystolicBloodPressure systolicBloodPressure =
-                new SystolicBloodPressure(BloodPressureUnit.MM_OF_MERCURY, systolicValue);
+        double systolicValue =
+                getBloodPressureValueInMmHg(asRequiredDouble(listEntryNode, "HP"), measureUnitMagicNumber);
+        SystolicBloodPressure systolicBloodPressure = new SystolicBloodPressure(MM_OF_MERCURY, systolicValue);
 
-        double diastolicValue = getBloodPressureValueInMmHg(asRequiredDouble(listEntryNode, "LP"), measureUnitMagicNumber);
-        DiastolicBloodPressure diastolicBloodPressure =
-                new DiastolicBloodPressure(BloodPressureUnit.MM_OF_MERCURY, diastolicValue);
+        double diastolicValue =
+                getBloodPressureValueInMmHg(asRequiredDouble(listEntryNode, "LP"), measureUnitMagicNumber);
+        DiastolicBloodPressure diastolicBloodPressure = new DiastolicBloodPressure(MM_OF_MERCURY, diastolicValue);
 
         BloodPressure.Builder bloodPressureBuilder =
                 new BloodPressure.Builder(systolicBloodPressure, diastolicBloodPressure);
@@ -79,14 +81,14 @@ public class IHealthBloodPressureDataPointMapper extends IHealthDataPointMapper<
      */
     protected double getBloodPressureValueInMmHg(double rawBpValue, Integer measureUnitMagicNumber) {
 
-        switch ( measureUnitMagicNumber ) {
-            case MMHG_UNIT_MAGIC_NUMBER:
-                return rawBpValue;
-            case KPA_UNIT_MAGIC_NUMBER:
-                return rawBpValue * KPA_TO_MMHG_CONVERSION_RATE;
-            default:
-                throw new UnsupportedOperationException();
+        if (measureUnitMagicNumber.equals(MMHG_UNIT_MAGIC_NUMBER)) {
+            return rawBpValue;
+        }
+        else if (measureUnitMagicNumber.equals(KPA_UNIT_MAGIC_NUMBER)) {
+            return rawBpValue * KPA_TO_MMHG_CONVERSION_RATE;
+        }
+        else {
+            throw new UnsupportedOperationException();
         }
     }
-
 }

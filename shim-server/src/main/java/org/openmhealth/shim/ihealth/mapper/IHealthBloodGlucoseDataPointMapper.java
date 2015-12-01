@@ -20,25 +20,28 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.ImmutableMap;
 import org.openmhealth.schema.domain.omh.*;
 
+import java.util.Map;
 import java.util.Optional;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.openmhealth.schema.domain.omh.BloodGlucoseUnit.*;
+import static org.openmhealth.schema.domain.omh.TemporalRelationshipToMeal.*;
 import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asOptionalString;
 import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asRequiredDouble;
 
 
 /**
- * A mapper that translates responses from the iHealth /glucose.json/ endpoint into {@link BloodGlucose} measures.
+ * A mapper that translates responses from the iHealth <code>/glucose.json</code> endpoint into {@link BloodGlucose}
+ * measures.
  *
  * @author Chris Schaefbauer
- * @see <a href="http://developer.ihealthlabs.com/dev_documentation_RequestfordataofBG.htm">
- * iHealth Blood Glucose Endpoint Documentation</a>
+ * @see <a href="http://developer.ihealthlabs.com/dev_documentation_RequestfordataofBG.htm">endpoint documentation</a>
  */
 public class IHealthBloodGlucoseDataPointMapper extends IHealthDataPointMapper<BloodGlucose> {
 
     public static final int MG_PER_DL_MAGIC_NUMBER = 0;
     public static final int MMOL_PER_L_MAGIC_NUMBER = 1;
-    protected static ImmutableMap<String, TemporalRelationshipToMeal> iHealthBloodGlucoseRelationshipToMeal;
+    protected static Map<String, TemporalRelationshipToMeal> iHealthBloodGlucoseRelationshipToMeal;
 
     @Override
     protected String getListNodeName() {
@@ -105,13 +108,13 @@ public class IHealthBloodGlucoseDataPointMapper extends IHealthDataPointMapper<B
 
         ImmutableMap.Builder<String, TemporalRelationshipToMeal> relationshipToMealMapBuilder = ImmutableMap.builder();
 
-        relationshipToMealMapBuilder.put("Before_breakfast", TemporalRelationshipToMeal.BEFORE_BREAKFAST)
-                .put("After_breakfast", TemporalRelationshipToMeal.AFTER_BREAKFAST)
-                .put("Before_lunch", TemporalRelationshipToMeal.BEFORE_LUNCH)
-                .put("After_lunch", TemporalRelationshipToMeal.AFTER_LUNCH)
-                .put("Before_dinner", TemporalRelationshipToMeal.BEFORE_DINNER)
-                .put("After_dinner", TemporalRelationshipToMeal.AFTER_DINNER)
-                .put("At_midnight", TemporalRelationshipToMeal.AFTER_DINNER);
+        relationshipToMealMapBuilder.put("Before_breakfast", BEFORE_BREAKFAST)
+                .put("After_breakfast", AFTER_BREAKFAST)
+                .put("Before_lunch", BEFORE_LUNCH)
+                .put("After_lunch", AFTER_LUNCH)
+                .put("Before_dinner", BEFORE_DINNER)
+                .put("After_dinner", AFTER_DINNER)
+                .put("At_midnight", AFTER_DINNER);
 
         iHealthBloodGlucoseRelationshipToMeal = relationshipToMealMapBuilder.build();
 
@@ -123,15 +126,14 @@ public class IHealthBloodGlucoseDataPointMapper extends IHealthDataPointMapper<B
      */
     protected BloodGlucoseUnit getBloodGlucoseUnitFromMagicNumber(Integer measureUnitMagicNumber) {
 
-        switch ( measureUnitMagicNumber ) {
-
-            case MG_PER_DL_MAGIC_NUMBER:
-                return BloodGlucoseUnit.MILLIGRAMS_PER_DECILITER;
-            case MMOL_PER_L_MAGIC_NUMBER:
-                return BloodGlucoseUnit.MILLIMOLES_PER_LITER;
-            default:
-                throw new UnsupportedOperationException();
+        if (measureUnitMagicNumber.equals(MG_PER_DL_MAGIC_NUMBER)) {
+            return MILLIGRAMS_PER_DECILITER;
+        }
+        else if (measureUnitMagicNumber.equals(MMOL_PER_L_MAGIC_NUMBER)) {
+            return MILLIMOLES_PER_LITER;
+        }
+        else {
+            throw new UnsupportedOperationException();
         }
     }
-
 }

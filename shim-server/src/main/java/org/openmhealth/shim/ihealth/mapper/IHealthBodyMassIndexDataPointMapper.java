@@ -26,13 +26,15 @@ import java.util.Optional;
 import static org.openmhealth.schema.domain.omh.BodyMassIndexUnit.KILOGRAMS_PER_SQUARE_METER;
 import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asRequiredDouble;
 
+
 /**
- * A mapper that translates responses from the iHealth /weight.json/ endpoint into {@link BodyMassIndex} measures.
+ * A mapper that translates responses from the iHealth <code>/weight.json</code> endpoint into {@link BodyMassIndex}
+ * measures.
  *
  * @author Emerson Farrugia
  * @author Chris Schaefbauer
- * @see <a href="http://developer.ihealthlabs.com/dev_documentation_RequestfordataofWeight.htm">
- * iHealth Body Weight Endpoint Documentation</a>
+ * @see <a href="http://developer.ihealthlabs.com/dev_documentation_RequestfordataofWeight.htm">endpoint
+ * documentation</a>
  */
 public class IHealthBodyMassIndexDataPointMapper extends IHealthDataPointMapper<BodyMassIndex> {
 

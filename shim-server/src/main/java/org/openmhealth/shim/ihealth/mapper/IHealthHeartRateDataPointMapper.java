@@ -26,8 +26,7 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asRequir
 
 
 /**
- * Base class that handles mapping iHealth responses from endpoints containing heart rate information into {@link
- * HeartRate} measures
+ * An abstract mapper that maps iHealth responses into {@link HeartRate} measures.
  *
  * @author Chris Schaefbauer
  * @author Emerson Farrugia
@@ -45,7 +44,6 @@ public abstract class IHealthHeartRateDataPointMapper extends IHealthDataPointMa
         double heartRateValue = asRequiredDouble(listEntryNode, "HR");
 
         if (heartRateValue == 0) {
-
             return Optional.empty();
         }
 
