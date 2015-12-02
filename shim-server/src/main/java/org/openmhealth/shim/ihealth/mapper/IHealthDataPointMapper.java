@@ -109,12 +109,11 @@ public abstract class IHealthDataPointMapper<T> implements DataPointMapper<T, Js
     }
 
     /**
-     * Sets the effective time frame of a measure builder as a single point in time using a date_time. This method does
-     * not set time intervals.
+     * Get an effective time frame based on the measurement date/time information in the list entry node. The effective
+     * time frame is set as a single point in time using an OffsetDateTime. This method does not get effective time
+     * frame as a time interval.
      *
-     * @param listEntryNode A single node from the response result array that contains the MDate field that needs to
-     * get
-     * mapped as a date_time in the timeframe.
+     * @param listEntryNode A single node from the response result array.
      */
     protected static Optional<TimeFrame> getEffectiveTimeFrameAsDateTime(JsonNode listEntryNode) {
 
@@ -134,7 +133,6 @@ public abstract class IHealthDataPointMapper<T> implements DataPointMapper<T, Js
         }
         // if the time zone is an JSON integer
         else if (asOptionalLong(listEntryNode, "TimeZone").isPresent()) {
-
 
             Long timeZoneOffsetValue = asOptionalLong(listEntryNode, "TimeZone").get();
 
@@ -158,16 +156,18 @@ public abstract class IHealthDataPointMapper<T> implements DataPointMapper<T, Js
     }
 
     /**
-     * This method transforms the unix epoch second timestamps in iHealth responses into an {@link
-     * OffsetDateTime} with
-     * the correct date/time and offset. The timestamps provided in iHealth responses are not in UTC but instead
-     * offset
-     * to the local time zone of the data point.
+     * This method transforms a timestamp from an iHealth response (which is in the form of local time as epoch
+     * seconds) into an {@link OffsetDateTime} with the correct date/time and offset. The timestamps provided in
+     * iHealth responses are not unix epoch seconds in UTC but instead a unix epoch seconds value that is offset by the
+     * time zone of the data point.
      */
     protected static OffsetDateTime getDateTimeWithCorrectOffset(Long localTimeAsEpochSeconds, ZoneOffset zoneOffset) {
 
-        // Since the timestamps are in local time, we can use the local date time provided by rendering the timestamp
-        // in UTC, then translating that local time to the appropriate offset.
+        /*
+            iHealth provides the local time of a measurement as if it had occurred in UTC, along with the timezone
+            offset where the measurement occurred. To retrieve the correct OffsetDateTime, we must retain the local
+            date/time value, but replace the timezone offset.
+        */
         return OffsetDateTime.ofInstant(Instant.ofEpochSecond(localTimeAsEpochSeconds), ZoneOffset.UTC)
                 .withOffsetSameLocal(zoneOffset);
     }
@@ -190,8 +190,7 @@ public abstract class IHealthDataPointMapper<T> implements DataPointMapper<T, Js
     }
 
     /**
-     * Sets the user note in a measure builder with the value of the note property in the list entry node if that
-     * property exists.
+     * Gets the user note from a list entry node if that property exists.
      *
      * @param listEntryNode A single entry from the response result array.
      */
