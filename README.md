@@ -11,12 +11,12 @@ We currently support the following APIs
 * [Misfit](http://misfit.com/)
 * [RunKeeper](https://runkeeper.com/index)
 * [Withings](http://www.withings.com/)
+* [iHealth](http://www.ihealthlabs.com/)
 
 And the following APIs are in the works
 
 * [FatSecret](https://www.fatsecret.com/)
 * [Ginsberg](https://www.ginsberg.io/)
-* [iHealth](http://www.ihealthlabs.com/)
 * [Strava](https://www.strava.com/)
 
 This README should have everything you need to get started. If you have any questions, feel free to [open an issue](https://github.com/openmhealth/shimmer/issues), [email us](mailto://admin@openmhealth.org), [post on our form](https://groups.google.com/forum/#!forum/omh-developers), or [visit our website](http://www.openmhealth.org/documentation/#/data-providers/get-started).
@@ -122,6 +122,11 @@ You need to obtain client credentials for any shim you'd like to use. These cred
 * [Misfit](https://build.misfit.com/)
 * [RunKeeper](http://developer.runkeeper.com/healthgraph) ([application management portal](http://runkeeper.com/partner))
 * [Withings](http://oauth.withings.com/api)
+* [iHealth](http://developer.ihealthlabs.com/index.htm) (see below for setting up special iHealth application specific credentials) 
+
+> If you are using the iHealth shim, you must uncomment and replace the SC and SV values for each endpoint in the `iHealth:serialValues` map in the `application.yaml` file. 
+These values are uniquely associated with each project you have and can be found in your project details on the [application management page](http://developer.ihealthlabs.com/developermanagepage.htm) 
+of the iHealth developers site.
 
 If any of the links are incorrect or out of date, please [submit an issue](https://github.com/openmhealth/shimmer/issues) to let us know. 
 
@@ -246,7 +251,14 @@ The currently supported shims are:
 | withings     | steps<sup>4</sup> | [omh:step-count](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_step-count) |
 | withings     | calories<sup>4</sup> | [omh:calories-burned](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_calories-burned) |
 | withings     | sleep<sup>5</sup> | [omh:sleep-duration](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_sleep-duration) |
-
+| ihealth      | physical_activity | [omh:physical-activity](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_physical-activity) |
+| ihealth      | blood_glucose     | [omh:blood-glucose](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_blood-glucose) |
+| ihealth      | blood_pressure    | [omh:blood-pressure](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_blood-pressure) |
+| ihealth      | body_weight       | [omh:body-weight](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_body-weight) |
+| ihealth      | body_mass_index   | [omh:body-mass-index](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_body-mass-index) |
+| ihealth      | heart_rate        | [omh:heart-rate](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_heart-rate) |
+| ihealth      | step_count        | [omh:step-count](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_step-count) |
+| ihealth      | sleep_duration    | [omh:sleep-duration](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_sleep-duration) |
 
 <sup>1</sup> *The Fitbit API does not provide time zone information for the data points it returns. Furthermore, it is not possible to infer the time zone from any of the information provided. Because Open mHealth schemas require timestamps to have a time zone, we need to assign a time zone to timestamps. We set the time zone of all timestamps to UTC for consistency, even if the data may not have occurred in that time zone. This means that unless the event actually occurred in UTC, the timestamps will be incorrect. Please consider this when working with data normalized into OmH schemas that are retrieved from the Fitbit shim. We will fix this as soon as Fitbit makes changes to their API to provide time zone information.* 
 
