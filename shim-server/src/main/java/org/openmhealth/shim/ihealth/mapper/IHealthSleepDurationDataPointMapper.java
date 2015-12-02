@@ -19,6 +19,7 @@ package org.openmhealth.shim.ihealth.mapper;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.openmhealth.schema.domain.omh.*;
 
+import java.time.ZoneOffset;
 import java.util.Optional;
 
 import static org.openmhealth.schema.domain.omh.TimeInterval.*;
@@ -61,8 +62,8 @@ public class IHealthSleepDurationDataPointMapper extends IHealthDataPointMapper<
             if (timeZone.isPresent()) {
 
                 sleepDurationBuilder.setEffectiveTimeFrame(ofStartDateTimeAndEndDateTime(
-                        getDateTimeWithCorrectOffset(startTime.get(), timeZone.get()),
-                        getDateTimeWithCorrectOffset(endTime.get(), timeZone.get())));
+                        getDateTimeWithCorrectOffset(startTime.get(), ZoneOffset.of(timeZone.get())),
+                        getDateTimeWithCorrectOffset(endTime.get(), ZoneOffset.of(timeZone.get()))));
             }
         }
 

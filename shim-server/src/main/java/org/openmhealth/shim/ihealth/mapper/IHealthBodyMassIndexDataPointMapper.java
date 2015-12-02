@@ -60,7 +60,8 @@ public class IHealthBodyMassIndexDataPointMapper extends IHealthDataPointMapper<
         BodyMassIndex.Builder bodyMassIndexBuilder =
                 new BodyMassIndex.Builder(new TypedUnitValue<>(KILOGRAMS_PER_SQUARE_METER, bmiValue));
 
-        setEffectiveTimeFrameWithDateTimeIfExists(listEntryNode, bodyMassIndexBuilder);
+        getEffectiveTimeFrameAsDateTime(listEntryNode)
+                .ifPresent(etf -> bodyMassIndexBuilder.setEffectiveTimeFrame(etf));
         setUserNoteIfExists(listEntryNode, bodyMassIndexBuilder);
 
         BodyMassIndex bodyMassIndex = bodyMassIndexBuilder.build();

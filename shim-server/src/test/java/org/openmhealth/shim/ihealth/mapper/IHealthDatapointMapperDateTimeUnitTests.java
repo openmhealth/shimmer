@@ -18,17 +18,19 @@ package org.openmhealth.shim.ihealth.mapper;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.openmhealth.schema.domain.omh.HeartRate;
+import org.openmhealth.schema.domain.omh.TimeFrame;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
 import java.time.OffsetDateTime;
+import java.util.Optional;
 
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.IsNull.notNullValue;
-import static org.openmhealth.shim.ihealth.mapper.IHealthDataPointMapper.*;
+import static org.hamcrest.core.Is.is;
+import static org.openmhealth.shim.ihealth.mapper.IHealthDataPointMapper.getDateTimeAtStartOfDayWithCorrectOffset;
+import static org.openmhealth.shim.ihealth.mapper.IHealthDataPointMapper.getEffectiveTimeFrameAsDateTime;
 
 
 /**
@@ -48,9 +50,9 @@ public class IHealthDatapointMapperDateTimeUnitTests extends IHealthDataPointMap
     public void setEffectiveTimeFrameShouldNotAddTimeFrameWhenTimeZoneIsMissing() throws IOException {
 
         JsonNode timeInfoNode = createResponseNodeWithTimeZone(null);
-        setEffectiveTimeFrameWithDateTimeIfExists(timeInfoNode, builder);
+        getEffectiveTimeFrameAsDateTime(timeInfoNode);
 
-        assertThat(builder.build().getEffectiveTimeFrame(), nullValue());
+        assertThat(getEffectiveTimeFrameAsDateTime(timeInfoNode).isPresent(), is(false));
     }
 
     @Test
@@ -58,9 +60,7 @@ public class IHealthDatapointMapperDateTimeUnitTests extends IHealthDataPointMap
 
         JsonNode timeInfoNode = createResponseNodeWithTimeZone("\"\"");
 
-        setEffectiveTimeFrameWithDateTimeIfExists(timeInfoNode, builder);
-
-        assertThat(builder.build().getEffectiveTimeFrame(), nullValue());
+        assertThat(getEffectiveTimeFrameAsDateTime(timeInfoNode).isPresent(), is(false));
     }
 
     @Test
@@ -125,11 +125,10 @@ public class IHealthDatapointMapperDateTimeUnitTests extends IHealthDataPointMap
             throws IOException {
 
         JsonNode timeInfoNode = createResponseNodeWithTimeZone(timezoneString);
-        setEffectiveTimeFrameWithDateTimeIfExists(timeInfoNode, builder);
+        Optional<TimeFrame> effectiveTimeFrameAsDateTime = getEffectiveTimeFrameAsDateTime(timeInfoNode);
 
-        assertThat(builder.build().getEffectiveTimeFrame(), notNullValue());
-        assertThat(builder.build().getEffectiveTimeFrame().getDateTime(), equalTo(
-                OffsetDateTime.parse(expectedDateTime)));
+        assertThat(effectiveTimeFrameAsDateTime.isPresent(), is(true));
+        assertThat(effectiveTimeFrameAsDateTime.get().getDateTime(), equalTo(OffsetDateTime.parse(expectedDateTime)));
     }
 
     public JsonNode createResponseNodeWithTimeZone(String timezoneString) throws IOException {

@@ -18,12 +18,10 @@ package org.openmhealth.shim.ihealth.mapper;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.Lists;
-import org.openmhealth.schema.domain.omh.DataPoint;
-import org.openmhealth.schema.domain.omh.DataPointAcquisitionProvenance;
-import org.openmhealth.schema.domain.omh.DataPointHeader;
-import org.openmhealth.schema.domain.omh.Measure;
+import org.openmhealth.schema.domain.omh.*;
 import org.openmhealth.shim.common.mapper.DataPointMapper;
 
+import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
@@ -115,61 +113,64 @@ public abstract class IHealthDataPointMapper<T> implements DataPointMapper<T, Js
      * Sets the effective time frame of a measure builder as a single point in time using a date_time. This method does
      * not set time intervals.
      *
-     * @param listEntryNode A single node from the response result array that contains the MDate field that needs to get
+     * @param listEntryNode A single node from the response result array that contains the MDate field that needs to
+     * get
      * mapped as a date_time in the timeframe.
-     * @param builder The measure builder to set the effective time frame.
      */
-    protected static void setEffectiveTimeFrameWithDateTimeIfExists(JsonNode listEntryNode, Builder builder) {
+    protected static Optional<TimeFrame> getEffectiveTimeFrameAsDateTime(JsonNode listEntryNode) {
 
-        Optional<Long> optionalOffsetDateTime = asOptionalLong(listEntryNode, "MDate");
+        Optional<Long> weirdSeconds = asOptionalLong(listEntryNode, "MDate");
 
-        if (!optionalOffsetDateTime.isPresent()) {
-            return;
+        if (!weirdSeconds.isPresent()) {
+            return Optional.empty();
         }
 
-        Optional<String> timeZone = asOptionalString(listEntryNode, "TimeZone");
+        ZoneOffset zoneOffset = null;
 
-        if (timeZone.isPresent() && !timeZone.get().isEmpty()) {
+        // if the time zone is a JSON string
+        if (asOptionalString(listEntryNode, "TimeZone").isPresent() &&
+                !asOptionalString(listEntryNode, "TimeZone").get().isEmpty()) {
 
-            OffsetDateTime offsetDateTimeCorrectOffset =
-                    getDateTimeWithCorrectOffset(optionalOffsetDateTime.get(), timeZone.get());
-            builder.setEffectiveTimeFrame(offsetDateTimeCorrectOffset);
+            zoneOffset = ZoneOffset.of(asOptionalString(listEntryNode, "TimeZone").get());
         }
-
+        // if the time zone is an JSON integer
         else if (asOptionalLong(listEntryNode, "TimeZone").isPresent()) {
 
-            Long timeZoneOffsetValue = asOptionalLong(listEntryNode, "TimeZone").get();
-            String timeZoneString = timeZoneOffsetValue.toString();
 
+            Long timeZoneOffsetValue = asOptionalLong(listEntryNode, "TimeZone").get();
+
+            String timeZoneString = timeZoneOffsetValue.toString();
 
             // Zone offset cannot parse a positive string offset that's missing a '+' sign (i.e., "0200" vs "+0200")
             if (timeZoneOffsetValue >= 0) {
-                timeZoneString = "+" + timeZoneOffsetValue.toString();
+
+                timeZoneString = "+" + timeZoneString;
             }
 
-            OffsetDateTime offsetDateTimeCorrectOffset =
-                    getDateTimeWithCorrectOffset(optionalOffsetDateTime.get(),
-                            timeZoneString);
-
-            builder.setEffectiveTimeFrame(offsetDateTimeCorrectOffset);
+            zoneOffset = ZoneOffset.of(timeZoneString);
         }
+
+        if (zoneOffset == null) {
+
+            return Optional.empty();
+        }
+
+        return Optional.of(new TimeFrame(getDateTimeWithCorrectOffset(weirdSeconds.get(), zoneOffset)));
     }
 
     /**
-     * This method transforms the unix epoch second timestamps in iHealth responses into an {@link OffsetDateTime} with
-     * the correct date/time and offset. The timestamps provided in iHealth responses are not in UTC but instead offset
+     * This method transforms the unix epoch second timestamps in iHealth responses into an {@link
+     * OffsetDateTime} with
+     * the correct date/time and offset. The timestamps provided in iHealth responses are not in UTC but instead
+     * offset
      * to the local time zone of the data point.
      */
-    protected static OffsetDateTime getDateTimeWithCorrectOffset(Long dateTimeInUnixSecondsWithLocalTimeOffset,
-            String timeZoneString) {
+    protected static OffsetDateTime getDateTimeWithCorrectOffset(Long localTimeAsEpochSeconds, ZoneOffset zoneOffset) {
 
         // Since the timestamps are in local time, we can use the local date time provided by rendering the timestamp
         // in UTC, then translating that local time to the appropriate offset.
-        OffsetDateTime offsetDateTimeFromOffsetInstant = ofInstant(
-                ofEpochSecond(dateTimeInUnixSecondsWithLocalTimeOffset),
-                ZoneId.of("Z"));
-
-        return offsetDateTimeFromOffsetInstant.toLocalDateTime().atOffset(ZoneOffset.of(timeZoneString));
+        return OffsetDateTime.ofInstant(Instant.ofEpochSecond(localTimeAsEpochSeconds), ZoneOffset.UTC)
+                .withOffsetSameLocal(zoneOffset);
     }
 
     /**
@@ -204,6 +205,9 @@ public abstract class IHealthDataPointMapper<T> implements DataPointMapper<T, Js
 
             builder.setUserNotes(note.get());
         }
+
+        //asOptionalString(listEntryNode, "Note").ifPresent(builder::setUserNotes);
+
     }
 
     /**

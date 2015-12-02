@@ -17,16 +17,14 @@
 package org.openmhealth.shim.ihealth.mapper;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.google.common.collect.ImmutableMap;
 import org.openmhealth.schema.domain.omh.*;
+import org.openmhealth.shim.ihealth.domain.IHealthTemporalRelationshipToMeal;
 
-import java.util.Map;
 import java.util.Optional;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.openmhealth.schema.domain.omh.BloodGlucoseUnit.MILLIGRAMS_PER_DECILITER;
 import static org.openmhealth.schema.domain.omh.BloodGlucoseUnit.MILLIMOLES_PER_LITER;
-import static org.openmhealth.schema.domain.omh.TemporalRelationshipToMeal.*;
 import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asOptionalString;
 import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asRequiredDouble;
 
@@ -42,7 +40,6 @@ public class IHealthBloodGlucoseDataPointMapper extends IHealthDataPointMapper<B
 
     public static final int MG_PER_DL_MAGIC_NUMBER = 0;
     public static final int MMOL_PER_L_MAGIC_NUMBER = 1;
-    protected static Map<String, TemporalRelationshipToMeal> iHealthBloodGlucoseRelationshipToMeal;
 
     @Override
     protected String getListNodeName() {
@@ -54,10 +51,6 @@ public class IHealthBloodGlucoseDataPointMapper extends IHealthDataPointMapper<B
         return Optional.of("BGUnit");
     }
 
-    public IHealthBloodGlucoseDataPointMapper() {
-
-        initializeTemporalRelationshipToFoodMap();
-    }
 
     @Override
     protected Optional<DataPoint<BloodGlucose>> asDataPoint(JsonNode listEntryNode, Integer measureUnitMagicNumber) {
@@ -79,15 +72,14 @@ public class IHealthBloodGlucoseDataPointMapper extends IHealthDataPointMapper<B
 
         if (dinnerSituation.isPresent()) {
 
-            TemporalRelationshipToMeal temporalRelationshipToMeal =
-                    iHealthBloodGlucoseRelationshipToMeal.get(dinnerSituation.get());
+            IHealthTemporalRelationshipToMeal temporalRelationshipToMeal =
+                    IHealthTemporalRelationshipToMeal.findByResponseValue(dinnerSituation.get()).get();
+            //iHealthBloodGlucoseRelationshipToMeal.get(dinnerSituation.get());
 
-            if (temporalRelationshipToMeal != null) {
-                bloodGlucoseBuilder.setTemporalRelationshipToMeal(temporalRelationshipToMeal);
-            }
+            bloodGlucoseBuilder.setTemporalRelationshipToMeal(temporalRelationshipToMeal.getStandardConstant());
         }
 
-        setEffectiveTimeFrameWithDateTimeIfExists(listEntryNode, bloodGlucoseBuilder);
+        getEffectiveTimeFrameAsDateTime(listEntryNode).ifPresent(etf -> bloodGlucoseBuilder.setEffectiveTimeFrame(etf));
         setUserNoteIfExists(listEntryNode, bloodGlucoseBuilder);
 
         BloodGlucose bloodGlucose = bloodGlucoseBuilder.build();
@@ -99,26 +91,6 @@ public class IHealthBloodGlucoseDataPointMapper extends IHealthDataPointMapper<B
                         .setAdditionalProperty("temporal_relationship_to_medication", drugSituation));
 
         return Optional.of(new DataPoint<>(createDataPointHeader(listEntryNode, bloodGlucose), bloodGlucose));
-    }
-
-    /**
-     * Maps strings used by iHealth to represent the relationship between a blood glucose measure and meals to the
-     * values used in OMH schema.
-     */
-    private void initializeTemporalRelationshipToFoodMap() {
-
-        ImmutableMap.Builder<String, TemporalRelationshipToMeal> relationshipToMealMapBuilder = ImmutableMap.builder();
-
-        relationshipToMealMapBuilder.put("Before_breakfast", BEFORE_BREAKFAST)
-                .put("After_breakfast", AFTER_BREAKFAST)
-                .put("Before_lunch", BEFORE_LUNCH)
-                .put("After_lunch", AFTER_LUNCH)
-                .put("Before_dinner", BEFORE_DINNER)
-                .put("After_dinner", AFTER_DINNER)
-                .put("At_midnight", AFTER_DINNER);
-
-        iHealthBloodGlucoseRelationshipToMeal = relationshipToMealMapBuilder.build();
-
     }
 
     /**
