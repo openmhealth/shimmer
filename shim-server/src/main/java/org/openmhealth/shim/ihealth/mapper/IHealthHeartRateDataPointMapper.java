@@ -49,10 +49,9 @@ public abstract class IHealthHeartRateDataPointMapper extends IHealthDataPointMa
 
         HeartRate.Builder heartRateBuilder = new HeartRate.Builder(heartRateValue);
 
-        getEffectiveTimeFrameAsDateTime(listEntryNode).ifPresent(etf -> heartRateBuilder.setEffectiveTimeFrame(etf));
+        getEffectiveTimeFrameAsDateTime(listEntryNode).ifPresent(heartRateBuilder::setEffectiveTimeFrame);
 
-        //setEffectiveTimeFrameWithDateTimeIfExists(listEntryNode, heartRateBuilder);
-        setUserNoteIfExists(listEntryNode, heartRateBuilder);
+        getUserNoteIfExists(listEntryNode).ifPresent(heartRateBuilder::setUserNotes);
 
         HeartRate heartRate = heartRateBuilder.build();
         return Optional.of(new DataPoint<>(createDataPointHeader(listEntryNode, heartRate), heartRate));

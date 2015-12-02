@@ -67,8 +67,9 @@ public class IHealthBodyWeightDataPointMapper extends IHealthDataPointMapper<Bod
         BodyWeight.Builder bodyWeightBuilder =
                 new BodyWeight.Builder(new MassUnitValue(bodyWeightUnit, bodyWeightValue));
 
-        getEffectiveTimeFrameAsDateTime(listEntryNode).ifPresent(etf -> bodyWeightBuilder.setEffectiveTimeFrame(etf));
-        setUserNoteIfExists(listEntryNode, bodyWeightBuilder);
+        getEffectiveTimeFrameAsDateTime(listEntryNode).ifPresent(bodyWeightBuilder::setEffectiveTimeFrame);
+
+        getUserNoteIfExists(listEntryNode).ifPresent(bodyWeightBuilder::setUserNotes);
 
         BodyWeight bodyWeight = bodyWeightBuilder.build();
 

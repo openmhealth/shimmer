@@ -67,9 +67,10 @@ public class IHealthSleepDurationDataPointMapper extends IHealthDataPointMapper<
             }
         }
 
-        setUserNoteIfExists(listEntryNode, sleepDurationBuilder);
+        getUserNoteIfExists(listEntryNode).ifPresent(sleepDurationBuilder::setUserNotes);
 
         SleepDuration sleepDuration = sleepDurationBuilder.build();
+
         asOptionalBigDecimal(listEntryNode, "Awaken")
                 .ifPresent(awaken -> sleepDuration.setAdditionalProperty("wakeup_count", awaken));
 

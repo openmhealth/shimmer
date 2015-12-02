@@ -34,7 +34,6 @@ import static java.time.Instant.ofEpochSecond;
 import static java.time.OffsetDateTime.ofInstant;
 import static org.openmhealth.schema.domain.omh.DataPointModality.SELF_REPORTED;
 import static org.openmhealth.schema.domain.omh.DataPointModality.SENSED;
-import static org.openmhealth.schema.domain.omh.Measure.Builder;
 import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.*;
 
 
@@ -195,19 +194,17 @@ public abstract class IHealthDataPointMapper<T> implements DataPointMapper<T, Js
      * property exists.
      *
      * @param listEntryNode A single entry from the response result array.
-     * @param builder The measure builder to set the user note.
      */
-    protected static void setUserNoteIfExists(JsonNode listEntryNode, Builder builder) {
+    protected static Optional<String> getUserNoteIfExists(JsonNode listEntryNode) {
 
         Optional<String> note = asOptionalString(listEntryNode, "Note");
 
         if (note.isPresent() && !note.get().isEmpty()) {
 
-            builder.setUserNotes(note.get());
+            return note;
         }
 
-        //asOptionalString(listEntryNode, "Note").ifPresent(builder::setUserNotes);
-
+        return Optional.empty();
     }
 
     /**

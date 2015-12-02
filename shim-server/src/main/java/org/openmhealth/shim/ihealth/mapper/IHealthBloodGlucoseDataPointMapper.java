@@ -68,19 +68,18 @@ public class IHealthBloodGlucoseDataPointMapper extends IHealthDataPointMapper<B
         BloodGlucose.Builder bloodGlucoseBuilder =
                 new BloodGlucose.Builder(new TypedUnitValue<>(bloodGlucoseUnit, bloodGlucoseValue));
 
-        Optional<String> dinnerSituation = asOptionalString(listEntryNode, "DinnerSituation");
+        Optional<String> relationshipToMeal = asOptionalString(listEntryNode, "DinnerSituation");
 
-        if (dinnerSituation.isPresent()) {
+        if (relationshipToMeal.isPresent()) {
 
             IHealthTemporalRelationshipToMeal temporalRelationshipToMeal =
-                    IHealthTemporalRelationshipToMeal.findByResponseValue(dinnerSituation.get()).get();
-            //iHealthBloodGlucoseRelationshipToMeal.get(dinnerSituation.get());
+                    IHealthTemporalRelationshipToMeal.findByResponseValue(relationshipToMeal.get()).get();
 
             bloodGlucoseBuilder.setTemporalRelationshipToMeal(temporalRelationshipToMeal.getStandardConstant());
         }
 
-        getEffectiveTimeFrameAsDateTime(listEntryNode).ifPresent(etf -> bloodGlucoseBuilder.setEffectiveTimeFrame(etf));
-        setUserNoteIfExists(listEntryNode, bloodGlucoseBuilder);
+        getEffectiveTimeFrameAsDateTime(listEntryNode).ifPresent(bloodGlucoseBuilder::setEffectiveTimeFrame);
+        getUserNoteIfExists(listEntryNode).ifPresent(bloodGlucoseBuilder::setUserNotes);
 
         BloodGlucose bloodGlucose = bloodGlucoseBuilder.build();
 

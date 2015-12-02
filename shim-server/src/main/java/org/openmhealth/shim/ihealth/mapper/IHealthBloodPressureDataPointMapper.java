@@ -68,10 +68,9 @@ public class IHealthBloodPressureDataPointMapper extends IHealthDataPointMapper<
         BloodPressure.Builder bloodPressureBuilder =
                 new BloodPressure.Builder(systolicBloodPressure, diastolicBloodPressure);
 
-        getEffectiveTimeFrameAsDateTime(listEntryNode)
-                .ifPresent(etf -> bloodPressureBuilder.setEffectiveTimeFrame(etf));
-        // setEffectiveTimeFrameWithDateTimeIfExists(listEntryNode, bloodPressureBuilder);
-        setUserNoteIfExists(listEntryNode, bloodPressureBuilder);
+        getEffectiveTimeFrameAsDateTime(listEntryNode).ifPresent(bloodPressureBuilder::setEffectiveTimeFrame);
+
+        getUserNoteIfExists(listEntryNode).ifPresent(bloodPressureBuilder::setUserNotes);
 
         BloodPressure bloodPressure = bloodPressureBuilder.build();
         return Optional.of(new DataPoint<>(createDataPointHeader(listEntryNode, bloodPressure), bloodPressure));

@@ -18,13 +18,13 @@ package org.openmhealth.shim.ihealth.mapper;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.openmhealth.schema.domain.omh.DataPoint;
-import org.openmhealth.schema.domain.omh.DurationUnit;
 import org.openmhealth.schema.domain.omh.DurationUnitValue;
 import org.openmhealth.schema.domain.omh.StepCount;
 
 import java.math.BigDecimal;
 import java.util.Optional;
 
+import static org.openmhealth.schema.domain.omh.DurationUnit.DAY;
 import static org.openmhealth.schema.domain.omh.TimeInterval.ofStartDateTimeAndDuration;
 import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.*;
 
@@ -72,11 +72,11 @@ public class IHealthStepCountDataPointMapper extends IHealthDataPointMapper<Step
                 the day (23:50) or at the latest time that datapoint was synced */
                 stepCountBuilder.setEffectiveTimeFrame(ofStartDateTimeAndDuration(
                         getDateTimeAtStartOfDayWithCorrectOffset(dateTimeString.get(), timeZone.get()),
-                        new DurationUnitValue(DurationUnit.DAY, 1)));
+                        new DurationUnitValue(DAY, 1)));
             }
         }
 
-        setUserNoteIfExists(listEntryNode, stepCountBuilder);
+        getUserNoteIfExists(listEntryNode).ifPresent(stepCountBuilder::setUserNotes);
 
         StepCount stepCount = stepCountBuilder.build();
 

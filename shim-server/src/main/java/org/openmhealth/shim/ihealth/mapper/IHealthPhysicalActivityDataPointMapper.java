@@ -82,6 +82,7 @@ public class IHealthPhysicalActivityDataPointMapper extends IHealthDataPointMapp
         }
 
         PhysicalActivity physicalActivity = physicalActivityBuilder.build();
+
         return Optional.of(new DataPoint<>(createDataPointHeader(listEntryNode, physicalActivity), physicalActivity));
     }
 }
