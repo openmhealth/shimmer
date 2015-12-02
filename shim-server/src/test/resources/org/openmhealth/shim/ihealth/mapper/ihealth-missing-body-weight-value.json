@@ -1,0 +1,26 @@
+{
+    "CurrentRecordCount": 4,
+    "NextPageUrl": "",
+    "PageLength": 50,
+    "PageNumber": 1,
+    "PrevPageUrl": "",
+    "RecordCount": 1,
+    "WeightDataList": [
+        {
+            "BMI": 0,
+            "BoneValue": 0,
+            "DCI": 0,
+            "DataID": "b702a3a5e998f2fca268df6daaa69871",
+            "DataSource": "Manual",
+            "FatValue": 0,
+            "LastChangeTime": 1442520480,
+            "MDate": 1442498877,
+            "MuscaleValue": 0,
+            "Note": "Weight so good, look at me meow",
+            "TimeZone": "-0600",
+            "WaterValue": 0,
+            "WeightValue": 0
+        }
+    ],
+    "WeightUnit": 0
+}

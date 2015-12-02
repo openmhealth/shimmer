@@ -11,12 +11,12 @@ We currently support the following APIs
 * [Misfit](http://misfit.com/)
 * [RunKeeper](https://runkeeper.com/index)
 * [Withings](http://www.withings.com/)
+* [iHealth](http://www.ihealthlabs.com/)
 
 And the following APIs are in the works
 
 * [FatSecret](https://www.fatsecret.com/)
 * [Ginsberg](https://www.ginsberg.io/)
-* [iHealth](http://www.ihealthlabs.com/)
 * [Strava](https://www.strava.com/)
 
 This README should have everything you need to get started. If you have any questions, feel free to [open an issue](https://github.com/openmhealth/shimmer/issues), [email us](mailto://support@openmhealth.org), [post on our form](https://groups.google.com/forum/#!forum/omh-developers), or [visit our website](http://www.openmhealth.org/documentation/#/data-providers/get-started).
@@ -122,6 +122,11 @@ You need to obtain client credentials for any shim you'd like to use. These cred
 * [Misfit](https://build.misfit.com/)
 * [RunKeeper](http://developer.runkeeper.com/healthgraph) ([application management portal](http://runkeeper.com/partner))
 * [Withings](http://oauth.withings.com/api)
+* [iHealth](http://developer.ihealthlabs.com/index.htm) (see below for setting up special iHealth application specific credentials) 
+
+> If you are using the iHealth shim, you must uncomment and replace the SC and SV values for each endpoint in the `iHealth:serialValues` map in the `application.yaml` file. 
+These values are uniquely associated with each project you have and can be found in your project details on the [application management page](http://developer.ihealthlabs.com/developermanagepage.htm) 
+of the iHealth developers site.
 
 If any of the links are incorrect or out of date, please [submit an issue](https://github.com/openmhealth/shimmer/issues) to let us know. 
 
@@ -218,7 +223,7 @@ The currently supported shims are:
 | shim         | endPoint          | OmH data produced by endpoint |
 | ------------ | ----------------- | -------------------------- |
 | fitbit<sup>1</sup> | activity    | [omh:physical-activity](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_physical-activity) |
-| fitbit<sup>1</sup> | steps             | [omh:step-count](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_step-count) |
+| fitbit<sup>1</sup> | steps<sup>2</sup>             | [omh:step-count](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_step-count) |
 | fitbit<sup>1</sup> | weight            | [omh:body-weight](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_body-weight) |
 | fitbit<sup>1</sup> | body_mass_index   | [omh:body-mass-index](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_body-mass-index)|
 | fitbit<sup>1</sup> | sleep             | [omh:sleep-duration](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_sleep-duration) |
@@ -229,11 +234,11 @@ The currently supported shims are:
 | googlefit    | step_count        | [omh:step-count](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_step-count)
 | googlefit    | calories_burned   | [omh:calories-burned](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_calories-burned) |
 | jawbone      | activity          | [omh:physical-activity](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_physical-activity) |
-| jawbone      | weight<sup>2</sup>            | [omh:body-weight](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_body-weight)
-| jawbone      | body_mass_index<sup>2</sup>   | [omh:body-mass-index](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_body-mass-index) |
+| jawbone      | weight            | [omh:body-weight](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_body-weight)
+| jawbone      | body_mass_index   | [omh:body-mass-index](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_body-mass-index) |
 | jawbone      | steps             | [omh:step-count](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_step-count) |
 | jawbone      | sleep             | [omh:sleep-duration](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_sleep-duration) |
-| jawbone      | heart_rate<sup>2</sup>        | [omh:heart-rate](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_heart-rate) |
+| jawbone      | heart_rate<sup>3</sup>        | [omh:heart-rate](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_heart-rate) |
 | misfit       | activities        | [omh:physical-activity](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_physical-activity) |
 | misfit       | steps             | [omh:step-count](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_step-count)
 | misfit       | sleep             | [omh:sleep-duration](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_sleep-duration) |
@@ -243,18 +248,27 @@ The currently supported shims are:
 | withings     | body_height       | [omh:body-height](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_body-height)|
 | withings     | body_weight       | [omh:body-weight](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_body-weight) |
 | withings     | heart_rate        | [omh:heart-rate](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_heart-rate) |
-| withings     | steps<sup>3</sup> | [omh:step-count](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_step-count) |
-| withings     | calories<sup>3</sup> | [omh:calories-burned](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_calories-burned) |
-| withings     | sleep<sup>4</sup> | [omh:sleep-duration](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_sleep-duration) |
-
+| withings     | steps<sup>4</sup> | [omh:step-count](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_step-count) |
+| withings     | calories<sup>4</sup> | [omh:calories-burned](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_calories-burned) |
+| withings     | sleep<sup>5</sup> | [omh:sleep-duration](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_sleep-duration) |
+| ihealth      | physical_activity | [omh:physical-activity](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_physical-activity) |
+| ihealth      | blood_glucose     | [omh:blood-glucose](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_blood-glucose) |
+| ihealth      | blood_pressure    | [omh:blood-pressure](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_blood-pressure) |
+| ihealth      | body_weight       | [omh:body-weight](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_body-weight) |
+| ihealth      | body_mass_index   | [omh:body-mass-index](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_body-mass-index) |
+| ihealth      | heart_rate        | [omh:heart-rate](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_heart-rate) |
+| ihealth      | step_count        | [omh:step-count](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_step-count) |
+| ihealth      | sleep_duration    | [omh:sleep-duration](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_sleep-duration) |
 
 <sup>1</sup> *The Fitbit API does not provide time zone information for the data points it returns. Furthermore, it is not possible to infer the time zone from any of the information provided. Because Open mHealth schemas require timestamps to have a time zone, we need to assign a time zone to timestamps. We set the time zone of all timestamps to UTC for consistency, even if the data may not have occurred in that time zone. This means that unless the event actually occurred in UTC, the timestamps will be incorrect. Please consider this when working with data normalized into OmH schemas that are retrieved from the Fitbit shim. We will fix this as soon as Fitbit makes changes to their API to provide time zone information.* 
 
-<sup>2</sup> *Body weight, body mass index, and heart rate mappers have not been tested on real data from Jawbone devices. They have been tested on example data provided in Jawbone API documentation. Please help us out by testing Shimmer with real-world data of one of these types from a Jawbone device and letting us know whether or not it works correctly.*
+<sup>2</sup> *Uses the daily step summary when partner access is disabled (default) and uses intraday step count (at 1 minute granularity) when partner access is enabled. Intraday activity requests are limited to 24 hours worth of data per request. See the YAML configuration file (application.yaml) to enable partner access if your API credentials have been granted partner access. Attempting to generate normalized data with the partner access property set to true, but when your API credentials have not been granted partner access will result in an error.*
 
-<sup>3</sup> *Uses the daily activity summary when partner access is disabled (default) and uses intraday activity when partner access is enabled. See the YAML configuration file for details. Intraday activity requests are limited to 24 hours worth of data per request.*
+<sup>3</sup> *The Heart rate mapper has not been tested on real data from Jawbone devices. They have been tested on example data provided in Jawbone API documentation. Please help us out by testing Shimmer with real-world data of one of these types from a Jawbone device and letting us know whether or not it works correctly.*
 
-<sup>4</sup> *Sleep data has not been tested using real data directly from a device. It has been tested with example data provided in the Withings API documentation. Please help us out by testing real-world Withings sleep data with Shimmer and letting us know whether or not it works correctly.*
+<sup>4</sup> *Uses the daily activity summary when partner access is disabled (default) and uses intraday activity when partner access is enabled. See the YAML configuration file for details. Intraday activity requests are limited to 24 hours worth of data per request.*
+
+<sup>5</sup> *Sleep data has not been tested using real data directly from a device. It has been tested with example data provided in the Withings API documentation. Please help us out by testing real-world Withings sleep data with Shimmer and letting us know whether or not it works correctly.*
 
 ### Contributing
 

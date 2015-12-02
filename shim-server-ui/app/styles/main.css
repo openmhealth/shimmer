@@ -166,4 +166,10 @@ body {
   .jumbotron {
     border-bottom: 0;
   }
+
+  .authorization-complete-message {
+    padding: 40px;
+    text-align: center;
+  }
+
 }

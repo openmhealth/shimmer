@@ -1,0 +1,37 @@
+{
+    "BGDataList": [
+        {
+            "BG": 60,
+            "DataID": "f706b6152f684c0e9185b1fa6b7c5148",
+            "DataSource": "FromDevice",
+            "DinnerSituation": "Before_breakfast",
+            "DrugSituation": "Before_taking_pills",
+            "LastChangeTime": 1442520221,
+            "Lat": -1,
+            "Lon": -1,
+            "MDate": 1442491407,
+            "Note": "Such glucose, much blood.",
+            "TimeZone": "-0800"
+        },
+        {
+            "BG": 70,
+            "DataID": "b0d61f8df4214f938a8d05d0ac583baa",
+            "DataSource": "Manual",
+            "DinnerSituation": "After_breakfast",
+            "DrugSituation": "After_taking_pills",
+            "LastChangeTime": 1443127602,
+            "Lat": -1,
+            "Lon": -1,
+            "MDate": 1443105880,
+            "Note": "",
+            "TimeZone": "-0600"
+        }
+    ],
+    "BGUnit": 0,
+    "CurrentRecordCount": 3,
+    "NextPageUrl": "",
+    "PageLength": 50,
+    "PageNumber": 1,
+    "PrevPageUrl": "",
+    "RecordCount": 3
+}

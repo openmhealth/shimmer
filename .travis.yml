@@ -12,3 +12,10 @@ cache:
   directories:
     - $HOME/.gradle/wrapper/dists/gradle-2.6-bin
     - $HOME/.gradle/caches/modules-2/files-2.1
+
+# TODO enable this once Travis builds the console
+#deploy:
+#  provider: script
+#  script: resources/docker-hub/deploy-to-docker-hub.sh
+#  on:
+#    tags: true
