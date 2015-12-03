@@ -147,8 +147,9 @@ To initiate the authorization process from the console,
 1. Type in an arbitrary user handle. This handle can be anything, it's just your way of referring to third-party API users. 
 1. Press *Find* and the console will show you a *Connect* button for each API with [configured](#setting-up-your-credentials) authentication credentials.
 1. Click *Connect* and a pop-up will open.
-1. Follow the authorization prompts. You should see an `AUTHORIZE` JSON response.
-1. Close the pop-up.
+1. Follow the authorization prompts. 
+1. After following the prompts, you should see an `authorization successful` response in the pop-up. 
+1. The pop-up will then automatically close.
 
 ### Authorize access programmatically
 
@@ -158,7 +159,7 @@ To initiate the authorization process programmatically,
   * The `shim` path parameter should be one of the names listed [below](#supported-apis-and-endpoints), e.g. `fitbit`. 
   * The `username` query parameter can be set to any unique identifier you'd like to use to identify the user. 
 1. Find the `authorizationUrl` value in the returned JSON response and redirect your user to this URL. Your user will land on the third-party website where they can login and authorize access to their third-party user account. 
-1. Once authorized, they will be redirected to `http://<host>:8083/authorize/{shim_name}/callback` along with an approval response.
+1. Once authorized, they will be redirected to `http://<host>:8083/authorize/{shim_name}/callback`. 
 
 ## Reading data
 A shim can produce JSON data that is either *normalized* to Open mHealth schemas or in the *raw* format produced by the third-party API. Raw data is passed through from the third-party API. Normalized data conforms to [Open mHealth schemas](http://www.openmhealth.org/documentation/#/schema-docs/schema-library).
