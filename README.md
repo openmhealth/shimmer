@@ -19,7 +19,7 @@ And the following APIs are in the works
 * [Ginsberg](https://www.ginsberg.io/)
 * [Strava](https://www.strava.com/)
 
-This README should have everything you need to get started. If you have any questions, feel free to [open an issue](https://github.com/openmhealth/shimmer/issues), [email us](mailto://admin@openmhealth.org), [post on our form](https://groups.google.com/forum/#!forum/omh-developers), or [visit our website](http://www.openmhealth.org/documentation/#/data-providers/get-started).
+This README should have everything you need to get started. If you have any questions, feel free to [open an issue](https://github.com/openmhealth/shimmer/issues), [email us](mailto://support@openmhealth.org), [post on our form](https://groups.google.com/forum/#!forum/omh-developers), or [visit our website](http://www.openmhealth.org/documentation/#/data-providers/get-started).
 
 ## Contents
 - [Overview](#overview)
