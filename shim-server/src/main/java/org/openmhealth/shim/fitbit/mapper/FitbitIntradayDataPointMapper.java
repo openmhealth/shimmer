@@ -31,10 +31,13 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asRequir
 
 
 /**
+ * TODO add Javadoc
+ *
  * @author Chris Schaefbauer
  */
 public abstract class FitbitIntradayDataPointMapper<T> extends FitbitDataPointMapper<T> {
 
+    // FIXME this shared state is a critical section if the mapper is reused
     private JsonNode responseNode;
 
     @Override
@@ -58,6 +61,7 @@ public abstract class FitbitIntradayDataPointMapper<T> extends FitbitDataPointMa
      * Allows specific intraday activity measure mappers to access the date that the datapoint occured, which is stored
      * outside the individual list nodes
      */
+    // TODO discuss naming
     public Optional<LocalDate> getDateFromSummaryForDay() {
 
         JsonNode summaryForDayNode = asRequiredNode(responseNode, getSummaryForDayNodeName()).get(0);
@@ -67,5 +71,6 @@ public abstract class FitbitIntradayDataPointMapper<T> extends FitbitDataPointMa
     /**
      * @return the name of the summary list node which contains a data point with the dateTime field
      */
+    // TODO discuss naming
     public abstract String getSummaryForDayNodeName();
 }

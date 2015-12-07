@@ -31,11 +31,18 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.*;
 
 
 /**
- * A mapper from Fitbit Resource API <code>sleep/date</code> responses to {@link SleepDuration} objects.
+ * A mapper that translates responses from the Fitbit Resource API <code>sleep/date</code> endpoint into {@link
+ * SleepDuration} data points.
  *
  * @author Chris Schaefbauer
+ * @see <a href="https://dev.fitbit.com/docs/sleep/#get-sleep-logs">API documentation</a>
  */
 public class FitbitSleepDurationDataPointMapper extends FitbitDataPointMapper<SleepDuration> {
+
+    @Override
+    protected String getListNodeName() {
+        return "sleep";
+    }
 
     @Override
     protected Optional<DataPoint<SleepDuration>> asDataPoint(JsonNode node) {
@@ -66,13 +73,5 @@ public class FitbitSleepDurationDataPointMapper extends FitbitDataPointMapper<Sl
         Optional<Long> externalId = asOptionalLong(node, "logId");
 
         return Optional.of(newDataPoint(measure, externalId.orElse(null)));
-    }
-
-    /**
-     * @return the name of the list node returned from the sleep/date Fitbit endpoint
-     */
-    @Override
-    protected String getListNodeName() {
-        return "sleep";
     }
 }
