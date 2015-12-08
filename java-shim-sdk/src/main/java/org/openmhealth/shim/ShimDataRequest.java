@@ -57,16 +57,6 @@ public class ShimDataRequest {
     private List<String> columnList;
 
     /**
-     * The starting row for the data (for pagination purposes)
-     */
-    private Long numToSkip;
-
-    /**
-     * Number of rows to return
-     */
-    private Long numToReturn;
-
-    /**
      * If true, returns normalized results
      * from the external data provider, otherwise
      * returns raw data.
@@ -89,8 +79,6 @@ public class ShimDataRequest {
         this.startDateTime = startDateTime;
         this.endDateTime = endDateTime;
         this.columnList = columnList;
-        this.numToSkip = numToSkip;
-        this.numToReturn = numToReturn;
         this.normalize = false;
     }
 
@@ -130,14 +118,6 @@ public class ShimDataRequest {
         this.columnList = columnList;
     }
 
-    public void setNumToSkip(Long numToSkip) {
-        this.numToSkip = numToSkip;
-    }
-
-    public void setNumToReturn(Long numToReturn) {
-        this.numToReturn = numToReturn;
-    }
-
     public String getDataTypeKey() {
         return dataTypeKey;
     }
@@ -148,14 +128,6 @@ public class ShimDataRequest {
 
     public List<String> getColumnList() {
         return columnList;
-    }
-
-    public Long getNumToSkip() {
-        return numToSkip;
-    }
-
-    public Long getNumToReturn() {
-        return numToReturn;
     }
 
     public boolean getNormalize() {

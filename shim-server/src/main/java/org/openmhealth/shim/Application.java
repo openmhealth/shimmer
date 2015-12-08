@@ -304,8 +304,7 @@ public class Application extends WebSecurityConfigurerAdapter {
             @PathVariable("dataType") String dataTypeKey,
             @RequestParam(value = "normalize", defaultValue = "") String normalize,
             @RequestParam(value = "dateStart", defaultValue = "") String dateStart,
-            @RequestParam(value = "dateEnd", defaultValue = "") String dateEnd,
-            @RequestParam(value = "numToReturn", defaultValue = "50") Long numToReturn)
+            @RequestParam(value = "dateEnd", defaultValue = "") String dateEnd)
             throws ShimException {
 
         setPassThroughAuthentication(username, shim);
@@ -324,7 +323,6 @@ public class Application extends WebSecurityConfigurerAdapter {
         if (!"".equals(dateEnd)) {
             shimDataRequest.setEndDateTime(LocalDate.parse(dateEnd).atStartOfDay().atOffset(UTC));
         }
-        shimDataRequest.setNumToReturn(numToReturn);
 
         AccessParameters accessParameters = accessParametersRepo.findByUsernameAndShimKey(
                 username, shim, new Sort(Sort.Direction.DESC, "dateCreated"));
