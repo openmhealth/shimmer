@@ -48,7 +48,7 @@ public class IHealthBodyWeightDataPointMapperUnitTests extends IHealthDataPointM
     @BeforeTest
     public void initializeResponseNode() throws IOException {
 
-        responseNode = asJsonNode("org/openmhealth/shim/ihealth/mapper/ihealth-body-weight.json");
+        responseNode = asJsonNode("org/openmhealth/shim/ihealth/mapper/ihealth-weight.json");
     }
 
     @BeforeMethod
@@ -104,7 +104,7 @@ public class IHealthBodyWeightDataPointMapperUnitTests extends IHealthDataPointM
     public void asDataPointsShouldReturnNoDataPointsWhenWeightValueEqualsZero() throws IOException {
 
         JsonNode zeroValueNode =
-                asJsonNode("org/openmhealth/shim/ihealth/mapper/ihealth-missing-body-weight-value.json");
+                asJsonNode("org/openmhealth/shim/ihealth/mapper/ihealth-weight-no-weight-value.json");
 
         assertThat(mapper.asDataPoints(singletonList(zeroValueNode)), is(empty()));
     }
@@ -112,7 +112,7 @@ public class IHealthBodyWeightDataPointMapperUnitTests extends IHealthDataPointM
     @Test
     public void asDataPointsShouldReturnNoDataPointsWhenWeightListIsEmpty() throws IOException {
 
-        JsonNode emptyListNode = asJsonNode("org/openmhealth/shim/ihealth/mapper/ihealth-empty-body-weight.json");
+        JsonNode emptyListNode = asJsonNode("org/openmhealth/shim/ihealth/mapper/ihealth-weight-empty.json");
 
         assertThat(mapper.asDataPoints(singletonList(emptyListNode)), is(empty()));
     }

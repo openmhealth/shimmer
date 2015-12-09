@@ -52,7 +52,7 @@ public class IHealthBloodPressureEndpointHeartRateDataPointMapperUnitTests exten
     @BeforeTest
     public void initializeResponseNodes() throws IOException {
 
-        responseNode = asJsonNode("/org/openmhealth/shim/ihealth/mapper/ihealth-blood-pressure.json");
+        responseNode = asJsonNode("/org/openmhealth/shim/ihealth/mapper/ihealth-bp.json");
     }
 
     @BeforeMethod
@@ -103,7 +103,7 @@ public class IHealthBloodPressureEndpointHeartRateDataPointMapperUnitTests exten
     public void asDataPointsShouldReturnNoDataPointWhenHeartRateDataIsNotPresent() throws IOException {
 
         JsonNode noHeartRateBloodPressureNode = asJsonNode(
-                "org/openmhealth/shim/ihealth/mapper/ihealth-blood-pressure-missing-heart-rate.json");
+                "org/openmhealth/shim/ihealth/mapper/ihealth-bp-no-heart-rate.json");
 
         assertThat(mapper.asDataPoints(singletonList(noHeartRateBloodPressureNode)), is(empty()));
     }

@@ -1,7 +1,7 @@
 {
-    "ARDataList": [],
+    "BPDataList": [],
+    "BPUnit": 0,
     "CurrentRecordCount": 0,
-    "DistanceUnit": 0,
     "NextPageUrl": "",
     "PageLength": 50,
     "PageNumber": 1,

@@ -34,15 +34,18 @@ public class FitbitPhysicalActivityDataPointMapperUnitTests extends DataPointMap
     @BeforeTest
     public void initializeResponseNodes() throws IOException {
 
-        singleActivityResponseNode = asJsonNode("org/openmhealth/shim/fitbit/mapper/fitbit-get-activities-single.json");
+        singleActivityResponseNode =
+                asJsonNode("org/openmhealth/shim/fitbit/mapper/fitbit-activities-date-single-in-activities-list.json");
         multipleActivityResponseNode =
-                asJsonNode("org/openmhealth/shim/fitbit/mapper/fitbit-get-activities-multiple.json");
+                asJsonNode(
+                        "org/openmhealth/shim/fitbit/mapper/fitbit-activities-date-multiple-in-activities-list.json");
     }
 
     @Test
     public void asDataPointsShouldReturnEmptyListWhenResponseIsEmpty() throws IOException {
 
-        JsonNode emptyNode = asJsonNode("org/openmhealth/shim/fitbit/mapper/fitbit-get-activities-empty.json");
+        JsonNode emptyNode =
+                asJsonNode("org/openmhealth/shim/fitbit/mapper/fitbit-activities-date-empty-activities-list.json");
 
         assertThat(mapper.asDataPoints(emptyNode), is(empty()));
     }

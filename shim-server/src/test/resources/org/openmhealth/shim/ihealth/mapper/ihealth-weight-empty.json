@@ -1,10 +1,10 @@
 {
-    "BGDataList": [],
-    "BGUnit": 0,
     "CurrentRecordCount": 0,
     "NextPageUrl": "",
     "PageLength": 50,
     "PageNumber": 1,
     "PrevPageUrl": "",
-    "RecordCount": 0
+    "RecordCount": 0,
+    "WeightDataList": [],
+    "WeightUnit": 0
 }

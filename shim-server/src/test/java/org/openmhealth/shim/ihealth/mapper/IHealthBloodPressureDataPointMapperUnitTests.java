@@ -48,7 +48,7 @@ public class IHealthBloodPressureDataPointMapperUnitTests extends IHealthDataPoi
     @BeforeTest
     public void initializeResponseNode() throws IOException {
 
-        responseNode = asJsonNode("org/openmhealth/shim/ihealth/mapper/ihealth-blood-pressure.json");
+        responseNode = asJsonNode("org/openmhealth/shim/ihealth/mapper/ihealth-bp.json");
     }
 
     @BeforeMethod
@@ -109,7 +109,7 @@ public class IHealthBloodPressureDataPointMapperUnitTests extends IHealthDataPoi
     @Test
     public void asDataPointsShouldReturnEmptyListWhenEmptyIHealthResponse() {
 
-        JsonNode emptyNode = asJsonNode("org/openmhealth/shim/ihealth/mapper/ihealth-empty-blood-pressure.json");
+        JsonNode emptyNode = asJsonNode("org/openmhealth/shim/ihealth/mapper/ihealth-bp-empty.json");
 
         assertThat(mapper.asDataPoints(singletonList(emptyNode)), is(empty()));
     }

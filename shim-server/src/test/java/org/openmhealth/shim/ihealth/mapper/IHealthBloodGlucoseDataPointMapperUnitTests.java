@@ -17,8 +17,9 @@
 package org.openmhealth.shim.ihealth.mapper;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import org.openmhealth.schema.domain.omh.*;
-import org.springframework.core.io.ClassPathResource;
+import org.openmhealth.schema.domain.omh.BloodGlucose;
+import org.openmhealth.schema.domain.omh.DataPoint;
+import org.openmhealth.schema.domain.omh.TypedUnitValue;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -33,10 +34,12 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
 import static org.openmhealth.schema.domain.omh.BloodGlucose.SCHEMA_ID;
-import static org.openmhealth.schema.domain.omh.BloodGlucoseUnit.*;
+import static org.openmhealth.schema.domain.omh.BloodGlucoseUnit.MILLIGRAMS_PER_DECILITER;
+import static org.openmhealth.schema.domain.omh.BloodGlucoseUnit.MILLIMOLES_PER_LITER;
 import static org.openmhealth.schema.domain.omh.DataPointModality.SELF_REPORTED;
 import static org.openmhealth.schema.domain.omh.DataPointModality.SENSED;
-import static org.openmhealth.schema.domain.omh.TemporalRelationshipToMeal.*;
+import static org.openmhealth.schema.domain.omh.TemporalRelationshipToMeal.AFTER_BREAKFAST;
+import static org.openmhealth.schema.domain.omh.TemporalRelationshipToMeal.BEFORE_BREAKFAST;
 
 
 /**
@@ -51,7 +54,7 @@ public class IHealthBloodGlucoseDataPointMapperUnitTests extends IHealthDataPoin
     @BeforeTest
     public void initializeResponseNode() throws IOException {
 
-        responseNode = asJsonNode("/org/openmhealth/shim/ihealth/mapper/ihealth-blood-glucose.json");
+        responseNode = asJsonNode("/org/openmhealth/shim/ihealth/mapper/ihealth-glucose.json");
     }
 
     @BeforeMethod
@@ -103,9 +106,7 @@ public class IHealthBloodGlucoseDataPointMapperUnitTests extends IHealthDataPoin
     @Test
     public void asDataPointsShouldReturnNoDataPointsWhenBloodGlucoseListIsEmpty() throws IOException {
 
-        ClassPathResource resource =
-                new ClassPathResource("/org/openmhealth/shim/ihealth/mapper/ihealth-empty-glucose.json");
-        JsonNode emptyListResponseNode = objectMapper.readTree(resource.getInputStream());
+        JsonNode emptyListResponseNode = asJsonNode("/org/openmhealth/shim/ihealth/mapper/ihealth-glucose-empty.json");
 
         assertThat(mapper.asDataPoints(singletonList(emptyListResponseNode)), is(empty()));
     }

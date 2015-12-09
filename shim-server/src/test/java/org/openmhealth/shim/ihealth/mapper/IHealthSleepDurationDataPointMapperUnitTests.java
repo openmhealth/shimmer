@@ -121,7 +121,7 @@ public class IHealthSleepDurationDataPointMapperUnitTests extends IHealthDataPoi
     @Test
     public void asDataPointsShouldReturnEmptyListWhenEmptyIHealthResponse() {
 
-        JsonNode emptyNode = asJsonNode("/org/openmhealth/shim/ihealth/mapper/ihealth-empty-sleep.json");
+        JsonNode emptyNode = asJsonNode("/org/openmhealth/shim/ihealth/mapper/ihealth-sleep-empty.json");
 
         assertThat(mapper.asDataPoints(singletonList(emptyNode)), is(empty()));
     }
