@@ -5,17 +5,15 @@ buildscript {
     }
 
     ext {
-        springBootVersion = "1.3.0.RC1"
+        springBootVersion = "1.3.0.RELEASE"
     }
 
     dependencies {
-        classpath 'io.spring.gradle:dependency-management-plugin:0.5.3.RELEASE'
         classpath "org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}"
     }
 }
 
 apply plugin: 'spring-boot'
-apply plugin: 'io.spring.dependency-management'
 
 version = shimmerVersion
 
@@ -35,6 +33,7 @@ configurations {
     compile.exclude module: "spring-boot-starter-tomcat"
 }
 
+// TODO confirm that this can be removed
 dependencyManagement {
     imports {
         mavenBom "org.springframework.boot:spring-boot-dependencies:${springBootVersion}"
@@ -75,6 +74,7 @@ dependencies {
     runtime 'org.slf4j:jcl-over-slf4j'
     runtime 'org.slf4j:log4j-over-slf4j'
     runtime 'ch.qos.logback:logback-classic'
+    runtime "org.yaml:snakeyaml"
 }
 
 task copyArchiveJarToDockerContext(dependsOn: assemble, type: Copy) {
