@@ -165,11 +165,18 @@ public class RunkeeperShim extends OAuth2ShimBase {
         OffsetDateTime endDateTime = shimDataRequest.getEndDateTime() == null ?
                 now.plusDays(1) : shimDataRequest.getEndDateTime();
 
+        /*
+            Runkeeper defaults to returning a maximum of 25 entries per request (pageSize = 25 by default), so
+            we override the default by specifying an arbitrarily large number as the pageSize.
+         */
+        long numToReturn = 100_000;
+
         UriComponentsBuilder uriBuilder = UriComponentsBuilder
                 .fromUriString(DATA_URL)
                 .pathSegment(runkeeperDataType.getEndPointUrl())
                 .queryParam("noEarlierThan", startDateTime.toLocalDate())
                 .queryParam("noLaterThan", endDateTime.toLocalDate())
+                .queryParam("pageSize", numToReturn)
                 .queryParam("detail", true); // added to all endpoints to support summaries
 
 
@@ -189,7 +196,7 @@ public class RunkeeperShim extends OAuth2ShimBase {
 
         if (shimDataRequest.getNormalize()) {
             RunkeeperDataPointMapper<?> dataPointMapper;
-            switch(runkeeperDataType){
+            switch ( runkeeperDataType ) {
                 case ACTIVITY:
                     dataPointMapper = new RunkeeperPhysicalActivityDataPointMapper();
                     break;

@@ -17,9 +17,7 @@
 package org.openmhealth.shim.fitbit.mapper;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import org.openmhealth.schema.domain.omh.DataPoint;
-import org.openmhealth.schema.domain.omh.DurationUnitValue;
-import org.openmhealth.schema.domain.omh.StepCount;
+import org.openmhealth.schema.domain.omh.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -34,9 +32,24 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asRequir
 
 
 /**
+ * A mapper that translates responses from the Fitbit Resource API <code>activities/steps</code> endpoint into {@link
+ * StepCount} data points. This mapper assumes one minute granularity, i.e. that the request specified a
+ * <code>detail-level</code> of <code>1min</code>.
+ *
  * @author Chris Schaefbauer
+ * @see <a href="https://dev.fitbit.com/docs/activity/#get-activity-intraday-time-series">API documentation</a>
  */
 public class FitbitIntradayStepCountDataPointMapper extends FitbitIntradayDataPointMapper<StepCount> {
+
+    @Override
+    protected String getListNodeName() {
+        return "activities-steps-intraday.dataset";
+    }
+
+    @Override
+    public String getSummaryForDayNodeName() {
+        return "activities-steps";
+    }
 
     @Override
     protected Optional<DataPoint<StepCount>> asDataPoint(JsonNode listEntryNode) {
@@ -62,15 +75,5 @@ public class FitbitIntradayStepCountDataPointMapper extends FitbitIntradayDataPo
         }
 
         return Optional.of(newDataPoint(stepCountBuilder.build(), null));
-    }
-
-    @Override
-    protected String getListNodeName() {
-        return "activities-steps-intraday.dataset";
-    }
-
-    @Override
-    public String getSummaryForDayNodeName() {
-        return "activities-steps";
     }
 }

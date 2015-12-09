@@ -17,6 +17,7 @@
 package org.openmhealth.shim;
 
 
+import org.openmhealth.shim.common.mapper.JsonNodeMappingException;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.client.DefaultOAuth2ClientContext;
@@ -157,7 +158,13 @@ public abstract class OAuth2ShimBase extends ShimBase implements OAuth2Shim {
             accessParameters.setStateKey(state);
             accessParametersRepo.save(accessParameters);
 
-            trigger(restTemplate, getTriggerDataRequest());
+            try{
+                trigger(restTemplate, getTriggerDataRequest());
+            }
+            catch(JsonNodeMappingException e){
+                // In this case authentication may have succeeded, but the data request may have failed so we
+                // should not fail. We should check and see if authentication succeeded in subsequent lines.
+            }
 
             /**
              * By this line we will have an approved access token or

@@ -31,11 +31,18 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.*;
 
 
 /**
- * A mapper from Fitbit Resource API <code>activities/date</code> responses to {@link PhysicalActivity} objects.
+ * A mapper that translates responses from the Fitbit Resource API <code>activities/date</code> endpoint into {@link
+ * PhysicalActivity} data points.
  *
  * @author Chris Schaefbauer
+ * @see <a href="https://dev.fitbit.com/docs/activity/#get-daily-activity-summary">API documentation</a>
  */
 public class FitbitPhysicalActivityDataPointMapper extends FitbitDataPointMapper<PhysicalActivity> {
+
+    @Override
+    protected String getListNodeName() {
+        return "activities";
+    }
 
     @Override
     protected Optional<DataPoint<PhysicalActivity>> asDataPoint(JsonNode node) {
@@ -92,13 +99,5 @@ public class FitbitPhysicalActivityDataPointMapper extends FitbitDataPointMapper
         Optional<Long> externalId = asOptionalLong(node, "logId");
 
         return Optional.of(newDataPoint(measure, externalId.orElse(null)));
-    }
-
-    /**
-     * @return the name of the list node returned from the activities/date Fitbit endpoint
-     */
-    @Override
-    protected String getListNodeName() {
-        return "activities";
     }
 }
