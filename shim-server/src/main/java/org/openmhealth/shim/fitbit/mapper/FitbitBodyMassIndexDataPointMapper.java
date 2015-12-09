@@ -31,11 +31,18 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asRequir
 
 
 /**
- * A mapper from Fitbit Resource API <code>body/log/weight</code> responses to {@link BodyMassIndex} objects.
+ * A mapper that translates responses from the Fitbit Resource API <code>body/log/weight</code> endpoint into {@link
+ * BodyMassIndex} data points.
  *
  * @author Chris Schaefbauer
+ * @see <a href="https://dev.fitbit.com/docs/body/#weight">API documentation</a>
  */
 public class FitbitBodyMassIndexDataPointMapper extends FitbitDataPointMapper<BodyMassIndex> {
+
+    @Override
+    protected String getListNodeName() {
+        return "weight";
+    }
 
     @Override
     protected Optional<DataPoint<BodyMassIndex>> asDataPoint(JsonNode node) {
@@ -54,13 +61,5 @@ public class FitbitBodyMassIndexDataPointMapper extends FitbitDataPointMapper<Bo
         Optional<Long> externalId = asOptionalLong(node, "logId");
 
         return Optional.of(newDataPoint(builder.build(), externalId.orElse(null)));
-    }
-
-    /**
-     * @return the name of the list node returned from Fitbit Resource API body/log/weight response
-     */
-    @Override
-    protected String getListNodeName() {
-        return "weight";
     }
 }

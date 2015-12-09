@@ -72,6 +72,9 @@ public class Application extends WebSecurityConfigurerAdapter {
     @Autowired
     private ShimRegistry shimRegistry;
 
+    @Autowired
+    private ShimServerConfig shimServerProperties;
+
     // TODO clarify what this is for
     private static final String REDIRECT_OOB = "oob";
 
@@ -278,7 +281,7 @@ public class Application extends WebSecurityConfigurerAdapter {
             }
 
             try{
-                servletResponse.sendRedirect(authorizationStatusURL);
+                servletResponse.sendRedirect(shimServerProperties.getCallbackUrlBase() + authorizationStatusURL);
             }
             catch (IOException e) {
                 e.printStackTrace();

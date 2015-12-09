@@ -1,0 +1,24 @@
+{
+    "ARDataList": [
+        {
+            "Calories": 1963,
+            "DataID": "de97222d4069d922b2ee8965d491c2e4",
+            "DataSource": "Manual",
+            "DistanceTraveled": 0,
+            "LastChangeTime": 1447826586,
+            "Lat": 0,
+            "Lon": 0,
+            "MDate": 1447800900,
+            "Note": "",
+            "Steps": 0,
+            "TimeZone": "-0700"
+        }
+    ],
+    "CurrentRecordCount": 1,
+    "DistanceUnit": 0,
+    "NextPageUrl": "",
+    "PageLength": 50,
+    "PageNumber": 1,
+    "PrevPageUrl": "",
+    "RecordCount": 1
+}
