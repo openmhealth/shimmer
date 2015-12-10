@@ -14,19 +14,15 @@
  * limitations under the License.
  */
 
-package org.openmhealth.shim;
+package org.openmhealth.shimmer.common.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import org.openmhealth.shim.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -41,7 +37,6 @@ import java.util.*;
 
 import static java.time.ZoneOffset.UTC;
 import static java.util.Collections.singletonList;
-import static org.openmhealth.schema.configuration.JacksonConfiguration.newObjectMapper;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 
@@ -54,7 +49,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.*;
 @ComponentScan(basePackages = "org.openmhealth")
 @EnableWebSecurity
 @RestController
-public class Application extends WebSecurityConfigurerAdapter {
+public class LegacyAuthorizationController {
 
     private static final String AUTH_SUCCESS_URL = "/#authorizationComplete/success";
     private static final String AUTH_FAILURE_URL = "/#authorizationComplete/failure";
@@ -65,88 +60,11 @@ public class Application extends WebSecurityConfigurerAdapter {
     private AuthorizationRequestParametersRepo authParametersRepo;
 
     @Autowired
-    private ApplicationAccessParametersRepo applicationAccessParametersRepo;
-
-    @Autowired
     private ShimRegistry shimRegistry;
 
     @Autowired
     private ShimServerConfig shimServerProperties;
 
-    // TODO clarify what this is for
-    private static final String REDIRECT_OOB = "oob";
-
-    public static void main(String[] args) {
-        SpringApplication.run(Application.class, args);
-    }
-
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        /**
-         * Allow full anonymous authentication.
-         */
-        http.csrf().disable()
-                .authorizeRequests().anyRequest().permitAll();
-    }
-
-    /**
-     * Return shims available in the registry and all endpoints.
-     *
-     * @return list of shims + endpoints in a map.
-     */
-    @RequestMapping(value = "registry", produces = APPLICATION_JSON_VALUE)
-    public List<Map<String, Object>> shimList(@RequestParam(value = "available", defaultValue = "") String available)
-            throws ShimException {
-
-        List<Map<String, Object>> results = new ArrayList<>();
-        List<Shim> shims = "".equals(available) ? shimRegistry.getShims() : shimRegistry.getAvailableShims();
-
-        for (Shim shim : shims) {
-            List<String> endpoints = new ArrayList<>();
-            for (ShimDataType dataType : shim.getShimDataTypes()) {
-                endpoints.add(dataType.name());
-            }
-            Map<String, Object> row = new HashMap<>();
-            row.put("shimKey", shim.getShimKey());
-            row.put("label", shim.getLabel());
-            row.put("endpoints", endpoints);
-            ApplicationAccessParameters parameters = shim.findApplicationAccessParameters();
-            if (parameters.getClientId() != null) {
-                row.put("clientId", parameters.getClientId());
-            }
-            if (parameters.getClientSecret() != null) {
-                row.put("clientSecret", parameters.getClientSecret());
-            }
-            results.add(row);
-        }
-        return results;
-    }
-
-    /**
-     * Update shim configuration
-     *
-     * @return list of shims + endpoints in a map.
-     */
-    @RequestMapping(value = "shim/{shim}/config", method = {GET, PUT, POST}, produces = APPLICATION_JSON_VALUE)
-    public List<String> updateShimConfig(
-            @PathVariable("shim") String shimKey,
-            @RequestParam("clientId") String clientId,
-            @RequestParam("clientSecret") String clientSecret)
-            throws ShimException {
-
-        ApplicationAccessParameters parameters = applicationAccessParametersRepo.findByShimKey(shimKey);
-
-        if (parameters == null) {
-            parameters = new ApplicationAccessParameters();
-            parameters.setShimKey(shimKey);
-        }
-        parameters.setClientId(clientId);
-        parameters.setClientSecret(clientSecret);
-        applicationAccessParametersRepo.save(parameters);
-        shimRegistry.init();
-
-        return singletonList("success");
-    }
 
     /**
      * Retrieve access parameters for the given username/fragment.
@@ -189,19 +107,21 @@ public class Application extends WebSecurityConfigurerAdapter {
     @RequestMapping(value = "/authorize/{shim}", produces = APPLICATION_JSON_VALUE)
     public AuthorizationRequestParameters authorize(
             @RequestParam(value = "username") String username,
-            @RequestParam(value = "client_redirect_url", defaultValue = REDIRECT_OOB) String clientRedirectUrl,
+            @RequestParam(value = "client_redirect_url", required = false) String clientRedirectUrl,
             @PathVariable("shim") String shim) throws ShimException {
 
         setPassThroughAuthentication(username, shim);
         AuthorizationRequestParameters authParams = shimRegistry.getShim(shim)
-                .getAuthorizationRequestParameters(username, Collections.<String, String>emptyMap());
+                .getAuthorizationRequestParameters(username, Collections.emptyMap());
         /**
          * Save authorization parameters to local repo. They will be
          * re-fetched via stateKey upon approval.
          */
         authParams.setUsername(username);
         authParams.setClientRedirectUrl(clientRedirectUrl);
+
         authParametersRepo.save(authParams);
+
         return authParams;
     }
 
@@ -257,11 +177,9 @@ public class Application extends WebSecurityConfigurerAdapter {
 
             /**
              * At this point the authorization is complete, if the authorization request
-             * required a client redirect we do it now, else just return
-             * the authorization response.
+             * required a client redirect we do it now
              */
-            if (authParams.getClientRedirectUrl() != null &&
-                    !REDIRECT_OOB.equals(authParams.getClientRedirectUrl())) {
+            if (authParams.getClientRedirectUrl() != null) {
                 try {
                     servletResponse.sendRedirect(authParams.getClientRedirectUrl());
                 }
@@ -273,7 +191,7 @@ public class Application extends WebSecurityConfigurerAdapter {
             }
 
             String authorizationStatusURL = AUTH_FAILURE_URL;
-            if(response.getType().equals(AuthorizationResponse.Type.AUTHORIZED)){
+            if (response.getType().equals(AuthorizationResponse.Type.AUTHORIZED)) {
 
                 authorizationStatusURL = AUTH_SUCCESS_URL;
             }
@@ -339,10 +257,5 @@ public class Application extends WebSecurityConfigurerAdapter {
      */
     private void setPassThroughAuthentication(String username, String shim) {
         SecurityContextHolder.getContext().setAuthentication(new ShimAuthentication(username, shim));
-    }
-
-    @Bean
-    public ObjectMapper objectMapper() {
-        return newObjectMapper();
     }
 }
