@@ -1,7 +1,6 @@
 package org.openmhealth.shim.googlefit.mapper;
 
 import org.openmhealth.schema.domain.omh.*;
-import org.springframework.core.io.ClassPathResource;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -26,9 +25,7 @@ public class GoogleFitCaloriesBurnedDataPointMapperUnitTests extends GoogleFitDa
     @Override
     public void initializeResponseNode() throws IOException {
 
-        ClassPathResource resource =
-                new ClassPathResource("org/openmhealth/shim/googlefit/mapper/googlefit-calories-burned.json");
-        responseNode = objectMapper.readTree(resource.getInputStream());
+        responseNode = asJsonNode("org/openmhealth/shim/googlefit/mapper/googlefit-merge-calories-expended.json");
     }
 
     @Test

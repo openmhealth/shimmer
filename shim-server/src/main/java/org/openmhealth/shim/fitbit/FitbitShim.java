@@ -197,9 +197,8 @@ public class FitbitShim extends OAuth1ShimBase {
     }
 
     /**
-     * Each 'dayResponse', when normalized, will have a type->list[objects] for the day.
-     * So we collect each daily map to create an aggregate map of the full
-     * time range.
+     * Each 'dayResponse', when normalized, will have a type->list[objects] for the day. So we collect each daily map to
+     * create an aggregate map of the full time range.
      */
     @SuppressWarnings("unchecked")
     private ShimDataResponse aggregateNormalized(List<ShimDataResponse> dayResponses) {
@@ -278,12 +277,12 @@ public class FitbitShim extends OAuth1ShimBase {
 
                 FitbitDataPointMapper dataPointMapper;
 
-                switch ( fitbitDataType ) {
+                switch (fitbitDataType) {
                     case STEPS:
-                        if(partnerAccess){
+                        if (partnerAccess) {
                             dataPointMapper = new FitbitIntradayStepCountDataPointMapper();
                         }
-                        else{
+                        else {
                             dataPointMapper = new FitbitStepCountDataPointMapper();
                         }
                         break;
@@ -373,12 +372,12 @@ public class FitbitShim extends OAuth1ShimBase {
 
                 FitbitDataPointMapper dataPointMapper;
 
-                switch ( fitbitDataType ) {
+                switch (fitbitDataType) {
                     case STEPS:
-                        if(partnerAccess){
+                        if (partnerAccess) {
                             dataPointMapper = new FitbitIntradayStepCountDataPointMapper();
                         }
-                        else{
+                        else {
                             dataPointMapper = new FitbitStepCountDataPointMapper();
                         }
                         break;

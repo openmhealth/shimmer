@@ -43,7 +43,7 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.*;
  * @author Chris Schaefbauer
  * @author Emerson Farrugia
  */
-public abstract class IHealthDataPointMapper<T> implements DataPointMapper<T, JsonNode> {
+public abstract class IHealthDataPointMapper<T extends SchemaSupport> implements DataPointMapper<T, JsonNode> {
 
     public static final String RESOURCE_API_SOURCE_NAME = "iHealth Resource API";
     public static final String DATA_SOURCE_MANUAL = "Manual";

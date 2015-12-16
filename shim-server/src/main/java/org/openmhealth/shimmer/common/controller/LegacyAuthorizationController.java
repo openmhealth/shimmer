@@ -48,8 +48,10 @@ import static org.springframework.web.bind.annotation.RequestMethod.*;
 @RestController
 public class LegacyAuthorizationController {
 
+    // TODO these should get passed in from the console
     private static final String AUTH_SUCCESS_URL = "/#authorizationComplete/success";
     private static final String AUTH_FAILURE_URL = "/#authorizationComplete/failure";
+
     @Autowired
     private AccessParametersRepo accessParametersRepo;
 

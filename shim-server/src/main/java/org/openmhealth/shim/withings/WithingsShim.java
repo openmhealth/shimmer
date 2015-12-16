@@ -201,7 +201,7 @@ public class WithingsShim extends OAuth1ShimBase {
             if (shimDataRequest.getNormalize()) {
                 WithingsDataPointMapper mapper;
 
-                switch ( withingsDataType ) {
+                switch (withingsDataType) {
 
                     case BODY_WEIGHT:
                         mapper = new WithingsBodyWeightDataPointMapper();

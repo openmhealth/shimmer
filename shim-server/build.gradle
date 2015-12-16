@@ -5,17 +5,15 @@ buildscript {
     }
 
     ext {
-        springBootVersion = "1.2.6.RELEASE"
+        springBootVersion = "1.3.0.RELEASE"
     }
 
     dependencies {
-        classpath 'io.spring.gradle:dependency-management-plugin:0.5.3.RELEASE'
         classpath "org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}"
     }
 }
 
 apply plugin: 'spring-boot'
-apply plugin: 'io.spring.dependency-management'
 
 version = shimmerVersion
 
@@ -29,16 +27,13 @@ bootRepackage {
 
 ext {
     signpostVersion = '1.2.1.2'
-    springSecurityOAuthVersion = '2.0.7.RELEASE'
 }
-
-ext['jackson.version'] = '2.5.3'
-ext["spring-data-releasetrain.version"] = "Fowler-SR2"
 
 configurations {
     compile.exclude module: "spring-boot-starter-tomcat"
 }
 
+// TODO confirm that this can be removed
 dependencyManagement {
     imports {
         mavenBom "org.springframework.boot:spring-boot-dependencies:${springBootVersion}"
@@ -48,14 +43,14 @@ dependencyManagement {
 dependencies {
     compile project(':java-shim-sdk')
     compile "commons-io:commons-io:2.4"
-    compile "com.google.code.findbugs:jsr305:3.0.0"
+    compile "org.hibernate:hibernate-validator"
     compile "org.apache.httpcomponents:httpclient"
-    compile "org.apache.httpcomponents:httpcore:4.3.3"
+    compile "org.apache.httpcomponents:httpcore"
     compile "com.fasterxml.jackson.core:jackson-annotations"
     compile "com.fasterxml.jackson.dataformat:jackson-dataformat-xml"
     compile "com.fasterxml.jackson.datatype:jackson-datatype-jsr310"
     compile "com.fasterxml.jackson.datatype:jackson-datatype-jdk8"
-    compile "joda-time:joda-time"             // TODO delete this when shims have been migrated
+    compile "com.google.code.findbugs:jsr305:3.0.0"
     compile "org.mongodb:mongo-java-driver"
     compile "org.openmhealth.schema:omh-schema-sdk:${omhSchemaSdkVersion}"
     compile "oauth.signpost:signpost-commonshttp4:${signpostVersion}"
@@ -63,10 +58,11 @@ dependencies {
     compile "org.springframework.boot:spring-boot-autoconfigure"
     compile "org.springframework.boot:spring-boot-starter-jetty"
     compile "org.springframework.data:spring-data-mongodb"
-    compile "org.springframework.security.oauth:spring-security-oauth:${springSecurityOAuthVersion}"
-    compile "org.springframework.security.oauth:spring-security-oauth2:${springSecurityOAuthVersion}"
+    compile "org.springframework.security.oauth:spring-security-oauth"
+    compile "org.springframework.security.oauth:spring-security-oauth2"
     compile "org.springframework:spring-web"
     compile "org.springframework:spring-webmvc"
+    compile "javax.validation:validation-api:1.1.0.Final"
     compile "org.codehaus.woodstox:woodstox-core-asl:4.4.1" // required to print XML
 
     testCompile 'org.testng:testng:6.8.21' // slowly migrate to TestNG
@@ -74,9 +70,11 @@ dependencies {
     testCompile "org.mockito:mockito-core"
     testCompile "org.springframework.boot:spring-boot-starter-test"
 
+    runtime "org.glassfish:javax.el"
     runtime 'org.slf4j:jcl-over-slf4j'
     runtime 'org.slf4j:log4j-over-slf4j'
     runtime 'ch.qos.logback:logback-classic'
+    runtime "org.yaml:snakeyaml"
 }
 
 task copyArchiveJarToDockerContext(dependsOn: assemble, type: Copy) {

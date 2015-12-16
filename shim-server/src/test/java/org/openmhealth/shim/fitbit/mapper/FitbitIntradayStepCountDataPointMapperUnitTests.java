@@ -22,7 +22,6 @@ import org.openmhealth.schema.domain.omh.DurationUnit;
 import org.openmhealth.schema.domain.omh.DurationUnitValue;
 import org.openmhealth.schema.domain.omh.StepCount;
 import org.openmhealth.shim.common.mapper.DataPointMapperUnitTests;
-import org.springframework.core.io.ClassPathResource;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -50,9 +49,7 @@ public class FitbitIntradayStepCountDataPointMapperUnitTests extends DataPointMa
     @BeforeTest
     public void initializeResponseNode() throws IOException {
 
-        ClassPathResource resource =
-                new ClassPathResource("/org/openmhealth/shim/fitbit/mapper/fitbit-get-intraday-steps.json");
-        responseNode = objectMapper.readTree(resource.getInputStream());
+        responseNode = asJsonNode("/org/openmhealth/shim/fitbit/mapper/fitbit-activities-steps-1d-1m-intraday.json");
     }
 
     @Test

@@ -40,7 +40,7 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.*;
  *
  * @author Emerson Farrugia
  */
-public abstract class RunkeeperDataPointMapper<T> implements JsonNodeDataPointMapper<T> {
+public abstract class RunkeeperDataPointMapper<T extends SchemaSupport> implements JsonNodeDataPointMapper<T> {
 
     public static final String RESOURCE_API_SOURCE_NAME = "Runkeeper HealthGraph API";
     public static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("EEE, d MMM yyyy HH:mm:ss");

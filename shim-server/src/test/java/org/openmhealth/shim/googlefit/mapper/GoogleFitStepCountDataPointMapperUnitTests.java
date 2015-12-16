@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import org.openmhealth.schema.domain.omh.DataPoint;
 import org.openmhealth.schema.domain.omh.DataPointModality;
 import org.openmhealth.schema.domain.omh.StepCount;
-import org.springframework.core.io.ClassPathResource;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -30,12 +29,8 @@ public class GoogleFitStepCountDataPointMapperUnitTests extends GoogleFitDataPoi
     @Override
     public void initializeResponseNode() throws IOException {
 
-        ClassPathResource resource =
-                new ClassPathResource("org/openmhealth/shim/googlefit/mapper/googlefit-step-count.json");
-        responseNode = objectMapper.readTree(resource.getInputStream());
-        resource = new ClassPathResource("org/openmhealth/shim/googlefit/mapper/googlefit-empty.json");
-        emptyNode = objectMapper.readTree(resource.getInputStream());
-
+        responseNode = asJsonNode("org/openmhealth/shim/googlefit/mapper/googlefit-merge-step-deltas.json");
+        emptyNode = asJsonNode("org/openmhealth/shim/googlefit/mapper/googlefit-empty.json");
     }
 
     @Test
