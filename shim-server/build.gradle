@@ -33,13 +33,6 @@ configurations {
     compile.exclude module: "spring-boot-starter-tomcat"
 }
 
-// TODO confirm that this can be removed
-dependencyManagement {
-    imports {
-        mavenBom "org.springframework.boot:spring-boot-dependencies:${springBootVersion}"
-    }
-}
-
 dependencies {
     compile project(':java-shim-sdk')
     compile "commons-io:commons-io:2.4"
