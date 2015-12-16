@@ -22,7 +22,7 @@ jar {
 }
 
 bootRepackage {
-    mainClass = "org.openmhealth.shim.Application"
+    mainClass = "org.openmhealth.shimmer.Application"
 }
 
 ext {
