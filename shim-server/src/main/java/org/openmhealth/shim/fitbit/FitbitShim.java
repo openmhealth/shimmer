@@ -43,6 +43,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static java.util.Collections.singletonList;
+import static org.openmhealth.shim.fitbit.FitbitShim.FitbitDataType.*;
 
 
 /**
@@ -114,7 +115,7 @@ public class FitbitShim extends OAuth1ShimBase {
 
     @Override
     public ShimDataType[] getShimDataTypes() {
-        return FitbitDataType.values();
+        return values();
     }
 
     public enum FitbitDataType implements ShimDataType {
@@ -147,7 +148,7 @@ public class FitbitShim extends OAuth1ShimBase {
 
         FitbitDataType fitbitDataType;
         try {
-            fitbitDataType = FitbitDataType.valueOf(shimDataRequest.getDataTypeKey().trim().toUpperCase());
+            fitbitDataType = valueOf(shimDataRequest.getDataTypeKey().trim().toUpperCase());
         }
         catch (NullPointerException | IllegalArgumentException e) {
             throw new ShimException("Null or Invalid data type parameter: "
@@ -168,16 +169,16 @@ public class FitbitShim extends OAuth1ShimBase {
 
         OffsetDateTime currentDate = startDate;
 
-        if (fitbitDataType.equals(FitbitDataType.WEIGHT)) {
+        if (usesDateRangeQuery(fitbitDataType)) {
             return getRangeData(
                     startDate, endDate, fitbitDataType,
                     shimDataRequest.getNormalize(), accessToken, tokenSecret);
         }
         else {
             /**
-             * Fitbit's API limits you to making a request for each given day
-             * of data. Thus we make a request for each day in the submitted time
-             * range and then aggregate the response based on the normalization parameter.
+             * Fitbit's API limits you to making a request for each given day of data for some endpoints. Thus we
+             * make a request for each day in the submitted time range and then aggregate the response based on the
+             * normalization parameter.
              */
             List<ShimDataResponse> dayResponses = new ArrayList<>();
 
@@ -197,7 +198,21 @@ public class FitbitShim extends OAuth1ShimBase {
     }
 
     /**
-     * Each 'dayResponse', when normalized, will have a type->list[objects] for the day. So we collect each daily map to
+     * Determines whether a range query should be used for submitting requests based on the data type. Based on the
+     * Fitbit API, we are able to use range queries for weight, BMI, and daily step summaries, without losing
+     * information needed for schema mapping.
+     */
+    private boolean usesDateRangeQuery(FitbitDataType fitbitDataType) {
+
+        // partnerAccess means that intraday steps will be used, which are not accessible from a ranged query
+        return fitbitDataType.equals(WEIGHT)
+                || fitbitDataType.equals(BODY_MASS_INDEX)
+                || (fitbitDataType.equals(STEPS) && !partnerAccess);
+    }
+
+    /**
+     * Each 'dayResponse', when normalized, will have a type->list[objects] for the day. So we collect each daily map
+     * to
      * create an aggregate map of the full time range.
      */
     @SuppressWarnings("unchecked")
@@ -277,7 +292,7 @@ public class FitbitShim extends OAuth1ShimBase {
 
                 FitbitDataPointMapper dataPointMapper;
 
-                switch (fitbitDataType) {
+                switch ( fitbitDataType ) {
                     case STEPS:
                         if (partnerAccess) {
                             dataPointMapper = new FitbitIntradayStepCountDataPointMapper();
@@ -330,10 +345,10 @@ public class FitbitShim extends OAuth1ShimBase {
         String toDateString = toTime.toLocalDate().toString();
 
         UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder.fromUriString(DATA_URL).
-                path("/1/user/-/{fitbitDataTypeEndpoint}/date/{fromDateString}/{toDateString}{stepTimeSeries}.json");
+                path("/1/user/-/{fitbitDataTypeEndpoint}/date/{fromDateString}/{toDateString}.json");
         String endpointUrl =
-                uriComponentsBuilder.buildAndExpand(fitbitDataType.getEndPoint(), fromDateString, toDateString,
-                        (fitbitDataType == FitbitDataType.STEPS ? "/1d/1min" : "")).encode().toUriString();
+                uriComponentsBuilder.buildAndExpand(fitbitDataType.getEndPoint(), fromDateString, toDateString).encode()
+                        .toUriString();
 
         return executeRequest(endpointUrl, accessToken, tokenSecret, normalize, fitbitDataType);
     }
@@ -348,7 +363,7 @@ public class FitbitShim extends OAuth1ShimBase {
         UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder.fromUriString(DATA_URL).
                 path("/1/user/-/{fitbitDataTypeEndpoint}/date/{dateString}{stepTimeSeries}.json");
         String endpointUrl = uriComponentsBuilder.buildAndExpand(fitbitDataType.getEndPoint(), dateString,
-                (fitbitDataType == FitbitDataType.STEPS ? "/1d/1min" : "")).encode().toString();
+                (fitbitDataType == STEPS ? "/1d/1min" : "")).encode().toString();
 
         ApplicationAccessParameters parameters = findApplicationAccessParameters();
         HttpRequestBase dataRequest =
@@ -372,7 +387,7 @@ public class FitbitShim extends OAuth1ShimBase {
 
                 FitbitDataPointMapper dataPointMapper;
 
-                switch (fitbitDataType) {
+                switch ( fitbitDataType ) {
                     case STEPS:
                         if (partnerAccess) {
                             dataPointMapper = new FitbitIntradayStepCountDataPointMapper();
