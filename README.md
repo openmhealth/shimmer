@@ -101,7 +101,7 @@ If you want to build and run the code natively, in a terminal
 1. Visit `http://localhost:8083` in a browser.
 
 If you want to build and run the code in Docker, in a terminal 
- 
+ i
 1. Clone this Git repository.
 1. Run `docker-machine ls` to find the name of your active Docker host.
 1. Run `eval "$(docker-machine env host)"` to prepare environment variables, *replacing `host` with the name of your Docker host*.
@@ -122,7 +122,7 @@ You need to obtain client credentials for any shim you'd like to use. These cred
 * [Misfit](https://build.misfit.com/)
 * [RunKeeper](http://developer.runkeeper.com/healthgraph) ([application management portal](http://runkeeper.com/partner))
 * [Withings](http://oauth.withings.com/api)
-* [iHealth](http://developer.ihealthlabs.com/index.htm) (see below for setting up special iHealth application specific credentials) 
+* [iHealth](http://developer.ihealthlabs.com/index.htm)
 
 > If you are using the iHealth shim, you must uncomment and replace the SC and SV values for each endpoint in the `iHealth:serialValues` map in the `application.yaml` file. 
 These values are uniquely associated with each project you have and can be found in your project details on the [application management page](http://developer.ihealthlabs.com/developermanagepage.htm) 
