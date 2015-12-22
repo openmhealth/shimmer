@@ -28,7 +28,6 @@ import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.util.List;
 
-import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -45,8 +44,8 @@ import static org.openmhealth.schema.domain.omh.DataPointModality.SENSED;
 public class IHealthBodyMassIndexDataPointMapperUnitTests extends IHealthDataPointMapperUnitTests {
 
     private JsonNode responseNode;
-    private IHealthBodyMassIndexDataPointMapper mapper = new IHealthBodyMassIndexDataPointMapper();
-    List<DataPoint<BodyMassIndex>> dataPoints;
+    private final IHealthBodyMassIndexDataPointMapper mapper = new IHealthBodyMassIndexDataPointMapper();
+    private List<DataPoint<BodyMassIndex>> dataPoints;
 
     @BeforeTest
     public void initializeResponse() throws IOException {
@@ -57,7 +56,7 @@ public class IHealthBodyMassIndexDataPointMapperUnitTests extends IHealthDataPoi
     @BeforeMethod
     public void initializeDataPoints() {
 
-        dataPoints = mapper.asDataPoints(singletonList(responseNode));
+        dataPoints = mapper.asDataPoints(responseNode);
     }
 
     @Test
@@ -69,11 +68,12 @@ public class IHealthBodyMassIndexDataPointMapperUnitTests extends IHealthDataPoi
     @Test
     public void asDataPointsShouldReturnCorrectSensedDataPoints() {
 
-        BodyMassIndex.Builder expectedBodyMassIndexBuilder = new BodyMassIndex.Builder(new TypedUnitValue<>(
+        BodyMassIndex expectedBodyMassIndex = new BodyMassIndex.Builder(new TypedUnitValue<>(
                 KILOGRAMS_PER_SQUARE_METER, 22.56052563257619))
-                .setEffectiveTimeFrame(OffsetDateTime.parse("2015-09-17T12:04:09-08:00"));
+                .setEffectiveTimeFrame(OffsetDateTime.parse("2015-09-17T12:04:09-08:00"))
+                .build();
 
-        assertThat(dataPoints.get(0).getBody(), equalTo(expectedBodyMassIndexBuilder.build()));
+        assertThat(dataPoints.get(0).getBody(), equalTo(expectedBodyMassIndex));
 
         testDataPointHeader(dataPoints.get(0).getHeader(), SCHEMA_ID, SENSED, "5fe5893c418b48cd8da7954f8b6c2f36",
                 OffsetDateTime.parse("2015-09-17T20:04:17Z"));
@@ -82,12 +82,13 @@ public class IHealthBodyMassIndexDataPointMapperUnitTests extends IHealthDataPoi
     @Test
     public void asDataPointsShouldReturnCorrectSelfReportedDataPoints() {
 
-        BodyMassIndex.Builder expectedBodyMassIndexBuilder = new BodyMassIndex.Builder(
+        BodyMassIndex expectedBodyMassIndex = new BodyMassIndex.Builder(
                 new TypedUnitValue<>(KILOGRAMS_PER_SQUARE_METER, 22.56052398681641))
                 .setEffectiveTimeFrame(OffsetDateTime.parse("2015-09-17T14:07:57-06:00"))
-                .setUserNotes("Weight so good, look at me now");
+                .setUserNotes("Weight so good, look at me now")
+                .build();
 
-        assertThat(dataPoints.get(1).getBody(), equalTo(expectedBodyMassIndexBuilder.build()));
+        assertThat(dataPoints.get(1).getBody(), equalTo(expectedBodyMassIndex));
 
         testDataPointHeader(dataPoints.get(1).getHeader(), SCHEMA_ID, SELF_REPORTED,
                 "b702a3a5e998f2fca268df6daaa69871", OffsetDateTime.parse("2015-09-17T20:08:00Z"));
@@ -99,7 +100,7 @@ public class IHealthBodyMassIndexDataPointMapperUnitTests extends IHealthDataPoi
         JsonNode zeroValueNode =
                 asJsonNode("org/openmhealth/shim/ihealth/mapper/ihealth-weight-no-weight-value.json");
 
-        assertThat(mapper.asDataPoints(singletonList(zeroValueNode)), is(empty()));
+        assertThat(mapper.asDataPoints(zeroValueNode), is(empty()));
     }
 
     @Test
@@ -107,7 +108,7 @@ public class IHealthBodyMassIndexDataPointMapperUnitTests extends IHealthDataPoi
 
         JsonNode emptyListNode = asJsonNode("org/openmhealth/shim/ihealth/mapper/ihealth-weight-empty.json");
 
-        assertThat(mapper.asDataPoints(singletonList(emptyListNode)), is(empty()));
+        assertThat(mapper.asDataPoints(emptyListNode), is(empty()));
     }
 
 }

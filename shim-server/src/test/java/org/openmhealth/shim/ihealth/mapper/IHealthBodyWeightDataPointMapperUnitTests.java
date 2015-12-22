@@ -18,22 +18,21 @@ package org.openmhealth.shim.ihealth.mapper;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.openmhealth.schema.domain.omh.*;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.util.List;
 
-import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsEmptyCollection.empty;
-import static org.openmhealth.schema.domain.omh.BodyWeight.*;
+import static org.openmhealth.schema.domain.omh.BodyWeight.SCHEMA_ID;
 import static org.openmhealth.schema.domain.omh.DataPointModality.SELF_REPORTED;
 import static org.openmhealth.schema.domain.omh.DataPointModality.SENSED;
-import static org.openmhealth.shim.ihealth.mapper.IHealthBodyWeightDataPointMapper.*;
+import static org.openmhealth.shim.ihealth.mapper.IHealthBodyWeightDataPointMapper.IHealthBodyWeightUnit;
 
 
 /**
@@ -41,11 +40,11 @@ import static org.openmhealth.shim.ihealth.mapper.IHealthBodyWeightDataPointMapp
  */
 public class IHealthBodyWeightDataPointMapperUnitTests extends IHealthDataPointMapperUnitTests {
 
-    protected JsonNode responseNode;
-    IHealthBodyWeightDataPointMapper mapper = new IHealthBodyWeightDataPointMapper();
-    List<DataPoint<BodyWeight>> dataPoints;
+    private JsonNode responseNode;
+    private final IHealthBodyWeightDataPointMapper mapper = new IHealthBodyWeightDataPointMapper();
+    private List<DataPoint<BodyWeight>> dataPoints;
 
-    @BeforeTest
+    @BeforeClass
     public void initializeResponseNode() throws IOException {
 
         responseNode = asJsonNode("org/openmhealth/shim/ihealth/mapper/ihealth-weight.json");
@@ -54,7 +53,7 @@ public class IHealthBodyWeightDataPointMapperUnitTests extends IHealthDataPointM
     @BeforeMethod
     public void initializeDataPoints() {
 
-        dataPoints = mapper.asDataPoints(singletonList(responseNode));
+        dataPoints = mapper.asDataPoints(responseNode);
     }
 
     @Test
@@ -66,14 +65,15 @@ public class IHealthBodyWeightDataPointMapperUnitTests extends IHealthDataPointM
     @Test
     public void asDataPointsShouldReturnCorrectSensedDataPoints() {
 
-        BodyWeight.Builder expectedBodyWeightBuilder = new BodyWeight.Builder(
+        BodyWeight expectedBodyWeight = new BodyWeight.Builder(
                 new MassUnitValue(MassUnit.KILOGRAM, 77.5643875134944))
-                .setEffectiveTimeFrame(OffsetDateTime.parse("2015-09-17T12:04:09-08:00"));
+                .setEffectiveTimeFrame(OffsetDateTime.parse("2015-09-17T12:04:09-08:00"))
+                .build();
 
-        assertThat(dataPoints.get(0).getBody(), equalTo(expectedBodyWeightBuilder.build()));
-
+        assertThat(dataPoints.get(0).getBody(), equalTo(expectedBodyWeight));
 
         DataPointHeader dataPointHeader = dataPoints.get(0).getHeader();
+
         testDataPointHeader(dataPointHeader, SCHEMA_ID, SENSED, "5fe5893c418b48cd8da7954f8b6c2f36",
                 OffsetDateTime.parse("2015-09-17T20:04:17Z"));
     }
@@ -81,12 +81,13 @@ public class IHealthBodyWeightDataPointMapperUnitTests extends IHealthDataPointM
     @Test
     public void asDataPointsShouldReturnCorrectSelfReportedDataPoints() {
 
-        BodyWeight.Builder expectedBodyWeightBuilder =
+        BodyWeight expectedBodyWeight =
                 new BodyWeight.Builder(new MassUnitValue(MassUnit.KILOGRAM, 77.56438446044922))
                         .setEffectiveTimeFrame(OffsetDateTime.parse("2015-09-17T14:07:57-06:00"))
-                        .setUserNotes("Weight so good, look at me now");
+                        .setUserNotes("Weight so good, look at me now")
+                        .build();
 
-        assertThat(dataPoints.get(1).getBody(), equalTo(expectedBodyWeightBuilder.build()));
+        assertThat(dataPoints.get(1).getBody(), equalTo(expectedBodyWeight));
 
         testDataPointHeader(dataPoints.get(1).getHeader(), SCHEMA_ID, SELF_REPORTED,
                 "b702a3a5e998f2fca268df6daaa69871", OffsetDateTime.parse("2015-09-17T20:08:00Z"));
@@ -106,7 +107,7 @@ public class IHealthBodyWeightDataPointMapperUnitTests extends IHealthDataPointM
         JsonNode zeroValueNode =
                 asJsonNode("org/openmhealth/shim/ihealth/mapper/ihealth-weight-no-weight-value.json");
 
-        assertThat(mapper.asDataPoints(singletonList(zeroValueNode)), is(empty()));
+        assertThat(mapper.asDataPoints(zeroValueNode), is(empty()));
     }
 
     @Test
@@ -114,7 +115,7 @@ public class IHealthBodyWeightDataPointMapperUnitTests extends IHealthDataPointM
 
         JsonNode emptyListNode = asJsonNode("org/openmhealth/shim/ihealth/mapper/ihealth-weight-empty.json");
 
-        assertThat(mapper.asDataPoints(singletonList(emptyListNode)), is(empty()));
+        assertThat(mapper.asDataPoints(emptyListNode), is(empty()));
     }
 
     @Test
@@ -126,6 +127,7 @@ public class IHealthBodyWeightDataPointMapperUnitTests extends IHealthDataPointM
 
         bodyWeightValueForUnitType = mapper.getBodyWeightValueForUnitType(100.5,
                 IHealthBodyWeightUnit.LB);
+
         assertThat(bodyWeightValueForUnitType, equalTo(100.5));
     }
 
@@ -134,6 +136,7 @@ public class IHealthBodyWeightDataPointMapperUnitTests extends IHealthDataPointM
 
         double bodyWeightValueForUnitType = mapper.getBodyWeightValueForUnitType(12.4,
                 IHealthBodyWeightUnit.STONE);
+
         assertThat(bodyWeightValueForUnitType, equalTo(78.74372));
 
     }
