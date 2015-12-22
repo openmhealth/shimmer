@@ -19,12 +19,12 @@ package org.openmhealth.shimmer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.context.web.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 
 import static org.openmhealth.schema.configuration.JacksonConfiguration.newObjectMapper;
 
@@ -34,22 +34,17 @@ import static org.openmhealth.schema.configuration.JacksonConfiguration.newObjec
  */
 @SpringBootApplication
 @EnableConfigurationProperties
-@EnableMongoRepositories("org.openmhealth.shim") // FIXME confirm
-@ComponentScan(basePackages = {"org.openmhealth.shim", "org.openmhealth.shimmer"}) // FIXME confirm
-public class Application extends WebSecurityConfigurerAdapter {
+@EnableMongoRepositories("org.openmhealth.shim")
+@ComponentScan(basePackages = {"org.openmhealth.shim", "org.openmhealth.shimmer"})
+public class Application extends SpringBootServletInitializer {
+
+    @Override
+    protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
+        return application.sources(Application.class);
+    }
 
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
-    }
-
-    // TODO refactor authentication
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-
-        /**
-         * Allow full anonymous authentication.
-         */
-        http.csrf().disable().authorizeRequests().anyRequest().permitAll();
     }
 
     // TODO look into Jackson2ObjectMapperBuilder to support Spring Boot configuration, e.g. for indentation
