@@ -1,10 +1,8 @@
 package org.openmhealth.shim.misfit.mapper;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import org.hamcrest.Matchers;
 import org.openmhealth.schema.domain.omh.*;
 import org.openmhealth.shim.common.mapper.DataPointMapperUnitTests;
-import org.springframework.core.io.ClassPathResource;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -13,10 +11,10 @@ import java.time.OffsetDateTime;
 import java.util.List;
 
 import static java.time.ZoneOffset.UTC;
-import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.openmhealth.schema.domain.omh.DurationUnit.DAY;
 import static org.openmhealth.shim.misfit.mapper.MisfitDataPointMapper.RESOURCE_API_SOURCE_NAME;
@@ -34,15 +32,13 @@ public class MisfitStepCountDataPointMapperUnitTests extends DataPointMapperUnit
     @BeforeTest
     public void initializeResponseNode() throws IOException {
 
-        ClassPathResource resource =
-                new ClassPathResource("org/openmhealth/shim/misfit/mapper/misfit-detailed-summaries.json");
-        responseNode = objectMapper.readTree(resource.getInputStream());
+        responseNode = asJsonNode("org/openmhealth/shim/misfit/mapper/misfit-detailed-summaries.json");
     }
 
     @Test
     public void asDataPointsShouldReturnCorrectNumberOfDataPoints() {
 
-        List<DataPoint<StepCount>> dataPoints = mapper.asDataPoints(singletonList(responseNode));
+        List<DataPoint<StepCount>> dataPoints = mapper.asDataPoints(responseNode);
 
         assertThat(dataPoints, notNullValue());
         assertThat(dataPoints.size(), equalTo(3));
@@ -51,7 +47,7 @@ public class MisfitStepCountDataPointMapperUnitTests extends DataPointMapperUnit
     @Test
     public void asDataPointsShouldReturnCorrectDataPoints() {
 
-        List<DataPoint<StepCount>> dataPoints = mapper.asDataPoints(singletonList(responseNode));
+        List<DataPoint<StepCount>> dataPoints = mapper.asDataPoints(responseNode);
 
         assertThat(dataPoints, notNullValue());
         assertThat(dataPoints.size(), greaterThan(0));
@@ -81,8 +77,7 @@ public class MisfitStepCountDataPointMapperUnitTests extends DataPointMapperUnit
         JsonNode emptyNode = objectMapper.readTree("{\n" +
                 "    \"summary\": []\n" +
                 "}");
-        List<DataPoint<StepCount>> dataPoints = mapper.asDataPoints(singletonList(emptyNode));
 
-        assertThat(dataPoints.size(), Matchers.equalTo(0));
+        assertThat(mapper.asDataPoints(emptyNode), empty());
     }
 }
