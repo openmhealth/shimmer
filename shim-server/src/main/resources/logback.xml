@@ -1,24 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-    <!--<appender name="console" class="ch.qos.logback.core.ConsoleAppender">-->
-    <!--<encoder>-->
-    <!--<pattern>[%d{ISO8601}] %-5p %m \(%c{0}\)%n</pattern>-->
-    <!--</encoder>-->
-    <!--</appender>-->
-
-    <appender name="FILE" class="ch.qos.logback.core.FileAppender">
-        <file>./omh-shims.log</file>
-        <encoder>
-            <pattern>%-4relative [%thread] %-5level %class - %msg%n</pattern>
-        </encoder>
-    </appender>
-
     <include resource="org/springframework/boot/logging/logback/base.xml"/>
-
-    <logger name="com.hipbone" level="debug"/>
-    <logger name="org.hibernate.engine.jdbc.com.JdbcCoordinatorImpl" level="error"/>
-
-    <root level="info">
-        <appender-ref ref="CONSOLE"/>
-        <appender-ref ref="FILE"/>
-    </root>
+    <logger name="org.openmhealth" level="INFO"/>
 </configuration>
