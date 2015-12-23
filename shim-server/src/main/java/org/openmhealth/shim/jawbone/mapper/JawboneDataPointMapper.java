@@ -36,7 +36,7 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.*;
 
 
 /**
- * The base class for mappers that translate Jawbone API responses with datapoints contained in an array to {@link
+ * The base class for mappers that translate Jawbone API responses with data points contained in an array to {@link
  * Measure} objects.
  *
  * @author Chris Schaefbauer

@@ -37,5 +37,4 @@ public abstract class DataPointMapperUnitTests {
                     format("The class path resource '%s' can't be loaded as a JSON node.", classPathResourceName), e);
         }
     }
-
 }

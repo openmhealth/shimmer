@@ -2,7 +2,6 @@ package org.openmhealth.shim.googlefit.mapper;
 
 import org.openmhealth.schema.domain.omh.DataPoint;
 import org.openmhealth.schema.domain.omh.HeartRate;
-import org.springframework.core.io.ClassPathResource;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -27,9 +26,7 @@ public class GoogleFitHeartRateDataPointMapperUnitTests extends GoogleFitDataPoi
     @Override
     public void initializeResponseNode() throws IOException {
 
-        ClassPathResource resource =
-                new ClassPathResource("org/openmhealth/shim/googlefit/mapper/googlefit-heart-rate.json");
-        responseNode = objectMapper.readTree(resource.getInputStream());
+        responseNode = asJsonNode("org/openmhealth/shim/googlefit/mapper/googlefit-merge-heart-rate.json");
     }
 
     @Test

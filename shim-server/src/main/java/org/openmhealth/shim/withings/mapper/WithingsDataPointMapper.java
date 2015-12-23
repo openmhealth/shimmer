@@ -16,10 +16,7 @@
 
 package org.openmhealth.shim.withings.mapper;
 
-import org.openmhealth.schema.domain.omh.DataPoint;
-import org.openmhealth.schema.domain.omh.DataPointAcquisitionProvenance;
-import org.openmhealth.schema.domain.omh.DataPointHeader;
-import org.openmhealth.schema.domain.omh.Measure;
+import org.openmhealth.schema.domain.omh.*;
 import org.openmhealth.shim.common.mapper.JsonNodeDataPointMapper;
 
 import static java.util.UUID.randomUUID;
@@ -30,7 +27,7 @@ import static org.openmhealth.schema.domain.omh.DataPointModality.SENSED;
 /**
  * @author Chris Schaefbauer
  */
-public abstract class WithingsDataPointMapper<T> implements JsonNodeDataPointMapper<T> {
+public abstract class WithingsDataPointMapper<T extends SchemaSupport> implements JsonNodeDataPointMapper<T> {
 
     public final static String RESOURCE_API_SOURCE_NAME = "Withings Resource API";
     protected static final String BODY_NODE_PROPERTY = "body";

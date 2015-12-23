@@ -150,11 +150,11 @@ public class JawboneShim extends OAuth2ShimBase {
                     + " in shimDataRequest, cannot retrieve data.");
         }
 
-        // FIXME this needs to get changed or documented
-        long numToReturn = 100;
-        if (shimDataRequest.getNumToReturn() != null) {
-            numToReturn = shimDataRequest.getNumToReturn();
-        }
+        /*
+            Jawbone defaults to returning a maximum of 10 entries per request (limit = 10 by default), so
+            we override the default by specifying an arbitrarily large number as the limit.
+         */
+        long numToReturn = 100_000;
 
         OffsetDateTime today = OffsetDateTime.now();
 
@@ -224,7 +224,7 @@ public class JawboneShim extends OAuth2ShimBase {
     protected String getAuthorizationUrl(UserRedirectRequiredException exception) {
 
         final OAuth2ProtectedResourceDetails resource = getResource();
-        
+
         UriComponentsBuilder uriBuilder = UriComponentsBuilder
                 .fromUriString(exception.getRedirectUri())
                 .queryParam("state", exception.getStateKey())

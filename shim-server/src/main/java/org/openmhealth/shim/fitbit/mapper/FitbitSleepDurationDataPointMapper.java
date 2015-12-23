@@ -17,37 +17,38 @@
 package org.openmhealth.shim.fitbit.mapper;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import org.openmhealth.schema.domain.omh.*;
+import org.openmhealth.schema.domain.omh.DataPoint;
+import org.openmhealth.schema.domain.omh.DurationUnitValue;
+import org.openmhealth.schema.domain.omh.SleepDuration;
+import org.openmhealth.schema.domain.omh.TimeInterval;
 
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.Optional;
 
+import static org.openmhealth.schema.domain.omh.DurationUnit.MINUTE;
 import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.*;
 
 
 /**
- * A mapper from Fitbit Resource API sleep/date responses to {@link SleepDuration} objects
+ * A mapper that translates responses from the Fitbit Resource API <code>sleep/date</code> endpoint into {@link
+ * SleepDuration} data points.
  *
  * @author Chris Schaefbauer
+ * @see <a href="https://dev.fitbit.com/docs/sleep/#get-sleep-logs">API documentation</a>
  */
 public class FitbitSleepDurationDataPointMapper extends FitbitDataPointMapper<SleepDuration> {
 
-    /**
-     * Maps a JSON response node from the Fitbit API into a {@link SleepDuration} measure
-     *
-     * @param node a JSON node for an individual object in the "sleep" array retrieved from the sleep/date/
-     * Fitbit API endpoint
-     * @return a {@link DataPoint} object containing a {@link SleepDuration} measure with the appropriate values from
-     * the node parameter, wrapped as an {@link Optional}
-     */
+    @Override
+    protected String getListNodeName() {
+        return "sleep";
+    }
+
     @Override
     protected Optional<DataPoint<SleepDuration>> asDataPoint(JsonNode node) {
 
-        DurationUnitValue unitValue =
-                new DurationUnitValue(DurationUnit.MINUTE, asRequiredDouble(node, "minutesAsleep"));
+        DurationUnitValue unitValue = new DurationUnitValue(MINUTE, asRequiredDouble(node, "minutesAsleep"));
         SleepDuration.Builder sleepDurationBuilder = new SleepDuration.Builder(unitValue);
-
 
         Optional<LocalDateTime> localStartTime = asOptionalLocalDateTime(node, "startTime");
 
@@ -58,11 +59,11 @@ public class FitbitSleepDurationDataPointMapper extends FitbitDataPointMapper<Sl
 
             if (timeInBed.isPresent()) {
                 sleepDurationBuilder.setEffectiveTimeFrame(TimeInterval.ofStartDateTimeAndDuration(offsetStartDateTime,
-                        new DurationUnitValue(DurationUnit.MINUTE, timeInBed.get())));
+                        new DurationUnitValue(MINUTE, timeInBed.get())));
             }
             else {
-                //in this case, there is no "time in bed" value, however we still have a start time, so we can set
-                // the datapoint to a single datetime point
+                // in this case, there is no "time in bed" value, however we still have a start time, so we can set
+                // the data point to a single date time point
                 sleepDurationBuilder.setEffectiveTimeFrame(offsetStartDateTime);
             }
         }
@@ -70,14 +71,7 @@ public class FitbitSleepDurationDataPointMapper extends FitbitDataPointMapper<Sl
         SleepDuration measure = sleepDurationBuilder.build();
 
         Optional<Long> externalId = asOptionalLong(node, "logId");
-        return Optional.of(newDataPoint(measure, externalId.orElse(null)));
-    }
 
-    /**
-     * @return the name of the list node returned from the sleep/date Fitbit endpoint
-     */
-    @Override
-    protected String getListNodeName() {
-        return "sleep";
+        return Optional.of(newDataPoint(measure, externalId.orElse(null)));
     }
 }

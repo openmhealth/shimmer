@@ -51,7 +51,7 @@ public class IHealthPhysicalActivityDataPointMapperUnitTests extends IHealthData
     @BeforeTest
     public void initializeResponseNode() throws IOException {
 
-        responseNode = asJsonNode("/org/openmhealth/shim/ihealth/mapper/ihealth-sports-activity.json");
+        responseNode = asJsonNode("/org/openmhealth/shim/ihealth/mapper/ihealth-sport.json");
     }
 
     @BeforeMethod
@@ -99,7 +99,7 @@ public class IHealthPhysicalActivityDataPointMapperUnitTests extends IHealthData
     public void asDataPointsReturnsNoDataPointsForAnEmptyList() throws IOException {
 
         JsonNode emptyListResponseNode =
-                asJsonNode("/org/openmhealth/shim/ihealth/mapper/ihealth-empty-sports-activity.json");
+                asJsonNode("/org/openmhealth/shim/ihealth/mapper/ihealth-sport-empty.json");
 
         assertThat(mapper.asDataPoints(singletonList(emptyListResponseNode)), is(empty()));
     }

@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import org.openmhealth.schema.domain.omh.DataPoint;
 import org.openmhealth.schema.domain.omh.DataPointModality;
 import org.openmhealth.schema.domain.omh.PhysicalActivity;
-import org.springframework.core.io.ClassPathResource;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -31,13 +30,9 @@ public class GoogleFitPhysicalActivityDataPointMapperUnitTests
     @Override
     public void initializeResponseNode() throws IOException {
 
-        ClassPathResource resource =
-                new ClassPathResource("org/openmhealth/shim/googlefit/mapper/googlefit-physical-activity.json");
-        responseNode = objectMapper.readTree(resource.getInputStream());
-        resource = new ClassPathResource("org/openmhealth/shim/googlefit/mapper/googlefit-sleep-activity.json");
-        sleepActivityNode = objectMapper.readTree(resource.getInputStream());
-
-
+        responseNode = asJsonNode("org/openmhealth/shim/googlefit/mapper/googlefit-merge-activity-segments.json");
+        sleepActivityNode =
+                asJsonNode("org/openmhealth/shim/googlefit/mapper/googlefit-merge-activity-segments-only-sleep.json");
     }
 
     @Test
@@ -82,12 +77,12 @@ public class GoogleFitPhysicalActivityDataPointMapperUnitTests
     @Test
     public void asDataPointsShouldNotReturnDataPointsForStationaryActivityTypes() throws IOException {
 
-        ClassPathResource resource =
-                new ClassPathResource("org/openmhealth/shim/googlefit/mapper/googlefit-stationary-activity.json");
-        JsonNode stationaryActivityNode = objectMapper.readTree(resource.getInputStream());
+        JsonNode stationaryActivityNode = asJsonNode(
+                "org/openmhealth/shim/googlefit/mapper/googlefit-merge-activity-segments-only-stationary-activity" +
+                        ".json");
 
         List<DataPoint<PhysicalActivity>> dataPoints = mapper.asDataPoints(singletonList(stationaryActivityNode));
-        assertThat(dataPoints.size(),equalTo(0));
+        assertThat(dataPoints.size(), equalTo(0));
     }
 
    /* Helper methods */

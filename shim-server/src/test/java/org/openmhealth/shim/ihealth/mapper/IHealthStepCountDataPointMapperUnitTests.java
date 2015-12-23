@@ -113,7 +113,7 @@ public class IHealthStepCountDataPointMapperUnitTests extends IHealthDataPointMa
     @Test
     public void asDataPointsShouldReturnEmptyListWhenEmptyIHealthResponse() {
 
-        JsonNode emptyNode = asJsonNode("/org/openmhealth/shim/ihealth/mapper/ihealth-empty-activity-response.json");
+        JsonNode emptyNode = asJsonNode("/org/openmhealth/shim/ihealth/mapper/ihealth-activity-empty.json");
 
         assertThat(mapper.asDataPoints(singletonList(emptyNode)), is(empty()));
     }

@@ -51,7 +51,7 @@ public class IHealthBloodOxygenEndpointHeartRateDataPointMapperUnitTests extends
     @BeforeTest
     public void initializeResponseNode() throws IOException {
 
-        responseNode = asJsonNode("/org/openmhealth/shim/ihealth/mapper/ihealth-blood-oxygen.json");
+        responseNode = asJsonNode("/org/openmhealth/shim/ihealth/mapper/ihealth-spo2.json");
     }
 
     @BeforeMethod
@@ -101,7 +101,7 @@ public class IHealthBloodOxygenEndpointHeartRateDataPointMapperUnitTests extends
     public void asDataPointsShouldReturnNoDataPointWhenHeartRateDataIsNotPresent() throws IOException {
 
         JsonNode noHeartRateBloodOxygenNode = asJsonNode(
-                "org/openmhealth/shim/ihealth/mapper/ihealth-blood-oxygen-missing-heart-rate.json");
+                "org/openmhealth/shim/ihealth/mapper/ihealth-spo2-no-heart-rate.json");
 
         assertThat(mapper.asDataPoints(singletonList(noHeartRateBloodOxygenNode)), is(empty()));
     }
@@ -109,7 +109,7 @@ public class IHealthBloodOxygenEndpointHeartRateDataPointMapperUnitTests extends
     @Test
     public void asDataPointsShouldReturnEmptyListWhenEmptyIHealthResponse() {
 
-        JsonNode emptyNode = asJsonNode("/org/openmhealth/shim/ihealth/mapper/ihealth-empty-blood-oxygen.json");
+        JsonNode emptyNode = asJsonNode("/org/openmhealth/shim/ihealth/mapper/ihealth-spo2-empty.json");
 
         assertThat(mapper.asDataPoints(singletonList(emptyNode)), is(empty()));
 

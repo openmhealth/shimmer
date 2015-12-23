@@ -1,7 +1,9 @@
 package org.openmhealth.shim.googlefit.mapper;
 
-import org.openmhealth.schema.domain.omh.*;
-import org.springframework.core.io.ClassPathResource;
+import org.openmhealth.schema.domain.omh.BodyHeight;
+import org.openmhealth.schema.domain.omh.DataPoint;
+import org.openmhealth.schema.domain.omh.LengthUnitValue;
+import org.openmhealth.schema.domain.omh.TimeInterval;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -29,9 +31,7 @@ public class GoogleFitBodyHeightDataPointMapperUnitTests extends GoogleFitDataPo
     @Override
     public void initializeResponseNode() throws IOException {
 
-        ClassPathResource resource =
-                new ClassPathResource("org/openmhealth/shim/googlefit/mapper/googlefit-body-height.json");
-        responseNode = objectMapper.readTree(resource.getInputStream());
+        responseNode = asJsonNode("org/openmhealth/shim/googlefit/mapper/googlefit-merge-height.json");
     }
 
     @Test

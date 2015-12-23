@@ -1,6 +1,7 @@
 package org.openmhealth.shim.common.mapper;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import org.openmhealth.schema.domain.omh.SchemaSupport;
 
 
 /**
@@ -9,6 +10,6 @@ import com.fasterxml.jackson.databind.JsonNode;
  * @param <B> the body type of the data points to create
  * @author Emerson Farrugia
  */
-public interface JsonNodeDataPointMapper<B> extends DataPointMapper<B, JsonNode> {
+public interface JsonNodeDataPointMapper<B extends SchemaSupport> extends DataPointMapper<B, JsonNode> {
 
 }

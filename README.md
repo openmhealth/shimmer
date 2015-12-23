@@ -1,4 +1,4 @@
-# Shimmer [![Build Status](https://travis-ci.org/openmhealth/shimmer.svg?branch=master)](https://travis-ci.org/openmhealth/shimmer)
+# Shimmer [![Build Status](https://travis-ci.org/openmhealth/shimmer.svg?branch=develop)](https://travis-ci.org/openmhealth/shimmer)
 
 Shimmer is an application that makes it easy to pull health data from popular third-party APIs like Runkeeper and Fitbit.
 It converts that data into an [Open mHealth](http://www.openmhealth.org) compliant format, letting your application work with clean and clinically meaningful data.   
@@ -98,6 +98,7 @@ If you want to build and run the code natively, in a terminal
 1. Run the `./run-natively.sh` script and follow the instructions.
 1. When the script blocks with the message `Started Application`, the components are running.
   * Press Ctrl-C to stop them.
+  * The script creates a WAR file which you can alternatively drop into an application server. [This issue](https://github.com/openmhealth/shimmer/issues/31) has details.
 1. Visit `http://localhost:8083` in a browser.
 
 If you want to build and run the code in Docker, in a terminal 

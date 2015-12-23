@@ -14,8 +14,10 @@ import java.util.List;
 
 import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.openmhealth.schema.domain.omh.DataPointModality.SELF_REPORTED;
 import static org.openmhealth.schema.domain.omh.DataPointModality.SENSED;
@@ -102,13 +104,10 @@ public class RunkeeperPhysicalActivityDataPointMapperUnitTests extends DataPoint
     @Test
     public void asDataPointsShouldNotCreateDataPointWhenOffsetMissing() throws IOException {
 
-        ClassPathResource resource =
-                new ClassPathResource(
-                        "org/openmhealth/shim/runkeeper/mapper/runkeeper-fitness-activities-no-offset.json");
-        JsonNode responseNodeWithoutUtcOffset = objectMapper.readTree(resource.getInputStream());
-
-        List<DataPoint<PhysicalActivity>> dataPoints = mapper.asDataPoints(singletonList(responseNodeWithoutUtcOffset));
-
-        assertThat(dataPoints.size(), equalTo(0));
+        assertThat(mapper.asDataPoints(
+                        asJsonNode(
+                                "org/openmhealth/shim/runkeeper/mapper/runkeeper-fitness-activities-missing-offset" +
+                                        ".json")),
+                is(empty()));
     }
 }

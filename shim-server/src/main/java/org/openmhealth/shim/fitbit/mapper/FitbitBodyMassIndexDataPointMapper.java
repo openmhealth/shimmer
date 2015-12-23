@@ -25,48 +25,41 @@ import org.openmhealth.schema.domain.omh.TypedUnitValue;
 import java.time.OffsetDateTime;
 import java.util.Optional;
 
+import static org.openmhealth.schema.domain.omh.BodyMassIndexUnit.KILOGRAMS_PER_SQUARE_METER;
 import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asOptionalLong;
 import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asRequiredDouble;
 
 
 /**
- * A mapper from Fitbit Resource API body/log/weight responses to {@link BodyMassIndex} objects
+ * A mapper that translates responses from the Fitbit Resource API <code>body/log/weight</code> endpoint into {@link
+ * BodyMassIndex} data points.
  *
  * @author Chris Schaefbauer
+ * @see <a href="https://dev.fitbit.com/docs/body/#weight">API documentation</a>
  */
 public class FitbitBodyMassIndexDataPointMapper extends FitbitDataPointMapper<BodyMassIndex> {
 
-    /**
-     * Maps a JSON response node from the Fitbit API into a {@link BodyMassIndex} measure
-     *
-     * @param node a JSON node for an individual object in the "weight" array retrieved from the body/log/weight Fitbit
-     * API call
-     * @return a {@link DataPoint} object containing a {@link BodyMassIndex} measure with the appropriate values from
-     * the JSON node parameter, wrapped as an {@link Optional}
-     */
+    @Override
+    protected String getListNodeName() {
+        return "weight";
+    }
+
     @Override
     protected Optional<DataPoint<BodyMassIndex>> asDataPoint(JsonNode node) {
 
         TypedUnitValue<BodyMassIndexUnit> bmiValue =
-                new TypedUnitValue<BodyMassIndexUnit>(BodyMassIndexUnit.KILOGRAMS_PER_SQUARE_METER,
-                        asRequiredDouble(node, "bmi"));
+                new TypedUnitValue<>(KILOGRAMS_PER_SQUARE_METER, asRequiredDouble(node, "bmi"));
+
         BodyMassIndex.Builder builder = new BodyMassIndex.Builder(bmiValue);
 
         Optional<OffsetDateTime> dateTime = combineDateTimeAndTimezone(node);
 
-        if ( dateTime.isPresent()) {
+        if (dateTime.isPresent()) {
             builder.setEffectiveTimeFrame(dateTime.get());
         }
 
         Optional<Long> externalId = asOptionalLong(node, "logId");
-        return Optional.of(newDataPoint(builder.build(), externalId.orElse(null)));
-    }
 
-    /**
-     * @return the name of the list node returned from Fitbit Resource API body/log/weight response
-     */
-    @Override
-    protected String getListNodeName() {
-        return "weight";
+        return Optional.of(newDataPoint(builder.build(), externalId.orElse(null)));
     }
 }
