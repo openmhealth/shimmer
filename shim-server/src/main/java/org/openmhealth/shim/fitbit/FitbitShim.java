@@ -48,6 +48,8 @@ import static org.openmhealth.shim.fitbit.FitbitShim.FitbitDataType.*;
 
 /**
  * @author Danilo Bonilla
+ * @author Chris Schaefbauer
+ * @author Emerson Farrugia
  */
 @Component
 @ConfigurationProperties(prefix = "openmhealth.shim.fitbit")
