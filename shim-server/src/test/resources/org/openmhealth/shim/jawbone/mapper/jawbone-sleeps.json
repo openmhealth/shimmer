@@ -1,0 +1,72 @@
+{
+    "data": {
+        "items": [
+            {
+                "date": 20150805,
+                "details": {
+                    "asleep_time": 1438751158,
+                    "awake": 1028,
+                    "awake_time": 1438761300,
+                    "awakenings": 0,
+                    "body": 0,
+                    "duration": 11384,
+                    "light": 0,
+                    "mind": 0,
+                    "quality": 47,
+                    "rem": 0,
+                    "smart_alarm_fire": 0,
+                    "sound": 10356,
+                    "sunrise": 0,
+                    "sunset": 0,
+                    "tz": "America/Denver"
+                },
+                "shared": true,
+                "snapshot_image": "/nudge/image/e/1438768320/QkfTizSpRdsDKwErMhvMqG9VDhpfyDGd/nq7c6F3gu84.png",
+                "sub_type": 0,
+                "time_completed": 1438761515,
+                "time_created": 1438750131,
+                "time_updated": 1438768320,
+                "title": "for 2h 52m",
+                "xid": "QkfTizSpRdsDKwErMhvMqG9VDhpfyDGd"
+            },
+            {
+                "date": 20150804,
+                "details": {
+                    "asleep_time": 1438657500,
+                    "awake": 1500,
+                    "awake_time": 1438686900,
+                    "awakenings": 2,
+                    "body": 0,
+                    "duration": 29400,
+                    "light": 14400,
+                    "mind": 0,
+                    "quality": 93,
+                    "rem": 0,
+                    "smart_alarm_fire": 0,
+                    "sound": 13500,
+                    "sunrise": 1438682100,
+                    "sunset": 0,
+                    "tz": "America/New_York"
+                },
+                "shared": false,
+                "snapshot_image": "/nudge/image/e/1438690256/QkfTizSpRdvIs6MMJbKP6ulqeYwu5c2v/nq7c6F3gu84.png",
+                "sub_type": 0,
+                "time_completed": 1438686900,
+                "time_created": 1438657500,
+                "time_updated": 1438690256,
+                "title": "for 7h 45m",
+                "xid": "QkfTizSpRdvIs6MMJbKP6ulqeYwu5c2v"
+            }
+        ],
+        "links": {
+            "next": "/nudge/api/v.1.1/users/VB0mNZWqiOUDWkkl72vgRQ/sleeps?page_token=1435672010&limit=10"
+        },
+        "size": 2
+    },
+    "meta": {
+        "code": 200,
+        "message": "OK",
+        "time": 1439918078,
+        "user_xid": "VB0mNZWqiOUDWkkl72vgRQ"
+    }
+}

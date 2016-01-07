@@ -7,22 +7,22 @@ spring:
       enabled: false
   data:
     mongodb:
-      uri: mongodb://localhost:27017/omh_dsu
+      uri: mongodb://omh-mongo:27017/omh
   jackson:
     serialization:
-      INDENT_OUTPUT: true
+      indent_output: true
 server:
-  port: 8083
+  port: 8084
 security:
   basic:
     enabled: false
 logging:
-  file: omh-shims.log
+  path: /var/log/ohmage-shim/
 
 openmhealth:
   shim:
     server:
-      callbackUrlBase: https://lifestreams.smalldata.io/shims
+      callbackUrlBase: http://localhost:8084/shims
 
     #NOTE: Un-comment and fill in with your credentials if you're not using the UI
     #fitbit:
@@ -31,17 +31,27 @@ openmhealth:
     #fatsecret:
     #  clientId: [YOUR_CLIENT_ID]
     #  clientSecret: [YOUR_CLIENT_SECRET]
+    #ihealth:
+    #  clientId: [YOUR_CLIENT_ID]
+    #  clientSecret: [YOUR_CLIENT_SECRET]
     #jawbone:
+    #  clientId: [YOUR_CLIENT_ID]
+    #  clientSecret: [YOUR_CLIENT_SECRET]
+    #misfit:
     #  clientId: [YOUR_CLIENT_ID]
     #  clientSecret: [YOUR_CLIENT_SECRET]
     #runkeeper:
     #  clientId: [YOUR_CLIENT_ID]
     #  clientSecret: [YOUR_CLIENT_SECRET]
     #withings:
+    #  partner_access: true
     #  clientId: [YOUR_CLIENT_ID]
     #  clientSecret: [YOUR_CLIENT_SECRET]
     #healthvault:
     #  clientId: [YOUR_CLIENT_ID]
+    #googlefit:
+    #  clientId: [YOUR_CLIENT_ID]
+    #  clientSecret: [YOUR_CLIENT_SECRET]
     #moves:
     #  clientId: [YOUR_CLIENT_ID]
     #  clientSecret: [YOUR_CLIENT_SECRET]

@@ -4,15 +4,14 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
-import org.openmhealth.schema.pojos.Activity;
 import org.openmhealth.shim.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.http.*;
 import org.springframework.security.oauth2.client.OAuth2RestOperations;
 import org.springframework.security.oauth2.client.resource.OAuth2ProtectedResourceDetails;
@@ -20,7 +19,10 @@ import org.springframework.security.oauth2.client.resource.UserRedirectRequiredE
 import org.springframework.security.oauth2.client.token.AccessTokenRequest;
 import org.springframework.security.oauth2.client.token.RequestEnhancer;
 import org.springframework.security.oauth2.client.token.grant.code.AuthorizationCodeAccessTokenProvider;
+import org.springframework.stereotype.Component;
 import org.springframework.util.MultiValueMap;
+import org.springframework.util.StringUtils;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 import java.util.*;
@@ -29,6 +31,8 @@ import java.util.*;
 /**
  * Created by Cheng-Kang Hsieh on 3/3/15.
  */
+@Component
+@ConfigurationProperties(prefix = "openmhealth.shim.moves")
 public class MovesShim extends OAuth2ShimBase{
     private static final Logger log = LoggerFactory.getLogger(MovesShim.class);
 
@@ -40,19 +44,18 @@ public class MovesShim extends OAuth2ShimBase{
 
     private static final String TOKEN_URL = "https://api.moves-app.com/oauth/v1/access_token";
 
-    private MovesConfig config;
 
     public static final ArrayList<String> MOVES_SCOPES =
             new ArrayList<>(Arrays.asList(
                     "activity", "location"
             ));
 
-    public MovesShim(AuthorizationRequestParametersRepo authorizationRequestParametersRepo,
-                         AccessParametersRepo accessParametersRepo,
-                         ShimServerConfig shimServerConfig1,
-                         MovesConfig movesConfig) {
-        super(authorizationRequestParametersRepo, accessParametersRepo, shimServerConfig1);
-        this.config = movesConfig;
+    @Autowired
+    public MovesShim(ApplicationAccessParametersRepo applicationParametersRepo,
+                     AuthorizationRequestParametersRepo authorizationRequestParametersRepo,
+                     AccessParametersRepo accessParametersRepo,
+                     ShimServerConfig shimServerConfig) {
+        super(applicationParametersRepo, authorizationRequestParametersRepo, accessParametersRepo, shimServerConfig);
     }
 
     @Override
@@ -63,16 +66,6 @@ public class MovesShim extends OAuth2ShimBase{
     @Override
     public String getShimKey() {
         return SHIM_KEY;
-    }
-
-    @Override
-    public String getClientSecret() {
-        return config.getClientSecret();
-    }
-
-    @Override
-    public String getClientId() {
-        return config.getClientId();
     }
 
     @Override
@@ -175,6 +168,7 @@ public class MovesShim extends OAuth2ShimBase{
         ShimDataRequest shimDataRequest = new ShimDataRequest();
         shimDataRequest.setDataTypeKey(MovesDataType.PROFILE.toString());
         shimDataRequest.setNumToReturn(1l);
+        shimDataRequest.setNormalize(false);
         return shimDataRequest;
     }
 
@@ -248,29 +242,25 @@ public class MovesShim extends OAuth2ShimBase{
         }
     }
 
-    protected AuthorizationRequestParameters getAuthorizationRequestParameters(
-            final String username,
-            final UserRedirectRequiredException exception) {
+    @Override
+    protected String getAuthorizationUrl(UserRedirectRequiredException exception) {
         final OAuth2ProtectedResourceDetails resource = getResource();
-        String authorizationUrl = exception.getRedirectUri()
-                + "?state="
-                + exception.getStateKey()
-                + "&client_id="
-                + resource.getClientId()
-                + "&response_type=code"
-                + "&redirect_uri=" + getCallbackUrl()
-                + "&scope=" + "activity location";
 
-        AuthorizationRequestParameters parameters = new AuthorizationRequestParameters();
-        parameters.setRedirectUri(exception.getRedirectUri());
-        parameters.setStateKey(exception.getStateKey());
-        parameters.setHttpMethod(HttpMethod.GET);
-        parameters.setAuthorizationUrl(authorizationUrl);
-        return parameters;
+        UriComponentsBuilder uriBuilder = UriComponentsBuilder
+                .fromUriString(exception.getRedirectUri())
+                .queryParam("state", exception.getStateKey())
+                .queryParam("client_id", resource.getClientId())
+                .queryParam("response_type", "code")
+                .queryParam("access_type", "offline")
+                .queryParam("approval_prompt", "force")
+                .queryParam("scope", StringUtils.collectionToDelimitedString(resource.getScope(), " "))
+                .queryParam("redirect_uri", getCallbackUrl());
+
+        return uriBuilder.build().encode().toUriString();
     }
 
     /**
-     * Adds jawbone required parameters to authorization token requests.
+     * Adds required parameters to authorization token requests.
      */
     private class MovesTokenRequestEnhancer implements RequestEnhancer {
         @Override

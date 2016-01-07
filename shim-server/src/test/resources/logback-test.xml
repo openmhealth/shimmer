@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/base.xml"/>
+
+    <!-- uncomment the next two lines to enable wire logging -->
+    <!--<logger name="org.apache.http" level="DEBUG"/>-->
+    <!--<logger name="org.apache.http.wire" level="ERROR"/>-->
+</configuration>

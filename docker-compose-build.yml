@@ -1,0 +1,17 @@
+resourceserver:
+  build: shim-server/docker
+  environment:
+    SPRING_PROFILES_ACTIVE: development
+    OPENMHEALTH_SHIM_SERVER_CALLBACKURLBASE: http://192.168.99.100:8083
+  links:
+    - mongo:mongo
+
+mongo:
+  image: mongo
+
+console:
+  build: shim-server-ui/docker
+  ports:
+    - "8083:8083"
+  links:
+    - resourceserver:resource-server
