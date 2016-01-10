@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.openmhealth.shim.*;
@@ -200,19 +201,18 @@ public class MovesShim extends OAuth2ShimBase{
              * Setup default date parameters
              */
             final DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd");
-            DateTime today = new DateTime();
+            LocalDate today = new LocalDate();
 
-            DateTime startDate = shimDataRequest.getStartDate() == null ?
-                    today.minusDays(1) : shimDataRequest.getStartDate();
-            String dateStart = startDate.toString(formatter);
+            LocalDate dateStart = shimDataRequest.getStartDateTime() == null ?
+                    today.minusDays(1) : new LocalDate(shimDataRequest.getStartDateTime().toLocalDate().toString());
 
-            DateTime endDate = shimDataRequest.getEndDate() == null ?
-                    today : shimDataRequest.getEndDate();
-            String dateEnd = endDate.toString(formatter);
+
+            LocalDate dateEnd = shimDataRequest.getEndDateTime() == null ?
+                    today : new LocalDate(shimDataRequest.getEndDateTime().toLocalDate().toString());
 
             urlParams = "&trackPoints=true";
-            urlParams += "&from=" + dateStart;
-            urlParams += "&to=" + dateEnd;
+            urlParams += "&from=" + dateStart.toString(formatter);
+            urlParams += "&to=" + dateEnd.toString(formatter);
             urlParams = urlParams.substring(1, urlParams.length());
         }
 

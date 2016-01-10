@@ -106,9 +106,6 @@ public class ShimDataRequest {
         return startDateTime;
     }
 
-    public DateTime getStartDate() {
-        return getStartDateTime() == null ? null : new DateTime(getStartDateTime().toInstant());
-    }
 
     public void setStartDateTime(OffsetDateTime startDateTime) {
         this.startDateTime = startDateTime;
@@ -118,9 +115,6 @@ public class ShimDataRequest {
         return endDateTime;
     }
 
-    public DateTime getEndDate() {
-        return getStartDateTime() == null ? null : new DateTime(getStartDateTime().toInstant());
-    }
 
     public void setEndDateTime(OffsetDateTime endDateTime) {
         this.endDateTime = endDateTime;
