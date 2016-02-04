@@ -17,9 +17,7 @@
 package org.openmhealth.shim.ihealth.mapper;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import org.openmhealth.schema.domain.omh.DataPoint;
-import org.openmhealth.schema.domain.omh.PhysicalActivity;
-import org.openmhealth.schema.domain.omh.TimeInterval;
+import org.openmhealth.schema.domain.omh.*;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -35,6 +33,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
 import static org.openmhealth.schema.domain.omh.DataPointModality.SELF_REPORTED;
 import static org.openmhealth.schema.domain.omh.DataPointModality.SENSED;
+import static org.openmhealth.schema.domain.omh.KcalUnit.KILOCALORIE;
 import static org.openmhealth.schema.domain.omh.PhysicalActivity.SCHEMA_ID;
 
 
@@ -73,7 +72,8 @@ public class IHealthPhysicalActivityDataPointMapperUnitTests extends IHealthData
                 new PhysicalActivity.Builder("Swimming, breaststroke")
                         .setEffectiveTimeFrame(TimeInterval.ofStartDateTimeAndEndDateTime(
                                 OffsetDateTime.parse("2015-09-17T20:02:28-08:00"),
-                                OffsetDateTime.parse("2015-09-17T20:32:28-08:00")));
+                                OffsetDateTime.parse("2015-09-17T20:32:28-08:00")))
+                        .setCaloriesBurned(new KcalUnitValue(KILOCALORIE, 221.5));
 
         assertThat(dataPoints.get(0).getBody(), equalTo(expectedPhysicalActivityBuilder.build()));
 
@@ -88,7 +88,8 @@ public class IHealthPhysicalActivityDataPointMapperUnitTests extends IHealthData
                 .setEffectiveTimeFrame(
                         TimeInterval.ofStartDateTimeAndEndDateTime(
                                 OffsetDateTime.parse("2015-09-22T20:43:03+01:00"),
-                                OffsetDateTime.parse("2015-09-22T21:13:03+01:00")));
+                                OffsetDateTime.parse("2015-09-22T21:13:03+01:00")))
+                .setCaloriesBurned(new KcalUnitValue(KILOCALORIE, 202.5));
 
         assertThat(dataPoints.get(1).getBody(), equalTo(expectedPhysicalActivityBuilder.build()));
 
