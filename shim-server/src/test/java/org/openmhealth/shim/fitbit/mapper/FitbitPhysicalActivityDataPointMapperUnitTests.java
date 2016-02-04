@@ -17,7 +17,9 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
+import static org.openmhealth.schema.domain.omh.DurationUnit.*;
 import static org.openmhealth.schema.domain.omh.DurationUnit.DAY;
+import static org.openmhealth.schema.domain.omh.KcalUnit.*;
 import static org.openmhealth.schema.domain.omh.LengthUnit.KILOMETER;
 
 
@@ -62,7 +64,7 @@ public class FitbitPhysicalActivityDataPointMapperUnitTests extends DataPointMap
 
         List<DataPoint<PhysicalActivity>> dataPoints = mapper.asDataPoints(singleActivityResponseNode);
 
-        assertThatDataPointMatches(dataPoints.get(0), "Walk", "2014-06-19", "09:00", 3.36, 3600000L, 79441095L);
+        assertThatDataPointMatches(dataPoints.get(0), "Walk", "2014-06-19", "09:00", 3.36, 3600000L, 79441095L, 128.0);
     }
 
     @Test
@@ -70,13 +72,15 @@ public class FitbitPhysicalActivityDataPointMapperUnitTests extends DataPointMap
 
         List<DataPoint<PhysicalActivity>> dataPoints = mapper.asDataPoints(multipleActivityResponseNode);
 
-        assertThatDataPointMatches(dataPoints.get(0), "Run", "2015-06-23", "11:55", 6.43738, 1440000L, 253202765L);
-        assertThatDataPointMatches(dataPoints.get(1), "Swimming", "2015-06-23", "10:00", null, null, 253246706L);
-        assertThatDataPointMatches(dataPoints.get(2), "Walk", "2015-06-23", 6.43738, 253202766L);
+        assertThatDataPointMatches(dataPoints.get(0), "Run", "2015-06-23", "11:55", 6.43738, 1440000L, 253202765L,
+                150.0);
+        assertThatDataPointMatches(dataPoints.get(1), "Swimming", "2015-06-23", "10:00", null, null, 253246706L, null);
+        assertThatDataPointMatches(dataPoints.get(2), "Walk", "2015-06-23", 6.43738, 253202766L, 200.0);
     }
 
     public void assertThatDataPointMatches(DataPoint<PhysicalActivity> dataPoint, String expectedActivityName,
-            String expectedEffectiveDate, Double expectedDistance, Long expectedExternalId) {
+            String expectedEffectiveDate, Double expectedDistance, Long expectedExternalId,
+            Double expectedCaloriesBurned) {
 
         OffsetDateTime expectedEffectiveStartDateTime =
                 OffsetDateTime.of(LocalDate.parse(expectedEffectiveDate).atStartOfDay(), UTC);
@@ -85,11 +89,12 @@ public class FitbitPhysicalActivityDataPointMapperUnitTests extends DataPointMap
                 TimeInterval.ofStartDateTimeAndDuration(expectedEffectiveStartDateTime, new DurationUnitValue(DAY, 1)));
 
         assertThatDataPointMatches(dataPoint, expectedActivityName, expectedTimeFrame, expectedDistance,
-                expectedExternalId);
+                expectedExternalId, expectedCaloriesBurned);
     }
 
     public void assertThatDataPointMatches(DataPoint<PhysicalActivity> dataPoint, String expectedActivityName,
-            TimeFrame expectedTimeFrame, Double expectedDistance, Long expectedExternalId) {
+            TimeFrame expectedTimeFrame, Double expectedDistance, Long expectedExternalId,
+            Double expectedCaloriesBurned) {
 
         PhysicalActivity.Builder expectedMeasureBuilder = new PhysicalActivity.Builder(expectedActivityName);
 
@@ -97,6 +102,10 @@ public class FitbitPhysicalActivityDataPointMapperUnitTests extends DataPointMap
 
         if (expectedDistance != null) {
             expectedMeasureBuilder.setDistance(new LengthUnitValue(KILOMETER, expectedDistance));
+        }
+
+        if (expectedCaloriesBurned != null) {
+            expectedMeasureBuilder.setCaloriesBurned(new KcalUnitValue(KILOCALORIE, expectedCaloriesBurned));
         }
 
         PhysicalActivity expectedPhysicalActivity = expectedMeasureBuilder.build();
@@ -111,7 +120,7 @@ public class FitbitPhysicalActivityDataPointMapperUnitTests extends DataPointMap
 
     public void assertThatDataPointMatches(DataPoint<PhysicalActivity> dataPoint, String expectedActivityName,
             String expectedEffectiveDate, String expectedEffectiveStartTime, Double expectedDistance,
-            Long expectedDurationInMs, Long expectedExternalId) {
+            Long expectedDurationInMs, Long expectedExternalId, Double expectedCaloriesBurned) {
 
         OffsetDateTime expectedEffectiveStartDateTime = OffsetDateTime
                 .of(LocalDate.parse(expectedEffectiveDate), LocalTime.parse(expectedEffectiveStartTime), UTC);
@@ -119,7 +128,7 @@ public class FitbitPhysicalActivityDataPointMapperUnitTests extends DataPointMap
         TimeFrame expectedTimeFrame;
 
         if (expectedDurationInMs != null) {
-            DurationUnitValue expectedDuration = new DurationUnitValue(DurationUnit.MILLISECOND, expectedDurationInMs);
+            DurationUnitValue expectedDuration = new DurationUnitValue(MILLISECOND, expectedDurationInMs);
 
             expectedTimeFrame = new TimeFrame(
                     TimeInterval.ofStartDateTimeAndDuration(expectedEffectiveStartDateTime, expectedDuration));
@@ -129,6 +138,6 @@ public class FitbitPhysicalActivityDataPointMapperUnitTests extends DataPointMap
         }
 
         assertThatDataPointMatches(dataPoint, expectedActivityName, expectedTimeFrame, expectedDistance,
-                expectedExternalId);
+                expectedExternalId, expectedCaloriesBurned);
     }
 }
