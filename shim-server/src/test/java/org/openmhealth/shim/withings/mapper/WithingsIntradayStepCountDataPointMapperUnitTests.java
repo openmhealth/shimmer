@@ -17,9 +17,10 @@
 package org.openmhealth.shim.withings.mapper;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import org.openmhealth.schema.domain.omh.*;
+import org.openmhealth.schema.domain.omh.DataPoint;
+import org.openmhealth.schema.domain.omh.DurationUnitValue;
+import org.openmhealth.schema.domain.omh.StepCount;
 import org.openmhealth.shim.common.mapper.DataPointMapperUnitTests;
-import org.springframework.core.io.ClassPathResource;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -31,12 +32,14 @@ import static java.util.Collections.singletonList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.openmhealth.schema.domain.omh.DataPointModality.SENSED;
+import static org.openmhealth.schema.domain.omh.DurationUnit.SECOND;
+import static org.openmhealth.schema.domain.omh.StepCount.SCHEMA_ID;
+import static org.openmhealth.schema.domain.omh.TimeInterval.ofStartDateTimeAndDuration;
 import static org.openmhealth.shim.withings.mapper.WithingsDataPointMapper.RESOURCE_API_SOURCE_NAME;
 
 
-// TODO clean up
 /**
- * Created by Chris Schaefbauer on 7/2/15.
+ * @author Chris Schaefbauer
  */
 public class WithingsIntradayStepCountDataPointMapperUnitTests extends DataPointMapperUnitTests {
 
@@ -45,21 +48,21 @@ public class WithingsIntradayStepCountDataPointMapperUnitTests extends DataPoint
 
     @BeforeTest
     public void initializeResponseNode() throws IOException {
-        ClassPathResource resource =
-                new ClassPathResource("/org/openmhealth/shim/withings/mapper/withings-intraday-activity.json");
-        responseNode = objectMapper.readTree(resource.getInputStream());
+
+        responseNode = asJsonNode("/org/openmhealth/shim/withings/mapper/withings-intraday-activity.json");
     }
 
     @Test
     public void asDataPointsShouldReturnCorrectNumberOfDataPoints() {
-        List<DataPoint<StepCount>> dataPoints = mapper.asDataPoints(singletonList(responseNode));
-        assertThat(dataPoints.size(), equalTo(4));
 
+        assertThat(mapper.asDataPoints(singletonList(responseNode)).size(), equalTo(4));
     }
 
     @Test
     public void asDataPointsShouldReturnCorrectDataPoints() {
-        List<DataPoint<StepCount>> dataPoints = mapper.asDataPoints(singletonList(responseNode));
+
+        List<DataPoint<StepCount>> dataPoints = mapper.asDataPoints(responseNode);
+
         testIntradayStepCountDataPoint(dataPoints.get(0), 21, "2015-06-20T00:04:00Z", 60L);
         testIntradayStepCountDataPoint(dataPoints.get(1), 47, "2015-06-20T00:29:00Z", 60L);
         testIntradayStepCountDataPoint(dataPoints.get(2), 20, "2015-06-20T00:30:00Z", 60L);
@@ -68,17 +71,19 @@ public class WithingsIntradayStepCountDataPointMapperUnitTests extends DataPoint
 
     public void testIntradayStepCountDataPoint(DataPoint<StepCount> stepCountDataPoint, long expectedStepCountValue,
             String expectedDateString, Long expectedDuration) {
-        StepCount.Builder expectedStepCountBuilder = new StepCount.Builder(expectedStepCountValue);
-        expectedStepCountBuilder.setEffectiveTimeFrame(
-                TimeInterval.ofStartDateTimeAndDuration(OffsetDateTime.parse(expectedDateString), new DurationUnitValue(
-                        DurationUnit.SECOND, expectedDuration)));
+
+        StepCount expectedStepCount = new StepCount.Builder(expectedStepCountValue).setEffectiveTimeFrame(
+                ofStartDateTimeAndDuration(OffsetDateTime.parse(expectedDateString),
+                        new DurationUnitValue(SECOND, expectedDuration)))
+                .build();
+
         StepCount testStepCount = stepCountDataPoint.getBody();
-        StepCount expectedStepCount = expectedStepCountBuilder.build();
+
         assertThat(testStepCount, equalTo(expectedStepCount));
         assertThat(stepCountDataPoint.getHeader().getAcquisitionProvenance().getModality(), equalTo(SENSED));
         assertThat(stepCountDataPoint.getHeader().getAcquisitionProvenance().getSourceName(), equalTo(
                 RESOURCE_API_SOURCE_NAME));
-        assertThat(stepCountDataPoint.getHeader().getBodySchemaId(), equalTo(StepCount.SCHEMA_ID));
+        assertThat(stepCountDataPoint.getHeader().getBodySchemaId(), equalTo(SCHEMA_ID));
 
     }
 

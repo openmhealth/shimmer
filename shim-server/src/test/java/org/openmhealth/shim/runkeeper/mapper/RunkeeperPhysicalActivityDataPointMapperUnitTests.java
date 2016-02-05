@@ -3,7 +3,6 @@ package org.openmhealth.shim.runkeeper.mapper;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.openmhealth.schema.domain.omh.*;
 import org.openmhealth.shim.common.mapper.DataPointMapperUnitTests;
-import org.springframework.core.io.ClassPathResource;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -12,10 +11,7 @@ import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.List;
 
-import static java.util.Collections.singletonList;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.greaterThan;
@@ -39,16 +35,13 @@ public class RunkeeperPhysicalActivityDataPointMapperUnitTests extends DataPoint
     @BeforeTest
     public void initializeResponseNode() throws IOException {
 
-        ClassPathResource resource =
-                new ClassPathResource("org/openmhealth/shim/runkeeper/mapper/runkeeper-fitness-activities.json");
-
-        responseNode = objectMapper.readTree(resource.getInputStream());
+        responseNode = asJsonNode("org/openmhealth/shim/runkeeper/mapper/runkeeper-fitness-activities.json");
     }
 
     @Test
     public void asDataPointsShouldReturnCorrectNumberOfDataPoints() {
 
-        List<DataPoint<PhysicalActivity>> dataPoints = mapper.asDataPoints(singletonList(responseNode));
+        List<DataPoint<PhysicalActivity>> dataPoints = mapper.asDataPoints(responseNode);
 
         assertThat(dataPoints, notNullValue());
         assertThat(dataPoints.size(), equalTo(2));
@@ -57,7 +50,7 @@ public class RunkeeperPhysicalActivityDataPointMapperUnitTests extends DataPoint
     @Test
     public void asDataPointsShouldReturnCorrectSensedDataPoints() {
 
-        List<DataPoint<PhysicalActivity>> dataPoints = mapper.asDataPoints(singletonList(responseNode));
+        List<DataPoint<PhysicalActivity>> dataPoints = mapper.asDataPoints(responseNode);
 
         assertThat(dataPoints, notNullValue());
         assertThat(dataPoints.size(), greaterThan(0));
@@ -71,11 +64,9 @@ public class RunkeeperPhysicalActivityDataPointMapperUnitTests extends DataPoint
                 .setEffectiveTimeFrame(effectiveTimeInterval)
                 .build();
 
-        DataPoint<PhysicalActivity> dataPoint = dataPoints.get(0);
+        assertThat(dataPoints.get(0).getBody(), equalTo(physicalActivity));
 
-        assertThat(dataPoint.getBody(), equalTo(physicalActivity));
-
-        DataPointAcquisitionProvenance acquisitionProvenance = dataPoint.getHeader().getAcquisitionProvenance();
+        DataPointAcquisitionProvenance acquisitionProvenance = dataPoints.get(0).getHeader().getAcquisitionProvenance();
 
         assertThat(acquisitionProvenance, notNullValue());
         assertThat(acquisitionProvenance.getSourceName(), equalTo(RESOURCE_API_SOURCE_NAME));
@@ -88,7 +79,7 @@ public class RunkeeperPhysicalActivityDataPointMapperUnitTests extends DataPoint
     @Test
     public void asDataPointsShouldReturnCorrectSelfReportedDataPoints() {
 
-        List<DataPoint<PhysicalActivity>> dataPoints = mapper.asDataPoints(singletonList(responseNode));
+        List<DataPoint<PhysicalActivity>> dataPoints = mapper.asDataPoints(responseNode);
 
         assertThat(dataPoints, notNullValue());
         assertThat(dataPoints.size(), equalTo(2));
@@ -105,9 +96,7 @@ public class RunkeeperPhysicalActivityDataPointMapperUnitTests extends DataPoint
     public void asDataPointsShouldNotCreateDataPointWhenOffsetMissing() throws IOException {
 
         assertThat(mapper.asDataPoints(
-                        asJsonNode(
-                                "org/openmhealth/shim/runkeeper/mapper/runkeeper-fitness-activities-missing-offset" +
-                                        ".json")),
+                asJsonNode("org/openmhealth/shim/runkeeper/mapper/runkeeper-fitness-activities-missing-offset.json")),
                 is(empty()));
     }
 }
