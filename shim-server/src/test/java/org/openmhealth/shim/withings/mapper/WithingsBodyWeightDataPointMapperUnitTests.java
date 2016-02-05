@@ -19,7 +19,6 @@ package org.openmhealth.shim.withings.mapper;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.openmhealth.schema.domain.omh.*;
 import org.openmhealth.shim.common.mapper.DataPointMapperUnitTests;
-import org.springframework.core.io.ClassPathResource;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -27,14 +26,17 @@ import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.util.List;
 
-import static java.util.Collections.singletonList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.openmhealth.schema.domain.omh.BodyWeight.*;
 import static org.openmhealth.schema.domain.omh.DataPointModality.SENSED;
+import static org.openmhealth.schema.domain.omh.MassUnit.*;
 import static org.openmhealth.shim.withings.mapper.WithingsDataPointMapper.RESOURCE_API_SOURCE_NAME;
 
 
-// TODO add Javadoc and clean up
+/**
+ * @author Chris Schaefbauer
+ */
 public class WithingsBodyWeightDataPointMapperUnitTests extends DataPointMapperUnitTests {
 
     WithingsBodyWeightDataPointMapper mapper = new WithingsBodyWeightDataPointMapper();
@@ -43,51 +45,51 @@ public class WithingsBodyWeightDataPointMapperUnitTests extends DataPointMapperU
     @BeforeTest
     public void initializeResponseNode() throws IOException {
 
-        ClassPathResource resource =
-                new ClassPathResource("org/openmhealth/shim/withings/mapper/withings-body-measures.json");
-        responseNode = objectMapper.readTree(resource.getInputStream());
-        resource = new ClassPathResource("org/openmhealth/shim/withings/mapper/withings-body-measures-only-goal.json");
-        responseNodeWithGoal = objectMapper.readTree(resource.getInputStream());
+        responseNode = asJsonNode("org/openmhealth/shim/withings/mapper/withings-body-measures.json");
+        responseNodeWithGoal = asJsonNode("org/openmhealth/shim/withings/mapper/withings-body-measures-only-goal.json");
     }
 
     @Test
     public void asDataPointsShouldReturnCorrectNumberOfDataPoints() {
-        List<DataPoint<BodyWeight>> dataPointList = mapper.asDataPoints(singletonList(responseNode));
-        assertThat(dataPointList.size(), equalTo(2));
+
+        assertThat(mapper.asDataPoints(responseNode).size(), equalTo(2));
     }
 
     @Test
     public void asDataPointsShouldReturnCorrectDataPoints() {
-        List<DataPoint<BodyWeight>> dataPointList = mapper.asDataPoints(singletonList(responseNode));
+
+        List<DataPoint<BodyWeight>> dataPointList = mapper.asDataPoints(responseNode);
 
         testDataPoint(dataPointList.get(0), 74.126, "2015-05-31T06:06:23Z", 366956482L);
         testDataPoint(dataPointList.get(1), 74.128, "2015-04-20T17:13:56Z", 347186704L);
-
     }
 
     @Test
     public void asDataPointsShouldIgnoreGoalsForBodyMeasures() {
-        List<DataPoint<BodyWeight>> dataPoints = mapper.asDataPoints(singletonList(responseNodeWithGoal));
-        assertThat(dataPoints.size(), equalTo(0));
+
+        assertThat(mapper.asDataPoints(responseNodeWithGoal).size(), equalTo(0));
     }
 
     //TODO: Refactor this out with an "expectedProperties" dictionary for all the inputs and then one for all
     // Withings points
     public void testDataPoint(DataPoint<BodyWeight> testDataPoint, double massValue, String offsetTimeString,
             long externalId) {
-        BodyWeight.Builder bodyWeightExpectedMeasureBuilder =
-                new BodyWeight.Builder(new MassUnitValue(MassUnit.KILOGRAM, massValue));
-        bodyWeightExpectedMeasureBuilder.setEffectiveTimeFrame(OffsetDateTime.parse(offsetTimeString));
-        BodyWeight bodyWeightExpected = bodyWeightExpectedMeasureBuilder.build();
+
+        BodyWeight bodyWeightExpected = new BodyWeight.Builder(new MassUnitValue(KILOGRAM, massValue))
+                .setEffectiveTimeFrame(OffsetDateTime.parse(offsetTimeString))
+                .build();
 
         assertThat(testDataPoint.getBody(), equalTo(bodyWeightExpected));
 
         DataPointAcquisitionProvenance testProvenance = testDataPoint.getHeader().getAcquisitionProvenance();
+
         assertThat(testProvenance.getSourceName(), equalTo(RESOURCE_API_SOURCE_NAME));
         assertThat(testProvenance.getModality(), equalTo(SENSED));
+
         Long expectedExternalId = (Long) testDataPoint.getHeader().getAcquisitionProvenance().getAdditionalProperties()
                 .get("external_id");
+
         assertThat(expectedExternalId, equalTo(externalId));
-        assertThat(testDataPoint.getHeader().getBodySchemaId(), equalTo(BodyWeight.SCHEMA_ID));
+        assertThat(testDataPoint.getHeader().getBodySchemaId(), equalTo(SCHEMA_ID));
     }
 }

@@ -2,7 +2,6 @@ package org.openmhealth.shim.runkeeper.mapper;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.openmhealth.schema.domain.omh.DataPoint;
-import org.openmhealth.schema.domain.omh.DataPointModality;
 import org.openmhealth.shim.common.mapper.DataPointMapperUnitTests;
 import org.testng.annotations.Test;
 
@@ -11,6 +10,8 @@ import java.util.Optional;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.openmhealth.schema.domain.omh.DataPointModality.SELF_REPORTED;
+import static org.openmhealth.schema.domain.omh.DataPointModality.SENSED;
 
 
 /**
@@ -33,7 +34,7 @@ public class RunkeeperDataPointMapperUnitTests extends DataPointMapperUnitTests 
                 "            \"has_path\": true,\n" +
                 "            \"source\": \"RunKeeper\"}");
 
-        assertThat(mapper.getModality(expectedSensedNode).get(), equalTo(DataPointModality.SENSED));
+        assertThat(mapper.getModality(expectedSensedNode).get(), equalTo(SENSED));
 
         JsonNode expectedEmptyNodeMissingMode = objectMapper.readTree("{\"has_path\": true,\n" +
                 "            \"source\": \"RunKeeper\"}");
@@ -64,7 +65,7 @@ public class RunkeeperDataPointMapperUnitTests extends DataPointMapperUnitTests 
                 "            \"has_path\": true,\n" +
                 "            \"source\": \"RunKeeper\"}");
 
-        assertThat(mapper.getModality(expectedSensedNode).get(), equalTo(DataPointModality.SELF_REPORTED));
+        assertThat(mapper.getModality(expectedSensedNode).get(), equalTo(SELF_REPORTED));
     }
 
     @Test

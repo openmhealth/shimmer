@@ -18,7 +18,10 @@ package org.openmhealth.shim.ihealth.mapper;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.hamcrest.Matchers;
-import org.openmhealth.schema.domain.omh.*;
+import org.openmhealth.schema.domain.omh.DataPoint;
+import org.openmhealth.schema.domain.omh.DurationUnitValue;
+import org.openmhealth.schema.domain.omh.StepCount;
+import org.openmhealth.schema.domain.omh.TimeInterval;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -26,15 +29,15 @@ import org.testng.annotations.Test;
 import java.time.OffsetDateTime;
 import java.util.List;
 
-import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.core.Is.is;
-import static org.openmhealth.schema.domain.omh.DataPointModality.*;
-import static org.openmhealth.schema.domain.omh.DurationUnit.*;
-import static org.openmhealth.schema.domain.omh.StepCount.*;
+import static org.openmhealth.schema.domain.omh.DataPointModality.SELF_REPORTED;
+import static org.openmhealth.schema.domain.omh.DataPointModality.SENSED;
+import static org.openmhealth.schema.domain.omh.DurationUnit.DAY;
+import static org.openmhealth.schema.domain.omh.StepCount.SCHEMA_ID;
 
 
 /**
@@ -44,7 +47,7 @@ public class IHealthStepCountDataPointMapperUnitTests extends IHealthDataPointMa
 
     private JsonNode responseNode;
     private IHealthStepCountDataPointMapper mapper = new IHealthStepCountDataPointMapper();
-    List<DataPoint<StepCount>> dataPoints;
+    private List<DataPoint<StepCount>> dataPoints;
 
 
     @BeforeClass
@@ -56,7 +59,7 @@ public class IHealthStepCountDataPointMapperUnitTests extends IHealthDataPointMa
     @BeforeMethod
     public void initializeDataPoints() {
 
-        dataPoints = mapper.asDataPoints(singletonList(responseNode));
+        dataPoints = mapper.asDataPoints(responseNode);
     }
 
     @Test
@@ -64,25 +67,25 @@ public class IHealthStepCountDataPointMapperUnitTests extends IHealthDataPointMa
 
         JsonNode nodeWithNoSteps = asJsonNode("org/openmhealth/shim/ihealth/mapper/ihealth-activity-no-steps.json");
 
-        assertThat(mapper.asDataPoints(singletonList(nodeWithNoSteps)), is(empty()));
+        assertThat(mapper.asDataPoints(nodeWithNoSteps), is(empty()));
     }
 
     @Test
     public void asDataPointsShouldReturnCorrectNumberOfDataPoints() {
 
-        assertThat(mapper.asDataPoints(singletonList(responseNode)).size(), equalTo(2));
+        assertThat(mapper.asDataPoints(responseNode).size(), equalTo(2));
     }
 
     @Test
     public void asDataPointsShouldReturnCorrectDataPointsWhenSensed() {
 
-        StepCount.Builder expectedStepCountBuilder = new StepCount.Builder(21);
+        StepCount expectedStepCount = new StepCount.Builder(21)
+                .setEffectiveTimeFrame(
+                        TimeInterval.ofStartDateTimeAndDuration(OffsetDateTime.parse("2015-11-16T00:00:00+05:00"),
+                                new DurationUnitValue(DAY, 1)))
+                .build();
 
-        expectedStepCountBuilder.setEffectiveTimeFrame(
-                TimeInterval.ofStartDateTimeAndDuration(OffsetDateTime.parse("2015-11-16T00:00:00+05:00"),
-                        new DurationUnitValue(DAY, 1)));
-
-        assertThat(dataPoints.get(0).getBody(), equalTo(expectedStepCountBuilder.build()));
+        assertThat(dataPoints.get(0).getBody(), equalTo(expectedStepCount));
 
         testDataPointHeader(dataPoints.get(0).getHeader(), SCHEMA_ID, SENSED,
                 "ac67c4ccf64af669d92569af85d19f59", OffsetDateTime.parse("2015-11-17T19:23:21Z"));
@@ -91,13 +94,13 @@ public class IHealthStepCountDataPointMapperUnitTests extends IHealthDataPointMa
     @Test
     public void asDataPointsShouldReturnDataPointWithUserNoteWhenNoteIsPresent() {
 
-        StepCount.Builder expectedStepCountBuilder = new StepCount.Builder(4398);
+        StepCount expectedStepCount = new StepCount.Builder(4398)
+                .setEffectiveTimeFrame(
+                        TimeInterval.ofStartDateTimeAndDuration(OffsetDateTime.parse("2015-11-18T00:00:00Z"),
+                                new DurationUnitValue(DAY, 1))).setUserNotes("Great steps")
+                .build();
 
-        expectedStepCountBuilder.setEffectiveTimeFrame(
-                TimeInterval.ofStartDateTimeAndDuration(OffsetDateTime.parse("2015-11-18T00:00:00Z"),
-                        new DurationUnitValue(DAY, 1))).setUserNotes("Great steps");
-
-        assertThat(dataPoints.get(1).getBody(), Matchers.equalTo(expectedStepCountBuilder.build()));
+        assertThat(dataPoints.get(1).getBody(), Matchers.equalTo(expectedStepCount));
 
         assertThat(dataPoints.get(0).getBody().getUserNotes(), nullValue());
         assertThat(dataPoints.get(1).getBody().getUserNotes(), equalTo("Great steps"));
@@ -106,8 +109,8 @@ public class IHealthStepCountDataPointMapperUnitTests extends IHealthDataPointMa
     @Test
     public void asDataPointsShouldReturnSensedDataPointWhenManuallyEntered() {
 
-        assertThat(mapper.asDataPoints(singletonList(responseNode)).get(1).getHeader().getAcquisitionProvenance()
-                .getModality(), equalTo(SELF_REPORTED));
+        assertThat(mapper.asDataPoints(responseNode).get(1).getHeader().getAcquisitionProvenance().getModality(),
+                equalTo(SELF_REPORTED));
     }
 
     @Test
@@ -115,6 +118,6 @@ public class IHealthStepCountDataPointMapperUnitTests extends IHealthDataPointMa
 
         JsonNode emptyNode = asJsonNode("/org/openmhealth/shim/ihealth/mapper/ihealth-activity-empty.json");
 
-        assertThat(mapper.asDataPoints(singletonList(emptyNode)), is(empty()));
+        assertThat(mapper.asDataPoints(emptyNode), is(empty()));
     }
 }

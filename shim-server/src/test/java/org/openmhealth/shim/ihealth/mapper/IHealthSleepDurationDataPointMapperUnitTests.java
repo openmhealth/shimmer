@@ -28,16 +28,13 @@ import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.List;
 
-import static java.util.Collections.singletonList;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
 import static org.openmhealth.schema.domain.omh.DataPointModality.SELF_REPORTED;
 import static org.openmhealth.schema.domain.omh.DataPointModality.SENSED;
 import static org.openmhealth.schema.domain.omh.DurationUnit.MINUTE;
-import static org.openmhealth.schema.domain.omh.SleepDuration.*;
+import static org.openmhealth.schema.domain.omh.SleepDuration.SCHEMA_ID;
 import static org.openmhealth.schema.domain.omh.TimeInterval.ofStartDateTimeAndEndDateTime;
 
 
@@ -59,7 +56,7 @@ public class IHealthSleepDurationDataPointMapperUnitTests extends IHealthDataPoi
     @BeforeMethod
     public void initializeDataPoints() {
 
-        dataPoints = mapper.asDataPoints(singletonList(responseNode));
+        dataPoints = mapper.asDataPoints(responseNode);
     }
 
     @Test
@@ -71,14 +68,14 @@ public class IHealthSleepDurationDataPointMapperUnitTests extends IHealthDataPoi
     @Test
     public void asDataPointsShouldReturnCorrectDataPointsWhenSensed() {
 
-        SleepDuration.Builder expectedSleepDurationBuilder = new SleepDuration.Builder(new DurationUnitValue(
-                MINUTE, 345));
+        SleepDuration expectedSleepDuration = new SleepDuration.Builder(new DurationUnitValue(
+                MINUTE, 345))
+                .setEffectiveTimeFrame(ofStartDateTimeAndEndDateTime(
+                        OffsetDateTime.parse("2015-11-15T01:51:00-07:00"),
+                        OffsetDateTime.parse("2015-11-15T09:16:00-07:00")))
+                .build();
 
-        expectedSleepDurationBuilder.setEffectiveTimeFrame(ofStartDateTimeAndEndDateTime(
-                OffsetDateTime.parse("2015-11-15T01:51:00-07:00"),
-                OffsetDateTime.parse("2015-11-15T09:16:00-07:00")));
-
-        assertThat(dataPoints.get(0).getBody(), equalTo(expectedSleepDurationBuilder.build()));
+        assertThat(dataPoints.get(0).getBody(), equalTo(expectedSleepDuration));
 
         testDataPointHeader(dataPoints.get(0).getHeader(), SCHEMA_ID, SENSED,
                 "7eb7292b90d710ae7b7f61b75f9425cf", OffsetDateTime.parse("2015-11-15T16:19:10Z"));
@@ -97,16 +94,14 @@ public class IHealthSleepDurationDataPointMapperUnitTests extends IHealthDataPoi
     @Test
     public void asDataPointsShouldReturnDataPointWithUserNoteWhenNoteIsPresent() {
 
-        SleepDuration.Builder expectedSleepDurationBuilder =
-                new SleepDuration.Builder(new DurationUnitValue(MINUTE, 195));
+        SleepDuration expectedSleepDuration = new SleepDuration.Builder(new DurationUnitValue(MINUTE, 195))
+                .setEffectiveTimeFrame(ofStartDateTimeAndEndDateTime(
+                        OffsetDateTime.parse("2015-11-15T13:51:00+01:00"),
+                        OffsetDateTime.parse("2015-11-15T17:16:00+01:00")))
+                .setUserNotes("Best sleep ever")
+                .build();
 
-        expectedSleepDurationBuilder.setEffectiveTimeFrame(ofStartDateTimeAndEndDateTime(
-                OffsetDateTime.parse("2015-11-15T13:51:00+01:00"),
-                OffsetDateTime.parse("2015-11-15T17:16:00+01:00")));
-
-        expectedSleepDurationBuilder.setUserNotes("Best sleep ever");
-
-        assertThat(dataPoints.get(1).getBody(), equalTo(expectedSleepDurationBuilder.build()));
+        assertThat(dataPoints.get(1).getBody(), equalTo(expectedSleepDuration));
 
         assertThat(dataPoints.get(0).getBody().getUserNotes(), nullValue());
         assertThat(dataPoints.get(1).getBody().getUserNotes(), equalTo("Best sleep ever"));
@@ -123,6 +118,6 @@ public class IHealthSleepDurationDataPointMapperUnitTests extends IHealthDataPoi
 
         JsonNode emptyNode = asJsonNode("/org/openmhealth/shim/ihealth/mapper/ihealth-sleep-empty.json");
 
-        assertThat(mapper.asDataPoints(singletonList(emptyNode)), is(empty()));
+        assertThat(mapper.asDataPoints(emptyNode), is(empty()));
     }
 }
