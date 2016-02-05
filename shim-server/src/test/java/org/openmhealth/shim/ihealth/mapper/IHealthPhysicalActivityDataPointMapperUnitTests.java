@@ -26,7 +26,6 @@ import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.util.List;
 
-import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -45,7 +44,7 @@ public class IHealthPhysicalActivityDataPointMapperUnitTests extends IHealthData
 
     private JsonNode responseNode;
     private IHealthPhysicalActivityDataPointMapper mapper = new IHealthPhysicalActivityDataPointMapper();
-    List<DataPoint<PhysicalActivity>> dataPoints;
+    private List<DataPoint<PhysicalActivity>> dataPoints;
 
     @BeforeTest
     public void initializeResponseNode() throws IOException {
@@ -56,7 +55,7 @@ public class IHealthPhysicalActivityDataPointMapperUnitTests extends IHealthData
     @BeforeMethod
     public void initializeDataPoints() {
 
-        dataPoints = mapper.asDataPoints(singletonList(responseNode));
+        dataPoints = mapper.asDataPoints(responseNode);
     }
 
     @Test
@@ -102,7 +101,7 @@ public class IHealthPhysicalActivityDataPointMapperUnitTests extends IHealthData
         JsonNode emptyListResponseNode =
                 asJsonNode("/org/openmhealth/shim/ihealth/mapper/ihealth-sport-empty.json");
 
-        assertThat(mapper.asDataPoints(singletonList(emptyListResponseNode)), is(empty()));
+        assertThat(mapper.asDataPoints(emptyListResponseNode), is(empty()));
     }
 
 }

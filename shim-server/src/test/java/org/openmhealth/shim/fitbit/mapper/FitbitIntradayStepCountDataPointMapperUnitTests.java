@@ -55,8 +55,7 @@ public class FitbitIntradayStepCountDataPointMapperUnitTests extends DataPointMa
     @Test
     public void asDataPointsShouldReturnCorrectNumberOfDataPoints() {
 
-        List<DataPoint<StepCount>> dataPoints = mapper.asDataPoints(singletonList(responseNode));
-        assertThat(dataPoints.size(), equalTo(2));
+        assertThat(mapper.asDataPoints(singletonList(responseNode)).size(), equalTo(2));
     }
 
     @Test

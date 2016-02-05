@@ -20,15 +20,14 @@ import com.fasterxml.jackson.databind.JsonNode;
 import org.openmhealth.schema.domain.omh.BloodGlucose;
 import org.openmhealth.schema.domain.omh.DataPoint;
 import org.openmhealth.schema.domain.omh.TypedUnitValue;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.util.List;
 
-import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -48,10 +47,10 @@ import static org.openmhealth.schema.domain.omh.TemporalRelationshipToMeal.BEFOR
 public class IHealthBloodGlucoseDataPointMapperUnitTests extends IHealthDataPointMapperUnitTests {
 
     private JsonNode responseNode;
-    private IHealthBloodGlucoseDataPointMapper mapper = new IHealthBloodGlucoseDataPointMapper();
-    List<DataPoint<BloodGlucose>> dataPoints;
+    private final IHealthBloodGlucoseDataPointMapper mapper = new IHealthBloodGlucoseDataPointMapper();
+    private List<DataPoint<BloodGlucose>> dataPoints;
 
-    @BeforeTest
+    @BeforeClass
     public void initializeResponseNode() throws IOException {
 
         responseNode = asJsonNode("/org/openmhealth/shim/ihealth/mapper/ihealth-glucose.json");
@@ -60,7 +59,7 @@ public class IHealthBloodGlucoseDataPointMapperUnitTests extends IHealthDataPoin
     @BeforeMethod
     public void initializeDataPoints() {
 
-        dataPoints = mapper.asDataPoints(singletonList(responseNode));
+        dataPoints = mapper.asDataPoints(responseNode);
     }
 
     @Test
@@ -90,12 +89,12 @@ public class IHealthBloodGlucoseDataPointMapperUnitTests extends IHealthDataPoin
     @Test
     public void asDataPointsShouldReturnCorrectSelfReportedDataPoints() {
 
-        BloodGlucose.Builder expectedBloodGlucoseBuilder =
-                new BloodGlucose.Builder(new TypedUnitValue<>(MILLIGRAMS_PER_DECILITER, 70))
-                        .setTemporalRelationshipToMeal(AFTER_BREAKFAST)
-                        .setEffectiveTimeFrame(OffsetDateTime.parse("2015-09-24T14:44:40-06:00"));
+        BloodGlucose expectedBloodGlucose = new BloodGlucose.Builder(new TypedUnitValue<>(MILLIGRAMS_PER_DECILITER, 70))
+                .setTemporalRelationshipToMeal(AFTER_BREAKFAST)
+                .setEffectiveTimeFrame(OffsetDateTime.parse("2015-09-24T14:44:40-06:00"))
+                .build();
 
-        assertThat(dataPoints.get(1).getBody(), equalTo(expectedBloodGlucoseBuilder.build()));
+        assertThat(dataPoints.get(1).getBody(), equalTo(expectedBloodGlucose));
 
         assertThat(dataPoints.get(1).getBody().getAdditionalProperty("temporal_relationship_to_medication").get(),
                 equalTo("After_taking_pills"));
@@ -108,7 +107,7 @@ public class IHealthBloodGlucoseDataPointMapperUnitTests extends IHealthDataPoin
 
         JsonNode emptyListResponseNode = asJsonNode("/org/openmhealth/shim/ihealth/mapper/ihealth-glucose-empty.json");
 
-        assertThat(mapper.asDataPoints(singletonList(emptyListResponseNode)), is(empty()));
+        assertThat(mapper.asDataPoints(emptyListResponseNode), is(empty()));
     }
 
     @Test
