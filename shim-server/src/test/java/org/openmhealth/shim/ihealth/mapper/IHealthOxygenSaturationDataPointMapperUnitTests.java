@@ -45,10 +45,10 @@ import static org.openmhealth.shim.ihealth.mapper.IHealthDataPointMapper.*;
 /**
  * @author Chris Schaefbauer
  */
-public class IHealthBloodOxygenDataPointMapperUnitTests extends IHealthDataPointMapperUnitTests {
+public class IHealthOxygenSaturationDataPointMapperUnitTests extends IHealthDataPointMapperUnitTests {
 
     private JsonNode responseNode;
-    private final IHealthBloodOxygenDataPointMapper mapper = new IHealthBloodOxygenDataPointMapper();
+    private final IHealthOxygenSaturationDataPointMapper mapper = new IHealthOxygenSaturationDataPointMapper();
     private List<DataPoint<OxygenSaturation>> dataPoints;
 
     @BeforeClass

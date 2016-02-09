@@ -38,7 +38,7 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asRequir
  * @see <a href="http://developer.ihealthlabs.com/dev_documentation_RequestfordataofBloodOxygen.htm">endpoint
  * documentation</a>
  */
-public class IHealthBloodOxygenDataPointMapper extends IHealthDataPointMapper<OxygenSaturation> {
+public class IHealthOxygenSaturationDataPointMapper extends IHealthDataPointMapper<OxygenSaturation> {
 
     @Override
     protected String getListNodeName() {
