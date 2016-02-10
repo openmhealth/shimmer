@@ -136,7 +136,8 @@ public class IHealthShim extends OAuth2ShimBase {
                 BODY_MASS_INDEX,
                 HEART_RATE,
                 STEP_COUNT,
-                SLEEP_DURATION
+                SLEEP_DURATION,
+                OXYGEN_SATURATION
         };
     }
 
@@ -164,7 +165,8 @@ public class IHealthShim extends OAuth2ShimBase {
         BODY_MASS_INDEX(singletonList("weight.json")),
         HEART_RATE(newArrayList("bp.json", "spo2.json")),
         STEP_COUNT(singletonList("activity.json")),
-        SLEEP_DURATION(singletonList("sleep.json"));
+        SLEEP_DURATION(singletonList("sleep.json")),
+        OXYGEN_SATURATION(singletonList("spo2.json"));
 
         private List<String> endPoint;
 
@@ -296,6 +298,9 @@ public class IHealthShim extends OAuth2ShimBase {
                             mapper = new IHealthBloodOxygenEndpointHeartRateDataPointMapper();
                             break;
                         }
+                    case OXYGEN_SATURATION:
+                        mapper = new IHealthOxygenSaturationDataPointMapper();
+                        break;
                     default:
                         throw new UnsupportedOperationException();
                 }
@@ -339,6 +344,8 @@ public class IHealthShim extends OAuth2ShimBase {
                 return singletonList(serialValues.get("sleepSV"));
             case HEART_RATE:
                 return newArrayList(serialValues.get("bloodPressureSV"), serialValues.get("spo2SV"));
+            case OXYGEN_SATURATION:
+                return singletonList(serialValues.get("spo2SV"));
             default:
                 throw new UnsupportedOperationException();
         }
