@@ -24,6 +24,7 @@ import org.openmhealth.schema.domain.omh.TypedUnitValue;
 import java.math.BigDecimal;
 import java.util.Optional;
 
+import static java.math.BigDecimal.ZERO;
 import static org.openmhealth.schema.domain.omh.OxygenSaturation.MeasurementMethod.PULSE_OXIMETRY;
 import static org.openmhealth.schema.domain.omh.OxygenSaturation.MeasurementSystem.PERIPHERAL_CAPILLARY;
 import static org.openmhealth.schema.domain.omh.PercentUnit.PERCENT;
@@ -58,8 +59,7 @@ public class IHealthOxygenSaturationDataPointMapper extends IHealthDataPointMapp
         BigDecimal bloodOxygenValue = asRequiredBigDecimal(listEntryNode, "BO");
 
         // iHealth has stated that missing values would most likely be represented as a 0 value for the field
-        if (bloodOxygenValue.compareTo(BigDecimal.ZERO) == 0) {
-
+        if (bloodOxygenValue.compareTo(ZERO) == 0) {
             return Optional.empty();
         }
 
@@ -67,7 +67,6 @@ public class IHealthOxygenSaturationDataPointMapper extends IHealthDataPointMapp
                 new OxygenSaturation.Builder(new TypedUnitValue<>(PERCENT, bloodOxygenValue))
                         .setMeasurementMethod(PULSE_OXIMETRY)
                         .setMeasurementSystem(PERIPHERAL_CAPILLARY);
-
 
         getEffectiveTimeFrameAsDateTime(listEntryNode).ifPresent(oxygenSaturationBuilder::setEffectiveTimeFrame);
         getUserNoteIfExists(listEntryNode).ifPresent(oxygenSaturationBuilder::setUserNotes);

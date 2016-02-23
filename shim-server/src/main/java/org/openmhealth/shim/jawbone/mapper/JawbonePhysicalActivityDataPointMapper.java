@@ -111,20 +111,22 @@ public class JawbonePhysicalActivityDataPointMapper extends JawboneDataPointMapp
 
         if (endTimestamp.isPresent() && durationInSec.isPresent() && timeZoneId.isPresent()) {
 
-            DurationUnitValue durationUnitValue = new DurationUnitValue(SECOND, durationInSec.get());
-
             OffsetDateTime endDateTime = ofInstant(ofEpochSecond(endTimestamp.get()),
-                    JawboneDataPointMapper.getTimeZoneForTimestamp(workoutNode, endTimestamp.get()));
+                    getTimeZoneForTimestamp(workoutNode, endTimestamp.get()));
 
-            builder.setEffectiveTimeFrame(ofEndDateTimeAndDuration(endDateTime, durationUnitValue));
+            builder.setEffectiveTimeFrame(
+                    ofEndDateTimeAndDuration(endDateTime, new DurationUnitValue(SECOND, durationInSec.get())));
         }
 
         Optional<BigDecimal> totalCalories = asOptionalBigDecimal(workoutNode, "details.calories");
 
         if (totalCalories.isPresent()) {
 
-            asOptionalBigDecimal(workoutNode, "details.bmr_calories").ifPresent(bmrCalories -> builder
-                    .setCaloriesBurned(new KcalUnitValue(KILOCALORIE, totalCalories.get().subtract(bmrCalories))));
+            asOptionalBigDecimal(workoutNode, "details.bmr_calories")
+                    .ifPresent(bmrCalories -> {
+                        BigDecimal caloriesBurned = totalCalories.get().subtract(bmrCalories);
+                        builder.setCaloriesBurned(new KcalUnitValue(KILOCALORIE, caloriesBurned));
+                    });
         }
 
         asOptionalInteger(workoutNode, "details.intensity")
@@ -165,7 +167,7 @@ public class JawbonePhysicalActivityDataPointMapper extends JawboneDataPointMapp
      */
     public SelfReportedIntensity asSelfReportedIntensity(int intensityValue) {
 
-        switch ( intensityValue ) {
+        switch (intensityValue) {
             case 1:
                 return LIGHT;
             case 2:

@@ -96,8 +96,8 @@ public class FitbitPhysicalActivityDataPointMapper extends FitbitDataPointMapper
             activityBuilder.setDistance(new LengthUnitValue(KILOMETER, distance.get()));
         }
 
-        asOptionalDouble(node, "calories").ifPresent(calories -> activityBuilder.setCaloriesBurned(
-                new KcalUnitValue(KILOCALORIE, calories)));
+        asOptionalDouble(node, "calories")
+                .ifPresent(calories -> activityBuilder.setCaloriesBurned(new KcalUnitValue(KILOCALORIE, calories)));
 
         PhysicalActivity measure = activityBuilder.build();
         Optional<Long> externalId = asOptionalLong(node, "logId");
