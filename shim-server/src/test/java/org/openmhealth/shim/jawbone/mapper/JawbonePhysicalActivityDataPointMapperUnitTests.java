@@ -19,10 +19,12 @@ import static java.time.ZoneOffset.UTC;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.openmhealth.schema.domain.omh.DataPointModality.SENSED;
 import static org.openmhealth.schema.domain.omh.DurationUnit.SECOND;
+import static org.openmhealth.schema.domain.omh.KcalUnit.KILOCALORIE;
 import static org.openmhealth.schema.domain.omh.LengthUnit.METER;
 import static org.openmhealth.schema.domain.omh.PhysicalActivity.SelfReportedIntensity.MODERATE;
 import static org.openmhealth.shim.jawbone.mapper.JawboneDataPointMapper.RESOURCE_API_SOURCE_NAME;
@@ -79,6 +81,7 @@ public class JawbonePhysicalActivityDataPointMapperUnitTests extends JawboneData
                 .setDistance(new LengthUnitValue(METER, 5_116))
                 .setEffectiveTimeFrame(effectiveTimeInterval)
                 .setReportedActivityIntensity(MODERATE)
+                .setCaloriesBurned(new KcalUnitValue(KILOCALORIE, 634.928678924))
                 .build();
 
         DataPoint<PhysicalActivity> firstDataPoint = dataPoints.get(0);
@@ -105,6 +108,7 @@ public class JawbonePhysicalActivityDataPointMapperUnitTests extends JawboneData
                 .setEffectiveTimeFrame(
                         TimeInterval.ofEndDateTimeAndDuration(OffsetDateTime.parse("2015-04-29T16:07:07-04:00"),
                                 new DurationUnitValue(SECOND, 343)))
+                .setCaloriesBurned(new KcalUnitValue(KILOCALORIE, 27.16863765916))
                 .build();
 
         assertThat(dataPoints.get(1).getBody(), equalTo(expectedPhysicalActivity));
@@ -115,6 +119,12 @@ public class JawbonePhysicalActivityDataPointMapperUnitTests extends JawboneData
         testProperties.put(HEADER_SOURCE_UPDATE_KEY, "2015-04-29T20:07:56Z");
         testProperties.put(HEADER_SCHEMA_ID_KEY, PhysicalActivity.SCHEMA_ID);
         testDataPointHeader(testDataPointHeader, testProperties);
+    }
+
+    @Test
+    public void asDataPointsShouldReturnDataPointWithoutCaloriesBurnedWhenCaloriesAreMissing() {
+
+        assertThat(mapper.asDataPoints(responseNode).get(2).getBody().getCaloriesBurned(), nullValue());
     }
 
     // TODO multiple tests?

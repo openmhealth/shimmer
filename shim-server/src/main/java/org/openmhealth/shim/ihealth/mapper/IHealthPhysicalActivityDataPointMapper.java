@@ -18,11 +18,13 @@ package org.openmhealth.shim.ihealth.mapper;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.openmhealth.schema.domain.omh.DataPoint;
+import org.openmhealth.schema.domain.omh.KcalUnitValue;
 import org.openmhealth.schema.domain.omh.PhysicalActivity;
 
 import java.time.ZoneOffset;
 import java.util.Optional;
 
+import static org.openmhealth.schema.domain.omh.KcalUnit.KILOCALORIE;
 import static org.openmhealth.schema.domain.omh.TimeInterval.ofStartDateTimeAndEndDateTime;
 import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.*;
 
@@ -80,6 +82,9 @@ public class IHealthPhysicalActivityDataPointMapper extends IHealthDataPointMapp
                     getDateTimeWithCorrectOffset(startTimeUnixEpochSecs.get(), ZoneOffset.of(timeZoneString)),
                     getDateTimeWithCorrectOffset(endTimeUnixEpochSecs.get(), ZoneOffset.of(timeZoneString))));
         }
+
+        asOptionalDouble(listEntryNode, "Calories").ifPresent(
+                calories -> physicalActivityBuilder.setCaloriesBurned(new KcalUnitValue(KILOCALORIE, calories)));
 
         PhysicalActivity physicalActivity = physicalActivityBuilder.build();
 
