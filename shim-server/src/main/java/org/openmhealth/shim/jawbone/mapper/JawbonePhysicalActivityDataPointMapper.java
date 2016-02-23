@@ -18,11 +18,13 @@ package org.openmhealth.shim.jawbone.mapper;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.openmhealth.schema.domain.omh.DurationUnitValue;
+import org.openmhealth.schema.domain.omh.KcalUnitValue;
 import org.openmhealth.schema.domain.omh.LengthUnitValue;
 import org.openmhealth.schema.domain.omh.PhysicalActivity;
 import org.openmhealth.schema.domain.omh.PhysicalActivity.SelfReportedIntensity;
 
 import javax.annotation.Nullable;
+import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.util.HashMap;
@@ -34,6 +36,7 @@ import static java.lang.String.format;
 import static java.time.Instant.ofEpochSecond;
 import static java.time.OffsetDateTime.ofInstant;
 import static org.openmhealth.schema.domain.omh.DurationUnit.SECOND;
+import static org.openmhealth.schema.domain.omh.KcalUnit.KILOCALORIE;
 import static org.openmhealth.schema.domain.omh.LengthUnit.METER;
 import static org.openmhealth.schema.domain.omh.PhysicalActivity.SelfReportedIntensity.*;
 import static org.openmhealth.schema.domain.omh.TimeInterval.ofEndDateTimeAndDuration;
@@ -107,10 +110,23 @@ public class JawbonePhysicalActivityDataPointMapper extends JawboneDataPointMapp
         Optional<ZoneId> timeZoneId = asOptionalZoneId(workoutNode, "details.tz");
 
         if (endTimestamp.isPresent() && durationInSec.isPresent() && timeZoneId.isPresent()) {
-            DurationUnitValue durationUnitValue = new DurationUnitValue(SECOND, durationInSec.get());
+
             OffsetDateTime endDateTime = ofInstant(ofEpochSecond(endTimestamp.get()),
-                    JawboneDataPointMapper.getTimeZoneForTimestamp(workoutNode, endTimestamp.get()));
-            builder.setEffectiveTimeFrame(ofEndDateTimeAndDuration(endDateTime, durationUnitValue));
+                    getTimeZoneForTimestamp(workoutNode, endTimestamp.get()));
+
+            builder.setEffectiveTimeFrame(
+                    ofEndDateTimeAndDuration(endDateTime, new DurationUnitValue(SECOND, durationInSec.get())));
+        }
+
+        Optional<BigDecimal> totalCalories = asOptionalBigDecimal(workoutNode, "details.calories");
+
+        if (totalCalories.isPresent()) {
+
+            asOptionalBigDecimal(workoutNode, "details.bmr_calories")
+                    .ifPresent(bmrCalories -> {
+                        BigDecimal caloriesBurned = totalCalories.get().subtract(bmrCalories);
+                        builder.setCaloriesBurned(new KcalUnitValue(KILOCALORIE, caloriesBurned));
+                    });
         }
 
         asOptionalInteger(workoutNode, "details.intensity")
@@ -151,7 +167,7 @@ public class JawbonePhysicalActivityDataPointMapper extends JawboneDataPointMapp
      */
     public SelfReportedIntensity asSelfReportedIntensity(int intensityValue) {
 
-        switch ( intensityValue ) {
+        switch (intensityValue) {
             case 1:
                 return LIGHT;
             case 2:

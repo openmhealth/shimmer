@@ -26,6 +26,7 @@ import java.util.Optional;
 
 import static org.openmhealth.schema.domain.omh.DurationUnit.DAY;
 import static org.openmhealth.schema.domain.omh.DurationUnit.MILLISECOND;
+import static org.openmhealth.schema.domain.omh.KcalUnit.KILOCALORIE;
 import static org.openmhealth.schema.domain.omh.LengthUnit.KILOMETER;
 import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.*;
 
@@ -94,6 +95,9 @@ public class FitbitPhysicalActivityDataPointMapper extends FitbitDataPointMapper
             // this assumes that the response is using the default for distance (KM)
             activityBuilder.setDistance(new LengthUnitValue(KILOMETER, distance.get()));
         }
+
+        asOptionalDouble(node, "calories")
+                .ifPresent(calories -> activityBuilder.setCaloriesBurned(new KcalUnitValue(KILOCALORIE, calories)));
 
         PhysicalActivity measure = activityBuilder.build();
         Optional<Long> externalId = asOptionalLong(node, "logId");

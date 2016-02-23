@@ -26,12 +26,11 @@ import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.util.List;
 
-import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
-import static org.openmhealth.schema.domain.omh.BloodPressure.*;
-import static org.openmhealth.schema.domain.omh.BloodPressureUnit.*;
+import static org.openmhealth.schema.domain.omh.BloodPressure.SCHEMA_ID;
+import static org.openmhealth.schema.domain.omh.BloodPressureUnit.MM_OF_MERCURY;
 import static org.openmhealth.schema.domain.omh.DataPointModality.SELF_REPORTED;
 import static org.openmhealth.schema.domain.omh.DataPointModality.SENSED;
 
@@ -43,7 +42,7 @@ public class IHealthBloodPressureDataPointMapperUnitTests extends IHealthDataPoi
 
     private JsonNode responseNode;
     private IHealthBloodPressureDataPointMapper mapper = new IHealthBloodPressureDataPointMapper();
-    List<DataPoint<BloodPressure>> dataPoints;
+    private List<DataPoint<BloodPressure>> dataPoints;
 
     @BeforeTest
     public void initializeResponseNode() throws IOException {
@@ -54,7 +53,7 @@ public class IHealthBloodPressureDataPointMapperUnitTests extends IHealthDataPoi
     @BeforeMethod
     public void initializeDataPoints() {
 
-        dataPoints = mapper.asDataPoints(singletonList(responseNode));
+        dataPoints = mapper.asDataPoints(responseNode);
     }
 
     @Test
@@ -111,7 +110,7 @@ public class IHealthBloodPressureDataPointMapperUnitTests extends IHealthDataPoi
 
         JsonNode emptyNode = asJsonNode("org/openmhealth/shim/ihealth/mapper/ihealth-bp-empty.json");
 
-        assertThat(mapper.asDataPoints(singletonList(emptyNode)), is(empty()));
+        assertThat(mapper.asDataPoints(emptyNode), is(empty()));
     }
 
     @Test
