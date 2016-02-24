@@ -31,7 +31,7 @@ public class FitbitBodyMassIndexDataPointMapperUnitTests extends DataPointMapper
     @BeforeTest
     public void initializeResponseNode() throws IOException {
 
-        responseNode = asJsonNode("org/openmhealth/shim/fitbit/mapper/fitbit-get-body-weight.json");
+        responseNode = asJsonNode("org/openmhealth/shim/fitbit/mapper/fitbit-body-log-weight.json");
     }
 
     @Test

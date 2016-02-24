@@ -35,7 +35,7 @@ public class FitbitStepCountDataPointMapperUnitTests extends DataPointMapperUnit
     @BeforeTest
     public void initializeResponseNodes() throws IOException {
 
-        responseNode = asJsonNode("org/openmhealth/shim/fitbit/mapper/fitbit-time-series-steps.json");
+        responseNode = asJsonNode("org/openmhealth/shim/fitbit/mapper/fitbit-activities-steps-timeseries.json");
     }
 
     @Test
@@ -45,12 +45,12 @@ public class FitbitStepCountDataPointMapperUnitTests extends DataPointMapperUnit
     }
 
     @Test
-    public void asDataPointsShouldReturnCorrectDataPoints() {
+    public void asDataPointsShouldReturnCorrectDataPointsWhenMultipleInResponse() {
 
         List<DataPoint<StepCount>> dataPoints = mapper.asDataPoints(singletonList(responseNode));
 
-        assertThatDataPointMatches(dataPoints.get(0), 2170, "2015-05-26");
-        assertThatDataPointMatches(dataPoints.get(1), 3248, "2015-05-27");
+        assertThatDataPointMatches(dataPoints.get(0), 175, "2015-08-23");
+        assertThatDataPointMatches(dataPoints.get(1), 2937, "2015-08-24");
     }
 
     public void assertThatDataPointMatches(DataPoint<StepCount> dataPoint, long expectedStepCountValue,

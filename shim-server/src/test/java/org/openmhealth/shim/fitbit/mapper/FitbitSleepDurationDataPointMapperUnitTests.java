@@ -33,8 +33,9 @@ public class FitbitSleepDurationDataPointMapperUnitTests extends DataPointMapper
     @BeforeTest
     public void initializeResponseNode() throws IOException {
 
-        singleSleepResponseNode = asJsonNode("org/openmhealth/shim/fitbit/mapper/fitbit-get-sleep.json");
-        multipleSleepResponseNode = asJsonNode("org/openmhealth/shim/fitbit/mapper/fitbit-get-sleep-multiple.json");
+        singleSleepResponseNode = asJsonNode("org/openmhealth/shim/fitbit/mapper/fitbit-sleep-date.json");
+        multipleSleepResponseNode =
+                asJsonNode("org/openmhealth/shim/fitbit/mapper/fitbit-sleep-date-multiple-in-sleep-list.json");
     }
 
     @Test
@@ -65,7 +66,8 @@ public class FitbitSleepDurationDataPointMapperUnitTests extends DataPointMapper
     @Test
     public void asDataPointsShouldReturnEmptyListWhenResponseIsEmpty() throws IOException {
 
-        JsonNode responseNode = asJsonNode("org/openmhealth/shim/fitbit/mapper/fitbit-get-sleep-empty.json");
+        JsonNode responseNode =
+                asJsonNode("org/openmhealth/shim/fitbit/mapper/fitbit-sleep-date-empty-sleep-list.json");
 
         assertThat(mapper.asDataPoints(responseNode), is(empty()));
     }

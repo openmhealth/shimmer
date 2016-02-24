@@ -17,7 +17,6 @@
 package org.openmhealth.shim;
 
 import org.springframework.data.annotation.Id;
-import org.springframework.http.HttpMethod;
 
 import java.util.Map;
 
@@ -32,9 +31,6 @@ public class AuthorizationRequestParameters {
     private String stateKey;
 
     private String username;
-
-    // TODO: unused, drop
-    private HttpMethod httpMethod = HttpMethod.POST;
 
     private String redirectUri;
 

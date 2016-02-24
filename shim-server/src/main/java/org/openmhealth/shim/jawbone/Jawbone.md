@@ -11,9 +11,9 @@ docs main page: https://jawbone.com/up/developer/
   1. take note of the "Client Id" and "App Secret" 
  
 # api
-api url: https://jawbone.com/nudge/api/v.1.1/users/@me
-version: v.1.1
-supports retrieval based on modification date: updated_after parameter  
+- api url: https://jawbone.com/nudge/api/v.1.1/users/@me
+- version: v.1.1
+- supports retrieval based on modification date: updated_after parameter  
 
 ## authentication
 
@@ -39,9 +39,9 @@ supports retrieval based on modification date: updated_after parameter
 - next page parameter: next, endpoint uri that can be appended to "https://jawbone.com/"
 - previous page parameters: prev, not always available
 - size gives number of entries in current page
-- items are listed newest to oldest
-
-
+- ordering of pages:
+  - items are listed newest to oldest when no time frame is specified in the request
+  - items are listed from oldest to newest when a time frame is specified in the request
 
 ## incremental data
 - endpoints accept a ‘updated_after’ parameter that retrieves items that were updated after a specific date
@@ -50,7 +50,6 @@ supports retrieval based on modification date: updated_after parameter
 - Most data points return datetime as unix epoch nanoseconds that are aligned to UTC
 
 ## rate limit
-
 - n/a
 
 ## other
@@ -69,7 +68,6 @@ All endpoint responses contain two properties, one named ‘meta’ and one name
   - end_time - epoch timestamp, in seconds, of the end of the time frame to retrieve, used along with start_time.  
   - limit - the maximum number of datapoints to be retrieved 
   - updated_after - epoch timestamp to list events that have been updated later than the timestamp
-
 
 ### get body events
 - Endpoint: /nudge/api/v.1.1/users/@me/body_events
@@ -117,6 +115,10 @@ The ‘data’ property contains an array, ‘items’, that contains a list of 
 ### get workouts
 - endpoint: /nudge/api/v.1.1/users/@me/workouts
 - reference: https://jawbone.com/up/developer/endpoints/workouts
+
+#### measures
+- physical activity: mapped
+- calories-burned: not mapped, concerns about the formulas used in calculating BMR and effective calories
 
 #### description 
 Retrieves a list of workouts that the user has completed. Workouts can be logged through Jawbone devices and applications as well as by 3rd parties. 

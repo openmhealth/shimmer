@@ -1,8 +1,10 @@
 package org.openmhealth.shim.jawbone.mapper;
 
 import com.google.common.collect.Maps;
-import org.openmhealth.schema.domain.omh.*;
-import org.springframework.core.io.ClassPathResource;
+import org.openmhealth.schema.domain.omh.BodyMassIndex;
+import org.openmhealth.schema.domain.omh.BodyMassIndexUnit;
+import org.openmhealth.schema.domain.omh.DataPoint;
+import org.openmhealth.schema.domain.omh.TypedUnitValue;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -21,14 +23,13 @@ import static org.hamcrest.MatcherAssert.assertThat;
  */
 public class JawboneBodyMassIndexDataPointMapperUnitTests extends JawboneDataPointMapperUnitTests<BodyMassIndex> {
 
-    private JawboneBodyMassIndexDataPointMapper mapper = new JawboneBodyMassIndexDataPointMapper();
+    private final JawboneBodyMassIndexDataPointMapper mapper = new JawboneBodyMassIndexDataPointMapper();
 
 
     @BeforeTest
     public void initializeResponseNodes() throws IOException {
-        ClassPathResource resource =
-                new ClassPathResource("org/openmhealth/shim/jawbone/mapper/jawbone-body-events.json");
-        responseNode = objectMapper.readTree(resource.getInputStream());
+
+        responseNode = asJsonNode("org/openmhealth/shim/jawbone/mapper/jawbone-body-events.json");
         initializeEmptyNode();
     }
 

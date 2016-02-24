@@ -150,6 +150,12 @@ public class JawboneShim extends OAuth2ShimBase {
                     + " in shimDataRequest, cannot retrieve data.");
         }
 
+        /*
+            Jawbone defaults to returning a maximum of 10 entries per request (limit = 10 by default), so
+            we override the default by specifying an arbitrarily large number as the limit.
+         */
+        long numToReturn = 100_000;
+
         OffsetDateTime today = OffsetDateTime.now();
 
         OffsetDateTime startDateTime = shimDataRequest.getStartDateTime() == null ?
@@ -162,11 +168,10 @@ public class JawboneShim extends OAuth2ShimBase {
                 today.plusDays(1) : shimDataRequest.getEndDateTime().plusDays(1);
         long endTimeInEpochSecond = endDateTime.toEpochSecond();
 
-        UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder
-                .fromUriString(DATA_URL)
-                .path(jawboneDataType.getEndPoint())
-                .queryParam("start_time", startTimeInEpochSecond)
-                .queryParam("end_time", endTimeInEpochSecond);
+        UriComponentsBuilder uriComponentsBuilder =
+                UriComponentsBuilder.fromUriString(DATA_URL).path(jawboneDataType.getEndPoint())
+                        .queryParam("start_time", startTimeInEpochSecond).queryParam("end_time", endTimeInEpochSecond)
+                        .queryParam("limit", numToReturn);
 
         ResponseEntity<JsonNode> responseEntity;
         try {
@@ -181,7 +186,7 @@ public class JawboneShim extends OAuth2ShimBase {
         if (shimDataRequest.getNormalize()) {
 
             JawboneDataPointMapper mapper;
-            switch (jawboneDataType) {
+            switch ( jawboneDataType ) {
                 case WEIGHT:
                     mapper = new JawboneBodyWeightDataPointMapper();
                     break;
