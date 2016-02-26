@@ -20,7 +20,9 @@ import org.openmhealth.shimmer.common.domain.ResponseLocation;
 import org.openmhealth.shimmer.common.domain.pagination.ManualPaginationEndCriteria;
 import org.openmhealth.shimmer.common.domain.pagination.PaginationResponseType;
 
-import static org.openmhealth.shimmer.common.domain.pagination.PaginationResponseType.*;
+import java.util.Optional;
+
+import static org.openmhealth.shimmer.common.domain.pagination.PaginationResponseType.MANUAL;
 
 
 /**
@@ -51,11 +53,17 @@ public class ManualPaginationSettings extends BasePaginationSettings {
         return false;
     }
 
+    /**
+     * @return The method that the endpoint uses to indicate that there is no more data to be retrieved via pagination.
+     */
     public ManualPaginationEndCriteria getPaginationEndCriteria() {
         return paginationEndCriteria;
     }
 
-    public String getEndPaginationPropertyIdentifier() {
+    /**
+     * @return The JSON dot path to the property in the response that indicates whether there is no more data available.
+     */
+    public Optional<String> getEndPaginationPropertyIdentifier() {
         return null;
     }
 

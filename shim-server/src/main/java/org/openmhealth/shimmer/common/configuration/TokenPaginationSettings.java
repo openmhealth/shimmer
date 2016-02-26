@@ -50,7 +50,10 @@ public class TokenPaginationSettings extends BasePaginationSettings {
         return responseInformationEncoded;
     }
 
-
+    /**
+     * @return The JSON dot path to the property in the response that contains the continuation token that identifies
+     * the next page of data.
+     */
     public String getNextPaginationPropertyIdentifier() {
         return null;
     }
@@ -59,8 +62,4 @@ public class TokenPaginationSettings extends BasePaginationSettings {
         this.responseInformationEncoded = responseInformationEncoded;
     }
 
-    //    @Override
-//    public TokenResponsePaginationStrategy createNewResponseStrategyForType() {
-//        return null;
-//    }
 }

@@ -36,7 +36,8 @@ public class ManualPaginationResponseProcessor
             ResponseEntity<JsonNode> responseEntity) {
 
         ManualPaginationEndCriteria paginationEndCriteria = paginationResponseProperties.getPaginationEndCriteria();
-        String endPaginationPropertyIdentifier = paginationResponseProperties.getEndPaginationPropertyIdentifier();
+        String endPaginationPropertyIdentifier =
+                paginationResponseProperties.getEndPaginationPropertyIdentifier().get();
 
         ManualPaginationStatus paginationStatus =
                 new ManualPaginationStatus(responseEntity.getBody(), paginationEndCriteria,

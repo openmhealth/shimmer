@@ -26,9 +26,12 @@ import java.util.Optional;
 
 
 /**
+ * Provides a default implementation for common pagination settings.
+ *
  * @author Chris Schaefbauer
  */
 public abstract class BasePaginationSettings implements PaginationSettings {
+
 
     private StringRequestParameter nextPageTokenParameter;
     private NumberRequestParameter paginationLimitParameter;
@@ -51,6 +54,7 @@ public abstract class BasePaginationSettings implements PaginationSettings {
         return false;
     }
 
+    @Override
     public Optional<BigDecimal> getPaginationLimitDefault() {
 
         if (getPaginationLimitParameter().isPresent()) {
@@ -60,6 +64,7 @@ public abstract class BasePaginationSettings implements PaginationSettings {
         return Optional.empty();
     }
 
+    @Override
     public Optional<BigDecimal> getPaginationMaxLimit() {
         if (getPaginationLimitParameter().isPresent()) {
             return paginationLimitParameter.getMaximumValue();
@@ -68,22 +73,22 @@ public abstract class BasePaginationSettings implements PaginationSettings {
         return Optional.empty();
     }
 
+    @Override
     public Optional<String> getLimitQueryParameterName() {
         return Optional.ofNullable(paginationLimitParameter.getParameterName());
     }
 
-
-    public Optional<StringRequestParameter> getNextPageTokenParameter()
-    {
+    @Override
+    public Optional<StringRequestParameter> getNextPageTokenParameter() {
         return Optional.ofNullable(nextPageTokenParameter);
     }
 
-
+    @Override
     public Optional<NumberRequestParameter> getPaginationLimitParameter() {
         return Optional.ofNullable(paginationLimitParameter);
     }
 
-
+    @Override
     public Optional<NumberRequestParameter> getPaginationOffsetParameter() {
         return Optional.ofNullable(paginationOffsetParameter);
     }

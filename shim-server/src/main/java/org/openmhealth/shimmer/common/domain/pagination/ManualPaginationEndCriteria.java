@@ -17,6 +17,8 @@
 package org.openmhealth.shimmer.common.domain.pagination;
 
 /**
+ * A method by which an API indicates that no more data is available to be retrieved in a manual pagination setting.
+ *
  * @author Chris Schaefbauer
  */
 public enum ManualPaginationEndCriteria {
