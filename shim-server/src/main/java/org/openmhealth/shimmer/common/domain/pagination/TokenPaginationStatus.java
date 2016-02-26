@@ -20,6 +20,9 @@ import java.util.Optional;
 
 
 /**
+ * Encapsulates information necessary to successfully request the next page of data points for an API that provides a
+ * "next page token" as a means of pagination in their responses.
+ *
  * @author Chris Schaefbauer
  */
 public class TokenPaginationStatus implements PaginationStatus {

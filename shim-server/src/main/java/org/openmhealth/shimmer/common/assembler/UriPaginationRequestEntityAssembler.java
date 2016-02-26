@@ -44,6 +44,8 @@ public class UriPaginationRequestEntityAssembler extends PaginationRequestEntity
         if (uriPaginationResponseConfiguration.providesCompleteUri()) {
 
             builder.setUriTemplate(new UriTemplate(paginationStatus.getPaginationResponseValue().get()));
+
+            // We can set assembling finished equal to true since we received a complete URI in the previous response.
             builder.setFinishedAssembling(true);
         }
         else {

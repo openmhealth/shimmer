@@ -38,6 +38,7 @@ public class TokenPaginationRequestEntityAssembler extends PaginationRequestEnti
     protected RequestEntityBuilder assembleForResponseType(RequestEntityBuilder builder,
             PaginationStatus paginationStatus) {
 
+
         if (paginationSettings.getNextPageTokenParameter().isPresent()) {
 
             builder.addParameterWithValue(paginationSettings.getNextPageTokenParameter().get(),

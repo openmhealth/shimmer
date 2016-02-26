@@ -22,6 +22,7 @@ import java.util.Map;
 /**
  * @author Chris Schaefbauer
  */
+@Deprecated
 public class RequestPaginationScheme {
 
     // Injected from config file

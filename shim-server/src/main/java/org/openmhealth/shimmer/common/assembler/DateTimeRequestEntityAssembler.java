@@ -26,15 +26,22 @@ import java.time.OffsetDateTime;
 
 
 /**
+ * Adds the appropriate date/time parameter information to RequestEntityBuilders that are being assembled. The
+ * date/time information added is based on the settings of the API for which the request is being made as well as the
+ * time frame being requested.
+ *
  * @author Chris Schaefbauer
  */
 public class DateTimeRequestEntityAssembler implements RequestEntityAssembler {
 
-
     private final Range<OffsetDateTime> timeRange;
     private DateTimeQuerySettings querySettings;
 
-
+    /**
+     *
+     * @param querySettings The date/time request settings for the API for which data is being requested.
+     * @param timeRange The time range for which data is being requested.
+     */
     public DateTimeRequestEntityAssembler(DateTimeQuerySettings querySettings, Range<OffsetDateTime> timeRange) {
 
         this.querySettings = querySettings;
@@ -43,8 +50,6 @@ public class DateTimeRequestEntityAssembler implements RequestEntityAssembler {
 
     @Override
     public RequestEntityBuilder assemble(RequestEntityBuilder builder, DataPointRequest request) {
-
-        //EndpointSettings endpoint = request.getEndpointSettings();
 
         if (querySettings.getDateTimeParameter().isPresent()) {
 

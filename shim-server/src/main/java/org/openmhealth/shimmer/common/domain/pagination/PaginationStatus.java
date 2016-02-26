@@ -20,28 +20,32 @@ import java.util.Optional;
 
 
 /**
- * Encapsulates the information necessary to determine whether more information exists in pagination and how to follow that information.
+ * Encapsulates the information necessary to determine whether more information exists through pagination and how to
+ * follow that information to retrieve additional data.
+ *
  * @author Chris Schaefbauer
  */
 public interface PaginationStatus {
 
     /**
-     * @return whether or not there is more data to retrieve through pagination
+     * @return TRUE if there is more data retrievable through pagination, FALSE if there is no additional data
      */
-    public boolean hasMoreData();
+    boolean hasMoreData();
 
     // Todo: Consider renaming so that it also would make sense for
-    public Optional<String> getPaginationResponseValue();
 
-    public void setPaginationResponseValue(String nextPageValueFromResponse);
+    /**
+     * @return The value returned in the response from the third-party API during a previous request, if one was
+     * provided. Otherwise, empty will be returned.
+     */
+    Optional<String> getPaginationResponseValue();
 
-//    public T getResponseStrategy();
-//
-//    public void setResponseStrategy(T paginationResponseStrategy);
-
-    //public T createNewResponseStrategyForType(PaginationSettings configuration);
-
-
-
+    /**
+     * Sets the value for the next page reference.
+     *
+     * @param nextPageValueFromResponse Value from the third-party API response that contains information necessary to
+     * retrieve the next page of data points.
+     */
+    void setPaginationResponseValue(String nextPageValueFromResponse);
 
 }

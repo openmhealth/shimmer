@@ -135,16 +135,17 @@ public class RequestEntityBuilder<T> {
                 UriComponentsBuilder.fromUriString(uriTemplate.toString()).buildAndExpand(pathParameters).toUriString();
         //.queryParams(queryParameters);
 
-//        try {
-//            // This decoding addresses the issue when
-//            uriWithPathParams = URLDecoder.decode(uriWithPathParams, "UTF-8");
-//        }
-//        catch (UnsupportedEncodingException e) {
-//
-//            // In this case we likely don't have a URI that needs decoding, so we can continue with the uri that was
-//            // generated before decoding.
-//            e.printStackTrace();
-//        }
+        //        try {
+        //            // This decoding addresses the issue when
+        //            uriWithPathParams = URLDecoder.decode(uriWithPathParams, "UTF-8");
+        //        }
+        //        catch (UnsupportedEncodingException e) {
+        //
+        //            // In this case we likely don't have a URI that needs decoding, so we can continue with the uri
+        // that was
+        //            // generated before decoding.
+        //            e.printStackTrace();
+        //        }
 
         //String completedUriString = uriBuilder.buildAndExpand(pathParameters).toString();
         URI uri = UriComponentsBuilder.fromUriString(uriWithPathParams).queryParams(queryParameters).build().encode()
@@ -153,9 +154,14 @@ public class RequestEntityBuilder<T> {
         return new RequestEntity(headers, httpMethod, uri);
     }
 
+    /**
+     * @return TRUE if the builder has all the information to construct a valid request to retrieve the correct data
+     * points, FALSE otherwise
+     */
     public boolean isFinishedAssembling() {
         return finishedAssembling;
     }
+
 
     public void setFinishedAssembling(boolean finishedAssembling) {
         this.finishedAssembling = finishedAssembling;

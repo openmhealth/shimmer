@@ -24,63 +24,83 @@ import org.openmhealth.shimmer.common.domain.parameters.NumberRequestParameter;
 
 
 /**
+ * Adds the appropriate pagination parameters to a request entity builder that is being assembled. The pagination
+ * information added to the builder is based on the API's pagination settings and pagination status information from
+ * the the response to the previous request, if one has already been made.
+ *
  * @author Chris Schaefbauer
  */
 public abstract class PaginationRequestEntityAssembler implements RequestEntityAssembler {
 
+    // In the case where an API has a default value for the limit of data points that can be requested, but no
+    // maximum limit, this value should be used to override the default limit, so we have fewer pages of data to handle.
     public static final String ARBITRARILY_LARGE_LIMIT = "10000";
 
     @Override
     public RequestEntityBuilder assemble(RequestEntityBuilder builder, DataPointRequest request) {
 
-        //EndpointSettings endpoint = request.getEndpointSettings();
-
-        //if (endpoint.supportsPagination()) {
-
-
-        PaginationSettings paginationSettings = getPaginationSettings();
         // The children implement a getPaginationSettings object with the correct type, the configuration is
         // passed in with the right type
-        //  PaginationSettings paginationSettings = endpoint.getPaginationSettings().get();
+        PaginationSettings paginationSettings = getPaginationSettings();
 
+
+        // If there is the pagination status is present and there is more data, then we need to assemble the
+        // pagination parameters according to the settings and status information.
         if (request.getPaginationStatus().isPresent() && request.getPaginationStatus().get().hasMoreData()) {
 
                 /*  If there is pagination status present, then we know there has to be pagination response configs
-                since
-                the configs are used to create a pagination status. */
+                since the configs are used to create a pagination status. */
             //                PaginationSettings paginationResponseConfiguration =
             //                        endpoint.getPaginationSettings().get();
             builder = assembleForResponseType(builder, request.getPaginationStatus().get());
 
         }
 
+        // If the API provides sufficient information in the response to construct the entirety of the next response,
+        // then we don't need to continue assembling.
+        if (builder.isFinishedAssembling()) {
+            return builder;
+        }
 
-        if (!builder.isFinishedAssembling()) {
+        // We need to set the limit if the API has a default limit value, since we will want to override it to
+        // increase the value to reduce pagination.
+        if (paginationSettings.hasPaginationLimitDefault()) {
 
-            // Now set the limit parameter if we need to
-            if (paginationSettings.hasPaginationLimitDefault()) {
+            NumberRequestParameter paginationLimitParameter =
+                    paginationSettings.getPaginationLimitParameter().get();
 
-                NumberRequestParameter paginationLimitParameter =
-                        paginationSettings.getPaginationLimitParameter().get();
+            String limitValueString = ARBITRARILY_LARGE_LIMIT; // Set the value to something arbitrarily large
 
-                String limitValueString = ARBITRARILY_LARGE_LIMIT; // Set the value to something arbitrarily large
+            // If the API specifies a maximum on the number of data points we can request, then we should use that
+            // maximum value instead of an arbitrary one, which it would likely reject.
+            if (paginationSettings.hasPaginationMaxLimit()) {
 
-                if (paginationSettings.hasPaginationMaxLimit()) {
-
-                    limitValueString =
-                            Integer.toString(paginationLimitParameter.getMaximumValue().get().intValue());
-                }
-
-                builder.addParameterWithValue(paginationLimitParameter, limitValueString);
+                limitValueString =
+                        Integer.toString(paginationLimitParameter.getMaximumValue().get().intValue());
             }
+
+            builder.addParameterWithValue(paginationLimitParameter, limitValueString);
         }
 
 
         return builder;
     }
 
+    /**
+     * Adds pagination information specific to a given type of pagination response. Implemented by pagination response
+     * specific subclasses.
+     *
+     * @param builder The request entity builder to which pagination parameter information should be added.
+     * @param paginationStatus The status of pagination for the current request based on the prior response. If this is
+     * the first request, then pagination status will indicate that.
+     * @return The RequestEntityBuilder containing the appropriate pagination parameters.
+     */
     protected abstract RequestEntityBuilder assembleForResponseType(RequestEntityBuilder builder,
             PaginationStatus paginationStatus);
 
+    /**
+     * @return The pagination settings for the API, so they can be used in assembling the RequestEntityBuilder with
+     * pagination parameter information.
+     */
     public abstract PaginationSettings getPaginationSettings();
 }

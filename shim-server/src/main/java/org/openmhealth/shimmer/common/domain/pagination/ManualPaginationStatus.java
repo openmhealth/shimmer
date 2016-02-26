@@ -24,6 +24,11 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asOption
 
 
 /**
+ * Encapsulates information necessary to successfully request the next page of data points for an API that provides no
+ * information in the response as a means of pagination in their responses. Instead APIs that use manual pagination
+ * provide the necessary information to paginate a-priori, however the end state for pagination (i.e., when all data
+ * points have been retrieved) must be assessed given pagination configuration settings and the response.
+ *
  * @author Chris Schaefbauer
  */
 public class ManualPaginationStatus implements PaginationStatus {
@@ -35,6 +40,8 @@ public class ManualPaginationStatus implements PaginationStatus {
     private Integer nextPageOffset;
 
     private ManualPaginationEndCriteria endCriteria;
+
+    // We may need the entire response body to test whether we have reached the end of pagination.
     private JsonNode responseBody;
 
 
@@ -46,37 +53,59 @@ public class ManualPaginationStatus implements PaginationStatus {
     }
 
 
+    /**
+     * Processes the response to determine whether there is more data available depending on the settings of the API.
+     * Maybe this processing should be done in a setter or in another method?
+     *
+     * @return TRUE if more data points are available through pagination, FALSE otherwise
+     */
     @Override
     public boolean hasMoreData() {
 
+        // Assuming there is a property whose presence, absence, or specific value indicates the end of the
+        // pagination, then we should attempt to get that property.
         Optional<JsonNode> endPropertyNodeOptional = asOptionalNode(responseBody, endPropertyIdentifier);
+
+        // Depending on how the API indicates that we should stop requesting more pages of data, we will check
+        // whether the appropriate conditions have been satisfied to indicate there are no more pages of data. There
+        // are certainly additional methods by which this can be indicated that are not addressed here, such as
+        // headers or HTTP responses, that need to be added.
         switch ( endCriteria ) {
+            // This is the case where an API provides an empty response to indicate that there are no more data points
+            // available.
             case EMPTY_RESPONSE:
                 if (!responseBody.elements().hasNext()) {
                     return false;
                 }
                 return true;
+
+            // This is the case where a specific field or value is missing or empty to indicate that there are no
+            // more data points available.
             case EMPTY_OR_MISSING_FIELD:
 
-                if(!endPropertyNodeOptional.isPresent()){
+                if (!endPropertyNodeOptional.isPresent()) {
                     return false;
                 }
                 JsonNode endPropertyNode = endPropertyNodeOptional.get();
-                if(endPropertyNode.isArray()){
-                    if(endPropertyNode.size() == 0){
+                if (endPropertyNode.isArray()) {
+                    if (endPropertyNode.size() == 0) {
                         return false;
                     }
                 }
-                if(endPropertyNode.isTextual()){
-                    if(endPropertyNode.asText("").isEmpty()){
+                if (endPropertyNode.isTextual()) {
+                    if (endPropertyNode.asText("").isEmpty()) {
                         return false;
                     }
                 }
                 break;
+
+            // This is the case where an API provides an explicit value in the response to indicate that there are no
+            // more data points available.
             case EXPLICITLY_INDICATED:
-                if(endPropertyNodeOptional.isPresent()){
+                if (endPropertyNodeOptional.isPresent()) {
                     endPropertyNodeOptional.get();
                 }
+                break;
         }
         return false;
 

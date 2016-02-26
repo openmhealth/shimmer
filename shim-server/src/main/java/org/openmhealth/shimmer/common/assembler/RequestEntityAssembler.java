@@ -28,12 +28,13 @@ import org.openmhealth.shimmer.common.domain.RequestEntityBuilder;
 public interface RequestEntityAssembler {
 
     /**
-     * FIXME Assembles a request entity builder.
+     * Adds request parameter information and values that are necessary to fulfill the pending data point request.
      *
-     * @param builder the request entity builder to assemble
-     * @param request the generic request that needs to be fulfilled by a request to the third party
-     * be sent
-     * @return the builder
+     * @param builder The request entity builder to assemble.
+     * @param request The specification of data to be requested of a third party, which must be translated into a
+     * an HTTP request that conforms to their API.
+     * @return The builder with the appropriate request parameter information added. Depending on the context, it may
+     * return the builder without adding any information.
      */
     RequestEntityBuilder assemble(RequestEntityBuilder builder, DataPointRequest request);
 }

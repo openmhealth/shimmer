@@ -20,45 +20,28 @@ import java.util.Optional;
 
 
 /**
+ * Encapsulates information necessary to successfully follow the pagination for an API that provides a URI or URI
+ * fragment for the pagination information in its responses.
+ *
  * @author Chris Schaefbauer
  */
 public class UriPaginationStatus implements PaginationStatus {
 
     private String nextPageUriValue;
-    //private String baseUri;
 
     @Override
     public boolean hasMoreData() {
         return getPaginationResponseValue().isPresent();
     }
 
-//    public String getBaseUri() {
-//        return baseUri;
-//    }
-//
-//    public void setBaseUri(String baseUri) {
-//        this.baseUri = baseUri;
-//    }
-
+    @Override
     public Optional<String> getPaginationResponseValue() {
         return Optional.ofNullable(nextPageUriValue);
     }
 
+    @Override
     public void setPaginationResponseValue(String paginationNextUriValue) {
         this.nextPageUriValue = paginationNextUriValue;
     }
-
-//    @Override
-//    public UriResponsePaginationStrategy createNewResponseStrategyForType(
-//            UriPaginationSettings configuration) {
-//
-//        if(configuration.getBaseUri().isPresent() && !configuration.getBaseUri().get().isEmpty()){
-//            return new ConcatUriResponsePaginationStrategy();
-//        }
-//
-//        return new CompleteUriResponsePaginationStrategy();
-//    }
-
-
 
 }
