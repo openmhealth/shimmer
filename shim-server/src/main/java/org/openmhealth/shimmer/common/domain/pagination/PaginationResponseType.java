@@ -17,12 +17,35 @@
 package org.openmhealth.shimmer.common.domain.pagination;
 
 /**
+ * A type of pagination response, which dictates the how the response should be processed and used to traverse
+ * pagination to retrieve all data points that satisify a request.
+ *
  * @author Chris Schaefbauer
  */
 public enum PaginationResponseType {
 
+    /**
+     * Indicates that a URI or URI fragment, which points to the next page of data, is returned in the response.
+     */
     URI,
+
+    /**
+     * Indicates that a continuation token, which identifies the next page of data as a request parameter, is returned
+     * in the response.
+     */
     TOKEN,
+
+    /**
+     * Indicates that there is no specific response information used for traversing pagination, but that instead, it is
+     * done using a known system of parameters for subsequent requests. For example, pagination using an skip and limit
+     * parameter where the skip is incremented with each request to get the next 'limit' number of data points. In this
+     * case there is an indicator that is expected in the response that identifies the situation where no further data
+     * points are available.
+     */
     MANUAL,
+
+    /**
+     * Indicates that a custom pagination responses is provided that does not match the other types.
+     */
     CUSTOM
 }

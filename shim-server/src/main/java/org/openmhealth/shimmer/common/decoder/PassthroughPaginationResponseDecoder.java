@@ -17,6 +17,12 @@
 package org.openmhealth.shimmer.common.decoder;
 
 /**
+ * A decoder that passes through the value input because no encoding is present. This decoder in essence implies the
+ * absence of a decoder, however it supports the case where we pass all pagination values through a decoder for
+ * simplicity sake. Since not every value is encoded, we would need a decoder that does nothing.
+ * <p>
+ * todo: Decide if this is needed based on whether all values go through a decoder
+ *
  * @author Chris Schaefbauer
  */
 public class PassthroughPaginationResponseDecoder implements PaginationResponseDecoder {

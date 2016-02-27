@@ -47,6 +47,7 @@ public class ManualPaginationStatus implements PaginationStatus {
 
     public ManualPaginationStatus(JsonNode responseBody, ManualPaginationEndCriteria endCriteria,
             String paginationEndPropertyIdentifier) {
+
         this.responseBody = responseBody;
         this.endCriteria = endCriteria;
         this.endPropertyIdentifier = paginationEndPropertyIdentifier;

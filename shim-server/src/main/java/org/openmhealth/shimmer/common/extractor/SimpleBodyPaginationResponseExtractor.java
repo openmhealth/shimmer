@@ -25,11 +25,22 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asOption
 
 
 /**
+ * Extracts the pagination response information necessary to traverse from the body of the response.
+ *
  * @author Chris Schaefbauer
  */
 public class SimpleBodyPaginationResponseExtractor implements PaginationResponseExtractor {
 
 
+    /**
+     * Uses the property identifier to extract the necessary pagination traversal information from the body of the
+     * response.
+     *
+     * @param responseEntity The response from which pagination information should be extracted.
+     * @param paginationPropertyIdentifier The path to the value that enables pagination traversal. For example, for
+     * URI-based pagination responses, this would be the path to the value containing the URI fragment or URI that
+     * references the next page of data points.
+     */
     @Override
     public Optional<String> extractPaginationResponse(ResponseEntity<JsonNode> responseEntity,
             String paginationPropertyIdentifier) {

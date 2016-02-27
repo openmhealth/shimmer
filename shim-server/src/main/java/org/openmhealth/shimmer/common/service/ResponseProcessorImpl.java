@@ -25,25 +25,35 @@ import org.springframework.http.ResponseEntity;
 
 
 /**
+ * Implementation of the response processor.
  * @author Chris Schaefbauer
  */
 public class ResponseProcessorImpl<T> implements ResponseProcessor<T> {
 
     @Override
-    public ProcessedResponse processResponse(EndpointSettings endpointProperties,
-            ResponseEntity<JsonNode> responseEntity) {
+    public ProcessedResponse processResponse(EndpointSettings settings,
+            ResponseEntity<JsonNode> response) {
 
         ProcessedResponse processedResponse = new ProcessedResponse();
 
-        HttpStatus statusCode = responseEntity.getStatusCode();
+        HttpStatus statusCode = response.getStatusCode();
+
+        /* The response processor could check status code information, log that information, and take action based on
+         the status code in the response.
+         */
+
         //        if(!statusCode.is2xxSuccessful()){
         //            //log issue
         //            return ProcessedResponse.Error(statusCode);
         //        }
         //
         //        processedResponse.setStatusCode(statusCode);
-        //
-        //        // Need to be able to get the shim and then its mappers
+
+
+        /* The response processor could retrieve the appropriate mappers, based on the settings or from the shim
+        registry, and then map that data if normalized data is requested
+        */
+
         //        Shim targetShim;
         //= getShimByApiSourceName(endpointProperties.getApiSourceName());
         //        DataPointMapper mapper = targetShim.getMapperForSchema();
@@ -51,9 +61,14 @@ public class ResponseProcessorImpl<T> implements ResponseProcessor<T> {
         //
         //        processedResponse.setMappedData(dataPoints);
         //
-        if (endpointProperties.supportsPaginationInResponses()) {
+
+        /* And finally process the pagination information contained in the response to determine whether more data is
+         available and extract and necessary information from the response to successfully traverse the pagination
+         upstream.
+         */
+        if (settings.supportsPaginationInResponses()) {
             PaginationResponseProcessor paginationProcessor;
-            switch ( endpointProperties.getPaginationSettings().get().getResponseType() ) {
+            switch ( settings.getPaginationSettings().get().getResponseType() ) {
                 case URI:
                     paginationProcessor = new UriPaginationResponseProcessor();
                     break;
@@ -63,16 +78,16 @@ public class ResponseProcessorImpl<T> implements ResponseProcessor<T> {
                 case MANUAL:
                     paginationProcessor = new ManualPaginationResponseProcessor();
                     break;
-//                case CUSTOM:
-//                    paginationProcessor = targetShim.getCustomPaginationResponseProcessor();
+                //                case CUSTOM:
+                //                    paginationProcessor = targetShim.getCustomPaginationResponseProcessor();
                 default:
                     throw new UnsupportedOperationException();
 
             }
 
             PaginationStatus paginationStatus = paginationProcessor.processPaginationResponse(
-                    endpointProperties.getPaginationSettings().get(),
-                    responseEntity);
+                    settings.getPaginationSettings().get(),
+                    response);
 
             processedResponse.setPaginationStatus(paginationStatus);
         }

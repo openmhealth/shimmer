@@ -26,20 +26,17 @@ import org.springframework.http.ResponseEntity;
 /**
  * @author Chris Schaefbauer
  */
-public class TokenPaginationResponseProcessor
-        extends PaginationResponseProcessor<TokenPaginationSettings> {
+public class TokenPaginationResponseProcessor extends PaginationResponseProcessor<TokenPaginationSettings> {
 
     @Override
-    public PaginationStatus processPaginationResponse(
-            TokenPaginationSettings paginationResponseProperties,
-            ResponseEntity<JsonNode> responseEntity) {
+    public PaginationStatus processPaginationResponse(TokenPaginationSettings settings,
+            ResponseEntity<JsonNode> response) {
 
-        TokenPaginationStatus paginationStatus =
-                new TokenPaginationStatus(); // Should we make setting the next token actually the constructor?
+        TokenPaginationStatus paginationStatus = new TokenPaginationStatus();
 
-        String nextPaginationPropertyIdentifier = paginationResponseProperties.getNextPaginationPropertyIdentifier();
+        String nextPaginationPropertyIdentifier = settings.getNextPaginationPropertyIdentifier();
 
-        getPaginationResponseExtractor().extractPaginationResponse(responseEntity, nextPaginationPropertyIdentifier)
+        getPaginationResponseExtractor().extractPaginationResponse(response, nextPaginationPropertyIdentifier)
                 .ifPresent(nextToken -> paginationStatus.setPaginationResponseValue(nextToken));
 
         return paginationStatus;

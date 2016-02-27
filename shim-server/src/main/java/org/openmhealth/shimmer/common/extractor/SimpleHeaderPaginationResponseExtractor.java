@@ -27,6 +27,17 @@ import java.util.Optional;
  */
 public class SimpleHeaderPaginationResponseExtractor implements PaginationResponseExtractor {
 
+    /**
+     * Uses the property identifier to extract the necessary pagination traversal information from the header of the
+     * response.
+     *
+     * @param responseEntity The response from which pagination information should be extracted.
+     * @param paginationPropertyIdentifier The path to the value that enables pagination traversal. For example, for
+     * URI-based pagination responses, this would be the path to the value containing the URI fragment or URI that
+     * references the next page of data points.
+     *
+     * @return
+     */
     @Override
     public Optional<String> extractPaginationResponse(ResponseEntity<JsonNode> responseEntity,
             String paginationPropertyIdentifier) {

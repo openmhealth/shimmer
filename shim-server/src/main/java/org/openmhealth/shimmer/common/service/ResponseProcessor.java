@@ -23,11 +23,20 @@ import org.springframework.http.ResponseEntity;
 
 
 /**
+ * Processes a response from a third-party API to handle the status of the response, extract data from it, and
+ * determine if there is further data available via pagination.
+ *
  * @author Chris Schaefbauer
  */
 public interface ResponseProcessor<T> {
 
-    public ProcessedResponse processResponse(EndpointSettings endpointProperties,
-            ResponseEntity<JsonNode> responseEntity);
+    /**
+     * @param settings The settings for the endpoint from which the response was retrieved.
+     * @param response The response returned by the third-party API.
+     * @return A processed response containing status information, data, and pagination status information necessary to
+     * retrieve additional data points if they exist.
+     */
+    ProcessedResponse processResponse(EndpointSettings settings,
+            ResponseEntity<JsonNode> response);
 
 }

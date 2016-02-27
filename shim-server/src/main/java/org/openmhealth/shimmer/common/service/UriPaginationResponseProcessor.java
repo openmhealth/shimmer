@@ -26,34 +26,31 @@ import org.springframework.http.ResponseEntity;
 /**
  * @author Chris Schaefbauer
  */
-public class UriPaginationResponseProcessor
-        extends PaginationResponseProcessor<UriPaginationSettings> {
-
+public class UriPaginationResponseProcessor extends PaginationResponseProcessor<UriPaginationSettings> {
 
     @Override
-    public PaginationStatus processPaginationResponse(
-            UriPaginationSettings paginationResponseProperties,
-            ResponseEntity<JsonNode> responseEntity) {
+    public PaginationStatus processPaginationResponse(UriPaginationSettings settings,
+            ResponseEntity<JsonNode> response) {
 
         UriPaginationStatus paginationStatus = new UriPaginationStatus();
 
-        String paginationNextUriPropertyName = paginationResponseProperties.getNextPaginationPropertyIdentifier();
+        String paginationNextUriPropertyName = settings.getNextPaginationPropertyIdentifier();
 
         if (getPaginationResponseDecoder().isPresent()) {
 
-            getPaginationResponseExtractor().extractPaginationResponse(responseEntity, paginationNextUriPropertyName)
+            getPaginationResponseExtractor().extractPaginationResponse(response, paginationNextUriPropertyName)
                     .ifPresent(nextUri -> paginationStatus.setPaginationResponseValue(
                             getPaginationResponseDecoder().get().decodePaginationResponseValue(nextUri)));
         }
         else {
 
-            getPaginationResponseExtractor().extractPaginationResponse(responseEntity, paginationNextUriPropertyName)
+            getPaginationResponseExtractor().extractPaginationResponse(response, paginationNextUriPropertyName)
                     .ifPresent(nextUri -> paginationStatus.setPaginationResponseValue(nextUri));
         }
 
 
         // now on to the rest of how we paginate, though we may not even need this since it comes from the configs
-        //paginationResponseProperties.getBaseUri().ifPresent(baseUri -> paginationStatus.setBaseUri(baseUri));
+        // paginationResponseProperties.getBaseUri().ifPresent(baseUri -> paginationStatus.setBaseUri(baseUri));
 
         return paginationStatus;
     }

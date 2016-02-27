@@ -27,6 +27,9 @@ import java.util.Optional;
 
 
 /**
+ * Processes a response from a third-party API to identify if more data points are available via pagination and to
+ * extract the information necessary to traverse the pagination to retrieve those data points.
+ *
  * @author Chris Schaefbauer
  */
 public abstract class PaginationResponseProcessor<T extends PaginationSettings> {
@@ -36,22 +39,25 @@ public abstract class PaginationResponseProcessor<T extends PaginationSettings> 
     PaginationResponseDecoder responseDecoder;
 
     /**
-     * Processes the pagination content in the response and loads the object to respond to requests for information about pagination.
-     * @param paginationResponseProperties
-     * @param responseEntity
+     * Processes the pagination content in the response and loads the object to respond to requests for information
+     * about pagination.
      */
     public abstract PaginationStatus processPaginationResponse(T paginationResponseProperties,
             ResponseEntity<JsonNode> responseEntity);
 
     public PaginationResponseExtractor getPaginationResponseExtractor() {
-        return responseExtractor; // This needs to get dependency injected somehow, maybe from Shim?
+        return responseExtractor; // This needs to get injected somehow, maybe from Shim or selected based on settings?
     }
 
     public void setPaginationResponseExtractor(PaginationResponseExtractor responseExtractor) {
         this.responseExtractor = responseExtractor;
     }
 
-    public Optional<PaginationResponseDecoder> getPaginationResponseDecoder(){
+    /**
+     * Used to decode pagination response information that is encoded in some form.
+     * @return The decoder to use in processing the pagination response information, if one exists.
+     */
+    public Optional<PaginationResponseDecoder> getPaginationResponseDecoder() {
         return Optional.ofNullable(responseDecoder);
     }
 

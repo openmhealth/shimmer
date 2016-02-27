@@ -27,21 +27,18 @@ import org.springframework.http.ResponseEntity;
 /**
  * @author Chris Schaefbauer
  */
-public class ManualPaginationResponseProcessor
-        extends PaginationResponseProcessor<ManualPaginationSettings> {
+public class ManualPaginationResponseProcessor extends PaginationResponseProcessor<ManualPaginationSettings> {
 
     @Override
-    public PaginationStatus processPaginationResponse(
-            ManualPaginationSettings paginationResponseProperties,
-            ResponseEntity<JsonNode> responseEntity) {
+    public PaginationStatus processPaginationResponse(ManualPaginationSettings settings,
+            ResponseEntity<JsonNode> response) {
 
-        ManualPaginationEndCriteria paginationEndCriteria = paginationResponseProperties.getPaginationEndCriteria();
-        String endPaginationPropertyIdentifier =
-                paginationResponseProperties.getEndPaginationPropertyIdentifier().get();
+        ManualPaginationEndCriteria paginationEndCriteria = settings.getPaginationEndCriteria();
+
+        String endPaginationPropertyIdentifier = settings.getEndPaginationPropertyIdentifier().get();
 
         ManualPaginationStatus paginationStatus =
-                new ManualPaginationStatus(responseEntity.getBody(), paginationEndCriteria,
-                        endPaginationPropertyIdentifier);
+                new ManualPaginationStatus(response.getBody(), paginationEndCriteria, endPaginationPropertyIdentifier);
 
         return paginationStatus;
     }

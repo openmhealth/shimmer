@@ -17,9 +17,10 @@
 package org.openmhealth.shimmer.common.decoder;
 
 /**
+ * 
  * @author Chris Schaefbauer
  */
 public interface PaginationResponseDecoder {
 
-    public String decodePaginationResponseValue(String paginationResponseValue);
+    String decodePaginationResponseValue(String paginationResponseValue);
 }
