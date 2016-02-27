@@ -173,16 +173,16 @@ public class RequestEntityBuilder<T> {
         checkNotNull(value);
         checkArgument(!value.isEmpty());
 
-        String parameterName = parameter.getParameterName();
-        switch ( parameter.getRequestParameterLocation() ) {
+        String parameterName = parameter.getName();
+        switch (parameter.getLocation()) {
 
-            case QUERY:
+            case QUERY_PARAMETER:
                 addQueryParameter(parameterName, value);
                 break;
-            case PATH:
+            case PATH_VARIABLE:
                 addPathParameter(parameterName, value);
                 break;
-            case HEADER:
+            case HEADER_FIELD:
                 addHeader(parameterName, value);
                 break;
         }

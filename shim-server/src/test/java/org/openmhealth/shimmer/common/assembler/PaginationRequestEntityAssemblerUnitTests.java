@@ -38,8 +38,8 @@ import java.net.URI;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
-import static org.openmhealth.shimmer.common.domain.parameters.RequestParameterLocation.PATH;
-import static org.openmhealth.shimmer.common.domain.parameters.RequestParameterLocation.QUERY;
+import static org.openmhealth.shimmer.common.domain.parameters.RequestParameterLocation.PATH_VARIABLE;
+import static org.openmhealth.shimmer.common.domain.parameters.RequestParameterLocation.QUERY_PARAMETER;
 
 
 /**
@@ -92,7 +92,7 @@ public class PaginationRequestEntityAssemblerUnitTests {
     @Test
     public void returnsBuilderWithCorrectUriWhenEndpointResponseProvidesPartialUriAndRequiresLimitQueryParameter() {
 
-        NumberRequestParameter limitRequestParameter = createNumberRequestParameter("limit", QUERY, 10, 20);
+        NumberRequestParameter limitRequestParameter = createNumberRequestParameter("limit", QUERY_PARAMETER, 10, 20);
 
         assertThatPartialUriIsAssembledCorrectlyWhen("/nudge/api/v.1.1/users/VB0mNZWqiOUDWkkl72vgRQ/moves?page_token" +
                         "=1440077820",
@@ -110,7 +110,7 @@ public class PaginationRequestEntityAssemblerUnitTests {
         DefaultEndpointSettings configProperties = new DefaultEndpointSettings();
 
         TokenPaginationSettings tokenPaginationSettings = new TokenPaginationSettings();
-        tokenPaginationSettings.setNextPageTokenParameter(createNextPageTokenParameter(QUERY));
+        tokenPaginationSettings.setNextPageTokenParameter(createNextPageTokenParameter(QUERY_PARAMETER));
         configProperties.setPaginationSettings(tokenPaginationSettings);
 
         PaginationStatus paginationStatus = new TokenPaginationStatus();
@@ -140,7 +140,7 @@ public class PaginationRequestEntityAssemblerUnitTests {
         DefaultEndpointSettings configProperties = new DefaultEndpointSettings();
 
         TokenPaginationSettings settings = new TokenPaginationSettings();
-        settings.setNextPageTokenParameter(createNextPageTokenParameter(PATH));
+        settings.setNextPageTokenParameter(createNextPageTokenParameter(PATH_VARIABLE));
         configProperties.setPaginationSettings(settings);
 
         PaginationStatus paginationStatus = new TokenPaginationStatus();
@@ -163,28 +163,28 @@ public class PaginationRequestEntityAssemblerUnitTests {
     @Test
     public void setsLimitQueryParameterToMaxWhenDefaultAndMaxParameterValuesExist() {
 
-        assertThatLimitParameterIsSetCorrectlyWhen(QUERY, "https://api.runkeeper.com/endpoint",
+        assertThatLimitParameterIsSetCorrectlyWhen(QUERY_PARAMETER, "https://api.runkeeper.com/endpoint",
                 "https://api.runkeeper.com/endpoint?limit=200", 25, 200);
     }
 
     @Test
     public void setsLimitPathParameterToMaxWhenDefaultAndMaxParameterValuesExist() {
 
-        assertThatLimitParameterIsSetCorrectlyWhen(PATH, "https://api.runkeeper.com/endpoint/{limit}/",
+        assertThatLimitParameterIsSetCorrectlyWhen(PATH_VARIABLE, "https://api.runkeeper.com/endpoint/{limit}/",
                 "https://api.runkeeper.com/endpoint/200/", 25, 200);
     }
 
     @Test
     public void doesNotSetLimitParameterWhenDefaultParameterIsMissing() {
 
-        assertThatLimitParameterIsSetCorrectlyWhen(QUERY, "https://api.runkeeper.com/endpoint",
+        assertThatLimitParameterIsSetCorrectlyWhen(QUERY_PARAMETER, "https://api.runkeeper.com/endpoint",
                 "https://api.runkeeper.com/endpoint", null, 200);
     }
 
     @Test
     public void setsLimitQueryParameterToAnArbitrarilyLargeLimitWhenDefaultParameterExistsButMaxDoesNot() {
 
-        assertThatLimitParameterIsSetCorrectlyWhen(QUERY, "https://api.runkeeper.com/endpoint",
+        assertThatLimitParameterIsSetCorrectlyWhen(QUERY_PARAMETER, "https://api.runkeeper.com/endpoint",
                 "https://api.runkeeper.com/endpoint?limit=" + PaginationRequestEntityAssembler.ARBITRARILY_LARGE_LIMIT,
                 25, null);
     }
@@ -258,8 +258,8 @@ public class PaginationRequestEntityAssemblerUnitTests {
 
         NumberRequestParameter numberRequestParameter = new NumberRequestParameter();
 
-        numberRequestParameter.setParameterName(parameterName);
-        numberRequestParameter.setRequestParameterLocation(location);
+        numberRequestParameter.setName(parameterName);
+        numberRequestParameter.setLocation(location);
 
         if (defaultLimit != null) {
             numberRequestParameter.setDefaultValue(BigDecimal.valueOf(defaultLimit));
@@ -276,8 +276,8 @@ public class PaginationRequestEntityAssemblerUnitTests {
 
         StringRequestParameter nextPageTokenParameter = new StringRequestParameter();
 
-        nextPageTokenParameter.setParameterName("pageToken");
-        nextPageTokenParameter.setRequestParameterLocation(location);
+        nextPageTokenParameter.setName("pageToken");
+        nextPageTokenParameter.setLocation(location);
 
         return nextPageTokenParameter;
     }

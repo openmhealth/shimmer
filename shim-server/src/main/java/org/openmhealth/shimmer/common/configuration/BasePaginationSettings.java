@@ -75,7 +75,7 @@ public abstract class BasePaginationSettings implements PaginationSettings {
 
     @Override
     public Optional<String> getLimitQueryParameterName() {
-        return Optional.ofNullable(paginationLimitParameter.getParameterName());
+        return Optional.ofNullable(paginationLimitParameter.getName());
     }
 
     @Override
