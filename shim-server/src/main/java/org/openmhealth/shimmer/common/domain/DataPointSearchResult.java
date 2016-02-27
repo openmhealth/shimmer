@@ -31,7 +31,7 @@ import java.util.List;
 public class DataPointSearchResult {
 
     private List<DataPoint<?>> dataPoints = new ArrayList<>();
-    private List<RequestResponsePair<?, ?>> requestResponsePairs = new ArrayList<>();
+    private List<RequestResponseEntityPair<?, ?>> requestResponsePairs = new ArrayList<>();
 
 
     /**
@@ -54,15 +54,15 @@ public class DataPointSearchResult {
      * @return the list of request-response pairs executed to effect the search
      */
     @NotNull
-    public List<RequestResponsePair<?, ?>> getRequestResponsePairs() {
+    public List<RequestResponseEntityPair<?, ?>> getRequestResponsePairs() {
         return requestResponsePairs;
     }
 
-    public void setRequestResponsePairs(List<RequestResponsePair<?, ?>> requestResponsePairs) {
-        this.requestResponsePairs = requestResponsePairs;
+    public void setRequestResponsePairs(List<RequestResponseEntityPair<?, ?>> requestResponseEntityPairs) {
+        this.requestResponsePairs = requestResponseEntityPairs;
     }
 
-    public void addRequestResponsePair(RequestResponsePair<?, ?> requestResponsePair) {
-        requestResponsePairs.add(requestResponsePair);
+    public void addRequestResponsePair(RequestResponseEntityPair<?, ?> requestResponseEntityPair) {
+        requestResponsePairs.add(requestResponseEntityPair);
     }
 }

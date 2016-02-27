@@ -23,13 +23,13 @@ import java.time.OffsetDateTime;
 
 
 /**
- * An HTTP request-response pair.
+ * An request entity and response entity pair that is used to record HTTP exchanges.
  *
  * @param <Q> the request body
  * @param <S> the response boxy
  * @author Emerson Farrugia
  */
-public class RequestResponsePair<Q, S> implements Comparable<RequestResponsePair<Q, S>> {
+public class RequestResponseEntityPair<Q, S> implements Comparable<RequestResponseEntityPair<Q, S>> {
 
     private RequestEntity<Q> requestEntity;
     private ResponseEntity<S> responseEntity;
@@ -92,7 +92,7 @@ public class RequestResponsePair<Q, S> implements Comparable<RequestResponsePair
             return false;
         }
 
-        RequestResponsePair<?, ?> that = (RequestResponsePair<?, ?>) object;
+        RequestResponseEntityPair<?, ?> that = (RequestResponseEntityPair<?, ?>) object;
 
         if (!requestEntity.equals(that.requestEntity)) {
             return false;
@@ -116,7 +116,7 @@ public class RequestResponsePair<Q, S> implements Comparable<RequestResponsePair
     }
 
     @Override
-    public int compareTo(RequestResponsePair<Q, S> that) {
+    public int compareTo(RequestResponseEntityPair<Q, S> that) {
 
         if (this.equals(that)) {
             return 0;
