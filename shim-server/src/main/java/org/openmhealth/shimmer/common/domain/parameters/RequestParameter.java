@@ -20,45 +20,80 @@ import java.util.Optional;
 
 
 /**
+ * A parameter sent as part of an HTTP request.
+ *
  * @author Chris Schaefbauer
+ * @author Emerson Farrugia
  */
 public abstract class RequestParameter<T> {
 
+    private String name;
+    private RequestParameterLocation location;
     private T defaultValue;
-    private RequestParameterLocation requestParameterLocation;
     private boolean required;
-    private String parameterName;
 
-    public RequestParameterLocation getRequestParameterLocation() {
-        return requestParameterLocation;
+    /**
+     * @return the name of the parameter. This doubles as the field name for query parameters and header fields, and the
+     * variable name for path variables.
+     */
+    public String getName() {
+        return name;
     }
 
-    public void setRequestParameterLocation(
-            RequestParameterLocation requestParameterLocation) {
-        this.requestParameterLocation = requestParameterLocation;
+    /**
+     * @param name the name of the parameter
+     */
+    public void setName(String name) {
+        this.name = name;
     }
 
+    /**
+     * @return the location of the parameter
+     */
+    public RequestParameterLocation getLocation() {
+        return location;
+    }
+
+    /**
+     * @param location the location of the parameter
+     */
+    public void setLocation(RequestParameterLocation location) {
+        this.location = location;
+    }
+
+    /**
+     * @return the default value of the parameter
+     */
     public Optional<T> getDefaultValue() {
         return Optional.ofNullable(defaultValue);
     }
 
+    /**
+     * @param defaultValue the default value of the parameter
+     */
     public void setDefaultValue(T defaultValue) {
         this.defaultValue = defaultValue;
     }
 
+    /**
+     * @return true if the parameter is required, or false otherwise
+     */
     public boolean isRequired() {
         return required;
     }
 
+    /**
+     * @param required true if the parameter is required, or false otherwise
+     */
     public void setRequired(boolean required) {
         this.required = required;
     }
 
-    public String getParameterName() {
-        return parameterName;
-    }
-
-    public void setParameterName(String parameterName) {
-        this.parameterName = parameterName;
+    /**
+     * @param value a parameter value
+     * @return the value in a format suitable to be added to the request
+     */
+    public String newArgument(T value) {
+        return value.toString();
     }
 }

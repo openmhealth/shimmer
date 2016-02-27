@@ -16,16 +16,17 @@
 
 package org.openmhealth.shimmer.common.domain.parameters;
 
+
 /**
+ * The location of a parameter in an HTTP request.
+ *
  * @author Chris Schaefbauer
+ * @author Emerson Farrugia
  */
 public enum RequestParameterLocation {
 
-    // Todo: add body, form, and custom parameter locations and support them in different requests
-    //BODY,
-    QUERY,
-    HEADER,
-    PATH
-//    FORM,
-//    CUSTOM
+    PATH_VARIABLE,
+    QUERY_PARAMETER,
+    HEADER_FIELD
+    // MATRIX_VARIABLE could be added in the future assuming the location accounts for the path element it applies to
 }
