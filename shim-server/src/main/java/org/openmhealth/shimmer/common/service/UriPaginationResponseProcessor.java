@@ -22,6 +22,12 @@ import org.openmhealth.shimmer.common.domain.pagination.PaginationStatus;
 import org.openmhealth.shimmer.common.domain.pagination.UriPaginationStatus;
 import org.springframework.http.ResponseEntity;
 
+import java.io.UnsupportedEncodingException;
+import java.util.Optional;
+
+import static java.net.URLDecoder.decode;
+import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asOptionalString;
+
 
 /**
  * @author Chris Schaefbauer
@@ -36,17 +42,43 @@ public class UriPaginationResponseProcessor extends PaginationResponseProcessor<
 
         String paginationNextUriPropertyName = settings.getNextPagePropertyIdentifier();
 
-        if (settings.isResponseInformationEncoded()) {
+        switch (settings.getPaginationResponseLocation()) {
 
-            getPaginationResponseExtractor(settings).extractPaginationResponse(response, paginationNextUriPropertyName)
-                    .ifPresent(nextUri -> paginationStatus.setPaginationResponseValue(
-                            getPaginationResponseDecoder(settings).get().decodePaginationResponseValue(nextUri)));
-        }
-        else {
+            case HEADER:
+                String headerValue = response.getHeaders().getFirst(paginationNextUriPropertyName);
 
-            getPaginationResponseExtractor(settings).extractPaginationResponse(response, paginationNextUriPropertyName)
-                    .ifPresent(nextUri -> paginationStatus.setPaginationResponseValue(nextUri));
+                if (headerValue != null) {
+                    paginationStatus.setPaginationResponseValue(headerValue);
+                }
+                break;
+
+            case BODY:
+                Optional<String> responseValue = asOptionalString(response.getBody(), paginationNextUriPropertyName);
+
+                if(responseValue.isPresent()){
+
+                    if (settings.isResponseInformationEncoded()) {
+
+                        try {
+
+                            paginationStatus.setPaginationResponseValue(decode(responseValue.get(), "UTF-8"));
+                        }
+                        catch (UnsupportedEncodingException e) {
+                            e.printStackTrace();
+                            // todo: Handle the exception
+                        }
+                    }
+                    else{
+
+                        paginationStatus.setPaginationResponseValue(responseValue.get());
+                    }
+                }
         }
+        //        else {
+//
+//            getPaginationResponseExtractor(settings).extractPaginationResponse(response, paginationNextUriPropertyName)
+//                    .ifPresent(nextUri -> paginationStatus.setPaginationResponseValue(nextUri));
+//        }
 
 
         // now on to the rest of how we paginate, though we may not even need this since it comes from the configs

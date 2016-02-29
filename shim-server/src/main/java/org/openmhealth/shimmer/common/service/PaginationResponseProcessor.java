@@ -18,18 +18,11 @@ package org.openmhealth.shimmer.common.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.openmhealth.shimmer.common.configuration.PaginationSettings;
-import org.openmhealth.shimmer.common.decoder.PaginationResponseDecoder;
-import org.openmhealth.shimmer.common.decoder.PassthroughPaginationResponseDecoder;
-import org.openmhealth.shimmer.common.decoder.PercentEncodingPaginationResponseDecoder;
 import org.openmhealth.shimmer.common.domain.pagination.PaginationStatus;
 import org.openmhealth.shimmer.common.extractor.PaginationResponseExtractor;
 import org.openmhealth.shimmer.common.extractor.SimpleBodyPaginationResponseExtractor;
 import org.openmhealth.shimmer.common.extractor.SimpleHeaderPaginationResponseExtractor;
 import org.springframework.http.ResponseEntity;
-
-import java.util.Optional;
-
-import static java.util.Optional.empty;
 
 
 /**
@@ -39,8 +32,6 @@ import static java.util.Optional.empty;
  * @author Chris Schaefbauer
  */
 public abstract class PaginationResponseProcessor<T extends PaginationSettings> {
-
-
 
     /*
     It doesn't make sense for the response processor to have an extractor and a decoder since, we shouldn't have a
@@ -68,28 +59,6 @@ public abstract class PaginationResponseProcessor<T extends PaginationSettings> 
         }
 
         return null;
-    }
-
-    /**
-     * Used to decode pagination response information that is encoded in some form.
-     *
-     * @return The decoder to use in processing the pagination response information, if one exists.
-     */
-    public Optional<PaginationResponseDecoder> getPaginationResponseDecoder(PaginationSettings settings) {
-
-        if (!settings.getResponseEncodingType().isPresent()) {
-            return empty();
-        }
-
-        switch ( settings.getResponseEncodingType().get() ) {
-            case NONE:
-                return Optional.of(new PassthroughPaginationResponseDecoder());
-            case PERCENT_ENCODING:
-                return Optional.of(new PercentEncodingPaginationResponseDecoder());
-            default:
-                //throw configuration exception
-        }
-        return empty();
     }
 
 }

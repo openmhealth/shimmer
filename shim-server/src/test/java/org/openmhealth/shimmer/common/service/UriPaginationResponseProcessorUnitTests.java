@@ -17,15 +17,21 @@
 package org.openmhealth.shimmer.common.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.openmhealth.shimmer.common.configuration.UriPaginationSettings;
 import org.openmhealth.shimmer.common.domain.ResponseLocation;
 import org.openmhealth.shimmer.common.domain.pagination.PaginationStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.testng.annotations.Test;
+
+import java.io.IOException;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.openmhealth.shimmer.common.domain.ResponseLocation.BODY;
+import static org.openmhealth.shimmer.common.domain.ResponseLocation.HEADER;
 import static org.openmhealth.shimmer.common.domain.pagination.PaginationResponseEncoding.PERCENT_ENCODING;
 import static org.springframework.http.HttpStatus.OK;
 
@@ -37,12 +43,96 @@ public class UriPaginationResponseProcessorUnitTests extends ResponseProcessorUn
 
 
     private UriPaginationResponseProcessor processor = new UriPaginationResponseProcessor();
+    ObjectMapper mapper = new ObjectMapper();
 
     @Test
-    public void processResponseShouldExtractUriValueFromBodyResponseWhenPresentAndNotEncoded() {
+    public void processResponseShouldExtractUriValueFromBodyResponseWhenPresentAndNotEncoded() throws IOException {
+
+        JsonNode responseNode = mapper.readTree("{\n" +
+                "    \"a\":{\n" +
+                "        \"b\" : {\n" +
+                "            \"c\":\"http://tokenuri.com\"\n" +
+                "        }\n" +
+                "    }\n" +
+                "}");
+
+        ResponseEntity<JsonNode> responseWithUriInBody = new ResponseEntity<>(responseNode, OK);
+
+        PaginationStatus status = processor.processPaginationResponse(
+                getSettingsForLocationWithValues(BODY, "a.b.c", false), responseWithUriInBody);
+
+        assertThat(status.getPaginationResponseValue().isPresent(), equalTo(true));
+        assertThat(status.getPaginationResponseValue().get(),
+                equalTo("http://tokenuri.com"));
+        assertThat(status.hasMoreData(), equalTo(true));
+    }
+
+    @Test
+    public void processResponseShouldIndicateNoMoreDataWhenUriValueIsNotPresentInBodyResponse() throws IOException {
+
+        JsonNode responseNode = mapper.readTree("{\n" +
+                "    \"a\":{}\n" +
+                "}");
+
+        ResponseEntity<JsonNode> responseWithNoUriInBody = new ResponseEntity<>(responseNode, OK);
+
+        PaginationStatus status =
+                processor.processPaginationResponse(getSettingsForLocationWithValues(BODY, "a.b.c", false),
+                        responseWithNoUriInBody);
+
+        assertThat(status.getPaginationResponseValue().isPresent(), equalTo(false));
+        assertThat(status.hasMoreData(), equalTo(false));
+    }
+
+    @Test
+    public void processResponseShouldExtractAndDecodeUriValueFromBodyResponseWhenPresentAndEncoded()
+            throws IOException {
+
+        JsonNode responseNode = mapper.readTree("{\n" +
+                "    \"a\":{\n" +
+                "        \"b\" : {\n" +
+                "            \"c\":\"http%3A%2F%2Ftokenuri.com%3Ftoken%3D123%26limit%3D4\"\n" +
+                "        }\n" +
+                "    }\n" +
+                "}");
+
+        ResponseEntity<JsonNode> responseWithUriInBodyWithEncoding = new ResponseEntity<>(responseNode, OK);
+
+        UriPaginationSettings settings = getSettingsForLocationWithValues(BODY, "a.b.c", true);
+        settings.setPaginationResponseEncoding(PERCENT_ENCODING);
+
+        PaginationStatus status = processor.processPaginationResponse(settings, responseWithUriInBodyWithEncoding);
+
+        assertThat(status.hasMoreData(), equalTo(true));
+
+        assertThat(status.getPaginationResponseValue().isPresent(), equalTo(true));
+        assertThat(status.getPaginationResponseValue().get(), equalTo("http://tokenuri.com?token=123&limit=4"));
+    }
+
+    @Test
+    public void processResponseShouldExtractUriValueFromHeaderResponseWhenPresent() {
+
+        MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
+
+        headers.add("NextPage", "http://tokenuri.com");
+
+        ResponseEntity<JsonNode> responseWithUriInHeader = new ResponseEntity<>(headers, OK);
+
+        PaginationStatus status = processor
+                .processPaginationResponse(getSettingsForLocationWithValues(HEADER, "NextPage", false),
+                        responseWithUriInHeader);
+
+        assertThat(status.hasMoreData(), equalTo(true));
+
+        assertThat(status.getPaginationResponseValue().isPresent(), equalTo(true));
+        assertThat(status.getPaginationResponseValue().get(), equalTo("http://tokenuri.com"));
+    }
+
+    @Test
+    public void processResponseShouldExtractUriValueFromBodyResponseForJawbone() {
 
         ResponseEntity<JsonNode> responseWithUriInBody = new ResponseEntity<>(
-                asJsonNode("org/openmhealth/shimmer/common/service/uri-pagination-body-response.json"), OK);
+                asJsonNode("org/openmhealth/shimmer/common/service/jawbone-uri-pagination-body-response.json"), OK);
 
 
         PaginationStatus status =
@@ -56,10 +146,10 @@ public class UriPaginationResponseProcessorUnitTests extends ResponseProcessorUn
     }
 
     @Test
-    public void processResponseShouldIndicateNoMoreDataWhenUriValueIsNotPresentInBody() {
+    public void processResponseShouldIndicateNoMoreDataWhenUriValueIsNotPresentInBodyResponseForJawbone() {
 
         ResponseEntity<JsonNode> responseWithNoUriInBody = new ResponseEntity<>(
-                asJsonNode("org/openmhealth/shimmer/common/service/uri-pagination-no-body-response.json"), OK);
+                asJsonNode("org/openmhealth/shimmer/common/service/jawbone-uri-pagination-no-body-response.json"), OK);
 
         PaginationStatus status =
                 processor.processPaginationResponse(getSettingsForLocationWithValues(BODY, "data.links.next", false),
@@ -70,10 +160,12 @@ public class UriPaginationResponseProcessorUnitTests extends ResponseProcessorUn
     }
 
     @Test
-    public void processResponseShouldExtractAndDecodeUriValueFromBodyResponseWhenPresentAndEncoded() {
+    public void processResponseShouldExtractAndDecodeUriValueFromBodyResponseWhenPresentAndEncodedForIHealth() {
 
         ResponseEntity<JsonNode> responseWithUriInBodyWithEncoding = new ResponseEntity<>(
-                asJsonNode("org/openmhealth/shimmer/common/service/uri-pagination-body-response-with-encoding.json"),
+                asJsonNode(
+                        "org/openmhealth/shimmer/common/service/ihealth-uri-pagination-body-response-with-encoding" +
+                                ".json"),
                 OK);
 
         UriPaginationSettings settings = getSettingsForLocationWithValues(BODY, "NextPageUrl", true);

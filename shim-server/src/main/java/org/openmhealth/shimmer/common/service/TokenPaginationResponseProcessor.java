@@ -22,6 +22,12 @@ import org.openmhealth.shimmer.common.domain.pagination.PaginationStatus;
 import org.openmhealth.shimmer.common.domain.pagination.TokenPaginationStatus;
 import org.springframework.http.ResponseEntity;
 
+import java.util.Optional;
+
+import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asOptionalNode;
+import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asRequiredInteger;
+import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asRequiredString;
+
 
 /**
  * @author Chris Schaefbauer
@@ -36,10 +42,36 @@ public class TokenPaginationResponseProcessor extends PaginationResponseProcesso
 
         String nextPaginationPropertyIdentifier = settings.getNextPaginationPropertyIdentifier();
 
-        getPaginationResponseExtractor(settings).extractPaginationResponse(response, nextPaginationPropertyIdentifier)
-                .ifPresent(nextToken -> paginationStatus.setPaginationResponseValue(nextToken));
+        switch ( settings.getPaginationResponseLocation() ) {
+
+            case BODY:
+                Optional<JsonNode> paginationValueNode =
+                        asOptionalNode(response.getBody(), nextPaginationPropertyIdentifier);
+                if (paginationValueNode.isPresent()) {
+
+                    if (paginationValueNode.get().isTextual()) {
+                        paginationStatus.setPaginationResponseValue(
+                                asRequiredString(response.getBody(), nextPaginationPropertyIdentifier));
+                    }
+                    else if (paginationValueNode.get().isInt()) {
+                        paginationStatus.setPaginationResponseValue(
+                                asRequiredInteger(response.getBody(), nextPaginationPropertyIdentifier).toString());
+                    }
+                    else {
+                        //throw incompatible type exception
+                    }
+                }
+                break;
+
+            case HEADER:
+                String headerValue = response.getHeaders().getFirst(nextPaginationPropertyIdentifier);
+
+                if (headerValue != null) {
+                    paginationStatus.setPaginationResponseValue(headerValue);
+                }
+                break;
+        }
 
         return paginationStatus;
     }
-
 }
