@@ -1,0 +1,24 @@
+{
+    "ARDataList": [
+        {
+            "Calories": 1399,
+            "DataID": "a7d1e0af6aa01088a901cf862cb4c113",
+            "DataSource": "FromDevice",
+            "DistanceTraveled": 1.79488,
+            "LastChangeTime": 1438362085,
+            "Lat": 0,
+            "Lon": 0,
+            "MDate": 1438213500,
+            "Note": "",
+            "Steps": 2272,
+            "TimeZone": "+0200"
+        }
+    ],
+    "CurrentRecordCount": 1,
+    "DistanceUnit": 0,
+    "NextPageUrl": "https%3a%2f%2fapi.ihealthlabs.com%3a8443%2fopenapiv2%2fuser%2f758d6e5a23c9495bad5c43bab40b7e3c%2factivity.json%2f%3fclient_id%3db6a4d7971a894ad9897689088ae0bdad%26client_secret%3d1a319d362e35431cbd4d855f33a1026d%26redirect_uri%3dhttp%253a%252f%252fsafedev.openmhealth.org%26access_token%3dEyiqrRKEuqDHl6PQRBrRsE0a2IsUTUtvq21s87r4GOGhgj9fzxOb9I3CP-z*aPpGy9qwUinSa*IIMHWeHB*5zkgS2tokptnzNvDuI2FTfZzor-ajL*MW4DeUBAeVgSYS6F6zfClNnQbZ0g4auLct4Q*baMbbXeBroukKaPf1Rjip06lfadXN*7W45jWu1CIDrPZzsC6JaH-Ix3oRasLEpg%26sc%3dd3fd64b0ba8e4fbaa4d0b8a65c68d46e%26sv%3dc2d2e3ffde224d1fb7a8f4a367a2ba90%26page_index%3d2",
+    "PageLength": 1,
+    "PageNumber": 1,
+    "PrevPageUrl": "",
+    "RecordCount": 63
+}

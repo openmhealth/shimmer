@@ -34,8 +34,9 @@ public class PercentEncodingPaginationResponseDecoder implements PaginationRespo
         }
         catch (UnsupportedEncodingException e) {
             e.printStackTrace();
+            // todo: Handle the exception
         }
-        // todo: Propagate the exception
+
         return null;
     }
 }

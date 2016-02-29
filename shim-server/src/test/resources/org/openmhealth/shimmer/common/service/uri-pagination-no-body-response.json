@@ -1,0 +1,40 @@
+{
+    "data": {
+        "items": [
+            {
+                "date": 20160204,
+                "details": {
+                    "bg_active_time": 0,
+                    "bg_calories": 0,
+                    "bmr": 68.4413771004,
+                    "bmr_calories": 68.4413771004,
+                    "calories": 425.0,
+                    "goal": 0,
+                    "intensity": 1,
+                    "km": 0.0,
+                    "meters": 0,
+                    "steps": 0,
+                    "time": 3600,
+                    "tz": "America/Denver"
+                },
+                "image": "",
+                "reaction": null,
+                "shared": true,
+                "snapshot_image": "",
+                "sub_type": 2,
+                "time_completed": 1454603424,
+                "time_created": 1454599824,
+                "time_updated": 1454628635,
+                "title": "Run",
+                "xid": "55s1JbvpDECqyrH5KEA7lJEC5ggHtIcr"
+            }
+        ],
+        "size": 1
+    },
+    "meta": {
+        "code": 200,
+        "message": "OK",
+        "time": 1454628648,
+        "user_xid": "VB0mNZWqiOWqYlss-itJlw"
+    }
+}
