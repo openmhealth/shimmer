@@ -19,11 +19,17 @@ package org.openmhealth.shimmer.common.service;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.openmhealth.shimmer.common.configuration.PaginationSettings;
 import org.openmhealth.shimmer.common.decoder.PaginationResponseDecoder;
+import org.openmhealth.shimmer.common.decoder.PassthroughPaginationResponseDecoder;
+import org.openmhealth.shimmer.common.decoder.PercentEncodingPaginationResponseDecoder;
 import org.openmhealth.shimmer.common.domain.pagination.PaginationStatus;
 import org.openmhealth.shimmer.common.extractor.PaginationResponseExtractor;
+import org.openmhealth.shimmer.common.extractor.SimpleBodyPaginationResponseExtractor;
+import org.openmhealth.shimmer.common.extractor.SimpleHeaderPaginationResponseExtractor;
 import org.springframework.http.ResponseEntity;
 
 import java.util.Optional;
+
+import static java.util.Optional.empty;
 
 
 /**
@@ -34,37 +40,57 @@ import java.util.Optional;
  */
 public abstract class PaginationResponseProcessor<T extends PaginationSettings> {
 
-    PaginationResponseExtractor responseExtractor;
 
-    PaginationResponseDecoder responseDecoder;
+
+    /*
+    It doesn't make sense for the response processor to have an extractor and a decoder since, we shouldn't have a
+    response processor per endpoint and in theory the decoder and extractor might be set at the settings level or
+    chosen based on settings.
+     */
 
     /**
-     * Processes the pagination content in the response and loads the object to respond to requests for information
+     * Processes the pagination content in the response and loads the object to respond to requests for
+     * information
      * about pagination.
      */
     public abstract PaginationStatus processPaginationResponse(T paginationResponseProperties,
             ResponseEntity<JsonNode> responseEntity);
 
-    public PaginationResponseExtractor getPaginationResponseExtractor() {
-        return responseExtractor; // This needs to get injected somehow, maybe from Shim or selected based on settings?
-    }
+    public PaginationResponseExtractor getPaginationResponseExtractor(PaginationSettings settings) {
 
-    public void setPaginationResponseExtractor(PaginationResponseExtractor responseExtractor) {
-        this.responseExtractor = responseExtractor;
+        switch ( settings.getPaginationResponseLocation() ) {
+            case BODY:
+                return new SimpleBodyPaginationResponseExtractor();
+            case HEADER:
+                return new SimpleHeaderPaginationResponseExtractor();
+            default:
+                // throw exception
+        }
+
+        return null;
     }
 
     /**
      * Used to decode pagination response information that is encoded in some form.
+     *
      * @return The decoder to use in processing the pagination response information, if one exists.
      */
-    public Optional<PaginationResponseDecoder> getPaginationResponseDecoder() {
-        return Optional.ofNullable(responseDecoder);
-    }
+    public Optional<PaginationResponseDecoder> getPaginationResponseDecoder(PaginationSettings settings) {
 
-    public void setResponseDecoder(PaginationResponseDecoder responseDecoder) {
-        this.responseDecoder = responseDecoder;
-    }
+        if (!settings.getResponseEncodingType().isPresent()) {
+            return empty();
+        }
 
+        switch ( settings.getResponseEncodingType().get() ) {
+            case NONE:
+                return Optional.of(new PassthroughPaginationResponseDecoder());
+            case PERCENT_ENCODING:
+                return Optional.of(new PercentEncodingPaginationResponseDecoder());
+            default:
+                //throw configuration exception
+        }
+        return empty();
+    }
 
 }
 

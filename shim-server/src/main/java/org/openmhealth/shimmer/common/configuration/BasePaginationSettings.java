@@ -17,6 +17,7 @@
 package org.openmhealth.shimmer.common.configuration;
 
 import org.openmhealth.shimmer.common.domain.ResponseLocation;
+import org.openmhealth.shimmer.common.domain.pagination.PaginationResponseEncoding;
 import org.openmhealth.shimmer.common.domain.pagination.PaginationResponseType;
 import org.openmhealth.shimmer.common.domain.parameters.NumberRequestParameter;
 import org.openmhealth.shimmer.common.domain.parameters.StringRequestParameter;
@@ -36,16 +37,14 @@ public abstract class BasePaginationSettings implements PaginationSettings {
     private StringRequestParameter nextPageTokenParameter;
     private NumberRequestParameter paginationLimitParameter;
     private NumberRequestParameter paginationOffsetParameter;
+    private ResponseLocation paginationResponseLocation;
+    private PaginationResponseEncoding responseEncoding;
 
     public abstract PaginationResponseType getResponseType();
 
     // Todo: Implement
     public String getPagingDirectionality() {
 
-        return null;
-    }
-
-    public ResponseLocation getPaginationResponseLocation() {
         return null;
     }
 
@@ -104,5 +103,23 @@ public abstract class BasePaginationSettings implements PaginationSettings {
 
     public void setPaginationOffsetParameter(NumberRequestParameter paginationOffsetParameter) {
         this.paginationOffsetParameter = paginationOffsetParameter;
+    }
+
+    @Override
+    public ResponseLocation getPaginationResponseLocation() {
+        return paginationResponseLocation;
+    }
+
+    public void setPaginationResponseLocation(ResponseLocation location) {
+        this.paginationResponseLocation = location;
+    }
+
+    @Override
+    public Optional<PaginationResponseEncoding> getResponseEncodingType() {
+        return Optional.of(responseEncoding);
+    }
+
+    public void setPaginationResponseEncoding(PaginationResponseEncoding encoding){
+        this.responseEncoding = encoding;
     }
 }

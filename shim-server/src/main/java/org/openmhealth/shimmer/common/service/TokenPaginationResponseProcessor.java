@@ -36,7 +36,7 @@ public class TokenPaginationResponseProcessor extends PaginationResponseProcesso
 
         String nextPaginationPropertyIdentifier = settings.getNextPaginationPropertyIdentifier();
 
-        getPaginationResponseExtractor().extractPaginationResponse(response, nextPaginationPropertyIdentifier)
+        getPaginationResponseExtractor(settings).extractPaginationResponse(response, nextPaginationPropertyIdentifier)
                 .ifPresent(nextToken -> paginationStatus.setPaginationResponseValue(nextToken));
 
         return paginationStatus;

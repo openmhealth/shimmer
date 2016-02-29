@@ -34,17 +34,17 @@ public class UriPaginationResponseProcessor extends PaginationResponseProcessor<
 
         UriPaginationStatus paginationStatus = new UriPaginationStatus();
 
-        String paginationNextUriPropertyName = settings.getNextPaginationPropertyIdentifier();
+        String paginationNextUriPropertyName = settings.getNextPagePropertyIdentifier();
 
-        if (getPaginationResponseDecoder().isPresent()) {
+        if (settings.isResponseInformationEncoded()) {
 
-            getPaginationResponseExtractor().extractPaginationResponse(response, paginationNextUriPropertyName)
+            getPaginationResponseExtractor(settings).extractPaginationResponse(response, paginationNextUriPropertyName)
                     .ifPresent(nextUri -> paginationStatus.setPaginationResponseValue(
-                            getPaginationResponseDecoder().get().decodePaginationResponseValue(nextUri)));
+                            getPaginationResponseDecoder(settings).get().decodePaginationResponseValue(nextUri)));
         }
         else {
 
-            getPaginationResponseExtractor().extractPaginationResponse(response, paginationNextUriPropertyName)
+            getPaginationResponseExtractor(settings).extractPaginationResponse(response, paginationNextUriPropertyName)
                     .ifPresent(nextUri -> paginationStatus.setPaginationResponseValue(nextUri));
         }
 

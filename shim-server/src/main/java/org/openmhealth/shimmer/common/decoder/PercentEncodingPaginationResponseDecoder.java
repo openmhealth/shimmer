@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Open mHealth
+ * Copyright 2016 Open mHealth
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,13 +16,26 @@
 
 package org.openmhealth.shimmer.common.decoder;
 
+import java.io.UnsupportedEncodingException;
+
+import static java.net.URLDecoder.decode;
+
+
 /**
- * Decodes pagination information contained in the response. Specifically, the information that is used to identify the
- * next page of data points, for example the URI fragment or continuation token.
- *
  * @author Chris Schaefbauer
  */
-public interface PaginationResponseDecoder {
+public class PercentEncodingPaginationResponseDecoder implements PaginationResponseDecoder {
 
-    String decodePaginationResponseValue(String paginationResponseValue);
+    @Override
+    public String decodePaginationResponseValue(String paginationResponseValue) {
+
+        try {
+            return decode(paginationResponseValue, "UTF-8");
+        }
+        catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        // todo: Propagate the exception
+        return null;
+    }
 }

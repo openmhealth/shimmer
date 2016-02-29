@@ -17,6 +17,7 @@
 package org.openmhealth.shimmer.common.configuration;
 
 import org.openmhealth.shimmer.common.domain.ResponseLocation;
+import org.openmhealth.shimmer.common.domain.pagination.PaginationResponseEncoding;
 import org.openmhealth.shimmer.common.domain.pagination.PaginationResponseType;
 import org.openmhealth.shimmer.common.domain.parameters.NumberRequestParameter;
 import org.openmhealth.shimmer.common.domain.parameters.StringRequestParameter;
@@ -56,6 +57,11 @@ public interface PaginationSettings {
      * @return TRUE if the pagination information is encoded in the response, FALSE otherwise.
      */
     boolean isResponseInformationEncoded();
+
+    /**
+     * @return The type of encoding used to encode the pagination information in the response, if it uses encoding.
+     */
+    Optional<PaginationResponseEncoding> getResponseEncodingType();
 
     /**
      * @return The default number of data points to be returned by each response from the endpoint, if one exists.

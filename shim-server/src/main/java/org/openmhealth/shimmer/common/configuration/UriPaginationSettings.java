@@ -16,7 +16,6 @@
 
 package org.openmhealth.shimmer.common.configuration;
 
-import org.openmhealth.shimmer.common.domain.ResponseLocation;
 import org.openmhealth.shimmer.common.domain.pagination.PaginationResponseType;
 
 import java.util.Optional;
@@ -38,6 +37,7 @@ public class UriPaginationSettings extends BasePaginationSettings {
     // Todo: This needs to be broken up to address the 3 types of directionality as an enum
 
     private boolean responseInformationEncoded;
+    private String nextPagePropertyIdentifier;
 
     /**
      * @return TRUE if paginated responses return a full URI pointing to the next page when more data points are
@@ -73,11 +73,6 @@ public class UriPaginationSettings extends BasePaginationSettings {
     }
 
     @Override
-    public ResponseLocation getPaginationResponseLocation() {
-        return null;
-    }
-
-    @Override
     public boolean isResponseInformationEncoded() {
         return responseInformationEncoded;
     }
@@ -86,8 +81,12 @@ public class UriPaginationSettings extends BasePaginationSettings {
      * @return The JSON dot path to the property in the response that contains the URI or URI fragment pointing to the
      * next page of data.
      */
-    public String getNextPaginationPropertyIdentifier() {
-        return null;
+    public String getNextPagePropertyIdentifier() {
+        return nextPagePropertyIdentifier;
+    }
+
+    public void setNextPagePropertyIdentifier(String propertyIdentifier){
+        this.nextPagePropertyIdentifier = propertyIdentifier;
     }
 
     @Override

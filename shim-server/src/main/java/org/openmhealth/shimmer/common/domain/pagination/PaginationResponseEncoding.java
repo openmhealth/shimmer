@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Open mHealth
+ * Copyright 2016 Open mHealth
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,16 @@
  * limitations under the License.
  */
 
-package org.openmhealth.shimmer.common.decoder;
+package org.openmhealth.shimmer.common.domain.pagination;
 
 /**
- * Decodes pagination information contained in the response. Specifically, the information that is used to identify the
- * next page of data points, for example the URI fragment or continuation token.
+ * Type used for encoding the pagination information that identifies the next page that is contained in the HTTP
+ * response.
  *
  * @author Chris Schaefbauer
  */
-public interface PaginationResponseDecoder {
+public enum PaginationResponseEncoding {
 
-    String decodePaginationResponseValue(String paginationResponseValue);
+    NONE,
+    PERCENT_ENCODING;
 }
