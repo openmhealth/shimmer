@@ -33,11 +33,6 @@ public class UriPaginationSettings extends BasePaginationSettings {
 
     private String baseUri;
 
-    private String pagingDirectionality;
-    // Todo: This needs to be broken up to address the 3 types of directionality as an enum
-
-    private boolean responseInformationEncoded;
-
     /**
      * @return TRUE if paginated responses return a full URI pointing to the next page when more data points are
      * available via pagination, FALSE if paginated responses return a partial URI fragment when more data points are
@@ -71,21 +66,6 @@ public class UriPaginationSettings extends BasePaginationSettings {
         return URI;
     }
 
-    @Override
-    public boolean isResponseInformationEncoded() {
-        return responseInformationEncoded;
-    }
 
-    @Override
-    public String getPagingDirectionality() {
-        return pagingDirectionality;
-    }
 
-    public void setPagingDirectionality(String pagingDirectionality) {
-        this.pagingDirectionality = pagingDirectionality;
-    }
-
-    public void setResponseInformationEncoded(boolean responseInformationEncoded) {
-        this.responseInformationEncoded = responseInformationEncoded;
-    }
 }

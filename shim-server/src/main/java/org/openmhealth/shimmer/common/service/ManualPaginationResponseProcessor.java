@@ -17,9 +17,7 @@
 package org.openmhealth.shimmer.common.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import org.openmhealth.shimmer.common.configuration.ManualPaginationSettings;
-import org.openmhealth.shimmer.common.domain.pagination.ManualPaginationEndCriteria;
-import org.openmhealth.shimmer.common.domain.pagination.ManualPaginationStatus;
+import org.openmhealth.shimmer.common.configuration.PaginationSettings;
 import org.openmhealth.shimmer.common.domain.pagination.PaginationStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -27,19 +25,20 @@ import org.springframework.http.ResponseEntity;
 /**
  * @author Chris Schaefbauer
  */
-public class ManualPaginationResponseProcessor extends PaginationResponseProcessor<ManualPaginationSettings> {
+public class ManualPaginationResponseProcessor extends PaginationResponseProcessor {
 
     @Override
-    public PaginationStatus processPaginationResponse(ManualPaginationSettings settings,
+    public PaginationStatus processPaginationResponse(PaginationSettings settings,
             ResponseEntity<JsonNode> response) {
 
-        ManualPaginationEndCriteria paginationEndCriteria = settings.getPaginationEndCriteria();
-
-        String endPaginationPropertyIdentifier = settings.getEndPaginationPropertyIdentifier().get();
-
-        ManualPaginationStatus paginationStatus =
-                new ManualPaginationStatus(response.getBody(), paginationEndCriteria, endPaginationPropertyIdentifier);
-
-        return paginationStatus;
+//        ManualPaginationEndCriteria paginationEndCriteria = settings.getPaginationEndCriteria();
+//
+//        String endPaginationPropertyIdentifier = settings.getEndPaginationPropertyIdentifier().get();
+//
+//        ManualPaginationStatus paginationStatus =
+//                new ManualPaginationStatus(response.getBody(), paginationEndCriteria, endPaginationPropertyIdentifier);
+//
+//        return paginationStatus;
+        return null;
     }
 }

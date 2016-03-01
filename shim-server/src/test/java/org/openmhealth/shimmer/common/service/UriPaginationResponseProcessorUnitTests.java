@@ -32,7 +32,6 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.openmhealth.shimmer.common.domain.ResponseLocation.BODY;
 import static org.openmhealth.shimmer.common.domain.ResponseLocation.HEADER;
-import static org.openmhealth.shimmer.common.domain.pagination.PaginationResponseEncoding.PERCENT_ENCODING;
 import static org.springframework.http.HttpStatus.OK;
 
 
@@ -99,7 +98,6 @@ public class UriPaginationResponseProcessorUnitTests extends ResponseProcessorUn
         ResponseEntity<JsonNode> responseWithUriInBodyWithEncoding = new ResponseEntity<>(responseNode, OK);
 
         UriPaginationSettings settings = getSettingsForLocationWithValues(BODY, "a.b.c", true);
-        settings.setPaginationResponseEncoding(PERCENT_ENCODING);
 
         PaginationStatus status = processor.processPaginationResponse(settings, responseWithUriInBodyWithEncoding);
 
@@ -184,7 +182,6 @@ public class UriPaginationResponseProcessorUnitTests extends ResponseProcessorUn
                 OK);
 
         UriPaginationSettings settings = getSettingsForLocationWithValues(BODY, "NextPageUrl", true);
-        settings.setPaginationResponseEncoding(PERCENT_ENCODING);
 
         PaginationStatus status = processor.processPaginationResponse(settings, responseWithUriInBodyWithEncoding);
 

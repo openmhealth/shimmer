@@ -17,7 +17,6 @@
 package org.openmhealth.shimmer.common.configuration;
 
 import org.openmhealth.shimmer.common.domain.ResponseLocation;
-import org.openmhealth.shimmer.common.domain.pagination.PaginationResponseEncoding;
 import org.openmhealth.shimmer.common.domain.pagination.PaginationResponseType;
 import org.openmhealth.shimmer.common.domain.parameters.NumberRequestParameter;
 import org.openmhealth.shimmer.common.domain.parameters.StringRequestParameter;
@@ -37,21 +36,25 @@ public abstract class BasePaginationSettings implements PaginationSettings {
     private StringRequestParameter nextPageTokenParameter;
     private NumberRequestParameter paginationLimitParameter;
     private NumberRequestParameter paginationOffsetParameter;
+
     private ResponseLocation paginationResponseLocation;
-    private PaginationResponseEncoding responseEncoding;
+
     private String nextPagePropertyIdentifier;
+
+    // Todo: This needs to be broken up to address the 3 types of directionality as an enum
+    private String pagingDirectionality;
+
+    private boolean responseInformationEncoded;
 
     public abstract PaginationResponseType getResponseType();
 
-    // Todo: Implement
+    @Override
     public String getPagingDirectionality() {
-
-        return null;
+        return pagingDirectionality;
     }
 
-
-    public boolean isResponseInformationEncoded() {
-        return false;
+    public void setPagingDirectionality(String pagingDirectionality) {
+        this.pagingDirectionality = pagingDirectionality;
     }
 
     @Override
@@ -115,21 +118,18 @@ public abstract class BasePaginationSettings implements PaginationSettings {
         this.paginationResponseLocation = location;
     }
 
+    public void setResponseInformationEncoded(boolean isEncoded){
+        this.responseInformationEncoded = isEncoded;
+    }
+
     @Override
-    public Optional<PaginationResponseEncoding> getResponseEncodingType() {
-        return Optional.of(responseEncoding);
+    public boolean isResponseInformationEncoded() {
+        return responseInformationEncoded;
     }
 
-    public void setPaginationResponseEncoding(PaginationResponseEncoding encoding){
-        this.responseEncoding = encoding;
-    }
-
-    /**
-     * @return The JSON dot path to the property in the response that contains the URI or URI fragment pointing to the
-     * next page of data.
-     */
-    public String getNextPagePropertyIdentifier() {
-        return nextPagePropertyIdentifier;
+    @Override
+    public Optional<String> getNextPagePropertyIdentifier() {
+        return Optional.ofNullable(nextPagePropertyIdentifier);
     }
 
     public void setNextPagePropertyIdentifier(String propertyIdentifier){

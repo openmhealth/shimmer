@@ -19,9 +19,6 @@ package org.openmhealth.shimmer.common.service;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.openmhealth.shimmer.common.configuration.PaginationSettings;
 import org.openmhealth.shimmer.common.domain.pagination.PaginationStatus;
-import org.openmhealth.shimmer.common.extractor.PaginationResponseExtractor;
-import org.openmhealth.shimmer.common.extractor.SimpleBodyPaginationResponseExtractor;
-import org.openmhealth.shimmer.common.extractor.SimpleHeaderPaginationResponseExtractor;
 import org.springframework.http.ResponseEntity;
 
 
@@ -31,7 +28,7 @@ import org.springframework.http.ResponseEntity;
  *
  * @author Chris Schaefbauer
  */
-public abstract class PaginationResponseProcessor<T extends PaginationSettings> {
+public abstract class PaginationResponseProcessor {
 
     /*
     It doesn't make sense for the response processor to have an extractor and a decoder since, we shouldn't have a
@@ -44,22 +41,8 @@ public abstract class PaginationResponseProcessor<T extends PaginationSettings> 
      * information
      * about pagination.
      */
-    public abstract PaginationStatus processPaginationResponse(T paginationResponseProperties,
+    public abstract PaginationStatus processPaginationResponse(PaginationSettings paginationSettings,
             ResponseEntity<JsonNode> responseEntity);
-
-    public PaginationResponseExtractor getPaginationResponseExtractor(PaginationSettings settings) {
-
-        switch ( settings.getPaginationResponseLocation() ) {
-            case BODY:
-                return new SimpleBodyPaginationResponseExtractor();
-            case HEADER:
-                return new SimpleHeaderPaginationResponseExtractor();
-            default:
-                // throw exception
-        }
-
-        return null;
-    }
 
 }
 

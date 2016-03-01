@@ -17,30 +17,28 @@
 package org.openmhealth.shimmer.common.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import org.openmhealth.shimmer.common.configuration.TokenPaginationSettings;
+import org.openmhealth.shimmer.common.configuration.PaginationSettings;
 import org.openmhealth.shimmer.common.domain.pagination.PaginationStatus;
 import org.openmhealth.shimmer.common.domain.pagination.TokenPaginationStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.util.Optional;
 
-import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asOptionalNode;
-import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asRequiredInteger;
-import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asRequiredString;
+import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.*;
 
 
 /**
  * @author Chris Schaefbauer
  */
-public class TokenPaginationResponseProcessor extends PaginationResponseProcessor<TokenPaginationSettings> {
+public class TokenPaginationResponseProcessor extends PaginationResponseProcessor {
 
     @Override
-    public PaginationStatus processPaginationResponse(TokenPaginationSettings settings,
+    public PaginationStatus processPaginationResponse(PaginationSettings settings,
             ResponseEntity<JsonNode> response) {
 
         TokenPaginationStatus paginationStatus = new TokenPaginationStatus();
 
-        String nextPaginationPropertyIdentifier = settings.getNextPagePropertyIdentifier();
+        String nextPaginationPropertyIdentifier = settings.getNextPagePropertyIdentifier().get();
 
         switch ( settings.getPaginationResponseLocation() ) {
 

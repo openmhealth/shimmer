@@ -26,28 +26,10 @@ import static org.openmhealth.shimmer.common.domain.pagination.PaginationRespons
  */
 public class TokenPaginationSettings extends BasePaginationSettings {
 
-
-    private boolean responseInformationEncoded;
-
     @Override
     public PaginationResponseType getResponseType() {
         return TOKEN;
     }
 
-    @Override
-    public String getPagingDirectionality() {
-        return null;
-    }
-
-
-    @Override
-    public boolean isResponseInformationEncoded() {
-        return responseInformationEncoded;
-    }
-
-
-    public void setResponseInformationEncoded(boolean responseInformationEncoded) {
-        this.responseInformationEncoded = responseInformationEncoded;
-    }
 
 }

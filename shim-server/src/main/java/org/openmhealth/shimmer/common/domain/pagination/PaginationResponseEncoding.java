@@ -22,6 +22,7 @@ package org.openmhealth.shimmer.common.domain.pagination;
  *
  * @author Chris Schaefbauer
  */
+@Deprecated
 public enum PaginationResponseEncoding {
 
     NONE,

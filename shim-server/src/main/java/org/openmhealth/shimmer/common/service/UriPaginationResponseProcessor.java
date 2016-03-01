@@ -17,7 +17,7 @@
 package org.openmhealth.shimmer.common.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import org.openmhealth.shimmer.common.configuration.UriPaginationSettings;
+import org.openmhealth.shimmer.common.configuration.PaginationSettings;
 import org.openmhealth.shimmer.common.domain.pagination.PaginationStatus;
 import org.openmhealth.shimmer.common.domain.pagination.UriPaginationStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,57 +32,48 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asOption
 /**
  * @author Chris Schaefbauer
  */
-public class UriPaginationResponseProcessor extends PaginationResponseProcessor<UriPaginationSettings> {
+public class UriPaginationResponseProcessor extends PaginationResponseProcessor {
 
     @Override
-    public PaginationStatus processPaginationResponse(UriPaginationSettings settings,
+    public PaginationStatus processPaginationResponse(PaginationSettings settings,
             ResponseEntity<JsonNode> response) {
 
         UriPaginationStatus paginationStatus = new UriPaginationStatus();
 
-        String paginationNextUriPropertyName = settings.getNextPagePropertyIdentifier();
+        String paginationNextUriPropertyName = settings.getNextPagePropertyIdentifier().get();
+
+        Optional<String> nextPaginationValue = Optional.empty();
 
         switch (settings.getPaginationResponseLocation()) {
 
             case HEADER:
-                String headerValue = response.getHeaders().getFirst(paginationNextUriPropertyName);
-
-                if (headerValue != null) {
-                    paginationStatus.setPaginationResponseValue(headerValue);
-                }
+                nextPaginationValue = Optional.ofNullable(response.getHeaders().getFirst(paginationNextUriPropertyName));
                 break;
 
             case BODY:
-                Optional<String> responseValue = asOptionalString(response.getBody(), paginationNextUriPropertyName);
-
-                if(responseValue.isPresent()){
-
-                    if (settings.isResponseInformationEncoded()) {
-
-                        try {
-
-                            paginationStatus.setPaginationResponseValue(decode(responseValue.get(), "UTF-8"));
-                        }
-                        catch (UnsupportedEncodingException e) {
-                            e.printStackTrace();
-                            // todo: Handle the exception
-                        }
-                    }
-                    else{
-
-                        paginationStatus.setPaginationResponseValue(responseValue.get());
-                    }
-                }
+                // Assuming that we have an optional String parser that can handle numeric values
+                nextPaginationValue = asOptionalString(response.getBody(), paginationNextUriPropertyName);
+                break;
         }
-        //        else {
-//
-//            getPaginationResponseExtractor(settings).extractPaginationResponse(response, paginationNextUriPropertyName)
-//                    .ifPresent(nextUri -> paginationStatus.setPaginationResponseValue(nextUri));
-//        }
 
+        if (!nextPaginationValue.isPresent()) {
+            return paginationStatus;
+        }
 
-        // now on to the rest of how we paginate, though we may not even need this since it comes from the configs
-        // paginationResponseProperties.getBaseUri().ifPresent(baseUri -> paginationStatus.setBaseUri(baseUri));
+        // May need to decode values that come from the Header or Body
+        if (settings.isResponseInformationEncoded()) {
+
+            try {
+                paginationStatus.setPaginationResponseValue(decode(nextPaginationValue.get(), "UTF-8"));
+            }
+            catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+                // todo: Handle the exception
+            }
+        }
+        else{
+            paginationStatus.setPaginationResponseValue(nextPaginationValue.get());
+        }
 
         return paginationStatus;
     }
