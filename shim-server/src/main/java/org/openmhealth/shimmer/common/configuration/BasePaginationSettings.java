@@ -39,6 +39,7 @@ public abstract class BasePaginationSettings implements PaginationSettings {
     private NumberRequestParameter paginationOffsetParameter;
     private ResponseLocation paginationResponseLocation;
     private PaginationResponseEncoding responseEncoding;
+    private String nextPagePropertyIdentifier;
 
     public abstract PaginationResponseType getResponseType();
 
@@ -121,5 +122,17 @@ public abstract class BasePaginationSettings implements PaginationSettings {
 
     public void setPaginationResponseEncoding(PaginationResponseEncoding encoding){
         this.responseEncoding = encoding;
+    }
+
+    /**
+     * @return The JSON dot path to the property in the response that contains the URI or URI fragment pointing to the
+     * next page of data.
+     */
+    public String getNextPagePropertyIdentifier() {
+        return nextPagePropertyIdentifier;
+    }
+
+    public void setNextPagePropertyIdentifier(String propertyIdentifier){
+        this.nextPagePropertyIdentifier = propertyIdentifier;
     }
 }

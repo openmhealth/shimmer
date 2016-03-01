@@ -16,7 +16,6 @@
 
 package org.openmhealth.shimmer.common.configuration;
 
-import org.openmhealth.shimmer.common.domain.ResponseLocation;
 import org.openmhealth.shimmer.common.domain.pagination.PaginationResponseType;
 
 import static org.openmhealth.shimmer.common.domain.pagination.PaginationResponseType.TOKEN;
@@ -40,25 +39,12 @@ public class TokenPaginationSettings extends BasePaginationSettings {
         return null;
     }
 
-    @Override
-    public ResponseLocation getPaginationResponseLocation() {
-        return null;
-    }
 
     @Override
     public boolean isResponseInformationEncoded() {
         return responseInformationEncoded;
     }
 
-
-
-    /**
-     * @return The JSON dot path to the property in the response that contains the continuation token that identifies
-     * the next page of data.
-     */
-    public String getNextPaginationPropertyIdentifier() {
-        return null;
-    }
 
     public void setResponseInformationEncoded(boolean responseInformationEncoded) {
         this.responseInformationEncoded = responseInformationEncoded;

@@ -1,0 +1,32 @@
+{
+    "minStartTimeNs": "1436553840000000000",
+    "nextPageToken": "1436566038006058105",
+    "maxEndTimeNs": "1436568240000000000",
+    "dataSourceId": "derived:com.google.step_count.delta:com.google.android.gms:merge_step_deltas",
+    "point": [
+        {
+            "modifiedTimeMillis": "1436593407066",
+            "startTimeNanos": "1436566174963637940",
+            "endTimeNanos": "1436566234963637940",
+            "value": [
+                {
+                    "intVal": 1
+                }
+            ],
+            "dataTypeName": "com.google.step_count.delta",
+            "originDataSourceId": "derived:com.google.step_count.cumulative:com.google.android.gms:samsung:Galaxy Nexus:bd000ff1:soft_step_counter"
+        },
+        {
+            "modifiedTimeMillis": "1436593407066",
+            "startTimeNanos": "1436566234963637940",
+            "endTimeNanos": "1436566238166000000",
+            "value": [
+                {
+                    "intVal": 2
+                }
+            ],
+            "dataTypeName": "com.google.step_count.delta",
+            "originDataSourceId": "derived:com.google.step_count.cumulative:com.google.android.gms:samsung:Galaxy Nexus:bd000ff1:soft_step_counter"
+        }
+    ]
+}

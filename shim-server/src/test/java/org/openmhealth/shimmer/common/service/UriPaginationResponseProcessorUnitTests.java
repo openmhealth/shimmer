@@ -129,6 +129,21 @@ public class UriPaginationResponseProcessorUnitTests extends ResponseProcessorUn
     }
 
     @Test
+    public void processResponseShouldReturnNoMoreDataWhenUriValueFromHeaderResponseIsNotPresent() {
+
+        MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
+
+        ResponseEntity<JsonNode> responseWithUriInHeader = new ResponseEntity<>(headers, OK);
+
+        PaginationStatus status = processor
+                .processPaginationResponse(getSettingsForLocationWithValues(HEADER, "NextPage", false),
+                        responseWithUriInHeader);
+
+        assertThat(status.hasMoreData(), equalTo(false));
+        assertThat(status.getPaginationResponseValue().isPresent(), equalTo(false));
+    }
+
+    @Test
     public void processResponseShouldExtractUriValueFromBodyResponseForJawbone() {
 
         ResponseEntity<JsonNode> responseWithUriInBody = new ResponseEntity<>(
