@@ -70,10 +70,8 @@ public class ResponseProcessorImpl<T> implements ResponseProcessor<T> {
             PaginationResponseProcessor paginationProcessor;
             switch ( settings.getPaginationSettings().get().getResponseType() ) {
                 case URI:
-                    paginationProcessor = new UriPaginationResponseProcessor();
-                    break;
                 case TOKEN:
-                    paginationProcessor = new TokenPaginationResponseProcessor();
+                    paginationProcessor = new SimplePaginationResponseProcessor();
                     break;
                 case MANUAL:
                     paginationProcessor = new ManualPaginationResponseProcessor();

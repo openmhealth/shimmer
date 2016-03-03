@@ -28,7 +28,7 @@ import org.springframework.http.ResponseEntity;
  *
  * @author Chris Schaefbauer
  */
-public abstract class PaginationResponseProcessor {
+public interface PaginationResponseProcessor {
 
     /*
     It doesn't make sense for the response processor to have an extractor and a decoder since, we shouldn't have a
@@ -41,7 +41,7 @@ public abstract class PaginationResponseProcessor {
      * information
      * about pagination.
      */
-    public abstract PaginationStatus processPaginationResponse(PaginationSettings paginationSettings,
+    PaginationStatus processPaginationResponse(PaginationSettings paginationSettings,
             ResponseEntity<JsonNode> responseEntity);
 
 }

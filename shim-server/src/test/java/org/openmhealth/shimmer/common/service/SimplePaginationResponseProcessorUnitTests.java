@@ -18,6 +18,7 @@ package org.openmhealth.shimmer.common.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.openmhealth.shimmer.common.configuration.TokenPaginationSettings;
 import org.openmhealth.shimmer.common.configuration.UriPaginationSettings;
 import org.openmhealth.shimmer.common.domain.ResponseLocation;
 import org.openmhealth.shimmer.common.domain.pagination.PaginationStatus;
@@ -38,10 +39,10 @@ import static org.springframework.http.HttpStatus.OK;
 /**
  * @author Chris Schaefbauer
  */
-public class UriPaginationResponseProcessorUnitTests extends ResponseProcessorUnitTests {
+public class SimplePaginationResponseProcessorUnitTests extends ResponseProcessorUnitTests {
 
 
-    private UriPaginationResponseProcessor processor = new UriPaginationResponseProcessor();
+    private SimplePaginationResponseProcessor processor = new SimplePaginationResponseProcessor();
     ObjectMapper mapper = new ObjectMapper();
 
     @Test
@@ -58,7 +59,7 @@ public class UriPaginationResponseProcessorUnitTests extends ResponseProcessorUn
         ResponseEntity<JsonNode> responseWithUriInBody = new ResponseEntity<>(responseNode, OK);
 
         PaginationStatus status = processor.processPaginationResponse(
-                getSettingsForLocationWithValues(BODY, "a.b.c", false), responseWithUriInBody);
+                getUriSettingsForLocationWithValues(BODY, "a.b.c", false), responseWithUriInBody);
 
         assertThat(status.getPaginationResponseValue().isPresent(), equalTo(true));
         assertThat(status.getPaginationResponseValue().get(),
@@ -76,7 +77,7 @@ public class UriPaginationResponseProcessorUnitTests extends ResponseProcessorUn
         ResponseEntity<JsonNode> responseWithNoUriInBody = new ResponseEntity<>(responseNode, OK);
 
         PaginationStatus status =
-                processor.processPaginationResponse(getSettingsForLocationWithValues(BODY, "a.b.c", false),
+                processor.processPaginationResponse(getUriSettingsForLocationWithValues(BODY, "a.b.c", false),
                         responseWithNoUriInBody);
 
         assertThat(status.getPaginationResponseValue().isPresent(), equalTo(false));
@@ -97,7 +98,7 @@ public class UriPaginationResponseProcessorUnitTests extends ResponseProcessorUn
 
         ResponseEntity<JsonNode> responseWithUriInBodyWithEncoding = new ResponseEntity<>(responseNode, OK);
 
-        UriPaginationSettings settings = getSettingsForLocationWithValues(BODY, "a.b.c", true);
+        UriPaginationSettings settings = getUriSettingsForLocationWithValues(BODY, "a.b.c", true);
 
         PaginationStatus status = processor.processPaginationResponse(settings, responseWithUriInBodyWithEncoding);
 
@@ -117,13 +118,32 @@ public class UriPaginationResponseProcessorUnitTests extends ResponseProcessorUn
         ResponseEntity<JsonNode> responseWithUriInHeader = new ResponseEntity<>(headers, OK);
 
         PaginationStatus status = processor
-                .processPaginationResponse(getSettingsForLocationWithValues(HEADER, "NextPage", false),
+                .processPaginationResponse(getUriSettingsForLocationWithValues(HEADER, "NextPage", false),
                         responseWithUriInHeader);
 
         assertThat(status.hasMoreData(), equalTo(true));
 
         assertThat(status.getPaginationResponseValue().isPresent(), equalTo(true));
         assertThat(status.getPaginationResponseValue().get(), equalTo("http://tokenuri.com"));
+    }
+
+    @Test
+    public void processResponseShouldExtractAndDecodeUriValueFromHeaderResponseWhenPresentAndEncoded() {
+
+        MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
+
+        headers.add("NextPage", "http%3A%2F%2Ftokenuri.com%3Ftoken%3D123%26limit%3D4");
+
+        ResponseEntity<JsonNode> responseWithUriInHeader = new ResponseEntity<>(headers, OK);
+
+        PaginationStatus status = processor
+                .processPaginationResponse(getUriSettingsForLocationWithValues(HEADER, "NextPage", true),
+                        responseWithUriInHeader);
+
+        assertThat(status.hasMoreData(), equalTo(true));
+
+        assertThat(status.getPaginationResponseValue().isPresent(), equalTo(true));
+        assertThat(status.getPaginationResponseValue().get(), equalTo("http://tokenuri.com?token=123&limit=4"));
     }
 
     @Test
@@ -134,12 +154,83 @@ public class UriPaginationResponseProcessorUnitTests extends ResponseProcessorUn
         ResponseEntity<JsonNode> responseWithUriInHeader = new ResponseEntity<>(headers, OK);
 
         PaginationStatus status = processor
-                .processPaginationResponse(getSettingsForLocationWithValues(HEADER, "NextPage", false),
+                .processPaginationResponse(getUriSettingsForLocationWithValues(HEADER, "NextPage", false),
                         responseWithUriInHeader);
 
         assertThat(status.hasMoreData(), equalTo(false));
         assertThat(status.getPaginationResponseValue().isPresent(), equalTo(false));
     }
+
+
+    @Test
+    public void processResponseShouldReturnTokenFromBodyResponseWhenPresent() throws IOException {
+
+        JsonNode responseNode = mapper.readTree("{\n" +
+                "    \"a\":{\n" +
+                "        \"b\" : {\n" +
+                "            \"c\":\"TOKEN123\"\n" +
+                "        }\n" +
+                "    }\n" +
+                "}");
+
+        ResponseEntity<JsonNode> responseWithTokenInBody = new ResponseEntity<>(responseNode, OK);
+
+        PaginationStatus status = processor
+                .processPaginationResponse(getTokenSettingsForLocationWithValues(BODY, "a.b.c", false),
+                        responseWithTokenInBody);
+
+        assertThat(status.hasMoreData(), equalTo(true));
+
+        assertThat(status.getPaginationResponseValue().isPresent(), equalTo(true));
+        assertThat(status.getPaginationResponseValue().get(), equalTo("TOKEN123"));
+    }
+
+    @Test
+    public void processResponseShouldIndicateNoMoreDataWhenTokenValueIsNotPresentInBodyResponse() throws IOException {
+
+        JsonNode responseNode = mapper.readTree("{\n" +
+                "    \"a\":{}\n" +
+                "}");
+
+        ResponseEntity<JsonNode> responseWithNoTokenInBody = new ResponseEntity<>(responseNode, OK);
+
+        PaginationStatus status = processor
+                .processPaginationResponse(getTokenSettingsForLocationWithValues(BODY, "a.b.c", false),
+                        responseWithNoTokenInBody);
+
+        assertThat(status.hasMoreData(), equalTo(false));
+        assertThat(status.getPaginationResponseValue().isPresent(), equalTo(false));
+    }
+
+    @Test
+    public void processResponseShouldReturnTokenFromBodyResponseWhenPresentForGoogle() {
+
+        ResponseEntity<JsonNode> responseWithTokenInBody = new ResponseEntity<>(
+                asJsonNode("org/openmhealth/shimmer/common/service/google-token-pagination-body-response.json"), OK);
+
+        PaginationStatus status = processor
+                .processPaginationResponse(getTokenSettingsForLocationWithValues(BODY, "nextPageToken", false),
+                        responseWithTokenInBody);
+
+        assertThat(status.hasMoreData(), equalTo(true));
+
+        assertThat(status.getPaginationResponseValue().isPresent(), equalTo(true));
+        assertThat(status.getPaginationResponseValue().get(), equalTo("1436566038006058105"));
+
+    }
+
+    public TokenPaginationSettings getTokenSettingsForLocationWithValues(ResponseLocation location,
+            String nextPagePropertyId, boolean isEncoded) {
+
+        TokenPaginationSettings settings = new TokenPaginationSettings();
+
+        settings.setResponseInformationEncoded(isEncoded);
+        settings.setNextPagePropertyIdentifier(nextPagePropertyId);
+        settings.setPaginationResponseLocation(location);
+
+        return settings;
+    }
+
 
     @Test
     public void processResponseShouldExtractUriValueFromBodyResponseForJawbone() {
@@ -149,7 +240,7 @@ public class UriPaginationResponseProcessorUnitTests extends ResponseProcessorUn
 
 
         PaginationStatus status =
-                processor.processPaginationResponse(getSettingsForLocationWithValues(BODY, "data.links.next", false),
+                processor.processPaginationResponse(getUriSettingsForLocationWithValues(BODY, "data.links.next", false),
                         responseWithUriInBody);
 
         assertThat(status.getPaginationResponseValue().isPresent(), equalTo(true));
@@ -165,7 +256,7 @@ public class UriPaginationResponseProcessorUnitTests extends ResponseProcessorUn
                 asJsonNode("org/openmhealth/shimmer/common/service/jawbone-uri-pagination-no-body-response.json"), OK);
 
         PaginationStatus status =
-                processor.processPaginationResponse(getSettingsForLocationWithValues(BODY, "data.links.next", false),
+                processor.processPaginationResponse(getUriSettingsForLocationWithValues(BODY, "data.links.next", false),
                         responseWithNoUriInBody);
 
         assertThat(status.getPaginationResponseValue().isPresent(), equalTo(false));
@@ -181,7 +272,7 @@ public class UriPaginationResponseProcessorUnitTests extends ResponseProcessorUn
                                 ".json"),
                 OK);
 
-        UriPaginationSettings settings = getSettingsForLocationWithValues(BODY, "NextPageUrl", true);
+        UriPaginationSettings settings = getUriSettingsForLocationWithValues(BODY, "NextPageUrl", true);
 
         PaginationStatus status = processor.processPaginationResponse(settings, responseWithUriInBodyWithEncoding);
 
@@ -198,8 +289,8 @@ public class UriPaginationResponseProcessorUnitTests extends ResponseProcessorUn
                         "=d3fd64b0ba8e4fbaa4d0b8a65c68d46e&sv=c2d2e3ffde224d1fb7a8f4a367a2ba90&page_index=2"));
     }
 
-    public UriPaginationSettings getSettingsForLocationWithValues(ResponseLocation location, String nextPagePropertyId,
-            boolean isEncoded) {
+    public UriPaginationSettings getUriSettingsForLocationWithValues(ResponseLocation location,
+            String nextPagePropertyId, boolean isEncoded) {
 
         UriPaginationSettings settings = new UriPaginationSettings();
 

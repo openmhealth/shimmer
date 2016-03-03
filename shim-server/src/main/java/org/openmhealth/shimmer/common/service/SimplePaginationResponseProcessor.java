@@ -32,7 +32,7 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asOption
 /**
  * @author Chris Schaefbauer
  */
-public class UriPaginationResponseProcessor extends PaginationResponseProcessor {
+public class SimplePaginationResponseProcessor implements PaginationResponseProcessor {
 
     @Override
     public PaginationStatus processPaginationResponse(PaginationSettings settings,

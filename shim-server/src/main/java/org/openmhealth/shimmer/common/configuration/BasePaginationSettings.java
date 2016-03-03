@@ -17,7 +17,6 @@
 package org.openmhealth.shimmer.common.configuration;
 
 import org.openmhealth.shimmer.common.domain.ResponseLocation;
-import org.openmhealth.shimmer.common.domain.pagination.PaginationResponseType;
 import org.openmhealth.shimmer.common.domain.parameters.NumberRequestParameter;
 import org.openmhealth.shimmer.common.domain.parameters.StringRequestParameter;
 
@@ -32,8 +31,9 @@ import java.util.Optional;
  */
 public abstract class BasePaginationSettings implements PaginationSettings {
 
+    // region Properties
 
-    private StringRequestParameter nextPageTokenParameter;
+    private StringRequestParameter nextPageParameter;
     private NumberRequestParameter paginationLimitParameter;
     private NumberRequestParameter paginationOffsetParameter;
 
@@ -46,16 +46,9 @@ public abstract class BasePaginationSettings implements PaginationSettings {
 
     private boolean responseInformationEncoded;
 
-    public abstract PaginationResponseType getResponseType();
+    // endregion
 
-    @Override
-    public String getPagingDirectionality() {
-        return pagingDirectionality;
-    }
-
-    public void setPagingDirectionality(String pagingDirectionality) {
-        this.pagingDirectionality = pagingDirectionality;
-    }
+    // region Request-specific methods
 
     @Override
     public Optional<BigDecimal> getPaginationLimitDefault() {
@@ -69,6 +62,7 @@ public abstract class BasePaginationSettings implements PaginationSettings {
 
     @Override
     public Optional<BigDecimal> getPaginationMaxLimit() {
+
         if (getPaginationLimitParameter().isPresent()) {
             return paginationLimitParameter.getMaximumValue();
         }
@@ -77,27 +71,8 @@ public abstract class BasePaginationSettings implements PaginationSettings {
     }
 
     @Override
-    public Optional<String> getLimitQueryParameterName() {
-        return Optional.ofNullable(paginationLimitParameter.getName());
-    }
-
-    @Override
-    public Optional<StringRequestParameter> getNextPageTokenParameter() {
-        return Optional.ofNullable(nextPageTokenParameter);
-    }
-
-    @Override
     public Optional<NumberRequestParameter> getPaginationLimitParameter() {
         return Optional.ofNullable(paginationLimitParameter);
-    }
-
-    @Override
-    public Optional<NumberRequestParameter> getPaginationOffsetParameter() {
-        return Optional.ofNullable(paginationOffsetParameter);
-    }
-
-    public void setNextPageTokenParameter(StringRequestParameter nextPageTokenParameter) {
-        this.nextPageTokenParameter = nextPageTokenParameter;
     }
 
     public void setPaginationLimitParameter(NumberRequestParameter paginationLimitParameter) {
@@ -105,8 +80,36 @@ public abstract class BasePaginationSettings implements PaginationSettings {
         this.paginationLimitParameter = paginationLimitParameter;
     }
 
+    @Override
+    public Optional<NumberRequestParameter> getPaginationOffsetParameter() {
+        return Optional.ofNullable(paginationOffsetParameter);
+    }
+
     public void setPaginationOffsetParameter(NumberRequestParameter paginationOffsetParameter) {
         this.paginationOffsetParameter = paginationOffsetParameter;
+    }
+
+    // Todo: Rename
+    @Override
+    public Optional<StringRequestParameter> getNextPageParameter() {
+        return Optional.ofNullable(nextPageParameter);
+    }
+
+    public void setNextPageParameter(StringRequestParameter nextPageParameter) {
+        this.nextPageParameter = nextPageParameter;
+    }
+
+    // endregion
+
+    // region Response-specific methods
+
+    @Override
+    public String getPagingDirectionality() {
+        return pagingDirectionality;
+    }
+
+    public void setPagingDirectionality(String pagingDirectionality) {
+        this.pagingDirectionality = pagingDirectionality;
     }
 
     @Override
@@ -118,13 +121,13 @@ public abstract class BasePaginationSettings implements PaginationSettings {
         this.paginationResponseLocation = location;
     }
 
-    public void setResponseInformationEncoded(boolean isEncoded){
-        this.responseInformationEncoded = isEncoded;
-    }
-
     @Override
     public boolean isResponseInformationEncoded() {
         return responseInformationEncoded;
+    }
+
+    public void setResponseInformationEncoded(boolean isEncoded){
+        this.responseInformationEncoded = isEncoded;
     }
 
     @Override
@@ -135,4 +138,6 @@ public abstract class BasePaginationSettings implements PaginationSettings {
     public void setNextPagePropertyIdentifier(String propertyIdentifier){
         this.nextPagePropertyIdentifier = propertyIdentifier;
     }
+
+    // endregion
 }

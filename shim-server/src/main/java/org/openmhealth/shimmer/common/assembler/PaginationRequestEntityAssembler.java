@@ -56,11 +56,9 @@ public abstract class PaginationRequestEntityAssembler implements RequestEntityA
 
         }
 
-        // If the API provides sufficient information in the response to construct the entirety of the next response,
-        // then we don't need to continue assembling.
-        if (builder.isFinishedAssembling()) {
-            return builder;
-        }
+        // Previously, if the API provided sufficient information in the response to construct the entirety of the next response,
+        // then we may not need to continue assembling. But it might not hurt to keep assembling.
+
 
         // We need to set the limit if the API has a default limit value, since we will want to override it to
         // increase the value to reduce pagination.

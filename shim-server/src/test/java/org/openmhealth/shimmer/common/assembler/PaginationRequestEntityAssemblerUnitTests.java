@@ -37,7 +37,6 @@ import java.net.URI;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.Is.is;
 import static org.openmhealth.shimmer.common.domain.parameters.RequestParameterLocation.PATH_VARIABLE;
 import static org.openmhealth.shimmer.common.domain.parameters.RequestParameterLocation.QUERY_PARAMETER;
 
@@ -69,7 +68,6 @@ public class PaginationRequestEntityAssemblerUnitTests {
 
         assertThat(assembledBuilder.build().getUrl().toString(),
                 equalTo(paginationStatus.getPaginationResponseValue().get()));
-        assertThat(assembledBuilder.isFinishedAssembling(), is(true));
     }
 
     @Test
@@ -110,7 +108,7 @@ public class PaginationRequestEntityAssemblerUnitTests {
         DefaultEndpointSettings configProperties = new DefaultEndpointSettings();
 
         TokenPaginationSettings tokenPaginationSettings = new TokenPaginationSettings();
-        tokenPaginationSettings.setNextPageTokenParameter(createNextPageTokenParameter(QUERY_PARAMETER));
+        tokenPaginationSettings.setNextPageParameter(createNextPageTokenParameter(QUERY_PARAMETER));
         configProperties.setPaginationSettings(tokenPaginationSettings);
 
         PaginationStatus paginationStatus = new TokenPaginationStatus();
@@ -127,7 +125,6 @@ public class PaginationRequestEntityAssemblerUnitTests {
                 .build().encode().toUri();
 
         assertThat(assembledBuilder.build().getUrl(), equalTo(expectedUri));
-        assertThat(assembledBuilder.isFinishedAssembling(), is(false));
     }
 
     @Test
@@ -140,7 +137,7 @@ public class PaginationRequestEntityAssemblerUnitTests {
         DefaultEndpointSettings configProperties = new DefaultEndpointSettings();
 
         TokenPaginationSettings settings = new TokenPaginationSettings();
-        settings.setNextPageTokenParameter(createNextPageTokenParameter(PATH_VARIABLE));
+        settings.setNextPageParameter(createNextPageTokenParameter(PATH_VARIABLE));
         configProperties.setPaginationSettings(settings);
 
         PaginationStatus paginationStatus = new TokenPaginationStatus();
@@ -157,7 +154,6 @@ public class PaginationRequestEntityAssemblerUnitTests {
                 .build().encode().toUri();
 
         assertThat(assembledBuilder.build().getUrl(), equalTo(expectedUri));
-        assertThat(assembledBuilder.isFinishedAssembling(), is(false));
     }
 
     @Test
@@ -208,6 +204,14 @@ public class PaginationRequestEntityAssemblerUnitTests {
         }
 
         paginationSettings.setBaseUri("https://jawbone.com/{paginationResponse}");
+
+        StringRequestParameter paginationParameter = new StringRequestParameter();
+
+        paginationParameter.setName("paginationResponse");
+        paginationParameter.setLocation(PATH_VARIABLE);
+
+        paginationSettings.setNextPageParameter(paginationParameter);
+
         configProperties.setPaginationSettings(paginationSettings);
 
         PaginationStatus paginationStatus = new UriPaginationStatus();
@@ -221,7 +225,6 @@ public class PaginationRequestEntityAssemblerUnitTests {
         URI expectedUri = UriComponentsBuilder.fromUriString(expectedUriString).build().encode().toUri();
 
         assertThat(assembledBuilder.build().getUrl(), equalTo(expectedUri));
-        assertThat(assembledBuilder.isFinishedAssembling(), is(false));
     }
 
     private void assertThatLimitParameterIsSetCorrectlyWhen(RequestParameterLocation location, String baseUriTemplate,

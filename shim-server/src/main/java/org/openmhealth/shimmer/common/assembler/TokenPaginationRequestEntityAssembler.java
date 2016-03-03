@@ -39,9 +39,9 @@ public class TokenPaginationRequestEntityAssembler extends PaginationRequestEnti
             PaginationStatus paginationStatus) {
 
 
-        if (paginationSettings.getNextPageTokenParameter().isPresent()) {
+        if (paginationSettings.getNextPageParameter().isPresent()) {
 
-            builder.addParameterWithValue(paginationSettings.getNextPageTokenParameter().get(),
+            builder.addParameterWithValue(paginationSettings.getNextPageParameter().get(),
                     paginationStatus.getPaginationResponseValue().get());
 
         }

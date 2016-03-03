@@ -158,11 +158,12 @@ public class RequestEntityBuilder<T> {
      * @return TRUE if the builder has all the information to construct a valid request to retrieve the correct data
      * points, FALSE otherwise
      */
+    @Deprecated
     public boolean isFinishedAssembling() {
         return finishedAssembling;
     }
 
-
+    @Deprecated
     public void setFinishedAssembling(boolean finishedAssembling) {
         this.finishedAssembling = finishedAssembling;
     }
@@ -174,7 +175,7 @@ public class RequestEntityBuilder<T> {
         checkArgument(!value.isEmpty());
 
         String parameterName = parameter.getName();
-        switch (parameter.getLocation()) {
+        switch ( parameter.getLocation() ) {
 
             case QUERY_PARAMETER:
                 addQueryParameter(parameterName, value);

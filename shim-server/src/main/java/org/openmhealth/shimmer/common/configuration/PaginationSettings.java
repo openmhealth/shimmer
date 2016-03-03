@@ -40,6 +40,61 @@ public interface PaginationSettings {
 
     PaginationResponseType getResponseType();
 
+    // region Request-specific methods
+
+    /**
+     * @return The default number of data points to be returned by each response from the endpoint, if one exists.
+     */
+    Optional<BigDecimal> getPaginationLimitDefault();
+
+    /**
+     * @return The maximum number of data points that can be requested in each page from the endpoint, if a maximum
+     * exists.
+     */
+    Optional<BigDecimal> getPaginationMaxLimit();
+
+    /**
+     * @return The description of the HTTP parameter used to control the maximum number of data points to be returned
+     * per page, if one exists.
+     */
+    Optional<NumberRequestParameter> getPaginationLimitParameter();
+
+    /**
+     * @return The description of the HTTP parameter used to control the offset of data points to be skipped in
+     * retrieving a specific page of data. This is specific to endpoints using offset-based manual pagination and will
+     * only
+     * exist for those endpoints.
+     */
+    Optional<NumberRequestParameter> getPaginationOffsetParameter();
+
+    /**
+     * @return The description of the parameter used in requests to deliver information from the
+     * previous response that identifies the next page pagination setting, if one exists.
+     * <p>
+     * In token pagination, this would be the next token parameter. In URI pagination, this would be the path segment or
+     * query parameter in which to insert the URI fragment.
+     */
+    Optional<StringRequestParameter> getNextPageParameter();
+
+    /**
+     * @return TRUE if the endpoint has a default for the number of data points returned per page, FALSE otherwise.
+     */
+    default boolean hasPaginationLimitDefault() {
+        return getPaginationLimitDefault().isPresent();
+    }
+
+    /**
+     * @return TRUE if the endpoint has a maximum for the number of data points that can be requested per page using the
+     * limit parameter, FALSE otherwise.
+     */
+    default boolean hasPaginationMaxLimit() {
+        return getPaginationMaxLimit().isPresent();
+    }
+
+    // endregion
+
+    // region Response-specific methods
+
     /**
      * @return The time-based directionality in which the pages of data are ordered. Could be oldest first, most recent
      * first, un-ordered, or custom.
@@ -58,61 +113,14 @@ public interface PaginationSettings {
     boolean isResponseInformationEncoded();
 
     /**
-     * @return The default number of data points to be returned by each response from the endpoint, if one exists.
-     */
-    Optional<BigDecimal> getPaginationLimitDefault();
-
-    /**
-     * @return The maximum number of data points that can be requested in each page from the endpoint, if a maximum
-     * exists.
-     */
-    Optional<BigDecimal> getPaginationMaxLimit();
-
-    @Deprecated
-    Optional<String> getLimitQueryParameterName();
-
-    /**
-     * @return The description of the HTTP parameter used to control the maximum number of data points to be returned
-     * per page, if one exists.
-     */
-    Optional<NumberRequestParameter> getPaginationLimitParameter();
-
-    /**
-     * @return The description of the HTTP parameter used to control the offset of data points to be skipped in
-     * retrieving a specific page of data. This is specific to endpoints using offset-based manual pagination and will
-     * only
-     * exist for those endpoints.
-     */
-    Optional<NumberRequestParameter> getPaginationOffsetParameter();
-
-    /**
-     * @return The description of the HTTP parameter used in requests to capture the continuation token from the
-     * previous response that identifies the next page in a token-based pagination setting, if one exists.
-     */
-    Optional<StringRequestParameter> getNextPageTokenParameter();
-
-    /**
-     * @return TRUE if the endpoint has a default for the number of data points returned per page, FALSE otherwise.
-     */
-    default boolean hasPaginationLimitDefault() {
-        return getPaginationLimitDefault().isPresent();
-    }
-
-    /**
-     * @return TRUE if the endpoint has a maximum for the number of data points that can be requested per page using the
-     * limit parameter, FALSE otherwise.
-     */
-    default boolean hasPaginationMaxLimit() {
-        return getPaginationMaxLimit().isPresent();
-    }
-
-    /**
      * @return The identifier of the property in the response, either in the body or header, that contains the
      * information necessary to retrieve the next page of data points, if they exist. For the body, this would be the
      * JSON dot path to the property. For the header, this would be the name of the header.
      * next page of data.
      */
     Optional<String> getNextPagePropertyIdentifier();
+
+    // endregion
 
     /* The following methods are unnecessary for the simplest solution where we don't worry about dealing with rate
     limits. It would support optimization and adapting the limit and the requests to optimize use of rate limits. */

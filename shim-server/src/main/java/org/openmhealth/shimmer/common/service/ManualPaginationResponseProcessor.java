@@ -25,7 +25,7 @@ import org.springframework.http.ResponseEntity;
 /**
  * @author Chris Schaefbauer
  */
-public class ManualPaginationResponseProcessor extends PaginationResponseProcessor {
+public class ManualPaginationResponseProcessor implements PaginationResponseProcessor {
 
     @Override
     public PaginationStatus processPaginationResponse(PaginationSettings settings,
