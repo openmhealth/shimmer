@@ -165,10 +165,13 @@ public abstract class OAuth2ShimBase extends ShimBase implements OAuth2Shim {
              * not, if we do not then we delete the access parameters entity.
              */
             if (restTemplate.getAccessToken() == null) {
-                accessParametersRepo.delete(accessParameters);
+                // we don't remove token, but only invalidate them instead for the records.
+                accessParameters.setValid(false);
+                accessParametersRepo.save(accessParameters);
+
                 return AuthorizationResponse.error("Did not receive approval");
             } else {
-                accessParameters = accessParametersRepo.findByUsernameAndShimKey(
+                accessParameters = accessParametersRepo.findByUsernameAndShimKeyAndValidIsTrue(
                     authorizationRequestParameters.getUsername(),
                     getShimKey(), new Sort(Sort.Direction.DESC, "dateCreated"));
             }

@@ -43,7 +43,7 @@ public class AccessParameterClientTokenServices implements ClientTokenServices {
         String username = authentication.getPrincipal().toString();
         String shimKey = authentication.getDetails().toString();
 
-        AccessParameters accessParameters = accessParametersRepo.findByUsernameAndShimKey(
+        AccessParameters accessParameters = accessParametersRepo.findByUsernameAndShimKeyAndValidIsTrue(
             username, shimKey, new Sort(Sort.Direction.DESC, "dateCreated"));
 
         if (accessParameters == null || accessParameters.getSerializedToken() == null) {
@@ -58,7 +58,7 @@ public class AccessParameterClientTokenServices implements ClientTokenServices {
                                 Authentication authentication, OAuth2AccessToken accessToken) {
         String username = authentication.getPrincipal().toString();
         String shimKey = authentication.getDetails().toString();
-        AccessParameters accessParameters = accessParametersRepo.findByUsernameAndShimKey(
+        AccessParameters accessParameters = accessParametersRepo.findByUsernameAndShimKeyAndValidIsTrue(
             username, shimKey, new Sort(Sort.Direction.DESC, "dateCreated"));
 
         if (accessParameters == null) {
@@ -77,9 +77,12 @@ public class AccessParameterClientTokenServices implements ClientTokenServices {
         String shimKey = authentication.getDetails().toString();
 
         List<AccessParameters> accessParameters =
-            accessParametersRepo.findAllByUsernameAndShimKey(username, shimKey);
+            accessParametersRepo.findAllByUsernameAndShimKeyAndValidIsTrue(username, shimKey);
+
+        // in order to keep records, we don't remove tokens, but only invalidate them instead.
         for (AccessParameters accessParameter : accessParameters) {
-            accessParametersRepo.delete(accessParameter);
+            accessParameter.setValid(false);
+            accessParametersRepo.save(accessParameter);
         }
     }
 }
