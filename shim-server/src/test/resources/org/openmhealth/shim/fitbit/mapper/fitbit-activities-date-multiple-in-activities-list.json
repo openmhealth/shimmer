@@ -1,0 +1,112 @@
+{
+    "activities": [
+        {
+            "activityId": 12120,
+            "activityParentId": 90009,
+            "activityParentName": "Run",
+            "calories": 150,
+            "description": "10 mph (6 min/mile)",
+            "distance": 6.43738,
+            "duration": 1440000,
+            "hasStartTime": true,
+            "isFavorite": false,
+            "lastModified": "2015-06-23T21:41:37.000Z",
+            "logId": 253202765,
+            "name": "Run",
+            "startDate": "2015-06-23",
+            "startTime": "11:55",
+            "steps": 6761
+        },
+        {
+            "activityId": 58002,
+            "activityParentId": 90024,
+            "activityParentName": "Swimming",
+            "description": "50-75 yards/min",
+            "hasStartTime": true,
+            "isFavorite": false,
+            "lastModified": "2015-06-23T21:41:04.000Z",
+            "logId": 253246706,
+            "name": "Swimming",
+            "startDate": "2015-06-23",
+            "startTime": "10:00",
+            "steps": 0
+        },
+        {
+            "activityId": 17200,
+            "activityParentId": 90013,
+            "activityParentName": "Walk",
+            "calories": 200,
+            "description": "3.5 mph, walking for exercise",
+            "duration": 3600000,
+            "distance": 6.43738,
+            "hasStartTime": false,
+            "isFavorite": false,
+            "lastModified": "2015-06-23T21:42:44.000Z",
+            "logId": 253202766,
+            "name": "Walk",
+            "startDate": "2015-06-23",
+            "startTime": "15:00",
+            "steps": 8481
+        }
+    ],
+    "goals": {
+        "activeMinutes": 30,
+        "caloriesOut": 2859,
+        "distance": 8.05,
+        "steps": 10000
+    },
+    "summary": {
+        "activeScore": -1,
+        "activityCalories": 150,
+        "caloriesBMR": 1069,
+        "caloriesOut": 1218,
+        "distances": [
+            {
+                "activity": "Run",
+                "distance": 6.43738
+            },
+            {
+                "activity": "Swimming",
+                "distance": 3.21869
+            },
+            {
+                "activity": "Walk",
+                "distance": 6.43738
+            },
+            {
+                "activity": "total",
+                "distance": 12.87
+            },
+            {
+                "activity": "tracker",
+                "distance": 0
+            },
+            {
+                "activity": "loggedActivities",
+                "distance": 16.09345
+            },
+            {
+                "activity": "veryActive",
+                "distance": 6.44
+            },
+            {
+                "activity": "moderatelyActive",
+                "distance": 0
+            },
+            {
+                "activity": "lightlyActive",
+                "distance": 6.44
+            },
+            {
+                "activity": "sedentaryActive",
+                "distance": 0
+            }
+        ],
+        "fairlyActiveMinutes": 0,
+        "lightlyActiveMinutes": 72,
+        "marginalCalories": 96,
+        "sedentaryMinutes": 787,
+        "steps": 15242,
+        "veryActiveMinutes": 24
+    }
+}

@@ -135,6 +135,18 @@ public class JsonNodeMappingSupport {
     /**
      * @param parentNode a parent node
      * @param path the path to a child node
+     * @return the value of the child node as a BigDecimal
+     * @throws MissingJsonNodeMappingException if the child doesn't exist
+     * @throws IncompatibleJsonNodeMappingException if the value of the child node isn't numeric
+     */
+    public static BigDecimal asRequiredBigDecimal(JsonNode parentNode, String path) {
+
+        return asRequiredValue(parentNode, path, JsonNode::isNumber, JsonNode::decimalValue, BigDecimal.class);
+    }
+
+    /**
+     * @param parentNode a parent node
+     * @param path the path to a child node
      * @return the value of the child node as a {@link LocalDate}
      * @throws MissingJsonNodeMappingException if the child doesn't exist
      * @throws IncompatibleJsonNodeMappingException if the value of the child node isn't a date

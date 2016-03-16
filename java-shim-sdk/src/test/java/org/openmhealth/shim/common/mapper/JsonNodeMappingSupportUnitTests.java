@@ -6,6 +6,7 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
@@ -607,5 +608,52 @@ public class JsonNodeMappingSupportUnitTests {
         assertThat(value, notNullValue());
         assertThat(value.isPresent(), equalTo(true));
         assertThat(value.get(), equalTo(2));
+    }
+
+    @Test
+    public void asOptionalBigDecimalShouldReturnBigDecimalForInteger() {
+
+        Optional<BigDecimal> value = asOptionalBigDecimal(testNode, "integer");
+
+        assertThat(value, notNullValue());
+        assertThat(value.isPresent(), equalTo(true));
+        assertThat(value.get().intValue(), equalTo(2));
+    }
+
+    @Test
+    public void asOptionalBigDecimalShouldReturnBigDecimalForDecimalValue() {
+
+        Optional<BigDecimal> value = asOptionalBigDecimal(testNode, "number");
+
+        assertThat(value, notNullValue());
+        assertThat(value.isPresent(), equalTo(true));
+        assertThat(value.get().doubleValue(), equalTo(2.3));
+    }
+
+    @Test
+    public void asOptionalBigDecimalShouldReturnEmptyOnMissingNode() {
+
+        Optional<BigDecimal> value = asOptionalBigDecimal(testNode, "foo");
+
+        assertThat(value, notNullValue());
+        assertThat(value.isPresent(), equalTo(false));
+    }
+
+    @Test
+    public void asOptionalBigDecimalShouldReturnEmptyOnNullNode() {
+
+        Optional<BigDecimal> value = asOptionalBigDecimal(testNode, "empty");
+
+        assertThat(value, notNullValue());
+        assertThat(value.isPresent(), equalTo(false));
+    }
+
+    @Test
+    public void asOptionalBigDecimalShouldReturnEmptyOnNonNumberNode() {
+
+        Optional<BigDecimal> value = asOptionalBigDecimal(testNode, "string");
+
+        assertThat(value, notNullValue());
+        assertThat(value.isPresent(), equalTo(false));
     }
 }

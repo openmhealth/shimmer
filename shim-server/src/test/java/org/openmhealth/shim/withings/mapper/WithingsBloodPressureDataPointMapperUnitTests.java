@@ -19,7 +19,6 @@ package org.openmhealth.shim.withings.mapper;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.openmhealth.schema.domain.omh.*;
 import org.openmhealth.shim.common.mapper.DataPointMapperUnitTests;
-import org.springframework.core.io.ClassPathResource;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -30,6 +29,7 @@ import java.util.List;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.openmhealth.schema.domain.omh.BloodPressure.*;
 import static org.openmhealth.schema.domain.omh.BloodPressureUnit.MM_OF_MERCURY;
 import static org.openmhealth.schema.domain.omh.DataPointModality.SENSED;
 import static org.openmhealth.shim.withings.mapper.WithingsDataPointMapper.RESOURCE_API_SOURCE_NAME;
@@ -46,16 +46,14 @@ public class WithingsBloodPressureDataPointMapperUnitTests extends DataPointMapp
 
     @BeforeTest
     public void initializeResponseNode() throws IOException {
-        ClassPathResource resource =
-                new ClassPathResource("org/openmhealth/shim/withings/mapper/withings-body-measures.json");
 
-        responseNode = objectMapper.readTree(resource.getInputStream());
+        responseNode = asJsonNode("org/openmhealth/shim/withings/mapper/withings-body-measures.json");
     }
 
     @Test
     public void asDataPointsShouldReturnCorrectNumberOfDataPoints() {
 
-        List<DataPoint<BloodPressure>> dataPoints = mapper.asDataPoints(singletonList(responseNode));
+        List<DataPoint<BloodPressure>> dataPoints = mapper.asDataPoints(responseNode);
         assertThat(dataPoints.size(), equalTo(1));
     }
 
@@ -73,7 +71,7 @@ public class WithingsBloodPressureDataPointMapperUnitTests extends DataPointMapp
         assertThat(actualDataPoints.get(0).getBody(), equalTo(expectedBloodPressure));
 
         DataPointHeader actualDataPointHeader = actualDataPoints.get(0).getHeader();
-        assertThat(actualDataPointHeader.getBodySchemaId(), equalTo(BloodPressure.SCHEMA_ID));
+        assertThat(actualDataPointHeader.getBodySchemaId(), equalTo(SCHEMA_ID));
         assertThat(actualDataPointHeader.getAcquisitionProvenance().getModality(), equalTo(SENSED));
         assertThat(actualDataPointHeader.getAcquisitionProvenance().getSourceName(), equalTo(RESOURCE_API_SOURCE_NAME));
         assertThat(actualDataPointHeader.getAcquisitionProvenance().getAdditionalProperties().get("external_id"),

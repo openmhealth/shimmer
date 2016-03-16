@@ -20,6 +20,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.Lists;
 import org.openmhealth.schema.domain.omh.DataPoint;
 import org.openmhealth.schema.domain.omh.Measure;
+import org.openmhealth.schema.domain.omh.SchemaSupport;
 
 import java.util.List;
 import java.util.Optional;
@@ -35,7 +36,7 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asRequir
  * @author Chris Schaefbauer
  * @author Emerson Farrugia
  */
-public abstract class WithingsListDataPointMapper<T> extends WithingsDataPointMapper<T> {
+public abstract class WithingsListDataPointMapper<T extends SchemaSupport> extends WithingsDataPointMapper<T> {
 
     /**
      * Maps a JSON response with individual data points contained in a JSON array to a list of {@link DataPoint}

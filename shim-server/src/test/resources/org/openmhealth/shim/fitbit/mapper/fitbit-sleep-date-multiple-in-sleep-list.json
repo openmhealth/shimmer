@@ -1,0 +1,2329 @@
+{
+    "sleep": [
+        {
+            "awakeCount": 0,
+            "awakeDuration": 0,
+            "awakeningsCount": 0,
+            "dateOfSleep": "2015-06-08",
+            "duration": 5400000,
+            "efficiency": 100,
+            "isMainSleep": false,
+            "logId": 1008298328,
+            "minuteData": [
+                {
+                    "dateTime": "13:00:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "13:01:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "13:02:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "13:03:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "13:04:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "13:05:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "13:06:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "13:07:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "13:08:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "13:09:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "13:10:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "13:11:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "13:12:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "13:13:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "13:14:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "13:15:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "13:16:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "13:17:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "13:18:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "13:19:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "13:20:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "13:21:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "13:22:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "13:23:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "13:24:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "13:25:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "13:26:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "13:27:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "13:28:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "13:29:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "13:30:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "13:31:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "13:32:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "13:33:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "13:34:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "13:35:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "13:36:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "13:37:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "13:38:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "13:39:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "13:40:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "13:41:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "13:42:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "13:43:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "13:44:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "13:45:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "13:46:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "13:47:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "13:48:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "13:49:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "13:50:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "13:51:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "13:52:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "13:53:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "13:54:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "13:55:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "13:56:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "13:57:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "13:58:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "13:59:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "14:00:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "14:01:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "14:02:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "14:03:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "14:04:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "14:05:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "14:06:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "14:07:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "14:08:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "14:09:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "14:10:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "14:11:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "14:12:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "14:13:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "14:14:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "14:15:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "14:16:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "14:17:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "14:18:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "14:19:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "14:20:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "14:21:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "14:22:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "14:23:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "14:24:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "14:25:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "14:26:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "14:27:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "14:28:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "14:29:00",
+                    "value": "1"
+                }
+            ],
+            "minutesAfterWakeup": 0,
+            "minutesAsleep": 90,
+            "minutesAwake": 0,
+            "minutesToFallAsleep": 0,
+            "restlessCount": 0,
+            "restlessDuration": 0,
+            "startTime": "2015-06-08T13:00:00.000",
+            "timeInBed": 90
+        },
+        {
+            "awakeCount": 0,
+            "awakeDuration": 0,
+            "awakeningsCount": 0,
+            "dateOfSleep": "2015-06-08",
+            "duration": 28800000,
+            "efficiency": 100,
+            "isMainSleep": true,
+            "logId": 1008807164,
+            "minuteData": [
+                {
+                    "dateTime": "22:00:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "22:01:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "22:02:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "22:03:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "22:04:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "22:05:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "22:06:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "22:07:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "22:08:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "22:09:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "22:10:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "22:11:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "22:12:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "22:13:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "22:14:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "22:15:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "22:16:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "22:17:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "22:18:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "22:19:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "22:20:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "22:21:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "22:22:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "22:23:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "22:24:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "22:25:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "22:26:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "22:27:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "22:28:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "22:29:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "22:30:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "22:31:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "22:32:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "22:33:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "22:34:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "22:35:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "22:36:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "22:37:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "22:38:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "22:39:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "22:40:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "22:41:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "22:42:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "22:43:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "22:44:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "22:45:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "22:46:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "22:47:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "22:48:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "22:49:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "22:50:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "22:51:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "22:52:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "22:53:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "22:54:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "22:55:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "22:56:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "22:57:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "22:58:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "22:59:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "23:00:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "23:01:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "23:02:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "23:03:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "23:04:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "23:05:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "23:06:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "23:07:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "23:08:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "23:09:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "23:10:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "23:11:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "23:12:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "23:13:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "23:14:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "23:15:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "23:16:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "23:17:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "23:18:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "23:19:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "23:20:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "23:21:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "23:22:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "23:23:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "23:24:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "23:25:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "23:26:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "23:27:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "23:28:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "23:29:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "23:30:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "23:31:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "23:32:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "23:33:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "23:34:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "23:35:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "23:36:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "23:37:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "23:38:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "23:39:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "23:40:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "23:41:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "23:42:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "23:43:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "23:44:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "23:45:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "23:46:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "23:47:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "23:48:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "23:49:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "23:50:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "23:51:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "23:52:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "23:53:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "23:54:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "23:55:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "23:56:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "23:57:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "23:58:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "23:59:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "00:00:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "00:01:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "00:02:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "00:03:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "00:04:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "00:05:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "00:06:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "00:07:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "00:08:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "00:09:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "00:10:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "00:11:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "00:12:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "00:13:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "00:14:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "00:15:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "00:16:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "00:17:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "00:18:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "00:19:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "00:20:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "00:21:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "00:22:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "00:23:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "00:24:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "00:25:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "00:26:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "00:27:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "00:28:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "00:29:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "00:30:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "00:31:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "00:32:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "00:33:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "00:34:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "00:35:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "00:36:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "00:37:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "00:38:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "00:39:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "00:40:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "00:41:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "00:42:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "00:43:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "00:44:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "00:45:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "00:46:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "00:47:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "00:48:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "00:49:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "00:50:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "00:51:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "00:52:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "00:53:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "00:54:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "00:55:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "00:56:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "00:57:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "00:58:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "00:59:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "01:00:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "01:01:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "01:02:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "01:03:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "01:04:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "01:05:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "01:06:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "01:07:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "01:08:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "01:09:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "01:10:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "01:11:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "01:12:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "01:13:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "01:14:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "01:15:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "01:16:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "01:17:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "01:18:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "01:19:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "01:20:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "01:21:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "01:22:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "01:23:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "01:24:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "01:25:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "01:26:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "01:27:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "01:28:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "01:29:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "01:30:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "01:31:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "01:32:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "01:33:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "01:34:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "01:35:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "01:36:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "01:37:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "01:38:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "01:39:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "01:40:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "01:41:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "01:42:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "01:43:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "01:44:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "01:45:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "01:46:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "01:47:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "01:48:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "01:49:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "01:50:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "01:51:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "01:52:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "01:53:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "01:54:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "01:55:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "01:56:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "01:57:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "01:58:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "01:59:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "02:00:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "02:01:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "02:02:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "02:03:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "02:04:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "02:05:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "02:06:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "02:07:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "02:08:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "02:09:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "02:10:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "02:11:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "02:12:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "02:13:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "02:14:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "02:15:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "02:16:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "02:17:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "02:18:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "02:19:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "02:20:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "02:21:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "02:22:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "02:23:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "02:24:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "02:25:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "02:26:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "02:27:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "02:28:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "02:29:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "02:30:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "02:31:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "02:32:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "02:33:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "02:34:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "02:35:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "02:36:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "02:37:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "02:38:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "02:39:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "02:40:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "02:41:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "02:42:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "02:43:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "02:44:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "02:45:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "02:46:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "02:47:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "02:48:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "02:49:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "02:50:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "02:51:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "02:52:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "02:53:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "02:54:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "02:55:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "02:56:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "02:57:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "02:58:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "02:59:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "03:00:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "03:01:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "03:02:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "03:03:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "03:04:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "03:05:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "03:06:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "03:07:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "03:08:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "03:09:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "03:10:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "03:11:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "03:12:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "03:13:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "03:14:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "03:15:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "03:16:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "03:17:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "03:18:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "03:19:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "03:20:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "03:21:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "03:22:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "03:23:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "03:24:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "03:25:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "03:26:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "03:27:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "03:28:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "03:29:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "03:30:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "03:31:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "03:32:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "03:33:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "03:34:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "03:35:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "03:36:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "03:37:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "03:38:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "03:39:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "03:40:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "03:41:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "03:42:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "03:43:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "03:44:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "03:45:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "03:46:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "03:47:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "03:48:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "03:49:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "03:50:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "03:51:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "03:52:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "03:53:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "03:54:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "03:55:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "03:56:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "03:57:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "03:58:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "03:59:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "04:00:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "04:01:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "04:02:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "04:03:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "04:04:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "04:05:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "04:06:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "04:07:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "04:08:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "04:09:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "04:10:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "04:11:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "04:12:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "04:13:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "04:14:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "04:15:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "04:16:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "04:17:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "04:18:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "04:19:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "04:20:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "04:21:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "04:22:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "04:23:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "04:24:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "04:25:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "04:26:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "04:27:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "04:28:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "04:29:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "04:30:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "04:31:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "04:32:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "04:33:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "04:34:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "04:35:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "04:36:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "04:37:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "04:38:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "04:39:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "04:40:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "04:41:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "04:42:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "04:43:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "04:44:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "04:45:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "04:46:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "04:47:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "04:48:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "04:49:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "04:50:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "04:51:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "04:52:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "04:53:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "04:54:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "04:55:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "04:56:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "04:57:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "04:58:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "04:59:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "05:00:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "05:01:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "05:02:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "05:03:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "05:04:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "05:05:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "05:06:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "05:07:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "05:08:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "05:09:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "05:10:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "05:11:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "05:12:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "05:13:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "05:14:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "05:15:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "05:16:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "05:17:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "05:18:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "05:19:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "05:20:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "05:21:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "05:22:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "05:23:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "05:24:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "05:25:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "05:26:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "05:27:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "05:28:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "05:29:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "05:30:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "05:31:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "05:32:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "05:33:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "05:34:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "05:35:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "05:36:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "05:37:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "05:38:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "05:39:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "05:40:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "05:41:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "05:42:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "05:43:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "05:44:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "05:45:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "05:46:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "05:47:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "05:48:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "05:49:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "05:50:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "05:51:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "05:52:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "05:53:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "05:54:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "05:55:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "05:56:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "05:57:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "05:58:00",
+                    "value": "1"
+                },
+                {
+                    "dateTime": "05:59:00",
+                    "value": "1"
+                }
+            ],
+            "minutesAfterWakeup": 0,
+            "minutesAsleep": 480,
+            "minutesAwake": 0,
+            "minutesToFallAsleep": 0,
+            "restlessCount": 0,
+            "restlessDuration": 0,
+            "startTime": "2015-06-07T22:00:00.000",
+            "timeInBed": 480
+        }
+    ],
+    "summary": {
+        "totalMinutesAsleep": 570,
+        "totalSleepRecords": 2,
+        "totalTimeInBed": 570
+    }
+}

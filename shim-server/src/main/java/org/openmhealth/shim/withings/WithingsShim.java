@@ -67,15 +67,16 @@ public class WithingsShim extends OAuth1ShimBase {
 
     private static final String PARTNER_ACCESS_ACTIVITY_ENDPOINT = "getintradayactivity";
 
-    @Value("${openmhealth.shim.withings.partner_access:false}")
+    @Value("${openmhealth.shim.withings.partnerAccess:false}")
     protected boolean partnerAccess;
 
     @Autowired
     public WithingsShim(ApplicationAccessParametersRepo applicationParametersRepo,
             AuthorizationRequestParametersRepo authorizationRequestParametersRepo,
-            ShimServerConfig shimServerConfig) {
+            ShimServerConfig shimServerConfig,
+            AccessParametersRepo accessParametersRepo) {
 
-        super(applicationParametersRepo, authorizationRequestParametersRepo, shimServerConfig);
+        super(applicationParametersRepo, authorizationRequestParametersRepo, shimServerConfig, accessParametersRepo);
 
     }
 

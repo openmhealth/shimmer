@@ -19,35 +19,34 @@ package org.openmhealth.shim.fitbit.mapper;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.openmhealth.schema.domain.omh.BodyWeight;
 import org.openmhealth.schema.domain.omh.DataPoint;
-import org.openmhealth.schema.domain.omh.MassUnit;
 import org.openmhealth.schema.domain.omh.MassUnitValue;
 
 import java.time.OffsetDateTime;
 import java.util.Optional;
 
+import static org.openmhealth.schema.domain.omh.MassUnit.KILOGRAM;
 import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asOptionalLong;
 import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asRequiredDouble;
 
 
 /**
- * A mapper from Fitbit Resource API body/log/weight responses to {@link BodyWeight} objects
+ * A mapper that translates responses from the Fitbit Resource API <code>body/log/weight</code> endpoint into {@link
+ * BodyWeight} data points.
  *
  * @author Chris Schaefbauer
+ * @see <a href="https://dev.fitbit.com/docs/body/#weight">API documentation</a>
  */
 public class FitbitBodyWeightDataPointMapper extends FitbitDataPointMapper<BodyWeight> {
 
-    /**
-     * Maps a JSON response node from the Fitbit API into a {@link BodyWeight} measure
-     *
-     * @param node a JSON node for an individual object in the "weight" array retrieved from the body/log/weight Fitbit
-     * API call
-     * @return a {@link DataPoint} object containing a {@link BodyWeight} measure with the appropriate values from the
-     * JSON node parameter, wrapped as an {@link Optional}
-     */
+    @Override
+    protected String getListNodeName() {
+        return "weight";
+    }
+
     @Override
     protected Optional<DataPoint<BodyWeight>> asDataPoint(JsonNode node) {
 
-        MassUnitValue bodyWeight = new MassUnitValue(MassUnit.KILOGRAM, asRequiredDouble(node, "weight"));
+        MassUnitValue bodyWeight = new MassUnitValue(KILOGRAM, asRequiredDouble(node, "weight"));
         BodyWeight.Builder builder = new BodyWeight.Builder(bodyWeight);
 
         Optional<OffsetDateTime> dateTime = combineDateTimeAndTimezone(node);
@@ -57,17 +56,7 @@ public class FitbitBodyWeightDataPointMapper extends FitbitDataPointMapper<BodyW
         }
 
         Optional<Long> externalId = asOptionalLong(node, "logId");
-        BodyWeight measure = builder.build();
 
-        return Optional.of(newDataPoint(measure, externalId.orElse(null)));
-
-    }
-
-    /**
-     * @return the name of the list node returned from Fitbit Resource API body/log/weight response
-     */
-    @Override
-    protected String getListNodeName() {
-        return "weight";
+        return Optional.of(newDataPoint(builder.build(), externalId.orElse(null)));
     }
 }

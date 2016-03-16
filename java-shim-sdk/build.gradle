@@ -31,14 +31,13 @@ archivesBaseName = 'omh-shim-sdk'
 version = '1.0.0'
 
 ext {
-    jacksonVersion = '2.5.3'
+    jacksonVersion = '2.6.1'
 }
 
 dependencies {
     compile "com.google.guava:guava:18.0"
     compile "com.fasterxml.jackson.core:jackson-annotations:${jacksonVersion}"
     compile "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}"
-    compile "joda-time:joda-time:2.5" // TODO remove this when refactored to java.time
     compile "org.openmhealth.schema:omh-schema-sdk:${omhSchemaSdkVersion}"
     compile 'org.slf4j:slf4j-api:1.7.12'
 

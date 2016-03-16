@@ -1,37 +1,47 @@
 spring:
   application:
-    name: Open mHealth shim server
-  # this is necessary to prevent proxy errors due https://github.com/spring-projects/spring-boot/issues/1929
-  dao:
-    exceptiontranslation:
-      enabled: false
+    name: Shimmer
   data:
     mongodb:
-      uri: mongodb://omh-mongo:27017/omh
+      uri: mongodb://mongo:27017/omh_dsu
   jackson:
     serialization:
       indent_output: true
 server:
-  port: 8084
+  port: 8083
 security:
   basic:
     enabled: false
 logging:
-  path: /var/log/ohmage-shim/
+  file: shimmer.log
 
 openmhealth:
   shim:
     server:
-      callbackUrlBase: http://localhost:8084/shims
+      callbackUrlBase: http://localhost:8083
 
-    #NOTE: Un-comment and fill in with your credentials if you're not using the UI
+    #NOTE: Uncomment and fill in the clientId/clientSecret with your credentials if you're not using the UI
+    #NOTE: Uncomment and set partnerAccess to true if your credentials for a given API have partner access
+    #NOTE: Uncomment and fill in your serialValues for iHealth, otherwise the iHealth shim will not work correctly
+    #ihealth:
+    #  serialValues:
+    #    SC: [YOUR_SC_VALUE]
+    #    sportSV: [YOUR_SV_VALUE_FOR_THE_SPORT_ENDPOINT]
+    #    bloodPressureSV: [YOUR_SV_VALUE_FOR_THE_BLOOD_PRESSURE_ENDPOINT]
+    #    spo2SV: [YOUR_SV_VALUE_FOR_THE_SPO2_ENDPOINT]
+    #    weightSV: [YOUR_SV_VALUE_FOR_THE_WEIGHT_ENDPOINT]
+    #    bloodGlucoseSV: [YOUR_SV_VALUE_FOR_THE_BLOOD_GLUCOSE_ENDPOINT]
+    #    activitySV: [YOUR_SV_VALUE_FOR_THE_ACTIVITY_ENDPOINT]
+    #    sleepSV: [YOUR_SV_VALUE_FOR_THE_SLEEP_ENDPOINT]
+    #  clientId: [YOUR_CLIENT_ID]
+    #  clientSecret: [YOUR_CLIENT_SECRET]
     #fitbit:
+    #  partnerAccess: true
     #  clientId: [YOUR_CLIENT_ID]
     #  clientSecret: [YOUR_CLIENT_SECRET]
     #fatsecret:
     #  clientId: [YOUR_CLIENT_ID]
     #  clientSecret: [YOUR_CLIENT_SECRET]
-    #ihealth:
     #  clientId: [YOUR_CLIENT_ID]
     #  clientSecret: [YOUR_CLIENT_SECRET]
     #jawbone:
@@ -44,7 +54,7 @@ openmhealth:
     #  clientId: [YOUR_CLIENT_ID]
     #  clientSecret: [YOUR_CLIENT_SECRET]
     #withings:
-    #  partner_access: true
+    #  partnerAccess: true
     #  clientId: [YOUR_CLIENT_ID]
     #  clientSecret: [YOUR_CLIENT_SECRET]
     #healthvault:
@@ -52,7 +62,3 @@ openmhealth:
     #googlefit:
     #  clientId: [YOUR_CLIENT_ID]
     #  clientSecret: [YOUR_CLIENT_SECRET]
-    #moves:
-    #  clientId: [YOUR_CLIENT_ID]
-    #  clientSecret: [YOUR_CLIENT_SECRET]
-

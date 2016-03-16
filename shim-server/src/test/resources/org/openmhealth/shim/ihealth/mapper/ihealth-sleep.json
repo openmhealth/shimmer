@@ -1,0 +1,55 @@
+{
+    "CurrentRecordCount": 3,
+    "NextPageUrl": "",
+    "PageLength": 50,
+    "PageNumber": 1,
+    "PrevPageUrl": "",
+    "RecordCount": 3,
+    "SRDataList": [
+        {
+            "Awaken": 13,
+            "DataID": "7eb7292b90d710ae7b7f61b75f9425cf",
+            "DataSource": "FromDevice",
+            "EndTime": 1447578960,
+            "FallSleep": 0,
+            "HoursSlept": 345,
+            "LastChangeTime": 1447604350,
+            "Lat": 0,
+            "Lon": 0,
+            "Note": "",
+            "SleepEfficiency": 77,
+            "StartTime": 1447552260,
+            "TimeZone": "-0700"
+        },
+        {
+            "Awaken": 2,
+            "DataID": "34aa1c5351f965dbb6a09f3c5b730e83",
+            "DataSource": "FromDevice",
+            "EndTime": 1447607760,
+            "FallSleep": 0,
+            "HoursSlept": 195,
+            "LastChangeTime": 1447689288,
+            "Lat": 0,
+            "Lon": 0,
+            "Note": "Best sleep ever",
+            "SleepEfficiency": 95,
+            "StartTime": 1447595460,
+            "TimeZone": "+0100"
+        },
+        {
+            "Awaken": 0,
+            "DataID": "ed650c323ebd78e444430291675bd2fd",
+            "DataSource": "Manual",
+            "EndTime": 1447657920,
+            "FallSleep": 0,
+            "HoursSlept": 355,
+            "LastChangeTime": 1447689288,
+            "Lat": 0,
+            "Lon": 0,
+            "Note": "",
+            "SleepEfficiency": 87,
+            "StartTime": 1447633620,
+            "TimeZone": "-0700"
+        }
+    ]
+}

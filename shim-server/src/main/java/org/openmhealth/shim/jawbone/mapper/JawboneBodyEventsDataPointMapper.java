@@ -29,7 +29,7 @@ import static org.openmhealth.shim.jawbone.mapper.JawboneBodyEventType.BODY_WEIG
 
 
 /**
- * Base class for Jawbone mappers that translate different individual body events (e.g., weight, bmi) into {@link
+ * Base class for Jawbone mappers that translate different individual body events (e.g., weight, BMI) into {@link
  * Measure} objects.
  *
  * @author Chris Schaefbauer

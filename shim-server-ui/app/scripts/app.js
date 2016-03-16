@@ -14,6 +14,10 @@ angular
                 templateUrl: 'views/main.html',
                 controller: 'MainCtrl'
             })
+            .when('/authorizationComplete/:errorState', {
+                templateUrl: 'views/authorizationComplete.html',
+                controller: 'AuthorizationCompleteCtrl'
+            })
             .otherwise({
                 redirectTo: '/'
             });

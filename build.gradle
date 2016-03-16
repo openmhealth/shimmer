@@ -10,8 +10,8 @@ subprojects {
 
     ext {
         javaVersion = 1.8
-        shimmerVersion = '0.3.0.SNAPSHOT'
-        omhSchemaSdkVersion = '1.0.3'
+        shimmerVersion = '0.4.3'
+        omhSchemaSdkVersion = '1.0.5'
     }
 
     sourceCompatibility = javaVersion

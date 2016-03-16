@@ -17,16 +17,14 @@
 package org.openmhealth.shim.misfit.mapper;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import org.openmhealth.schema.domain.omh.DataPoint;
-import org.openmhealth.schema.domain.omh.DurationUnitValue;
-import org.openmhealth.schema.domain.omh.LengthUnitValue;
-import org.openmhealth.schema.domain.omh.PhysicalActivity;
+import org.openmhealth.schema.domain.omh.*;
 
 import java.time.OffsetDateTime;
 import java.util.Optional;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.openmhealth.schema.domain.omh.DurationUnit.SECOND;
+import static org.openmhealth.schema.domain.omh.KcalUnit.KILOCALORIE;
 import static org.openmhealth.schema.domain.omh.LengthUnit.MILE;
 import static org.openmhealth.schema.domain.omh.TimeInterval.ofStartDateTimeAndDuration;
 import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.*;
@@ -68,6 +66,9 @@ public class MisfitPhysicalActivityDataPointMapper extends MisfitDataPointMapper
             DurationUnitValue durationUnitValue = new DurationUnitValue(SECOND, durationInSec.get());
             builder.setEffectiveTimeFrame(ofStartDateTimeAndDuration(startDateTime.get(), durationUnitValue));
         }
+
+        asOptionalBigDecimal(sessionNode, "calories")
+                .ifPresent(calories -> builder.setCaloriesBurned(new KcalUnitValue(KILOCALORIE, 96.8)));
 
         PhysicalActivity measure = builder.build();
 

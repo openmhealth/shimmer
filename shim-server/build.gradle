@@ -5,86 +5,94 @@ buildscript {
     }
 
     ext {
-        springBootVersion = "1.2.5.RELEASE"
+        springBootVersion = "1.3.2.RELEASE"
     }
 
     dependencies {
-        classpath 'io.spring.gradle:dependency-management-plugin:0.5.3.RELEASE'
         classpath "org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}"
     }
 }
 
+apply plugin: 'war'
 apply plugin: 'spring-boot'
-apply plugin: 'io.spring.dependency-management'
 
 version = shimmerVersion
 
-jar {
+war {
     baseName = 'shimmer'
 }
 
 bootRepackage {
-    mainClass = "org.openmhealth.shim.Application"
+    mainClass = "org.openmhealth.shimmer.Application"
 }
 
 ext {
     signpostVersion = '1.2.1.2'
-    springSecurityOAuthVersion = '2.0.7.RELEASE'
-}
-
-ext['jackson.version'] = '2.5.3'
-ext["spring-data-releasetrain.version"] = "Fowler-SR2"
-
-configurations {
-    compile.exclude module: "spring-boot-starter-tomcat"
-}
-
-dependencyManagement {
-    imports {
-        mavenBom "org.springframework.boot:spring-boot-dependencies:${springBootVersion}"
-    }
 }
 
 dependencies {
     compile project(':java-shim-sdk')
     compile "commons-io:commons-io:2.4"
-    compile "com.google.code.findbugs:jsr305:3.0.0"
+    compile "org.hibernate:hibernate-validator"
     compile "org.apache.httpcomponents:httpclient"
-    compile "org.apache.httpcomponents:httpcore:4.3.3"
+    compile "org.apache.httpcomponents:httpcore"
     compile "com.fasterxml.jackson.core:jackson-annotations"
     compile "com.fasterxml.jackson.dataformat:jackson-dataformat-xml"
     compile "com.fasterxml.jackson.datatype:jackson-datatype-jsr310"
     compile "com.fasterxml.jackson.datatype:jackson-datatype-jdk8"
-    compile "joda-time:joda-time"             // TODO delete this when shims have been migrated
+    compile "com.google.code.findbugs:jsr305:3.0.0"
     compile "org.mongodb:mongo-java-driver"
     compile "org.openmhealth.schema:omh-schema-sdk:${omhSchemaSdkVersion}"
     compile "oauth.signpost:signpost-commonshttp4:${signpostVersion}"
     compile "oauth.signpost:signpost-core:${signpostVersion}"
     compile "org.springframework.boot:spring-boot-autoconfigure"
-    compile "org.springframework.boot:spring-boot-starter-jetty"
     compile "org.springframework.data:spring-data-mongodb"
-    compile "org.springframework.security.oauth:spring-security-oauth:${springSecurityOAuthVersion}"
-    compile "org.springframework.security.oauth:spring-security-oauth2:${springSecurityOAuthVersion}"
+    compile "org.springframework.security.oauth:spring-security-oauth"
+    compile "org.springframework.security.oauth:spring-security-oauth2"
     compile "org.springframework:spring-web"
     compile "org.springframework:spring-webmvc"
-    compile "org.codehaus.woodstox:woodstox-core-asl:4.4.1" // required to print XML
+    compile "javax.validation:validation-api:1.1.0.Final"
 
-    testCompile 'org.testng:testng:6.8.21' // slowly migrate to TestNG
+    testCompile "org.hamcrest:hamcrest-core"
+    testCompile "org.hamcrest:hamcrest-library"
     testCompile "junit:junit"
     testCompile "org.mockito:mockito-core"
-    testCompile "org.springframework.boot:spring-boot-starter-test"
+    testCompile "org.springframework:spring-test"
+    testCompile "org.testng:testng:6.8.21" // slowly migrate to TestNG
 
+    runtime "org.glassfish:javax.el"
     runtime 'org.slf4j:jcl-over-slf4j'
     runtime 'org.slf4j:log4j-over-slf4j'
     runtime 'ch.qos.logback:logback-classic'
+    runtime "org.yaml:snakeyaml"
+
+    /* Servlet API and Jetty dependencies shouldn't be included in the `lib` directory of the assembled WAR file,
+       as they'll conflict with existing classes in the application server's classpath. To prevent them from being
+       copied into the WAR file, their scope is set to `providedCompile` or `providedRuntime` as defined
+       by the Gradle WAR plugin.
+
+       In order to make the WAR executable from the command line, the Spring Boot Gradle plugin copies the
+       dependencies to a different directory in the WAR file called `lib-provided`, which is ignored by the application
+       server but contributes classes to the classpath when running with `java -jar`.
+
+       Unfortunately, IntelliJ's Spring Boot run configuration doesn't include dependencies with provided scope in the
+       application classpath, and the application fails to start because of missing classes. This is tracked
+       at https://youtrack.jetbrains.com/issue/IDEA-107048. To get around this, you can either use a Gradle run
+       configuration and set it to execute the `bootRun` task. Or you can use the Spring Boot run configuration
+       and toggle the comments on the following four lines.
+    */
+    providedCompile "javax.servlet:javax.servlet-api"
+    providedRuntime "org.springframework.boot:spring-boot-starter-jetty"
+    // compile "javax.servlet:javax.servlet-api"
+    // runtime "org.springframework.boot:spring-boot-starter-jetty"
 }
 
-task copyArchiveJarToDockerContext(dependsOn: assemble, type: Copy) {
+task copyWarToDockerContext(dependsOn: assemble, type: Copy) {
     from 'build/libs'
     into 'docker'
-    include "${jar.archiveName}"
+    include "${war.archiveName}"
     rename { String fileName ->
-        fileName.replace("${jar.archiveName}", "${jar.baseName}.jar")
+        fileName.replace("${war.archiveName}", "${war.baseName}.war")
     }
 }
-build.dependsOn copyArchiveJarToDockerContext
+build.dependsOn copyWarToDockerContext

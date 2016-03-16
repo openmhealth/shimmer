@@ -3,7 +3,6 @@ package org.openmhealth.shim.runkeeper.mapper;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.openmhealth.schema.domain.omh.*;
 import org.openmhealth.shim.common.mapper.DataPointMapperUnitTests;
-import org.springframework.core.io.ClassPathResource;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -11,9 +10,14 @@ import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.util.List;
 
-import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.openmhealth.schema.domain.omh.CaloriesBurned.SCHEMA_ID;
+import static org.openmhealth.schema.domain.omh.DataPointModality.SENSED;
+import static org.openmhealth.schema.domain.omh.DurationUnit.SECOND;
+import static org.openmhealth.schema.domain.omh.KcalUnit.KILOCALORIE;
+import static org.openmhealth.schema.domain.omh.TimeInterval.ofStartDateTimeAndDuration;
+import static org.openmhealth.shim.runkeeper.mapper.RunkeeperDataPointMapper.RESOURCE_API_SOURCE_NAME;
 
 
 /**
@@ -22,54 +26,50 @@ import static org.hamcrest.MatcherAssert.assertThat;
 public class RunkeeperCaloriesBurnedDataPointMapperUnitTests extends DataPointMapperUnitTests {
 
     private JsonNode responseNode;
-    private RunkeeperCaloriesBurnedDataPointMapper mapper = new RunkeeperCaloriesBurnedDataPointMapper();
+    private final RunkeeperCaloriesBurnedDataPointMapper mapper = new RunkeeperCaloriesBurnedDataPointMapper();
 
     @BeforeTest
     public void initializeResponseNode() throws IOException {
 
-        ClassPathResource resource =
-                new ClassPathResource("org/openmhealth/shim/runkeeper/mapper/runkeeper-fitness-activities.json");
-        responseNode = objectMapper.readTree(resource.getInputStream());
+        responseNode = asJsonNode("org/openmhealth/shim/runkeeper/mapper/runkeeper-fitness-activities.json");
     }
 
     @Test
     public void asDataPointsShouldReturnCorrectNumberOfDataPoints() {
 
-        List<DataPoint<CaloriesBurned>> dataPoints = mapper.asDataPoints(singletonList(responseNode));
-
-        assertThat(dataPoints.size(), equalTo(1));
+        assertThat(mapper.asDataPoints(responseNode).size(), equalTo(1));
     }
 
     @Test
     public void asDataPointsShouldReturnCorrectDataPointBodies() {
 
-        List<DataPoint<CaloriesBurned>> dataPoints = mapper.asDataPoints(singletonList(responseNode));
+        List<DataPoint<CaloriesBurned>> dataPoints = mapper.asDataPoints(responseNode);
 
-        CaloriesBurned.Builder expectedCaloriesBurnedBuilder =
-                new CaloriesBurned.Builder(new KcalUnitValue(KcalUnit.KILOCALORIE, 210.796359954334))
+        CaloriesBurned expectedCaloriesBurned =
+                new CaloriesBurned.Builder(new KcalUnitValue(KILOCALORIE, 210.796359954334))
                         .setActivityName("Cycling")
-                        .setEffectiveTimeFrame(TimeInterval.ofStartDateTimeAndDuration(
+                        .setEffectiveTimeFrame(ofStartDateTimeAndDuration(
                                 OffsetDateTime.parse("2014-10-19T13:17:27+02:00"),
-                                new DurationUnitValue(DurationUnit.SECOND, 4364.74158141667)));
+                                new DurationUnitValue(SECOND, 4364.74158141667)))
+                        .build();
 
-        assertThat(dataPoints.get(0).getBody(), equalTo(expectedCaloriesBurnedBuilder.build()));
+        assertThat(dataPoints.get(0).getBody(), equalTo(expectedCaloriesBurned));
     }
 
     @Test
     public void asDataPointsShouldReturnCorrectDataPointHeaders() {
 
-        List<DataPoint<CaloriesBurned>> dataPoints = mapper.asDataPoints(singletonList(responseNode));
-        DataPointHeader firstTestHeader = dataPoints.get(0).getHeader();
+        DataPointHeader firstTestHeader = mapper.asDataPoints(responseNode).get(0).getHeader();
 
-        assertThat(firstTestHeader.getAcquisitionProvenance().getModality(), equalTo(DataPointModality.SENSED));
+        assertThat(firstTestHeader.getAcquisitionProvenance().getModality(), equalTo(SENSED));
 
-        assertThat(firstTestHeader.getBodySchemaId(), equalTo(CaloriesBurned.SCHEMA_ID));
+        assertThat(firstTestHeader.getBodySchemaId(), equalTo(SCHEMA_ID));
 
         assertThat(firstTestHeader.getAcquisitionProvenance().getAdditionalProperty("external_id").get(),
                 equalTo("/fitnessActivities/465161536"));
 
         assertThat(firstTestHeader.getAcquisitionProvenance().getSourceName(),
-                equalTo(RunkeeperDataPointMapper.RESOURCE_API_SOURCE_NAME));
+                equalTo(RESOURCE_API_SOURCE_NAME));
 
     }
 }
