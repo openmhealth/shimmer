@@ -153,7 +153,7 @@ public class Application extends WebSecurityConfigurerAdapter {
     public List<Map<String, Object>> authorizations(@RequestParam(value = "username") String username)
             throws ShimException {
 
-        List<AccessParameters> accessParameters = accessParametersRepo.findAllByUsernameLikeAndValidIsTrue(username);
+        List<AccessParameters> accessParameters = accessParametersRepo.findAllByUsernameLike(username);
 
         List<Map<String, Object>> results = new ArrayList<>();
         Map<String, Set<String>> auths = new HashMap<>();
@@ -213,14 +213,9 @@ public class Application extends WebSecurityConfigurerAdapter {
             @PathVariable("shim") String shim)
             throws ShimException {
 
-        List<AccessParameters> accessParameters = accessParametersRepo.findAllByUsernameAndShimKeyAndValidIsTrue(username, shim);
+        List<AccessParameters> accessParameters = accessParametersRepo.findAllByUsernameAndShimKey(username, shim);
 
-        // in order to keep records, we don't remove tokens, but only invalidate them instead
-        // so that they won't be found when query valid tokens
-        for (AccessParameters accessParameter : accessParameters) {
-            accessParameter.setValid(false);
-            accessParametersRepo.save(accessParameter);
-        }
+        accessParameters.forEach(accessParametersRepo::delete);
 
         return singletonList("Success: Authorization Removed.");
     }
@@ -311,7 +306,7 @@ public class Application extends WebSecurityConfigurerAdapter {
         }
         shimDataRequest.setNumToReturn(numToReturn);
 
-        AccessParameters accessParameters = accessParametersRepo.findByUsernameAndShimKeyAndValidIsTrue(
+        AccessParameters accessParameters = accessParametersRepo.findByUsernameAndShimKey(
                 username, shim, new Sort(Sort.Direction.DESC, "dateCreated"));
 
         if (accessParameters == null) {

@@ -27,20 +27,9 @@ import java.util.List;
  */
 public interface AccessParametersRepo extends MongoRepository<AccessParameters, String> {
 
-    AccessParameters findByUsernameAndShimKeyAndValidIsTrue(String username, String shimKey, Sort sort);
+    AccessParameters findByUsernameAndShimKey(String username, String shimKey, Sort sort);
 
-    List<AccessParameters> findAllByUsernameAndShimKeyAndValidIsTrue(String username, String shimKey);
+    List<AccessParameters> findAllByUsernameAndShimKey(String username, String shimKey);
 
-    List<AccessParameters> findAllByUsernameLikeAndValidIsTrue(String username);
-
-
-    /**
-     * Please do NOT use this function. In order to keep records, we DON'T remove any tokens, but instead,
-     * only setValid(false) to invalidate them. See de-authorize function in Application.java
-     * @Deprecated
-     * @param param param
-     */
-    @Deprecated
-    void delete(AccessParameters param);
-
+    List<AccessParameters> findAllByUsernameLike(String username);
 }
