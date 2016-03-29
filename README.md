@@ -102,7 +102,7 @@ If you want to build and run the code natively, in a terminal
 1. Visit `http://localhost:8083` in a browser.
 
 If you want to build and run the code in Docker, in a terminal 
- i
+ 
 1. Clone this Git repository.
 1. Run `docker-machine ls` to find the name of your active Docker host.
 1. Run `eval "$(docker-machine env host)"` to prepare environment variables, *replacing `host` with the name of your Docker host*.
