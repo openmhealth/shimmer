@@ -269,7 +269,6 @@ public class MovesShim extends OAuth2ShimBase{
                             MultiValueMap<String, String> form, HttpHeaders headers) {
             form.set("client_id", resource.getClientId());
             form.set("client_secret", resource.getClientSecret());
-            form.set("grant_type", resource.getGrantType());
             form.set("redirect_uri", getCallbackUrl());
             headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
         }
