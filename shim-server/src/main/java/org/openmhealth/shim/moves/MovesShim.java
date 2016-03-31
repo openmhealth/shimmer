@@ -4,15 +4,12 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 import org.openmhealth.shim.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.*;
 import org.springframework.security.oauth2.client.OAuth2RestOperations;
 import org.springframework.security.oauth2.client.resource.OAuth2ProtectedResourceDetails;
@@ -26,6 +23,8 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 
@@ -168,7 +167,6 @@ public class MovesShim extends OAuth2ShimBase{
     public ShimDataRequest getTriggerDataRequest() {
         ShimDataRequest shimDataRequest = new ShimDataRequest();
         shimDataRequest.setDataTypeKey(MovesDataType.PROFILE.toString());
-        shimDataRequest.setNumToReturn(1l);
         shimDataRequest.setNormalize(false);
         return shimDataRequest;
     }
@@ -200,19 +198,17 @@ public class MovesShim extends OAuth2ShimBase{
             /***
              * Setup default date parameters
              */
-            final DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd");
-            LocalDate today = new LocalDate();
+            LocalDate today = LocalDate.now();
 
             LocalDate dateStart = shimDataRequest.getStartDateTime() == null ?
-                    today.minusDays(1) : new LocalDate(shimDataRequest.getStartDateTime().toLocalDate().toString());
-
+                    today.minusDays(1) : shimDataRequest.getStartDateTime().toLocalDate();
 
             LocalDate dateEnd = shimDataRequest.getEndDateTime() == null ?
-                    today : new LocalDate(shimDataRequest.getEndDateTime().toLocalDate().toString());
+                    today : shimDataRequest.getEndDateTime().toLocalDate();
 
             urlParams = "&trackPoints=true";
-            urlParams += "&from=" + dateStart.toString(formatter);
-            urlParams += "&to=" + dateEnd.toString(formatter);
+            urlParams += "&from=" + dateStart.format(DateTimeFormatter.ISO_LOCAL_DATE);
+            urlParams += "&to=" + dateEnd.format(DateTimeFormatter.ISO_LOCAL_DATE);
             urlParams = urlParams.substring(1, urlParams.length());
         }
 
