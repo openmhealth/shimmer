@@ -118,14 +118,14 @@ If you want to build and run the code in Docker, in a terminal
 You need to obtain client credentials for any shim you'd like to use. These credentials are typically an OAuth client ID and client secret, and you can generate them from the developer website of the third-party API. Visit the following links to register your application and obtain authentication credentials for each of the shims you want to use.  
 
 * [Fitbit](http://dev.fitbit.com/)
+  * Fitbit has deprecated OAuth 1.0a authorization in favour of OAuth 2.0. Shimmer requires OAuth 2.0 credentials.
 * [Google Fit](https://developers.google.com/fit/rest/) ([application management portal](https://console.developers.google.com/start))
 * [Jawbone UP](https://jawbone.com/up/developer)
 * [Misfit](https://build.misfit.com/)
 * [RunKeeper](http://developer.runkeeper.com/healthgraph) ([application management portal](http://runkeeper.com/partner))
 * [Withings](http://oauth.withings.com/api)
-* [iHealth](http://developer.ihealthlabs.com/index.htm) (see below for setting up special iHealth application specific credentials) 
-
-> If you are using the iHealth shim, you must uncomment and replace the SC and SV values for each endpoint in the `iHealth:serialValues` map in the `application.yaml` file. 
+* [iHealth](http://developer.ihealthlabs.com/index.htm)
+  * If you are using the iHealth shim, you must uncomment and replace the SC and SV values for each endpoint in the `openmhealth.shim.ihealth.serialValues` map in the `application.yaml` file.
 These values are uniquely associated with each project you have and can be found in your project details on the [application management page](http://developer.ihealthlabs.com/developermanagepage.htm) 
 of the iHealth developers site.
 
