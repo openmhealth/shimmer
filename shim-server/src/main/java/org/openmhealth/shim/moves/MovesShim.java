@@ -1,16 +1,19 @@
 package org.openmhealth.shim.moves;
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.google.common.base.Splitter;
 import org.openmhealth.shim.*;
+import org.openmhealth.shim.moves.mapper.MovesDataPointMapper;
+import org.openmhealth.shim.moves.mapper.MovesStepCountDataPointMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.client.OAuth2RestOperations;
 import org.springframework.security.oauth2.client.resource.OAuth2ProtectedResourceDetails;
 import org.springframework.security.oauth2.client.resource.UserRedirectRequiredException;
@@ -20,12 +23,18 @@ import org.springframework.security.oauth2.client.token.grant.code.Authorization
 import org.springframework.stereotype.Component;
 import org.springframework.util.MultiValueMap;
 import org.springframework.util.StringUtils;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.io.IOException;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.time.Duration;
+import java.time.OffsetDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import static java.util.Collections.singletonList;
+import static org.springframework.http.ResponseEntity.ok;
 
 
 /**
@@ -34,7 +43,7 @@ import java.util.*;
 @Component
 @ConfigurationProperties(prefix = "openmhealth.shim.moves")
 public class MovesShim extends OAuth2ShimBase{
-    private static final Logger log = LoggerFactory.getLogger(MovesShim.class);
+    private static final Logger logger = LoggerFactory.getLogger(MovesShim.class);
 
     public static final String SHIM_KEY = "moves";
 
@@ -50,6 +59,8 @@ public class MovesShim extends OAuth2ShimBase{
                     "activity", "location"
             ));
 
+    private static final long MAX_DURATION_IN_DAYS = 31;
+
     @Autowired
     public MovesShim(ApplicationAccessParametersRepo applicationParametersRepo,
                      AuthorizationRequestParametersRepo authorizationRequestParametersRepo,
@@ -57,6 +68,8 @@ public class MovesShim extends OAuth2ShimBase{
                      ShimServerConfig shimServerConfig) {
         super(applicationParametersRepo, authorizationRequestParametersRepo, accessParametersRepo, shimServerConfig);
     }
+
+    private MovesStepCountDataPointMapper stepCountMapper = new MovesStepCountDataPointMapper();
 
     @Override
     public String getLabel() {
@@ -83,76 +96,21 @@ public class MovesShim extends OAuth2ShimBase{
         return MOVES_SCOPES;
     }
 
-    //Example: Wed, 6 Aug 2014 04:49:00
-    //private static DateTimeFormatter dateFormatter = DateTimeFormat.forPattern("EEE, d MMM yyyy HH:mm:ss");
-
     public enum MovesDataType implements ShimDataType {
 
-        STORYLINE("/user/storyline/daily",
-                new JsonDeserializer<ShimDataResponse>() {
-                    @Override
-                    public ShimDataResponse deserialize(JsonParser jsonParser,
-                                                        DeserializationContext ctxt)
-                            throws IOException {
-                throw new UnsupportedOperationException("Moves normalizer is not supported yet!");
+        STEPS("/user/summary/daily"),
+        ACTIVITY("/user/activities/daily");
 
-                    }
-                }),
-        PROFILE("/user/profile",  new JsonDeserializer<ShimDataResponse>() {
-            @Override
-            public ShimDataResponse deserialize(JsonParser jsonParser,
-                    DeserializationContext ctxt) throws IOException {
-                throw new UnsupportedOperationException("Moves normalizer is not supported yet!");
-            }
-        }),
-        SUMMARY("/user/summary/daily",
-                        new JsonDeserializer<ShimDataResponse>() {
-            @Override
-            public ShimDataResponse deserialize(JsonParser jsonParser,
-                    DeserializationContext ctxt)
-            throws IOException {
-                throw new UnsupportedOperationException("Moves normalizer is not supported yet!");
-
-            }
-        }),
-        ACTIVITIES("/user/activities/daily",
-                new JsonDeserializer<ShimDataResponse>() {
-                    @Override
-                    public ShimDataResponse deserialize(JsonParser jsonParser,
-                                                        DeserializationContext ctxt)
-                            throws IOException {
-                        throw new UnsupportedOperationException("Moves normalizer is not supported yet!");
-
-                    }
-                }),
-        PLACES("/user/places/daily",
-                new JsonDeserializer<ShimDataResponse>() {
-                    @Override
-                    public ShimDataResponse deserialize(JsonParser jsonParser,
-                                                        DeserializationContext ctxt)
-                            throws IOException {
-                        throw new UnsupportedOperationException("Moves normalizer is not supported yet!");
-
-                    }
-                });
-
-        private String endPointUrl;
+        private String endPoint;
 
         private JsonDeserializer<ShimDataResponse> normalizer;
 
-        MovesDataType(String endPointUrl,
-                          JsonDeserializer<ShimDataResponse> normalizer) {
-            this.endPointUrl = endPointUrl;
-            this.normalizer = normalizer;
+        MovesDataType(String endPoint) {
+            this.endPoint = endPoint;
         }
 
-        @Override
-        public JsonDeserializer<ShimDataResponse> getNormalizer() {
-            return normalizer;
-        }
-
-        public String getEndPointUrl() {
-            return endPointUrl;
+        public String getEndPoint() {
+            return endPoint;
         }
     }
 
@@ -164,18 +122,11 @@ public class MovesShim extends OAuth2ShimBase{
     }
 
     @Override
-    public ShimDataRequest getTriggerDataRequest() {
-        ShimDataRequest shimDataRequest = new ShimDataRequest();
-        shimDataRequest.setDataTypeKey(MovesDataType.PROFILE.toString());
-        shimDataRequest.setNormalize(false);
-        return shimDataRequest;
-    }
-
-    @Override
     public ShimDataType[] getShimDataTypes() {
         return MovesDataType.values();
     }
 
+    @Override
     protected ResponseEntity<ShimDataResponse> getData(OAuth2RestOperations restTemplate,
                                                        ShimDataRequest shimDataRequest) throws ShimException {
 
@@ -189,53 +140,64 @@ public class MovesShim extends OAuth2ShimBase{
                     + dataTypeKey + " in shimDataRequest, cannot retrieve data.");
         }
 
-        String urlRequest = DATA_URL;
-        urlRequest += "/" + movesDataType.getEndPointUrl();
-        String urlParams;
-        if(movesDataType.equals(MovesDataType.PROFILE)){
-            urlParams = "";
-        }else {
-            /***
-             * Setup default date parameters
-             */
-            LocalDate today = LocalDate.now();
+        OffsetDateTime now = OffsetDateTime.now();
 
-            LocalDate dateStart = shimDataRequest.getStartDateTime() == null ?
-                    today.minusDays(1) : shimDataRequest.getStartDateTime().toLocalDate();
+        OffsetDateTime startDateTime = shimDataRequest.getStartDateTime() == null ?
+                now.minusDays(1) : shimDataRequest.getStartDateTime();
 
-            LocalDate dateEnd = shimDataRequest.getEndDateTime() == null ?
-                    today : shimDataRequest.getEndDateTime().toLocalDate();
+        OffsetDateTime endDateTime = shimDataRequest.getEndDateTime() == null ?
+                now.plusDays(1) : shimDataRequest.getEndDateTime();
 
-            urlParams = "&trackPoints=true";
-            urlParams += "&from=" + dateStart.format(DateTimeFormatter.ISO_LOCAL_DATE);
-            urlParams += "&to=" + dateEnd.format(DateTimeFormatter.ISO_LOCAL_DATE);
-            urlParams = urlParams.substring(1, urlParams.length());
+        if (Duration.between(startDateTime, endDateTime).toDays() > MAX_DURATION_IN_DAYS) {
+            endDateTime =
+                    startDateTime.plusDays(MAX_DURATION_IN_DAYS - 1);  // TODO when refactoring, break apart queries
         }
 
-        urlRequest += "?" + urlParams;
-        ObjectMapper objectMapper = new ObjectMapper();
+        UriComponentsBuilder uriBuilder = UriComponentsBuilder
+                .fromUriString(DATA_URL);
+
+        for (String pathSegment : Splitter.on("/").split(movesDataType.getEndPoint())) {
+            uriBuilder.pathSegment(pathSegment);
+        }
+
+        uriBuilder
+                .queryParam("from", startDateTime.toLocalDate())
+                .queryParam("to", endDateTime.toLocalDate())
+                .queryParam("trackPoints", false);
 
         HttpHeaders headers = new HttpHeaders();
-
         headers.add("Authorization", "Bearer " + restTemplate.getAccessToken().getValue());
-        ResponseEntity<byte[]> response = restTemplate.exchange(
-                urlRequest,
-                HttpMethod.GET,
-                new HttpEntity<byte[]>(headers),
-                byte[].class);
+        HttpEntity<String> entity = new HttpEntity<String>("parameters", headers);
 
+        ResponseEntity<JsonNode> responseEntity;
         try {
-            if (shimDataRequest.getNormalize()) {
-                throw new UnsupportedOperationException("Moves normalizer is not supported yet!");
-            } else {
-                return new ResponseEntity<>(
-                        ShimDataResponse.result(MovesShim.SHIM_KEY, objectMapper.readTree(response.getBody())), HttpStatus.OK);
+            responseEntity = restTemplate.exchange(uriBuilder.build().encode().toUri(), HttpMethod.GET, entity, JsonNode.class);
+        }
+        catch (HttpClientErrorException | HttpServerErrorException e) {
+            // FIXME figure out how to handle this
+            logger.error("A request for Misfit data failed.", e);
+            throw e;
+        }
+
+        if (shimDataRequest.getNormalize()) {
+
+            MovesDataPointMapper<?> dataPointMapper;
+
+            switch (movesDataType) {
+                case STEPS:
+                    dataPointMapper = stepCountMapper;
+                    break;
+                default:
+                    throw new UnsupportedOperationException();
             }
 
-        } catch (IOException e) {
-            e.printStackTrace();
-            throw new ShimException("Could not read response data.");
+            return ok().body(ShimDataResponse.result(SHIM_KEY,
+                    dataPointMapper.asDataPoints(singletonList(responseEntity.getBody()))));
         }
+        else {
+            return ok().body(ShimDataResponse.result(SHIM_KEY, responseEntity.getBody()));
+        }
+
     }
 
     @Override
@@ -266,7 +228,6 @@ public class MovesShim extends OAuth2ShimBase{
             form.set("client_id", resource.getClientId());
             form.set("client_secret", resource.getClientSecret());
             form.set("redirect_uri", getCallbackUrl());
-            headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
         }
     }
 }
