@@ -113,28 +113,47 @@ If you want to build and run the code in Docker, in a terminal
 
 > If you can't run the Bash scripts on your system, open them and take a look at the commands they run. The important commands are marked with a "#CMD" comment.
 
-## Setting up your credentials
+## Registering with third-party APIs
 
-You need to obtain client credentials for any shim you'd like to use. These credentials are typically an OAuth client ID and client secret, and you can generate them from the developer website of the third-party API. Visit the following links to register your application and obtain authentication credentials for each of the shims you want to use.  
+To get data from a third-party API, you need to visit the developer website of that API and register a
+*client application*. The registration information that you give to the third-party lets them show relevant information to
+their end users about your application, and lets them manage other operational concerns like authorization and rate limits.
 
-* [Fitbit](http://dev.fitbit.com/)
-  * Fitbit has deprecated OAuth 1.0a authorization in favour of OAuth 2.0. Shimmer requires OAuth 2.0 credentials.
-* [Google Fit](https://developers.google.com/fit/rest/) ([application management portal](https://console.developers.google.com/start))
-* [Jawbone UP](https://jawbone.com/up/developer)
-* [Misfit](https://build.misfit.com/)
-* [RunKeeper](http://developer.runkeeper.com/healthgraph) ([application management portal](http://runkeeper.com/partner))
-* [Withings](http://oauth.withings.com/api)
-* [iHealth](http://developer.ihealthlabs.com/index.htm)
-  * If you are using the iHealth shim, you must uncomment and replace the SC and SV values for each endpoint in the `openmhealth.shim.ihealth.serialValues` map in the `application.yaml` file.
-  These values are uniquely associated with each project you have and can be found in your project details on the [application management page](http://developer.ihealthlabs.com/developermanagepage.htm)
-  of the iHealth developers site.
+You will be given a set of client credentials, usually an OAuth client ID and client secret, for each application you register.
+You may also need to enter a redirect URL, which is the URL a user is sent to after granting your application access to
+their data.
 
-If any of the links are incorrect or out of date, please [submit an issue](https://github.com/openmhealth/shimmer/issues) to let us know. 
+The following table contains a link to the developer portal of each API and information about redirect URL restrictions.
+ The restrictions can be good to know about during development, but TLS and full URLs should be used during production.
 
-Once credentials are obtained for a particular API, navigate to the settings tab of the console and fill them in. 
+> This table will be fully populated in in the coming days.
 
-> If you didn't build the console, uncomment and replace the corresponding `clientId` and `clientSecret` placeholders in the `application.yaml` file 
+Visit the links to register and configure your application for each of the APIs you want to use. Once credentials are
+obtained for a particular API, navigate to the settings tab of the console and fill them in.
+
+> If you didn't build the console, uncomment and replace the corresponding `clientId` and `clientSecret` placeholders in the `application.yaml` file
 with your new credentials and rebuild.
+
+
+API                                                               | requires TLS       | allows non-FQDN hostname | allows IP addresses | allows localhost | requires URL path | example
+----------------------------------------------------------------- | ------------------ | ------------------------ | ------------------- | ---------------- | ----------------- | --------
+[Fitbit](http://dev.fitbit.com/)<sup>1</sup>                      | false              | true                     | true                | true             | true              | http://localhost:8083/authorize/fitbit/callback
+[Google Fit](https://console.developers.google.com/start)         | false              | false                    | false               | true             | ?                 | http://localhost:8083/authorize/googlefit/callback
+[iHealth](http://developer.ihealthlabs.com/index.htm)<sup>2</sup> | ?                  | ?                        | ?                   | ?                | false             | http://localhost:8083/authorize/ihealth/callback
+[Jawbone UP](https://jawbone.com/up/developer)                    | false <sup>3</sup> | ?                        | ?                   | ?                | ?                 | http://localhost:8083/authorize/jawbone/callback
+[Misfit](https://build.misfit.com/)                               | ?                  | ?                        | ?                   | ?                | ?                 | http://localhost:8083/authorize/misfit/callback
+[RunKeeper](http://runkeeper.com/partner)                         | ?                  | ?                        | ?                   | ?                | ?                 | http://localhost:8083/authorize/runkeeper/callback
+[Withings](http://oauth.withings.com/api)                         | ?                  | ?                        | ?                   | ?                | ?                 | http://localhost:8083/authorize/withings/callback
+
+<sup>1</sup> *Fitbit has deprecated OAuth 1.0a authorization in favour of OAuth 2.0. You will need OAuth 2.0 credentials.*
+
+<sup>2</sup> *You'll need to copy the iHealth SC and SV values found via the [application management page](http://developer.ihealthlabs.com/developermanagepage.htm)
+into the `openmhealth.shim.ihealth.serialValues` map of the `application.yaml` file.*
+
+<sup>3</sup> *The [documentation](https://jawbone.com/up/developer/authentication) states TLS is required, but authorization does work without it.*
+
+> If any of the links or fields are incorrect or out of date, please [submit an issue](https://github.com/openmhealth/shimmer/issues) to let us know.
+
 
 ## Authorizing access to a third-party user account
 
