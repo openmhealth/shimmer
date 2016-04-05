@@ -56,6 +56,7 @@ import static java.util.Collections.singletonList;
 import static org.openmhealth.shim.ShimDataResponse.result;
 import static org.openmhealth.shim.fitbit.FitbitShim.FitbitDataType.*;
 import static org.slf4j.LoggerFactory.getLogger;
+import static org.springframework.http.ResponseEntity.ok;
 
 
 /**
@@ -217,8 +218,8 @@ public class FitbitShim extends OAuth2ShimBase {
             }
 
             return shimDataRequest.getNormalize() ?
-                    ResponseEntity.ok(aggregateNormalized(dayResponses))
-                    : ResponseEntity.ok(aggregateIntoList(dayResponses));
+                    ok(aggregateNormalized(dayResponses))
+                    : ok(aggregateIntoList(dayResponses));
         }
     }
 
@@ -331,7 +332,7 @@ public class FitbitShim extends OAuth2ShimBase {
                     throw new UnsupportedOperationException();
             }
 
-            return ResponseEntity.ok().body(result(FitbitShim.SHIM_KEY,
+            return ok().body(result(FitbitShim.SHIM_KEY,
                     dataPointMapper.asDataPoints(singletonList(responseEntity.getBody()))));
 
         }
@@ -354,8 +355,7 @@ public class FitbitShim extends OAuth2ShimBase {
             }
 
             try {
-                return ResponseEntity.ok()
-                        .body(ShimDataResponse.result(FitbitShim.SHIM_KEY, objectMapper.readTree(jsonContent)));
+                return ok().body(ShimDataResponse.result(FitbitShim.SHIM_KEY, objectMapper.readTree(jsonContent)));
             }
             catch (IOException e) {
                 logger.error("Data returned in Fitbit request was not valid JSON.", e);
