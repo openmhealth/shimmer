@@ -41,6 +41,9 @@ supports ETag header: yes
 steps
 - raw: summaries (/user/summary/daily)
 
+activity
+- raw: storyline (/user/storyline/daily)
+
 # notifications
 
 supports callback notifications for updates: yes (shim does not support)

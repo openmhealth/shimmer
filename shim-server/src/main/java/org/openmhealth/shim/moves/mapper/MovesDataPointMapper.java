@@ -43,12 +43,7 @@ public abstract class MovesDataPointMapper<T extends SchemaSupport> implements J
         return dataPoints;
     }
 
-    /**
-     * @return the name of the list node used by this mapper
-     */
-    protected abstract String getListNodeName();
-
-    /**
+     /**
      * Creates a data point.
      *
      * @param measure the measure to set as the body of the data point

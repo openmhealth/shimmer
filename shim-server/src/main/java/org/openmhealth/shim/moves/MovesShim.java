@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.base.Splitter;
 import org.openmhealth.shim.*;
 import org.openmhealth.shim.moves.mapper.MovesDataPointMapper;
+import org.openmhealth.shim.moves.mapper.MovesPhysicalActivityDataPointMapper;
 import org.openmhealth.shim.moves.mapper.MovesStepCountDataPointMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,6 +71,7 @@ public class MovesShim extends OAuth2ShimBase{
     }
 
     private MovesStepCountDataPointMapper stepCountMapper = new MovesStepCountDataPointMapper();
+    private MovesPhysicalActivityDataPointMapper physicalActivityMapper = new MovesPhysicalActivityDataPointMapper();
 
     @Override
     public String getLabel() {
@@ -99,7 +101,7 @@ public class MovesShim extends OAuth2ShimBase{
     public enum MovesDataType implements ShimDataType {
 
         STEPS("/user/summary/daily"),
-        ACTIVITY("/user/activities/daily");
+        ACTIVITY("/user/storyline/daily");
 
         private String endPoint;
 
@@ -186,6 +188,9 @@ public class MovesShim extends OAuth2ShimBase{
             switch (movesDataType) {
                 case STEPS:
                     dataPointMapper = stepCountMapper;
+                    break;
+                case ACTIVITY:
+                    dataPointMapper = physicalActivityMapper;
                     break;
                 default:
                     throw new UnsupportedOperationException();

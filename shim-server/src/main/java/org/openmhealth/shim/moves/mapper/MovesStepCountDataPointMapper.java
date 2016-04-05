@@ -52,12 +52,4 @@ public class MovesStepCountDataPointMapper extends MovesDataPointMapper<StepCoun
 
         return Optional.of(newDataPoint(measure, null));
     }
-
-    /**
-     * @return the name of the list node returned from the activities/steps Fitbit endpoint
-     */
-    @Override
-    protected String getListNodeName() {
-        return "summary";
-    }
 }
