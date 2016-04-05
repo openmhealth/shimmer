@@ -19,19 +19,19 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.2'
+        classpath "com.jfrog.bintray.gradle:gradle-bintray-plugin:1.2"
     }
 }
 
-apply plugin: 'maven'
-apply plugin: 'maven-publish'
-apply plugin: 'com.jfrog.bintray' // see https://github.com/bintray/gradle-bintray-plugin for details
+apply plugin: "maven"
+apply plugin: "maven-publish"
+apply plugin: "com.jfrog.bintray" // see https://github.com/bintray/gradle-bintray-plugin for details
 
-archivesBaseName = 'omh-shim-sdk'
-version = '1.0.0'
+archivesBaseName = "omh-shim-sdk"
+version = "1.0.0"
 
 ext {
-    jacksonVersion = '2.6.1'
+    jacksonVersion = "2.6.1"
 }
 
 dependencies {
@@ -39,58 +39,58 @@ dependencies {
     compile "com.fasterxml.jackson.core:jackson-annotations:${jacksonVersion}"
     compile "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}"
     compile "org.openmhealth.schema:omh-schema-sdk:${omhSchemaSdkVersion}"
-    compile 'org.slf4j:slf4j-api:1.7.12'
+    compile "org.slf4j:slf4j-api:1.7.12"
 
-    testCompile 'org.testng:testng:6.8.21'
-    testCompile 'org.hamcrest:hamcrest-library:1.3'
+    testCompile "org.testng:testng:6.8.21"
+    testCompile "org.hamcrest:hamcrest-library:1.3"
 
-    testRuntime 'ch.qos.logback:logback-classic:1.1.3'
+    testRuntime "ch.qos.logback:logback-classic:1.1.3"
 }
 
 task sourcesJar(type: Jar, dependsOn: classes) {
-    classifier = 'sources'
+    classifier = "sources"
     from sourceSets.main.allSource
 }
 
 task javadocJar(type: Jar, dependsOn: Javadoc) {
-    classifier = 'javadoc'
+    classifier = "javadoc"
     from javadoc.destinationDir
 }
 
 publishing {
     publications {
         jar(MavenPublication) {
-            artifactId 'omh-shim-sdk'
+            artifactId "omh-shim-sdk"
             from components.java
         }
         sources(MavenPublication) {
-            artifactId 'omh-shim-sdk'
+            artifactId "omh-shim-sdk"
             artifact sourcesJar
         }
         javadoc(MavenPublication) {
-            artifactId 'omh-shim-sdk'
+            artifactId "omh-shim-sdk"
             artifact javadocJar
         }
     }
 }
 
 bintray {
-    user = project.hasProperty('bintray_user') ? bintray_user : ''
-    key = project.hasProperty('bintray_api_key') ? bintray_api_key : ''
+    user = project.hasProperty("bintray_user") ? bintray_user : ""
+    key = project.hasProperty("bintray_api_key") ? bintray_api_key : ""
 
-    publications = ['jar', 'sources', 'javadoc']
+    publications = ["jar", "sources", "javadoc"]
     dryRun = false
     publish = false
     pkg {
-        repo = 'maven'
-        name = 'omh-shim-sdk'
-        userOrg = 'openmhealth'
-        desc = 'A library containing Java classes that help you build Open mHealth shims.'
-        websiteUrl = 'https://github.com/openmhealth/shimmer'
-        issueTrackerUrl = 'https://github.com/openmhealth/shimmer/issues'
-        vcsUrl = 'https://github.com/openmhealth/shimmer.git'
-        licenses = ['Apache-2.0']
-        labels = ['shims']
+        repo = "maven"
+        name = "omh-shim-sdk"
+        userOrg = "openmhealth"
+        desc = "A library containing Java classes that help you build Open mHealth shims."
+        websiteUrl = "https://github.com/openmhealth/shimmer"
+        issueTrackerUrl = "https://github.com/openmhealth/shimmer/issues"
+        vcsUrl = "https://github.com/openmhealth/shimmer.git"
+        licenses = ["Apache-2.0"]
+        labels = ["shims"]
         publicDownloadNumbers = true
     }
 }

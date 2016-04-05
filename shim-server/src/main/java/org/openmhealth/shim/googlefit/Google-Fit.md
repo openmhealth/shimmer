@@ -131,4 +131,6 @@ Retrieves heart rate measurements that have been stored on the Google Fit platfo
 Retrieves information about continuous activities that were performed by the user during different time period, but not information about the outcomes of those sessions (calories burned, distance traveled, etc). These activity segments can be created through user input, application data, or inferred through sensors and other data. 
 
 # issues
-Currently the limit parameter is not working, for at least some merged datasources, and pagination does not work because the 'nextPageToken' property is not returned in responses
+~~Currently the limit parameter is not working, for at least some merged datasources, and pagination does not work because the 'nextPageToken' property is not returned in responses~~ 
+
+> Based on our testing, this appears to have been fixed at some point. However, there has been no formal documentation or release notes verifying it, so we urge developers to confirm this for themselves.
