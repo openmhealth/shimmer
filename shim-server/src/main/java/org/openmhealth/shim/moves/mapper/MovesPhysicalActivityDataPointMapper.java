@@ -23,7 +23,8 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.*;
  * A mapper that translates responses from the Moves Resource API <code>/user/storyline/daily</code> endpoint into {@link
  * PhysicalActivity} data points.
  *
- * @author Jared Sieling.
+ * @author Jared Sieling
+ * @see <a href="https://dev.moves-app.com/docs/api_storyline">API documentation</a>
  */
 public class MovesPhysicalActivityDataPointMapper extends MovesDataPointMapper<PhysicalActivity>{
 

@@ -17,7 +17,8 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asOption
 /**
  * A mapper from Moves Resource API /user/summary/daily responses to {@link StepCount} objects.
  *
- * @author Jared Sieling.
+ * @author Jared Sieling
+ * @see <a href="https://dev.moves-app.com/docs/api_summaries">API documentation</a>
  */
 public class MovesStepCountDataPointMapper extends MovesDataPointMapper<StepCount>{
 
