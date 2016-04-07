@@ -15,9 +15,10 @@ We currently support the following APIs
 
 And the following APIs are in the works
 
+* [Moves](https://www.moves-app.com/)
+* [Strava](https://www.strava.com/)
 * [FatSecret](https://www.fatsecret.com/)
 * [Ginsberg](https://www.ginsberg.io/)
-* [Strava](https://www.strava.com/)
 
 This README should have everything you need to get started. If you have any questions, feel free to [open an issue](https://github.com/openmhealth/shimmer/issues), [email us](mailto://support@openmhealth.org), [post on our form](https://groups.google.com/forum/#!forum/omh-developers), or [visit our website](http://www.openmhealth.org/documentation/#/data-providers/get-started).
 
@@ -126,14 +127,6 @@ their data.
 The following table contains a link to the developer portal of each API and information about redirect URL restrictions.
  The restrictions can be good to know about during development, but TLS and full URLs should be used during production.
 
-> This table will be fully populated in in the coming days.
-
-Visit the links to register and configure your application for each of the APIs you want to use. Once credentials are
-obtained for a particular API, navigate to the settings tab of the console and fill them in.
-
-> If you didn't build the console, uncomment and replace the corresponding `clientId` and `clientSecret` placeholders in the `application.yaml` file
-with your new credentials and rebuild.
-
 
 API                                                               | requires TLS       | allows non-FQDN hostname | allows IP addresses | allows localhost | requires URL path | example
 ----------------------------------------------------------------- | ------------------ | ------------------------ | ------------------- | ---------------- | ----------------- | --------
@@ -153,6 +146,14 @@ into the `openmhealth.shim.ihealth.serialValues` map of the `application.yaml` f
 <sup>3</sup> *The [documentation](https://jawbone.com/up/developer/authentication) states TLS is required, but authorization does work without it.*
 
 > If any of the links or fields are incorrect or out of date, please [submit an issue](https://github.com/openmhealth/shimmer/issues) to let us know.
+> This table will be fully populated in in the coming days.
+
+Visit the links to register and configure your application for each of the APIs you want to use. Once credentials are
+obtained for a particular API, navigate to the settings tab of the console and fill them in.
+
+> If you didn't build the console, uncomment and replace the corresponding `clientId` and `clientSecret` placeholders in the `application.yaml` file
+with your new credentials and rebuild.
+
 
 
 ## Authorizing access to a third-party user account
