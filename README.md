@@ -1,4 +1,4 @@
-# Shimmer [![Build Status](https://travis-ci.org/openmhealth/shimmer.svg?branch=master)](https://travis-ci.org/openmhealth/shimmer)
+# Shimmer [![Build Status](https://travis-ci.org/openmhealth/shimmer.svg?branch=develop)](https://travis-ci.org/openmhealth/shimmer)
 
 Shimmer is an application that makes it easy to pull health data from popular third-party APIs like Runkeeper and Fitbit.
 It converts that data into an [Open mHealth](http://www.openmhealth.org) compliant format, letting your application work with clean and clinically meaningful data.   
