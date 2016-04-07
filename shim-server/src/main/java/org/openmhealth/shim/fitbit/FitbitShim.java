@@ -299,7 +299,7 @@ public class FitbitShim extends OAuth2ShimBase {
         }
         catch (HttpClientErrorException | HttpServerErrorException e) {
             // FIXME figure out how to handle this
-            logger.error("A request for Jawbone data failed.", e);
+            logger.error("A request for Fitbit data failed.", e);
             throw e;
         }
 
