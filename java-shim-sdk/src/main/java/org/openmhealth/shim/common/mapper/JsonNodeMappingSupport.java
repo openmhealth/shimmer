@@ -60,7 +60,7 @@ public class JsonNodeMappingSupport {
      * @throws IncompatibleJsonNodeMappingException if the value of the child node isn't compatible
      */
     public static <T> T asRequiredValue(JsonNode parentNode, String path, Function<JsonNode, Boolean> typeChecker,
-                                        Function<JsonNode, T> converter, Class<T> targetType) {
+            Function<JsonNode, T> converter, Class<T> targetType) {
 
         JsonNode childNode = asRequiredNode(parentNode, path);
 
@@ -225,7 +225,7 @@ public class JsonNodeMappingSupport {
      * value of the child node isn't compatible
      */
     public static <T> Optional<T> asOptionalValue(JsonNode parentNode, String path,
-                                                  Function<JsonNode, Boolean> typeChecker, Function<JsonNode, T> converter) {
+            Function<JsonNode, Boolean> typeChecker, Function<JsonNode, T> converter) {
 
         JsonNode childNode = asOptionalNode(parentNode, path).orElse(null);
 
@@ -298,7 +298,7 @@ public class JsonNodeMappingSupport {
      * value of the child node isn't a date time
      */
     public static Optional<LocalDateTime> asOptionalLocalDateTime(JsonNode parentNode, String path,
-                                                                  DateTimeFormatter formatter) {
+            DateTimeFormatter formatter) {
 
         Optional<String> string = asOptionalString(parentNode, path);
 
@@ -332,7 +332,7 @@ public class JsonNodeMappingSupport {
 
     // TODO refactor this by delegating to existing methods, then add tests
     public static Optional<LocalDateTime> asOptionalLocalDateTime(JsonNode parentNode, String pathToDate,
-                                                                  String pathToTime) {
+            String pathToTime) {
         Optional<String> time = asOptionalString(parentNode, pathToTime);
         Optional<String> date = asOptionalString(parentNode, pathToDate);
         if (!time.isPresent() || !date.isPresent()) {
@@ -358,7 +358,7 @@ public class JsonNodeMappingSupport {
 
     // TODO add Javadoc and tests
     public static Optional<LocalDate> asOptionalLocalDate(JsonNode parentNode, String path,
-                                                          DateTimeFormatter dateFormat) {
+            DateTimeFormatter dateFormat) {
 
         Optional<String> string = asOptionalString(parentNode, path);
 

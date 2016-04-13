@@ -3,22 +3,22 @@ spring:
     name: Shimmer
   data:
     mongodb:
-      uri: mongodb://omh-mongo:27017/omh
+      uri: mongodb://mongo:27017/omh_dsu
   jackson:
     serialization:
       indent_output: true
 server:
-  port: 8084
+  port: 8083
 security:
   basic:
     enabled: false
 logging:
-  path: /var/log/ohmage-shim/
+  file: shimmer.log
 
 openmhealth:
   shim:
     server:
-      callbackUrlBase: http://localhost:8084/shims
+      callbackUrlBase: http://localhost:8083
 
     #NOTE: Uncomment and fill in the clientId/clientSecret with your credentials if you're not using the UI
     #NOTE: Uncomment and set partnerAccess to true if your credentials for a given API have partner access
@@ -60,8 +60,5 @@ openmhealth:
     #healthvault:
     #  clientId: [YOUR_CLIENT_ID]
     #googlefit:
-    #  clientId: [YOUR_CLIENT_ID]
-    #  clientSecret: [YOUR_CLIENT_SECRET]
-    #moves:
     #  clientId: [YOUR_CLIENT_ID]
     #  clientSecret: [YOUR_CLIENT_SECRET]
