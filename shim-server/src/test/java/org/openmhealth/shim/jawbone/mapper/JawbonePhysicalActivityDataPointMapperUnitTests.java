@@ -104,7 +104,7 @@ public class JawbonePhysicalActivityDataPointMapperUnitTests extends JawboneData
         List<DataPoint<PhysicalActivity>> dataPoints = mapper.asDataPoints(singletonList(responseNode));
 
         PhysicalActivity expectedPhysicalActivity = new PhysicalActivity.Builder("Bike")
-                .setDistance(new LengthUnitValue(METER, 1188))
+                .setDistance(new LengthUnitValue(METER, 6318.2688961))
                 .setEffectiveTimeFrame(
                         TimeInterval.ofEndDateTimeAndDuration(OffsetDateTime.parse("2015-04-29T16:07:07-04:00"),
                                 new DurationUnitValue(SECOND, 343)))
