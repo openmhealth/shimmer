@@ -46,7 +46,7 @@ Shimmer is made up of different components - individual shims, a resource server
 ### Shims
 A *shim* is a library that can communicate with a specific third-party API, e.g. Withings. It handles the process of authenticating with the API, requesting data from it, and mapping that data into an Open mHealth compliant data format. 
 
-A shim generates *data points*, which are self-contained pieces of data that not only contain the health data of interest, but also include header information such as date of creation, acquisition provenance, and data source. This metadata helps describe the data and where it came from. The library is called a shim because such clean and clinically significant data in not provided natively by the third-party API.
+A shim generates *data points*, which are self-contained pieces of data that not only contain the health data of interest, but also include header information such as date of creation, acquisition provenance, and data source. This metadata helps describe the data and where it came from. The library is called a shim because such clean and clinically significant data is not provided natively by the third-party API.
 
 ### Resource server
 The *resource server* exposes an API to retrieve data points. The server handles API requests by delegating them to the correct shim. As more and more shims are developed and added to the resource server, it becomes capable of providing data points from more and more third-party APIs. The resource server also manages third-party access tokens on behalf of shims.
