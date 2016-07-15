@@ -72,10 +72,10 @@ public class LegacyDataPointSearchController {
         shimDataRequest.setNormalize(normalize);
 
         if (!dateStart.isEmpty()) {
-            shimDataRequest.setStartDateTime(LocalDate.parse(dateStart).atStartOfDay().atOffset(UTC));
+            shimDataRequest.setStartDateTime(LocalDateTime.parse(dateStart).atOffset(UTC));
         }
         if (!dateEnd.isEmpty()) {
-            shimDataRequest.setEndDateTime(LocalDate.parse(dateEnd).atStartOfDay().atOffset(UTC));
+            shimDataRequest.setEndDateTime(LocalDateTime.parse(dateEnd).atOffset(UTC));
         }
 
         AccessParameters accessParameters = accessParametersRepo.findByUsernameAndShimKey(
