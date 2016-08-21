@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import static java.time.ZoneOffset.UTC;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -72,10 +72,10 @@ public class LegacyDataPointSearchController {
         shimDataRequest.setNormalize(normalize);
 
         if (!dateStart.isEmpty()) {
-            shimDataRequest.setStartDateTime(LocalDate.parse(dateStart).atStartOfDay().atOffset(UTC));
+            shimDataRequest.setStartDateTime(LocalDateTime.parse(dateStart).atOffset(UTC));
         }
         if (!dateEnd.isEmpty()) {
-            shimDataRequest.setEndDateTime(LocalDate.parse(dateEnd).atStartOfDay().atOffset(UTC));
+            shimDataRequest.setEndDateTime(LocalDateTime.parse(dateEnd).atOffset(UTC));
         }
 
         AccessParameters accessParameters = accessParametersRepo.findByUsernameAndShimKey(
