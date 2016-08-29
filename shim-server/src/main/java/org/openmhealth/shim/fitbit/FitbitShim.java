@@ -196,10 +196,39 @@ public class FitbitShim extends OAuth2ShimBase {
         OffsetDateTime currentDate = startDate;
 
         if (usesDateRangeQuery(fitbitDataType)) {
+    		if(fitbitDataType != fitbitDataType.WEIGHT) {
+	            return getDataForDateRange(restTemplate,
+	                    startDate, endDate, fitbitDataType,
+	                    shimDataRequest.getNormalize());
+    		}
+    		else{
+    			/**
+                 * Fitbit's API limits you to making a request for only 31 days. So when a request is made with a larger date
+                 * range than 31 days, we split it up and make multiple requests.
+                 */
+    			OffsetDateTime tempEndDate = endDate;
+            	long daysBetween = java.time.temporal.ChronoUnit.DAYS.between(currentDate, endDate);
+            	if(daysBetween > 31){
+            		tempEndDate = currentDate.plusDays(30);
+            	}
+            	
+    			List<ShimDataResponse> responses = new ArrayList<>();
 
-            return getDataForDateRange(restTemplate,
-                    startDate, endDate, fitbitDataType,
-                    shimDataRequest.getNormalize());
+                while (currentDate.toLocalDate().isBefore(endDate.toLocalDate()) ||
+                        currentDate.toLocalDate().isEqual(endDate.toLocalDate())) {
+
+                    responses.add(getDataForDateRange(restTemplate,
+                    		currentDate, tempEndDate, fitbitDataType,
+    	                    shimDataRequest.getNormalize()).getBody());
+                    currentDate = currentDate.plusDays(30);
+                    tempEndDate = currentDate.plusDays(30);
+                    if(tempEndDate.isAfter(endDate)){ tempEndDate = endDate; }
+                }
+
+                return shimDataRequest.getNormalize() ?
+                        ok(aggregateNormalized(responses))
+                        : ok(aggregateIntoList(responses));
+    		}
         }
         else {
             /**
