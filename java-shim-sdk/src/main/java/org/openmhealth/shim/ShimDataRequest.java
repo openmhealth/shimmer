@@ -17,6 +17,7 @@
 package org.openmhealth.shim;
 
 import java.time.OffsetDateTime;
+import java.time.ZonedDateTime;
 
 
 /**
@@ -40,12 +41,12 @@ public class ShimDataRequest {
      * // TODO replace this with filters on effective time, using the Data Point API The start date for the data being
      * retrieved
      */
-    private OffsetDateTime startDateTime;
+    private ZonedDateTime startDateTime;
 
     /**
      * The end date for the data being retrieved
      */
-    private OffsetDateTime endDateTime;
+    private ZonedDateTime endDateTime;
 
     /**
      * If true, returns normalized results from the external data provider, otherwise returns raw data.
@@ -61,19 +62,19 @@ public class ShimDataRequest {
         this.accessParameters = accessParameters;
     }
 
-    public OffsetDateTime getStartDateTime() {
+    public ZonedDateTime getStartDateTime() {
         return startDateTime;
     }
 
-    public void setStartDateTime(OffsetDateTime startDateTime) {
+    public void setStartDateTime(ZonedDateTime startDateTime) {
         this.startDateTime = startDateTime;
     }
 
-    public OffsetDateTime getEndDateTime() {
+    public ZonedDateTime getEndDateTime() {
         return endDateTime;
     }
 
-    public void setEndDateTime(OffsetDateTime endDateTime) {
+    public void setEndDateTime(ZonedDateTime endDateTime) {
         this.endDateTime = endDateTime;
     }
 

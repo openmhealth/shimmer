@@ -45,7 +45,9 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.net.URI;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.List;
 
@@ -163,17 +165,19 @@ public class GoogleFitShim extends OAuth2ShimBase {
                     + " in shimDataRequest, cannot retrieve data.");
         }
 
+        ZoneId timeZone = ZoneId.of("Z");
 
         OffsetDateTime todayInUTC =
                 LocalDate.now().atStartOfDay().atOffset(ZoneOffset.UTC);
 
         OffsetDateTime startDateInUTC = shimDataRequest.getStartDateTime() == null ?
-                todayInUTC.minusDays(1) : shimDataRequest.getStartDateTime();
+                todayInUTC.minusDays(1) : shimDataRequest.getStartDateTime().withZoneSameInstant(timeZone).toOffsetDateTime();
+                
         long startTimeNanos = (startDateInUTC.toEpochSecond() * 1000000000) + startDateInUTC.toInstant().getNano();
 
         OffsetDateTime endDateInUTC = shimDataRequest.getEndDateTime() == null ?
                 todayInUTC.plusDays(1) :
-                shimDataRequest.getEndDateTime().plusDays(1);   // We are inclusive of the last day, so add 1 day to get
+                shimDataRequest.getEndDateTime().plusDays(1).withZoneSameInstant(timeZone).toOffsetDateTime();   // We are inclusive of the last day, so add 1 day to get
         // the end of day on the last day, which captures the
         // entire last day
         long endTimeNanos = (endDateInUTC.toEpochSecond() * 1000000000) + endDateInUTC.toInstant().getNano();
