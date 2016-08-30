@@ -160,10 +160,10 @@ public class RunkeeperShim extends OAuth2ShimBase {
         OffsetDateTime now = OffsetDateTime.now();
 
         OffsetDateTime startDateTime = shimDataRequest.getStartDateTime() == null ?
-                now.minusDays(1) : shimDataRequest.getStartDateTime();
+                now.minusDays(1) : shimDataRequest.getStartDateTime().toOffsetDateTime();
 
         OffsetDateTime endDateTime = shimDataRequest.getEndDateTime() == null ?
-                now.plusDays(1) : shimDataRequest.getEndDateTime();
+                now.plusDays(1) : shimDataRequest.getEndDateTime().toOffsetDateTime();
 
         /*
             Runkeeper defaults to returning a maximum of 25 entries per request (pageSize = 25 by default), so

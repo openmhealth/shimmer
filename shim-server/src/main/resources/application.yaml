@@ -3,12 +3,12 @@ spring:
     name: Shimmer
   data:
     mongodb:
-      uri: mongodb://mongo:27017/omh_dsu
+      uri: mongodb://shimmerapp:Ab9(gQua*9@ds040489.mlab.com:40489/shimmer_dev
   jackson:
     serialization:
       indent_output: true
 server:
-  port: 8083
+  port: 8080
 security:
   basic:
     enabled: false
@@ -18,7 +18,7 @@ logging:
 openmhealth:
   shim:
     server:
-      callbackUrlBase: http://localhost:8083
+      callbackUrlBase: http://localhost:59363
 
     #NOTE: Uncomment and fill in the clientId/clientSecret with your credentials if you're not using the UI
     #NOTE: Uncomment and set partnerAccess to true if your credentials for a given API have partner access
@@ -35,10 +35,10 @@ openmhealth:
     #    sleepSV: [YOUR_SV_VALUE_FOR_THE_SLEEP_ENDPOINT]
     #  clientId: [YOUR_CLIENT_ID]
     #  clientSecret: [YOUR_CLIENT_SECRET]
-    #fitbit:
-    #  partnerAccess: true
-    #  clientId: [YOUR_CLIENT_ID]
-    #  clientSecret: [YOUR_CLIENT_SECRET]
+    fitbit:
+      partnerAccess: true
+      clientId: 227VX4
+      clientSecret: 9d60e46eade1673cb2ce6ba9999b816c
     #fatsecret:
     #  clientId: [YOUR_CLIENT_ID]
     #  clientSecret: [YOUR_CLIENT_SECRET]
@@ -59,6 +59,6 @@ openmhealth:
     #  clientSecret: [YOUR_CLIENT_SECRET]
     #healthvault:
     #  clientId: [YOUR_CLIENT_ID]
-    #googlefit:
-    #  clientId: [YOUR_CLIENT_ID]
-    #  clientSecret: [YOUR_CLIENT_SECRET]
+    googlefit:
+      clientId: 531482589768-gdjv1ojl77hge4ssg4n15r3dipsv9o2g.apps.googleusercontent.com
+      clientSecret: 1L63MQDI3JPr3h1n99VyqY4N

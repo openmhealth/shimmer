@@ -159,13 +159,13 @@ public class JawboneShim extends OAuth2ShimBase {
         OffsetDateTime today = OffsetDateTime.now();
 
         OffsetDateTime startDateTime = shimDataRequest.getStartDateTime() == null ?
-                today.minusDays(1) : shimDataRequest.getStartDateTime();
+                today.minusDays(1) : shimDataRequest.getStartDateTime().toOffsetDateTime();
         long startTimeInEpochSecond = startDateTime.toEpochSecond();
 
         // We are inclusive of the last day, so we need to add an extra day since we are dealing with start of day,
         // and would miss the activities that occurred during the last day within going to midnight of that day
         OffsetDateTime endDateTime = shimDataRequest.getEndDateTime() == null ?
-                today.plusDays(1) : shimDataRequest.getEndDateTime().plusDays(1);
+                today.plusDays(1) : shimDataRequest.getEndDateTime().plusDays(1).toOffsetDateTime();
         long endTimeInEpochSecond = endDateTime.toEpochSecond();
 
         UriComponentsBuilder uriComponentsBuilder =
