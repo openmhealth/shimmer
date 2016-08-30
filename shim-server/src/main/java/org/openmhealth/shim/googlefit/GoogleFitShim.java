@@ -177,7 +177,7 @@ public class GoogleFitShim extends OAuth2ShimBase {
 
         OffsetDateTime endDateInUTC = shimDataRequest.getEndDateTime() == null ?
                 todayInUTC.plusDays(1) :
-                shimDataRequest.getEndDateTime().plusDays(1).withZoneSameInstant(timeZone).toOffsetDateTime();   // We are inclusive of the last day, so add 1 day to get
+                shimDataRequest.getEndDateTime().withZoneSameInstant(timeZone).toOffsetDateTime();   // We are inclusive of the last day, so add 1 day to get
         // the end of day on the last day, which captures the
         // entire last day
         long endTimeNanos = (endDateInUTC.toEpochSecond() * 1000000000) + endDateInUTC.toInstant().getNano();
