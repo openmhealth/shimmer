@@ -68,3 +68,5 @@ crashlytics-build.properties
 ### Gradle ###
 .gradle
 build/
+
+application.yaml

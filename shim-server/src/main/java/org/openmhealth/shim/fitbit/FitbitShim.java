@@ -188,10 +188,10 @@ public class FitbitShim extends OAuth2ShimBase {
         OffsetDateTime today = LocalDate.now().atStartOfDay(ZoneId.of("Z")).toOffsetDateTime();
 
         OffsetDateTime startDate = shimDataRequest.getStartDateTime() == null ?
-                today.minusDays(1) : shimDataRequest.getStartDateTime();
+                today.minusDays(1) : shimDataRequest.getStartDateTime().toOffsetDateTime();
 
         OffsetDateTime endDate = shimDataRequest.getEndDateTime() == null ?
-                today.plusDays(1) : shimDataRequest.getEndDateTime();
+                today.plusDays(1) : shimDataRequest.getEndDateTime().toOffsetDateTime();
 
         OffsetDateTime currentDate = startDate;
 

@@ -27,6 +27,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 
 import static java.time.ZoneOffset.UTC;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -61,7 +63,8 @@ public class LegacyDataPointSearchController {
             @PathVariable("dataType") String dataTypeKey,
             @RequestParam(value = "normalize", defaultValue = "true") boolean normalize,
             @RequestParam(value = "dateStart", defaultValue = "") String dateStart,
-            @RequestParam(value = "dateEnd", defaultValue = "") String dateEnd)
+            @RequestParam(value = "dateEnd", defaultValue = "") String dateEnd,
+    		@RequestParam(value = "timezone", defaultValue = "") String timezone)
             throws ShimException {
 
         setPassThroughAuthentication(username, shim);
@@ -70,12 +73,13 @@ public class LegacyDataPointSearchController {
 
         shimDataRequest.setDataTypeKey(dataTypeKey);
         shimDataRequest.setNormalize(normalize);
+        ZoneId timeZone = ZoneId.of(timezone);
 
         if (!dateStart.isEmpty()) {
-            shimDataRequest.setStartDateTime(LocalDateTime.parse(dateStart).atOffset(UTC));
+            shimDataRequest.setStartDateTime(ZonedDateTime.of(LocalDateTime.parse(dateStart), timeZone));
         }
         if (!dateEnd.isEmpty()) {
-            shimDataRequest.setEndDateTime(LocalDateTime.parse(dateEnd).atOffset(UTC));
+            shimDataRequest.setEndDateTime(ZonedDateTime.of(LocalDateTime.parse(dateEnd), timeZone));
         }
 
         AccessParameters accessParameters = accessParametersRepo.findByUsernameAndShimKey(

@@ -156,10 +156,10 @@ public class MisfitShim extends OAuth2ShimBase {
         OffsetDateTime now = OffsetDateTime.now();
 
         OffsetDateTime startDateTime = shimDataRequest.getStartDateTime() == null ?
-                now.minusDays(1) : shimDataRequest.getStartDateTime();
+                now.minusDays(1) : shimDataRequest.getStartDateTime().toOffsetDateTime();
 
         OffsetDateTime endDateTime = shimDataRequest.getEndDateTime() == null ?
-                now.plusDays(1) : shimDataRequest.getEndDateTime();
+                now.plusDays(1) : shimDataRequest.getEndDateTime().toOffsetDateTime();
 
         if (Duration.between(startDateTime, endDateTime).toDays() > MAX_DURATION_IN_DAYS) {
             endDateTime =

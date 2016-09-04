@@ -198,9 +198,9 @@ public class IHealthShim extends OAuth2ShimBase {
 
         OffsetDateTime now = OffsetDateTime.now();
         OffsetDateTime startDate = shimDataRequest.getStartDateTime() == null ?
-                now.minusDays(1) : shimDataRequest.getStartDateTime();
+                now.minusDays(1) : shimDataRequest.getStartDateTime().toOffsetDateTime();
         OffsetDateTime endDate = shimDataRequest.getEndDateTime() == null ?
-                now.plusDays(1) : shimDataRequest.getEndDateTime();
+                now.plusDays(1) : shimDataRequest.getEndDateTime().toOffsetDateTime();
 
         /*
             The physical activity point handles start and end datetimes differently than the other endpoints. It
