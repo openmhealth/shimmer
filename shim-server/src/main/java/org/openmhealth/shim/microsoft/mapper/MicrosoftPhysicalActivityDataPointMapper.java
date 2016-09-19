@@ -17,16 +17,18 @@
 package org.openmhealth.shim.microsoft.mapper;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.mongodb.util.JSON;
 import org.openmhealth.schema.domain.omh.*;
 
+import java.time.Duration;
 import java.time.OffsetDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.openmhealth.schema.domain.omh.DurationUnit.SECOND;
+import static org.openmhealth.schema.domain.omh.DurationUnit.DAY;
 import static org.openmhealth.schema.domain.omh.KcalUnit.KILOCALORIE;
 import static org.openmhealth.schema.domain.omh.LengthUnit.MILE;
 import static org.openmhealth.schema.domain.omh.TimeInterval.ofStartDateTimeAndDuration;
@@ -34,11 +36,9 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.*;
 
 
 /**
- * A mapper from Microsoft Resource API /activity/sessions responses to {@link PhysicalActivity} objects.
+ * A mapper from Microsoft Resource API /Activities responses to {@link PhysicalActivity} objects.
  *
- * @author Emerson Farrugia
- * @author Eric Jain
- * @see <a href="https://build.misfit.com/docs/references#APIReferences-Session">API documentation</a>
+ * @author jjcampa
  */
 public class MicrosoftPhysicalActivityDataPointMapper extends MicrosoftDataPointMapper<PhysicalActivity> {
     @Override
@@ -51,15 +51,16 @@ public class MicrosoftPhysicalActivityDataPointMapper extends MicrosoftDataPoint
         // all mapped Microsoft responses contain a single list
         List<DataPoint<PhysicalActivity>> dataPoints = new ArrayList<>();
 
-        for(int i=0;i<6;i++){
-        Optional<JsonNode> listNodes = asOptionalNode(responseNodes.get(0), getListNodeName(i));
+        for (int i = 0; i < 6; i++) {
+            Optional<JsonNode> listNodes = asOptionalNode(responseNodes.get(0), getListNodeName(i));
 
-        if(listNodes.isPresent()) {
+            if (listNodes.isPresent()) {
 
-            for (JsonNode listEntryNode : listNodes.get()) {
-                asDataPoint(listEntryNode).ifPresent(dataPoints::add);
+                for (JsonNode listEntryNode : listNodes.get()) {
+                    asDataPoint(listEntryNode).ifPresent(dataPoints::add);
+                }
             }
-        }}
+        }
         return dataPoints;
     }
 
@@ -67,11 +68,12 @@ public class MicrosoftPhysicalActivityDataPointMapper extends MicrosoftDataPoint
     protected String getListNodeName() {
 
 
-        return "sleepActivities";
+        return "Activities";
     }
+
     protected String getListNodeName(int act) {
 
-        switch(act){
+        switch (act) {
             case 0:
                 return "bikeActivities";
 
@@ -106,64 +108,27 @@ public class MicrosoftPhysicalActivityDataPointMapper extends MicrosoftDataPoint
         PhysicalActivity.Builder builder = new PhysicalActivity.Builder(activityName);
 
         Optional<JsonNode> distance = asOptionalNode(sessionNode, "distanceSummary");
-        if(distance.isPresent()) {
+        if (distance.isPresent()) {
             JsonNode d = distance.get();
             Optional<Double> dist = asOptionalDouble(d, "totalDistance");
             if (dist.isPresent()) {
                 builder.setDistance(new LengthUnitValue(MILE, dist.get()));
             }
         }
+
         Optional<OffsetDateTime> startDateTime = asOptionalOffsetDateTime(sessionNode, "startTime");
 
-
         String sleepDurationString = asRequiredString(sessionNode, "duration");
-        long h=0;
-        long m=0;
-        long s=0;
-        try {
-            if(sleepDurationString.indexOf("H")!=-1)
-            h = Long.parseLong((sleepDurationString.substring(sleepDurationString.indexOf("H") - 2, sleepDurationString.indexOf("H"))));
-
-        }
-        catch(NumberFormatException ex){
-            h = Long.parseLong((sleepDurationString.substring(sleepDurationString.indexOf("H") - 1, sleepDurationString.indexOf("H"))));
-
-        }
-        try {
-            if(sleepDurationString.indexOf("M")!=-1)
-
-                m = Long.parseLong((sleepDurationString.substring(sleepDurationString.indexOf("M") - 2, sleepDurationString.indexOf("M"))));
-        }
-        catch(NumberFormatException ex) {
-            m = Long.parseLong((sleepDurationString.substring(sleepDurationString.indexOf("M") - 1, sleepDurationString.indexOf("M"))));
-
-        }
-
-        try {
-            if(sleepDurationString.indexOf("S")!=-1)
-
-                s = Long.parseLong((sleepDurationString.substring(sleepDurationString.indexOf("S") - 2, sleepDurationString.indexOf("S"))));
-        }
-        catch(NumberFormatException ex){
-            s = Long.parseLong((sleepDurationString.substring(sleepDurationString.indexOf("S") - 1, sleepDurationString.indexOf("S"))));
-
-        }
-        Long durationInSec = h * 3600 + m * 60 + s;
-        if (durationInSec == 0) {
-            return Optional.empty();
-        }
-
-
-
+        Duration duration = java.time.Duration.parse(sleepDurationString);
 
         if (startDateTime.isPresent()) {
-            DurationUnitValue durationUnitValue = new DurationUnitValue(SECOND, durationInSec);
+            DurationUnitValue durationUnitValue = new DurationUnitValue(DAY, TimeUnit.DAYS.convert(duration.get(ChronoUnit.SECONDS), TimeUnit.SECONDS));
             builder.setEffectiveTimeFrame(ofStartDateTimeAndDuration(startDateTime.get(), durationUnitValue));
         }
-        Optional<JsonNode> caloriesnode = asOptionalNode(sessionNode, "caloriesSummary");
-        if(caloriesnode.isPresent()) {
+        Optional<JsonNode> caloriesnode = asOptionalNode(sessionNode, "caloriesBurnedSummary");
+        if (caloriesnode.isPresent()) {
             JsonNode d = caloriesnode.get();
-            Optional<Double> calories = asOptionalDouble(d, "totalcalories");
+            Optional<Integer> calories = asOptionalInteger(d, "totalCalories");
             if (calories.isPresent()) {
                 builder.setCaloriesBurned(new KcalUnitValue(KILOCALORIE, calories.get()));
             }

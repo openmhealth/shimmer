@@ -27,6 +27,7 @@ import java.time.OffsetDateTime;
 import java.util.Optional;
 
 import static java.lang.String.format;
+import static java.time.temporal.ChronoUnit.SECONDS;
 import static org.openmhealth.schema.domain.omh.DurationUnit.SECOND;
 import static org.openmhealth.schema.domain.omh.TimeInterval.ofStartDateTimeAndEndDateTime;
 import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.*;
@@ -39,8 +40,6 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.*;
  * preserve the granularity of the original data. This mapper may be updated to return a data point per segment in the
  * future.
  *
- * @author Emerson Farrugia
- * @see <a href="https://build.misfit.com/docs/references#APIReferences-Sleep">API documentation</a>
  */
 public class MicrosoftSleepDurationDataPointMapper extends MicrosoftDataPointMapper<SleepDuration> {
 
@@ -54,59 +53,19 @@ public class MicrosoftSleepDurationDataPointMapper extends MicrosoftDataPointMap
     @Override
     public Optional<DataPoint<SleepDuration>> asDataPoint(JsonNode sleepNode) {
 
-        // The sleep details array contains segments corresponding to whether the user was awake, sleeping lightly,
-        // or sleeping restfully for the duration of that segment. To discount the awake segments, we have to deduct
-        // their duration from the total sleep duration.
-
-
         // to calculate the duration of last segment, first determine the overall end time
         OffsetDateTime startDateTime = asRequiredOffsetDateTime(sleepNode, "startTime");
         OffsetDateTime endDateTime = asRequiredOffsetDateTime(sleepNode, "endTime");
 
-        if(startDateTime==null){
-
-                throw new JsonNodeMappingException(format("The Misfit sleep node '%s' has no sleep details.", sleepNode));
-
-
+        if (startDateTime == null) {
+            throw new JsonNodeMappingException(format("The Microsoft sleep node '%s' has no sleep details.", sleepNode));
         }
+
         String sleepDurationString = asRequiredString(sleepNode, "sleepDuration");
-        long h=0;
-        long m=0;
-        long s=0;
-        try {
-            if(sleepDurationString.indexOf("H")!=-1)
+        Duration duration = java.time.Duration.parse(sleepDurationString);
 
-                h = Long.parseLong((sleepDurationString.substring(sleepDurationString.indexOf("H") - 2, sleepDurationString.indexOf("H"))));
-        }
-        catch(NumberFormatException ex){
-            h = Long.parseLong((sleepDurationString.substring(sleepDurationString.indexOf("H") - 1, sleepDurationString.indexOf("H"))));
 
-        }
-        try {
-            if(sleepDurationString.indexOf("M")!=-1)
-
-                m = Long.parseLong((sleepDurationString.substring(sleepDurationString.indexOf("M") - 2, sleepDurationString.indexOf("M"))));
-        }
-        catch(NumberFormatException ex) {
-            m = Long.parseLong((sleepDurationString.substring(sleepDurationString.indexOf("M") - 1, sleepDurationString.indexOf("M"))));
-
-        }
-
-        try {
-            if(sleepDurationString.indexOf("S")!=-1)
-
-                s = Long.parseLong((sleepDurationString.substring(sleepDurationString.indexOf("S") - 2, sleepDurationString.indexOf("S"))));
-        }
-        catch(NumberFormatException ex){
-            s = Long.parseLong((sleepDurationString.substring(sleepDurationString.indexOf("S") - 1, sleepDurationString.indexOf("S"))));
-
-        }
-            Long sleepDurationInSec = h * 3600 + m * 60 + s;
-            if (sleepDurationInSec == 0) {
-                return Optional.empty();
-            }
-
-        SleepDuration measure = new SleepDuration.Builder(new DurationUnitValue(SECOND, sleepDurationInSec))
+        SleepDuration measure = new SleepDuration.Builder(new DurationUnitValue(SECOND, duration.get(SECONDS)))
                 .setEffectiveTimeFrame(ofStartDateTimeAndEndDateTime(startDateTime, endDateTime))
                 .build();
 

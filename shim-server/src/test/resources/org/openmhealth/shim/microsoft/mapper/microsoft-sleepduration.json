@@ -1,0 +1,40 @@
+{
+  "sleepActivities": [
+    {
+      "activityType": "Sleep",
+      "activitySegments": [],
+      "awakeDuration": "P1DT3H23M",
+      "sleepDuration": "P14DT9H42M",
+      "numberOfWakeups": 3,
+      "fallAsleepDuration": "PT8H57M",
+      "sleepEfficiencyPercentage": 95,
+      "totalRestlessSleepDuration": "PT4H35M30S",
+      "totalRestfulSleepDuration": "PT1H10M12S",
+      "restingHeartRate": 63,
+      "fallAsleepTime": "2015-05-11T08:00:00.00+00:00",
+      "wakeupTime": "2015-05-11T14:00:00.000+00:00",
+      "id": "2519709685807976512",
+      "userId": null,
+      "deviceId": null,
+      "startTime": "2015-05-11T08:00:00.0+00:00",
+      "endTime": "2015-05-11T14:00:00.0+00:00",
+      "dayId": "2015-05-11T00:00:00+00:00",
+      "createdTime": "0001-01-01T00:00:00+00:00",
+      "createdBy": null,
+      "name": null,
+      "duration": "PT6H13M5S",
+      "minuteSummaries": null,
+      "caloriesBurnedSummary": {
+        "period": "Activity",
+        "totalCalories": 492
+      },
+      "heartRateSummary": {
+        "period": "Activity",
+        "averageHeartRate": 74,
+        "peakHeartRate": 110,
+        "lowestHeartRate": 56
+      },
+      "properties": null
+    }
+  ]
+}

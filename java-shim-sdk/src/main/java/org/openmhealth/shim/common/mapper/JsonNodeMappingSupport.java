@@ -28,7 +28,7 @@ public class JsonNodeMappingSupport {
 
     /**
      * @param parentNode a parent node
-     * @param path a path to a child node
+     * @param path       a path to a child node
      * @return the child node reached by traversing the path, where dots denote nested nodes
      * @throws MissingJsonNodeMappingException if the child node doesn't exist
      */
@@ -50,17 +50,17 @@ public class JsonNodeMappingSupport {
     }
 
     /**
-     * @param parentNode a parent node
-     * @param path the path to a child node
+     * @param parentNode  a parent node
+     * @param path        the path to a child node
      * @param typeChecker the function to check if the type is compatible
-     * @param converter the function to convert the node to a value
-     * @param <T> the type of the value to convert to
+     * @param converter   the function to convert the node to a value
+     * @param <T>         the type of the value to convert to
      * @return the value of the child node
-     * @throws MissingJsonNodeMappingException if the child doesn't exist
+     * @throws MissingJsonNodeMappingException      if the child doesn't exist
      * @throws IncompatibleJsonNodeMappingException if the value of the child node isn't compatible
      */
     public static <T> T asRequiredValue(JsonNode parentNode, String path, Function<JsonNode, Boolean> typeChecker,
-            Function<JsonNode, T> converter, Class<T> targetType) {
+                                        Function<JsonNode, T> converter, Class<T> targetType) {
 
         JsonNode childNode = asRequiredNode(parentNode, path);
 
@@ -73,9 +73,9 @@ public class JsonNodeMappingSupport {
 
     /**
      * @param parentNode a parent node
-     * @param path the path to a child node
+     * @param path       the path to a child node
      * @return the value of the child node as a string
-     * @throws MissingJsonNodeMappingException if the child doesn't exist
+     * @throws MissingJsonNodeMappingException      if the child doesn't exist
      * @throws IncompatibleJsonNodeMappingException if the value of the child node isn't textual
      */
     public static String asRequiredString(JsonNode parentNode, String path) {
@@ -87,9 +87,9 @@ public class JsonNodeMappingSupport {
 
     /**
      * @param parentNode a parent node
-     * @param path the path to a child node
+     * @param path       the path to a child node
      * @return the value of the child node as a boolean
-     * @throws MissingJsonNodeMappingException if the child doesn't exist
+     * @throws MissingJsonNodeMappingException      if the child doesn't exist
      * @throws IncompatibleJsonNodeMappingException if the value of the child node isn't a boolean
      */
     public static Boolean asRequiredBoolean(JsonNode parentNode, String path) {
@@ -99,9 +99,9 @@ public class JsonNodeMappingSupport {
 
     /**
      * @param parentNode a parent node
-     * @param path the path to a child node
+     * @param path       the path to a child node
      * @return the value of the child node as a long
-     * @throws MissingJsonNodeMappingException if the child doesn't exist
+     * @throws MissingJsonNodeMappingException      if the child doesn't exist
      * @throws IncompatibleJsonNodeMappingException if the value of the child node isn't an integer
      */
     public static Long asRequiredLong(JsonNode parentNode, String path) {
@@ -113,9 +113,9 @@ public class JsonNodeMappingSupport {
 
     /**
      * @param parentNode a parent node
-     * @param path the path to a child node
+     * @param path       the path to a child node
      * @return the value of the child node as an integer
-     * @throws MissingJsonNodeMappingException if the child doesn't exist
+     * @throws MissingJsonNodeMappingException      if the child doesn't exist
      * @throws IncompatibleJsonNodeMappingException if the value of the child node isn't an integer
      */
     public static Integer asRequiredInteger(JsonNode parentNode, String path) {
@@ -125,9 +125,9 @@ public class JsonNodeMappingSupport {
 
     /**
      * @param parentNode a parent node
-     * @param path the path to a child node
+     * @param path       the path to a child node
      * @return the value of the child node as a double
-     * @throws MissingJsonNodeMappingException if the child doesn't exist
+     * @throws MissingJsonNodeMappingException      if the child doesn't exist
      * @throws IncompatibleJsonNodeMappingException if the value of the child node isn't numeric
      */
     public static Double asRequiredDouble(JsonNode parentNode, String path) {
@@ -137,9 +137,9 @@ public class JsonNodeMappingSupport {
 
     /**
      * @param parentNode a parent node
-     * @param path the path to a child node
+     * @param path       the path to a child node
      * @return the value of the child node as a BigDecimal
-     * @throws MissingJsonNodeMappingException if the child doesn't exist
+     * @throws MissingJsonNodeMappingException      if the child doesn't exist
      * @throws IncompatibleJsonNodeMappingException if the value of the child node isn't numeric
      */
     public static BigDecimal asRequiredBigDecimal(JsonNode parentNode, String path) {
@@ -149,9 +149,9 @@ public class JsonNodeMappingSupport {
 
     /**
      * @param parentNode a parent node
-     * @param path the path to a child node
+     * @param path       the path to a child node
      * @return the value of the child node as a {@link LocalDate}
-     * @throws MissingJsonNodeMappingException if the child doesn't exist
+     * @throws MissingJsonNodeMappingException      if the child doesn't exist
      * @throws IncompatibleJsonNodeMappingException if the value of the child node isn't a date
      */
     // TODO overload with a DateTimeFormatter parameter
@@ -161,17 +161,35 @@ public class JsonNodeMappingSupport {
 
         try {
             return LocalDate.parse(string);
-        }
-        catch (DateTimeParseException e) {
+        } catch (DateTimeParseException e) {
             throw new IncompatibleJsonNodeMappingException(parentNode, path, LocalDate.class, e);
         }
     }
 
     /**
      * @param parentNode a parent node
-     * @param path the path to a child node
+     * @param path       the path to a child node
+     * @return the value of the child node as a {@link LocalDateTime}
+     * @throws MissingJsonNodeMappingException      if the child doesn't exist
+     * @throws IncompatibleJsonNodeMappingException if the value of the child node isn't a datetime
+     */
+    // TODO overload with a DateTimeFormatter parameter
+    public static LocalDateTime asRequiredLocalDateTime(JsonNode parentNode, String path) {
+
+        String string = asRequiredString(parentNode, path);
+
+        try {
+            return LocalDateTime.parse(string);
+        } catch (DateTimeParseException e) {
+            throw new IncompatibleJsonNodeMappingException(parentNode, path, LocalDateTime.class, e);
+        }
+    }
+
+    /**
+     * @param parentNode a parent node
+     * @param path       the path to a child node
      * @return the value of the child node as an {@link OffsetDateTime}
-     * @throws MissingJsonNodeMappingException if the child doesn't exist
+     * @throws MissingJsonNodeMappingException      if the child doesn't exist
      * @throws IncompatibleJsonNodeMappingException if the value of the child node isn't a date time
      */
     public static OffsetDateTime asRequiredOffsetDateTime(JsonNode parentNode, String path) {
@@ -180,15 +198,14 @@ public class JsonNodeMappingSupport {
 
         try {
             return OffsetDateTime.parse(string);
-        }
-        catch (DateTimeParseException e) {
+        } catch (DateTimeParseException e) {
             throw new IncompatibleJsonNodeMappingException(parentNode, path, OffsetDateTime.class, e);
         }
     }
 
     /**
      * @param parentNode a parent node
-     * @param path a path to a child node, where dots denote nested nodes
+     * @param path       a path to a child node, where dots denote nested nodes
      * @return the child node reached by traversing the path, or an empty optional if the child doesn't exist
      */
     public static Optional<JsonNode> asOptionalNode(final JsonNode parentNode, final String path) {
@@ -216,16 +233,16 @@ public class JsonNodeMappingSupport {
     }
 
     /**
-     * @param parentNode a parent node
-     * @param path the path to a child node
+     * @param parentNode  a parent node
+     * @param path        the path to a child node
      * @param typeChecker the function to check if the type is compatible
-     * @param converter the function to convert the node to a value
-     * @param <T> the type of the value to convert to
+     * @param converter   the function to convert the node to a value
+     * @param <T>         the type of the value to convert to
      * @return the value of the child node, or an empty optional if the child doesn't exist or if the
      * value of the child node isn't compatible
      */
     public static <T> Optional<T> asOptionalValue(JsonNode parentNode, String path,
-            Function<JsonNode, Boolean> typeChecker, Function<JsonNode, T> converter) {
+                                                  Function<JsonNode, Boolean> typeChecker, Function<JsonNode, T> converter) {
 
         JsonNode childNode = asOptionalNode(parentNode, path).orElse(null);
 
@@ -243,7 +260,7 @@ public class JsonNodeMappingSupport {
 
     /**
      * @param parentNode a parent node
-     * @param path the path to a child node
+     * @param path       the path to a child node
      * @return the value of the child node as a string, or an empty optional if the child doesn't exist or if the
      * value of the child node isn't textual
      */
@@ -254,7 +271,7 @@ public class JsonNodeMappingSupport {
 
     /**
      * @param parentNode a parent node
-     * @param path the path to a child node
+     * @param path       the path to a child node
      * @return the value of the child node as a boolean, or an empty optional if the child doesn't exist or if the
      * value of the child node isn't boolean
      */
@@ -265,7 +282,7 @@ public class JsonNodeMappingSupport {
 
     /**
      * @param parentNode a parent node
-     * @param path the path to a child node
+     * @param path       the path to a child node
      * @return the value of the child node as a date time, or an empty optional if the child doesn't exist or if the
      * value of the child node isn't a date time
      */
@@ -281,8 +298,7 @@ public class JsonNodeMappingSupport {
 
         try {
             dateTime = OffsetDateTime.parse(string.get());
-        }
-        catch (DateTimeParseException e) {
+        } catch (DateTimeParseException e) {
             logger.warn("The '{}' field in node '{}' with value '{}' isn't a valid timestamp.",
                     path, parentNode, string.get(), e);
         }
@@ -292,13 +308,13 @@ public class JsonNodeMappingSupport {
 
     /**
      * @param parentNode a parent node
-     * @param path the path to a child node
-     * @param formatter the formatter to use to parse the value of the child node
+     * @param path       the path to a child node
+     * @param formatter  the formatter to use to parse the value of the child node
      * @return the value of the child node as a date time, or an empty optional if the child doesn't exist or if the
      * value of the child node isn't a date time
      */
     public static Optional<LocalDateTime> asOptionalLocalDateTime(JsonNode parentNode, String path,
-            DateTimeFormatter formatter) {
+                                                                  DateTimeFormatter formatter) {
 
         Optional<String> string = asOptionalString(parentNode, path);
 
@@ -310,8 +326,7 @@ public class JsonNodeMappingSupport {
 
         try {
             dateTime = LocalDateTime.parse(string.get(), formatter);
-        }
-        catch (DateTimeParseException e) {
+        } catch (DateTimeParseException e) {
             logger.warn("The '{}' field in node '{}' with value '{}' isn't a valid timestamp.",
                     path, parentNode, string.get(), e);
         }
@@ -321,7 +336,7 @@ public class JsonNodeMappingSupport {
 
     /**
      * @param parentNode a parent node
-     * @param path the path to a child node
+     * @param path       the path to a child node
      * @return the value of the child node as a date time, or an empty optional if the child doesn't exist or if the
      * value of the child node isn't a date time matching {@link DateTimeFormatter#ISO_LOCAL_DATE_TIME}
      */
@@ -332,7 +347,7 @@ public class JsonNodeMappingSupport {
 
     // TODO refactor this by delegating to existing methods, then add tests
     public static Optional<LocalDateTime> asOptionalLocalDateTime(JsonNode parentNode, String pathToDate,
-            String pathToTime) {
+                                                                  String pathToTime) {
         Optional<String> time = asOptionalString(parentNode, pathToTime);
         Optional<String> date = asOptionalString(parentNode, pathToDate);
         if (!time.isPresent() || !date.isPresent()) {
@@ -341,8 +356,7 @@ public class JsonNodeMappingSupport {
         LocalDateTime dateTime = null;
         try {
             dateTime = LocalDateTime.parse(date.get() + "T" + time.get(), ISO_LOCAL_DATE_TIME);
-        }
-        catch (DateTimeParseException e) {
+        } catch (DateTimeParseException e) {
             logger.warn(
                     "The '{}' and '{}' fields in node '{}' with values '{}' and '{}' do not make-up a valid timestamp.",
                     pathToDate, pathToTime, parentNode, date.get(), time.get(), e);
@@ -358,7 +372,7 @@ public class JsonNodeMappingSupport {
 
     // TODO add Javadoc and tests
     public static Optional<LocalDate> asOptionalLocalDate(JsonNode parentNode, String path,
-            DateTimeFormatter dateFormat) {
+                                                          DateTimeFormatter dateFormat) {
 
         Optional<String> string = asOptionalString(parentNode, path);
 
@@ -370,8 +384,7 @@ public class JsonNodeMappingSupport {
 
         try {
             localDate = LocalDate.parse(string.get(), dateFormat);
-        }
-        catch (DateTimeParseException e) {
+        } catch (DateTimeParseException e) {
             logger.warn("The '{}' field in node '{}' with value '{}' isn't a valid date.",
                     path, parentNode, string.get(), e);
         }
@@ -381,7 +394,7 @@ public class JsonNodeMappingSupport {
 
     /**
      * @param parentNode a parent node
-     * @param path the path to a child node
+     * @param path       the path to a child node
      * @return the value of the child node as a double, or an empty optional if the child doesn't exist or if the
      * value of the child node isn't numeric
      */
@@ -392,7 +405,7 @@ public class JsonNodeMappingSupport {
 
     /**
      * @param parentNode a parent node
-     * @param path the path to a child node
+     * @param path       the path to a child node
      * @return the value of the child node as a long, or an empty optional if the child doesn't exist or if the
      * value of the child node isn't an integer
      */
@@ -403,7 +416,7 @@ public class JsonNodeMappingSupport {
 
     /**
      * @param parentNode a parent node
-     * @param path the path to a child node
+     * @param path       the path to a child node
      * @return the value of the child node as an integer, or an empty optional if the child doesn't exist or if the
      * value of the child node isn't an integer
      */
@@ -414,7 +427,7 @@ public class JsonNodeMappingSupport {
 
     /**
      * @param parentNode a parent node
-     * @param path the path to a child node
+     * @param path       the path to a child node
      * @return the value of the child node as a Big Decimal, or an empty optional if the child doesn't exist or if the
      * value of the child node isn't numeric
      */
@@ -425,7 +438,7 @@ public class JsonNodeMappingSupport {
 
     /**
      * @param parentNode a parent node
-     * @param path the path to a child node
+     * @param path       the path to a child node
      * @return the value of the child node as a {@link ZoneId}, or an empty optional if the child doesn't exist or if
      * the value of the child node isn't a valid time zone
      */
@@ -441,8 +454,7 @@ public class JsonNodeMappingSupport {
 
         try {
             zoneId = ZoneId.of(string.get());
-        }
-        catch (DateTimeException e) {
+        } catch (DateTimeException e) {
             logger.warn("The '{}' field in node '{}' with value '{}' isn't a valid time zone.",
                     path, parentNode, string.get(), e);
         }

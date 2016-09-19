@@ -50,6 +50,9 @@ openmhealth:
     #misfit:
     #  clientId: [YOUR_CLIENT_ID]
     #  clientSecret: [YOUR_CLIENT_SECRET]
+    #microsoft:
+    #  clientId: [YOUR_CLIENT_ID]
+    #  clientSecret: [YOUR_CLIENT_SECRET]
     #runkeeper:
     #  clientId: [YOUR_CLIENT_ID]
     #  clientSecret: [YOUR_CLIENT_SECRET]

@@ -18,6 +18,8 @@ package org.openmhealth.shim;
 
 
 import org.openmhealth.shim.common.mapper.JsonNodeMappingException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.client.DefaultOAuth2ClientContext;
@@ -49,6 +51,9 @@ public abstract class OAuth2ShimBase extends ShimBase implements OAuth2Shim {
     private AccessParametersRepo accessParametersRepo;
 
     protected ShimServerConfig shimServerConfig;
+
+    @Autowired
+    ApplicationContext applicationContext;
 
     protected OAuth2ShimBase(ApplicationAccessParametersRepo applicationParametersRepo,
                              AuthorizationRequestParametersRepo authorizationRequestParametersRepo,
@@ -218,7 +223,7 @@ public abstract class OAuth2ShimBase extends ShimBase implements OAuth2Shim {
             context.setPreservedState(stateKey, "NONE");
         }
 
-        OAuth2RestTemplate restTemplate = new OAuth2RestTemplate(getResource(), context);
+        OAuth2RestTemplate restTemplate = applicationContext.getBean(OAuth2RestTemplate.class, getResource(), context);
         AccessTokenProviderChain tokenProviderChain =
             new AccessTokenProviderChain(new ArrayList<>(
                 Arrays.asList(getAuthorizationCodeAccessTokenProvider())));
@@ -231,4 +236,5 @@ public abstract class OAuth2ShimBase extends ShimBase implements OAuth2Shim {
     protected OAuth2RestOperations restTemplate() {
         return restTemplate(null, null);
     }
+
 }

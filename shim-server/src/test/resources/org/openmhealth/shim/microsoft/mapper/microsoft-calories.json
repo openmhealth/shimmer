@@ -1,0 +1,25 @@
+{
+  "summaries": [
+    {
+      "userId": "30700e2f-b6d5-46c8-b661-7f987bf86d80",
+      "startTime": "2016-09-14T00:00:00.000+00:00",
+      "endTime": "2016-09-15T00:00:00.000+00:00",
+      "parentDay": "2016-09-14T00:00:00.000+00:00",
+      "isTransitDay": false,
+      "period": "Daily",
+      "duration": "P1D",
+      "stepsTaken": 0,
+      "floorsClimbed": 0,
+      "caloriesBurnedSummary": {
+        "period": "Daily",
+        "totalCalories": 6
+      },
+      "heartRateSummary": {
+        "period": "Daily"
+      },
+      "distanceSummary": {
+        "period": "Daily"
+      }
+    }
+  ]
+}

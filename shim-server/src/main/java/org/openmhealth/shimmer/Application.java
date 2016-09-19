@@ -21,10 +21,14 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.boot.context.web.SpringBootServletInitializer;
+import org.springframework.boot.web.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Scope;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
+import org.springframework.security.oauth2.client.OAuth2ClientContext;
+import org.springframework.security.oauth2.client.OAuth2RestTemplate;
+import org.springframework.security.oauth2.client.resource.OAuth2ProtectedResourceDetails;
 
 import static org.openmhealth.schema.configuration.JacksonConfiguration.newObjectMapper;
 
@@ -52,4 +56,11 @@ public class Application extends SpringBootServletInitializer {
     public ObjectMapper objectMapper() {
         return newObjectMapper();
     }
+
+    @Bean  // TODO: move these to a better place
+    @Scope("prototype")
+    public OAuth2RestTemplate restTemplate(OAuth2ProtectedResourceDetails resource, OAuth2ClientContext oauth2ClientContext) {
+        return new OAuth2RestTemplate(resource, oauth2ClientContext);
+    }
+
 }

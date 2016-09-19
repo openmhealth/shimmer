@@ -27,12 +27,13 @@ import java.util.UUID;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.openmhealth.schema.domain.omh.DataPointModality.SENSED;
+import static org.openmhealth.schema.domain.omh.DurationUnit.DAY;
 import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asOptionalNode;
-import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asRequiredNode;
+import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asRequiredOffsetDateTime;
 
 
 /**
- * @author Emerson Farrugia
+ * @author jjcampa
  */
 public abstract class MicrosoftDataPointMapper<T extends SchemaSupport> implements JsonNodeDataPointMapper<T> {
 
@@ -49,7 +50,7 @@ public abstract class MicrosoftDataPointMapper<T extends SchemaSupport> implemen
         Optional<JsonNode> listNodes = asOptionalNode(responseNodes.get(0), getListNodeName());
 
         List<DataPoint<T>> dataPoints = new ArrayList<>();
-        if(listNodes.isPresent()) {
+        if (listNodes.isPresent()) {
             for (JsonNode listEntryNode : listNodes.get()) {
                 asDataPoint(listEntryNode).ifPresent(dataPoints::add);
             }
@@ -70,15 +71,15 @@ public abstract class MicrosoftDataPointMapper<T extends SchemaSupport> implemen
 
 
     /**
-     * @param measure the body of the data point
+     * @param measure    the body of the data point
      * @param sourceName the name of the source of the measure
      * @param externalId the identifier of the measure as recorded by the data provider
-     * @param sensed true if the measure is sensed by a device, false if it's manually entered, null otherwise
-     * @param <T> the measure type
+     * @param sensed     true if the measure is sensed by a device, false if it's manually entered, null otherwise
+     * @param <T>        the measure type
      * @return a data point
      */
     protected <T extends Measure> DataPoint<T> newDataPoint(T measure, String sourceName, String externalId,
-            Boolean sensed) {
+                                                            Boolean sensed) {
 
         DataPointAcquisitionProvenance.Builder provenanceBuilder =
                 new DataPointAcquisitionProvenance.Builder(sourceName);
@@ -99,5 +100,11 @@ public abstract class MicrosoftDataPointMapper<T extends SchemaSupport> implemen
                 .build();
 
         return new DataPoint<>(header, measure);
+    }
+
+    public TimeInterval getStartTime(JsonNode node) {
+        return TimeInterval.ofStartDateTimeAndDuration(
+                asRequiredOffsetDateTime(node, "startTime"),
+                new DurationUnitValue(DAY, 1));
     }
 }

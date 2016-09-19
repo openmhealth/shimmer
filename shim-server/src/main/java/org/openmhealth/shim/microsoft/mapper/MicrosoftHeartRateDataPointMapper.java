@@ -1,14 +1,12 @@
 package org.openmhealth.shim.microsoft.mapper;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import org.openmhealth.schema.domain.omh.CaloriesBurned;
 import org.openmhealth.schema.domain.omh.DataPoint;
-import org.openmhealth.schema.domain.omh.KcalUnitValue;
+import org.openmhealth.schema.domain.omh.HeartRate;
 
 import java.util.Optional;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.openmhealth.schema.domain.omh.KcalUnit.KILOCALORIE;
 import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asOptionalInteger;
 import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asRequiredNode;
 /*
@@ -29,25 +27,23 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asRequir
  */
 
 
-/* @author jjcampa */
-public class MicrosoftCaloriesBurnedDataPointMapper extends MicrosoftDataPointMapper<CaloriesBurned> {
+/* @author wwadge */
+public class MicrosoftHeartRateDataPointMapper extends MicrosoftDataPointMapper<HeartRate> {
     protected String getListNodeName() {
         return "summaries";
     }
 
     @Override
-    protected Optional<DataPoint<CaloriesBurned>> asDataPoint(JsonNode summaryNode) {
+    protected Optional<DataPoint<HeartRate>> asDataPoint(JsonNode summaryNode) {
         checkNotNull(summaryNode);
 
-        JsonNode stepCount = asRequiredNode(summaryNode, "caloriesBurnedSummary");
-        Optional<Integer> calories = asOptionalInteger(stepCount, "totalCalories");
+        JsonNode heartRateSummary = asRequiredNode(summaryNode, "heartRateSummary");
+        Optional<Integer> averageHeartRate = asOptionalInteger(heartRateSummary, "averageHeartRate");
+        HeartRate.Builder heartRateBuilder = new HeartRate.Builder(averageHeartRate.orElseGet(() -> 0));
 
-        CaloriesBurned.Builder caloriesBurnedBuilder = new CaloriesBurned.Builder(
-                new KcalUnitValue(KILOCALORIE, calories.orElseGet(() -> 0)));
-
-        caloriesBurnedBuilder.setEffectiveTimeFrame(getStartTime(summaryNode));
+        heartRateBuilder.setEffectiveTimeFrame(getStartTime(summaryNode));
 
 
-        return Optional.of(newDataPoint(caloriesBurnedBuilder.build(), RESOURCE_API_SOURCE_NAME, null, null));
+        return Optional.of(newDataPoint(heartRateBuilder.build(), RESOURCE_API_SOURCE_NAME, null, null));
     }
 }

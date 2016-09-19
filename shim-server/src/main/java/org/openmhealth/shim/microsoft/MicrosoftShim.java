@@ -20,6 +20,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import org.openmhealth.shim.*;
+import org.openmhealth.shim.common.mapper.JsonNodeDataPointMapper;
 import org.openmhealth.shim.microsoft.mapper.*;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,8 +39,6 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.Arrays;
@@ -52,6 +51,7 @@ import static org.springframework.http.ResponseEntity.ok;
 
 /**
  * @author Juanjo Campana
+ * @author Wallace Wadge
  */
 @Component
 @ConfigurationProperties(prefix = "openmhealth.shim.microsoft")
@@ -67,22 +67,17 @@ public class MicrosoftShim extends OAuth2ShimBase {
 
     private static final String TOKEN_URL = "https://login.live.com/oauth20_token.srf";
 
-    public static final List<String> MICROSOFT_SCOPES = Arrays.asList( "mshealth.ReadDevices", "mshealth.ReadActivityHistory","mshealth.ReadActivityLocation","offline_access");
+    public static final List<String> MICROSOFT_SCOPES = Arrays.asList("mshealth.ReadDevices", "mshealth.ReadActivityHistory", "mshealth.ReadActivityLocation", "offline_access");
 
     private static final long MAX_DURATION_IN_DAYS = 31;
 
     @Autowired
     public MicrosoftShim(ApplicationAccessParametersRepo applicationParametersRepo,
-            AuthorizationRequestParametersRepo authorizationRequestParametersRepo,
-            AccessParametersRepo accessParametersRepo,
-            ShimServerConfig shimServerConfig) {
+                         AuthorizationRequestParametersRepo authorizationRequestParametersRepo,
+                         AccessParametersRepo accessParametersRepo,
+                         ShimServerConfig shimServerConfig) {
         super(applicationParametersRepo, authorizationRequestParametersRepo, accessParametersRepo, shimServerConfig);
     }
-
-    private MicrosoftPhysicalActivityDataPointMapper physicalActivityMapper = new MicrosoftPhysicalActivityDataPointMapper();
-    private MicrosoftSleepDurationDataPointMapper sleepDurationMapper = new MicrosoftSleepDurationDataPointMapper();
-    private MicrosoftStepCountDataPointMapper stepCountMapper = new MicrosoftStepCountDataPointMapper();
-    private MicrosoftCaloriesBurnedDataPointMapper caloriesCountMapper = new MicrosoftCaloriesBurnedDataPointMapper();
 
     @Override
     public String getLabel() {
@@ -119,19 +114,31 @@ public class MicrosoftShim extends OAuth2ShimBase {
         return MicrosoftDataTypes.values();
     }
 
-
-    // TODO remove this structure once endpoints are figured out
     public enum MicrosoftDataTypes implements ShimDataType {
 
-        ACTIVITY("Activities/"),
-        STEPS("Summaries/Daily"),
-        SLEEP("Activities/"),
-        CALORIES("Summaries/Daily");
 
+        ACTIVITY("Activities/", new MicrosoftPhysicalActivityDataPointMapper(), true),
+        CALORIES("Summaries/Daily", new MicrosoftCaloriesBurnedDataPointMapper(), true),
+        HEARTRATE("Summaries/Daily", new MicrosoftHeartRateDataPointMapper(), true),
+        SLEEP("Activities/", new MicrosoftSleepDurationDataPointMapper(), false),
+        STEPS("Summaries/Daily", new MicrosoftStepCountDataPointMapper(), true);
+
+        private final boolean dateTimeBound;
+        private JsonNodeDataPointMapper mapper;
         private String endPoint;
 
-        MicrosoftDataTypes(String endPoint) {
+        <T extends MicrosoftDataPointMapper> MicrosoftDataTypes(String endPoint, T mapper, boolean dateTimeBound) {
             this.endPoint = endPoint;
+            this.mapper = mapper;
+            this.dateTimeBound = dateTimeBound;
+        }
+
+        public boolean isDateTimeBound() {
+            return this.dateTimeBound;
+        }
+
+        public JsonNodeDataPointMapper getMapper() {
+            return mapper;
         }
 
         public String getEndPoint() {
@@ -141,13 +148,12 @@ public class MicrosoftShim extends OAuth2ShimBase {
 
     @Override
     protected ResponseEntity<ShimDataResponse> getData(OAuth2RestOperations restTemplate,
-            ShimDataRequest shimDataRequest) throws ShimException {
+                                                       ShimDataRequest shimDataRequest) throws ShimException {
 
         final MicrosoftDataTypes microsoftDataType;
         try {
             microsoftDataType = MicrosoftDataTypes.valueOf(shimDataRequest.getDataTypeKey().trim().toUpperCase());
-        }
-        catch (NullPointerException | IllegalArgumentException e) {
+        } catch (NullPointerException | IllegalArgumentException e) {
             throw new ShimException("Null or Invalid data type parameter: " + shimDataRequest.getDataTypeKey()
                     + " in shimDataRequest, cannot retrieve data.");
         }
@@ -171,54 +177,31 @@ public class MicrosoftShim extends OAuth2ShimBase {
         for (String pathSegment : Splitter.on("/").split(microsoftDataType.getEndPoint())) {
             uriBuilder.pathSegment(pathSegment);
         }
-        if(/*microsoftDataType==MicrosoftDataTypes.SUMMARY || */microsoftDataType==MicrosoftDataTypes.STEPS || microsoftDataType==MicrosoftDataTypes.CALORIES || microsoftDataType==MicrosoftDataTypes.ACTIVITY || microsoftDataType==MicrosoftDataTypes.SLEEP) {
+        if (microsoftDataType.isDateTimeBound()) {
 
             uriBuilder
                     .queryParam("startTime", startDateTime.toInstant()) // TODO convert ODT to LocalDate properly
                     .queryParam("endTime", endDateTime.toInstant());
 
         }
-        if(microsoftDataType==MicrosoftDataTypes.SLEEP){
+        if (microsoftDataType == MicrosoftDataTypes.SLEEP) {
 
-            uriBuilder.queryParam("activityTypes","Sleep");
+            uriBuilder.queryParam("activityTypes", "Sleep");
         }
-        ResponseEntity<JsonNode> responseEntity=null;
+        ResponseEntity<JsonNode> responseEntity;
 
         try {
             responseEntity = restTemplate.getForEntity(uriBuilder.build().encode().toUri(), JsonNode.class);
-        }
-        catch (HttpClientErrorException | HttpServerErrorException e) {
-            // FIXME figure out how to handle this
+        } catch (HttpClientErrorException | HttpServerErrorException e) {
             logger.error("A request for Microsoft data failed.", e);
             logger.error(e.getResponseBodyAsString());
             throw e;
         }
 
         if (shimDataRequest.getNormalize()) {
-
-            MicrosoftDataPointMapper<?> dataPointMapper;
-
-            switch (microsoftDataType) {
-                case ACTIVITY:
-                    dataPointMapper = physicalActivityMapper;
-                    break;
-                case SLEEP:
-                    dataPointMapper=sleepDurationMapper;
-                    break;
-                case STEPS:
-                    dataPointMapper = stepCountMapper;
-                    break;
-                case CALORIES:
-                    dataPointMapper = caloriesCountMapper;
-                    break;
-                default:
-                    throw new UnsupportedOperationException();
-            }
-
             return ok().body(ShimDataResponse.result(SHIM_KEY,
-                    dataPointMapper.asDataPoints(singletonList(responseEntity.getBody()))));
-        }
-        else {
+                    microsoftDataType.getMapper().asDataPoints(singletonList(responseEntity.getBody()))));
+        } else {
             return ok().body(ShimDataResponse.result(SHIM_KEY, responseEntity.getBody()));
         }
     }
@@ -250,13 +233,13 @@ public class MicrosoftShim extends OAuth2ShimBase {
 
 
     /**
-     * Adds jawbone required parameters to authorization token requests.
+     * Adds microsoft required parameters to authorization token requests.
      */
     private class MicrosoftTokenRequestEnhancer implements RequestEnhancer {
 
         @Override
         public void enhance(AccessTokenRequest request, OAuth2ProtectedResourceDetails resource,
-                MultiValueMap<String, String> form, HttpHeaders headers) {
+                            MultiValueMap<String, String> form, HttpHeaders headers) {
             form.set("client_id", resource.getClientId());
             form.set("client_secret", resource.getClientSecret());
             form.set("redirect_uri", getCallbackUrl());

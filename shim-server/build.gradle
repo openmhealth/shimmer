@@ -59,6 +59,7 @@ dependencies {
     testCompile "org.mockito:mockito-core"
     testCompile "org.springframework:spring-test"
     testCompile "org.testng:testng:6.8.21" // slowly migrate to TestNG
+    testCompile "org.springframework.boot:spring-boot-starter-test"
 
     runtime "org.glassfish:javax.el"
     runtime "org.slf4j:jcl-over-slf4j"

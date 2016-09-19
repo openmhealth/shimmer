@@ -9,9 +9,11 @@ We currently support the following APIs
 * [Google Fit](https://developers.google.com/fit/?hl=en)
 * [Jawbone UP](https://jawbone.com/up)
 * [Misfit](http://misfit.com/)
+* [Microsoft](https://account.live.com/developers/applications)
 * [RunKeeper](https://runkeeper.com/index)
 * [Withings](http://www.withings.com/)
 * [iHealth](http://www.ihealthlabs.com/)
+
 
 And the following APIs are in the works
 
@@ -135,6 +137,7 @@ API                                                               | requires TLS
 [iHealth](http://developer.ihealthlabs.com/index.htm)<sup>2</sup> | ?                  | ?                        | ?                   | ?                | false             | http://localhost:8083/authorize/ihealth/callback
 [Jawbone UP](https://jawbone.com/up/developer)                    | false <sup>3</sup> | ?                        | ?                   | ?                | ?                 | http://localhost:8083/authorize/jawbone/callback
 [Misfit](https://build.misfit.com/)                               | ?                  | ?                        | ?                   | ?                | ?                 | http://localhost:8083/authorize/misfit/callback
+[Microsoft](https://account.live.com/developers/applications)<sup>4</sup>     | ?                  | true                     | true                | true             | false             | http://localhost:8083/authorize/microsoft/callback
 [RunKeeper](http://runkeeper.com/partner)                         | ?                  | ?                        | ?                   | ?                | ?                 | http://localhost:8083/authorize/runkeeper/callback
 [Withings](http://oauth.withings.com/api)                         | ?                  | ?                        | ?                   | ?                | ?                 | http://localhost:8083/authorize/withings/callback
 
@@ -144,6 +147,8 @@ API                                                               | requires TLS
 into the `openmhealth.shim.ihealth.serialValues` map of the `application.yaml` file.*
 
 <sup>3</sup> *The [documentation](https://jawbone.com/up/developer/authentication) states TLS is required, but authorization does work without it.*
+
+<sup>4</sup> *At time of writing, the callback URL prompt asks for an https prefixed url, but http is also being accepted.
 
 > If any of the links or fields are incorrect or out of date, please [submit an issue](https://github.com/openmhealth/shimmer/issues) to let us know.
 > This table will be fully populated in in the coming days.
@@ -264,6 +269,11 @@ The currently supported shims are:
 | misfit       | activities        | [omh:physical-activity](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_physical-activity) |
 | misfit       | steps             | [omh:step-count](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_step-count)
 | misfit       | sleep             | [omh:sleep-duration](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_sleep-duration) |
+| microsoft    | activities<sup>5</sup>         | [omh:physical-activity](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_physical-activity) |
+| microsoft    | calories          | [omh:calories-burned](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_calories-burned) |
+| microsoft    | heart_rate        | [omh:heart-rate](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_heart-rate) |
+| microsoft    | sleep             | [omh:sleep-duration](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_sleep-duration) |
+| microsoft    | steps             | [omh:step-count](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_step-count)
 | runkeeper    | activity          | [omh:physical-activity](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_physical-activity) |
 | runkeeper    | calories          | [omh:calories-burned](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_calories-burned) |
 | withings     | blood_pressure    | [omh:blood-pressure](http://www.openmhealth.org/documentation/#/schema-docs/schema-library/schemas/omh_blood-pressure)|
@@ -290,7 +300,7 @@ The currently supported shims are:
 
 <sup>4</sup> *Uses the daily activity summary when partner access is disabled (default) and uses intraday activity when partner access is enabled. See the YAML configuration file for details. Intraday activity requests are limited to 24 hours worth of data per request.*
 
-<sup>5</sup> *Sleep data has not been tested using real data directly from a device. It has been tested with example data provided in the Withings API documentation. Please help us out by testing real-world Withings sleep data with Shimmer and letting us know whether or not it works correctly.*
+<sup>5</sup> *Data has not been tested using real data directly from a device. It has been tested with example data provided in the API documentation. Please help us out by testing real-world (device-driven) sleep data with Shimmer and letting us know whether or not it works correctly.*
 
 ### Contributing
 
