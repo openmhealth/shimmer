@@ -132,6 +132,7 @@ public class FitbitShim extends OAuth2ShimBase {
         SLEEP("sleep"),
         BODY_MASS_INDEX("body/log/weight"),
         STEPS("activities/steps"),
+        HEART("activities/heart"),
         ACTIVITY("activities");
 
         private String endPoint;
@@ -316,6 +317,10 @@ public class FitbitShim extends OAuth2ShimBase {
                         dataPointMapper = new FitbitStepCountDataPointMapper();
                     }
                     break;
+
+                case HEART:
+                     dataPointMapper = new FitbitIntradayHeartRateDataPointMapper();
+                     break;
                 case ACTIVITY:
                     dataPointMapper = new FitbitPhysicalActivityDataPointMapper();
                     break;
@@ -394,7 +399,7 @@ public class FitbitShim extends OAuth2ShimBase {
                 path("/1/user/-/{fitbitDataTypeEndpoint}/date/{dateString}{stepTimeSeries}.json");
 
         URI endpointUrl = uriComponentsBuilder.buildAndExpand(fitbitDataType.getEndPoint(), dateString,
-                (fitbitDataType == STEPS ? "/1d/1min" : "")).encode().toUri();
+                (fitbitDataType == STEPS || fitbitDataType == HEART ? "/1d/1min" : "")).encode().toUri();
 
         return executeRequest(restTemplate, endpointUrl, normalize, fitbitDataType, dateString);
     }
