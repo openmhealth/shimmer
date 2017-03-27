@@ -62,3 +62,6 @@ openmhealth:
     #googlefit:
     #  clientId: [YOUR_CLIENT_ID]
     #  clientSecret: [YOUR_CLIENT_SECRET]
+    #moves:
+    #  clientId: [YOUR_CLIENT_ID]
+    #  clientSecret: [YOUR_CLIENT_SECRET]
