@@ -9,13 +9,13 @@ We currently support the following APIs
 * [Google Fit](https://developers.google.com/fit/?hl=en)
 * [Jawbone UP](https://jawbone.com/up)
 * [Misfit](http://misfit.com/)
+* [Moves](https://www.moves-app.com/)
 * [RunKeeper](https://runkeeper.com/index)
 * [Withings](http://www.withings.com/)
 * [iHealth](http://www.ihealthlabs.com/)
 
 And the following APIs are in the works
 
-* [Moves](https://www.moves-app.com/)
 * [Strava](https://www.strava.com/)
 * [FatSecret](https://www.fatsecret.com/)
 * [Ginsberg](https://www.ginsberg.io/)
@@ -135,6 +135,7 @@ API                                                               | requires TLS
 [iHealth](http://developer.ihealthlabs.com/index.htm)<sup>2</sup> | ?                  | ?                        | ?                   | ?                | false             | http://localhost:8083/authorize/ihealth/callback
 [Jawbone UP](https://jawbone.com/up/developer)                    | false <sup>3</sup> | ?                        | ?                   | ?                | ?                 | http://localhost:8083/authorize/jawbone/callback
 [Misfit](https://build.misfit.com/)                               | ?                  | ?                        | ?                   | ?                | ?                 | http://localhost:8083/authorize/misfit/callback
+[Moves](https://dev.moves-app.com/)                               | ?                  | ?                        | ?                   | ?                | ?                 | http://localhost:8083/authorize/moves/callback
 [RunKeeper](http://runkeeper.com/partner)                         | ?                  | ?                        | ?                   | ?                | ?                 | http://localhost:8083/authorize/runkeeper/callback
 [Withings](http://oauth.withings.com/api)                         | ?                  | ?                        | ?                   | ?                | ?                 | http://localhost:8083/authorize/withings/callback
 
