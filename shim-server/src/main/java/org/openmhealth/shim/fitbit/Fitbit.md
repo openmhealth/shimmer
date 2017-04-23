@@ -56,10 +56,11 @@ Returns information from the user’s profile in the form of a json object “us
 
 ### measures
 - physical activity: mapped
+- heart rate: mapped
 - calories burned: not mapped, uncertainty around the different calorie values
 
 ### description
-Returns all the activities for a user on a specified day and contains a list of activities, goals, and summary of the day. The request takes an optional request header of Accept-Language, which can be used to specify the measurement unit system for the values. By default, uses metric system. “activities” is a JSON array of activity JSON objects with details about each activity logged on that day. “goals” is a JSON object with activity-oriented goals - “caloriesOut”, “distance”, “floors”, “steps”. “summary” is a JSON object that summarizes key outcomes aggregated over all activities for that day  - “activityCalories”, “activityOut”, “elevation”, etc, and an array “distances,” which breaks down the distances of various activities completed that day.  
+Returns all the activities for a user on a specified day and contains a list of activities, heart-rate, goals, and summary of the day. The request takes an optional request header of Accept-Language, which can be used to specify the measurement unit system for the values. By default, uses metric system. “activities” is a JSON array of activity JSON objects with details about each activity logged on that day. “goals” is a JSON object with activity-oriented goals - “caloriesOut”, “distance”, “floors”, “steps”. “summary” is a JSON object that summarizes key outcomes aggregated over all activities for that day  - “activityCalories”, “activityOut”, “elevation”, etc, and an array “distances,” which breaks down the distances of various activities completed that day.  
 
 ## get daily step count summary
 - Endpoint: /activities/steps/date/{date-parameters}
