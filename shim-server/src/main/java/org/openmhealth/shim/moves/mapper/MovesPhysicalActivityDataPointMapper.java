@@ -69,13 +69,13 @@ public class MovesPhysicalActivityDataPointMapper extends MovesDataPointMapper<P
 
         Optional<Double> distance = asOptionalDouble(node, "distance");
 
-        if (distance.isPresent()) {
-            builder.setDistance(new LengthUnitValue(METER, distance.get()));
-        }
+        distance.ifPresent(aDouble -> builder.setDistance(new LengthUnitValue(METER, aDouble)));
 
+        // TODO update JSON utilities
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmssx");
         OffsetDateTime dateTime = OffsetDateTime.parse(node.get("startTime").asText(), formatter);
         Optional<OffsetDateTime> startDateTime = Optional.ofNullable(dateTime);
+
         Optional<Double> durationInSec = asOptionalDouble(node, "duration");
 
         if (startDateTime.isPresent() && durationInSec.isPresent()) {

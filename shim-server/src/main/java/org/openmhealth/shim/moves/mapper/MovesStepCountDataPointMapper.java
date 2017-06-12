@@ -44,6 +44,8 @@ public class MovesStepCountDataPointMapper extends MovesDataPointMapper<StepCoun
         if (stepDate.isPresent()) {
             LocalDateTime startDateTime = stepDate.get().atTime(0, 0, 0, 0);
 
+            // FIXME the time zone handling here is suspect; if the code is going to assume UTC, the shim should be
+            // asking for UTC in the initial request
             builder.setEffectiveTimeFrame(
                     TimeInterval.ofStartDateTimeAndDuration(combineDateTimeAndTimezone(startDateTime),
                             new DurationUnitValue(DAY, 1)));

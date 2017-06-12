@@ -67,7 +67,7 @@ public abstract class MovesDataPointMapper<T extends SchemaSupport> implements J
     }
 
     /**
-     * TODO rewrite this, the names don't make sense
+     * FIXME this is copy-pasted from Fitbit, and it's not clear why this would apply
      * @param node a JSON node containing <code>date</code> and <code>time</code> properties
      * @return the equivalent OffsetDateTime
      */
@@ -77,7 +77,6 @@ public abstract class MovesDataPointMapper<T extends SchemaSupport> implements J
         Optional<OffsetDateTime> offsetDateTime = null;
 
         if (dateTime.isPresent()) {
-            // FIXME fix the time zone offset to use the correct offset for the data point once it is fixed by Fitbit
             offsetDateTime = Optional.of(OffsetDateTime.of(dateTime.get(), ZoneOffset.UTC));
         }
 
@@ -85,19 +84,19 @@ public abstract class MovesDataPointMapper<T extends SchemaSupport> implements J
     }
 
     /**
+     * FIXME this is copy-pasted from Fitbit, and it's not clear why this would apply
      * Transforms a {@link LocalDateTime} object into an {@link OffsetDateTime} object with a UTC time zone
      *
-     * @param dateTime local date and time for the Fitbit response JSON node
+     * @param dateTime local date and time for the Moves response JSON node
      * @return the date and time based on the input dateTime parameter
      */
     protected OffsetDateTime combineDateTimeAndTimezone(LocalDateTime dateTime) {
 
-        // FIXME fix the time zone offset to use the appropriate offset for the data point once it is fixed by Fitbit
         return OffsetDateTime.of(dateTime, ZoneOffset.UTC);
     }
 
     /**
-     * Maps a JSON response node from the Fitbit API into a data point.
+     * Maps a JSON response node from the Moves API into a data point.
      *
      * @return the data point
      */

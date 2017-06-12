@@ -177,7 +177,7 @@ public class MovesShim extends OAuth2ShimBase{
         }
         catch (HttpClientErrorException | HttpServerErrorException e) {
             // FIXME figure out how to handle this
-            logger.error("A request for Misfit data failed.", e);
+            logger.error("A request for Moves data failed.", e);
             throw e;
         }
 
