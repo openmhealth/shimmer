@@ -228,18 +228,18 @@ To pull data from a third-party API using the console,
 
 To pull data from a third-party API programmatically, make requests in the format
  
-`http://<host>:8083/data/{shim}/{endPoint}?username={userId}&dateStart=yyyy-MM-dd&dateEnd=yyyy-MM-dd&normalize={true|false}`
+`http://<host>:8083/data/{shim}/{endpoint}?username={userId}&dateStart=yyyy-MM-dd&dateEnd=yyyy-MM-dd&normalize={true|false}`
 
 The URL can be broken down as follows
 * The `shim` and `username` path variables are the same as [above](#authorizing-access-to-a-third-party-user-account).
-* The `endPoint` path variable corresponds to the type of data to retrieve. There's a table of these [below](#supported-apis-and-endpoints).
+* The `endpoint` path variable corresponds to the type of data to retrieve. There's a table of these [below](#supported-apis-and-endpoints).
 * The `normalize` parameter controls whether the shim returns data in a raw third-party API format (`false`) or in an Open mHealth compliant format (`true`).  
 
 > N.B. This API will be changing significantly in the near future to provide greater consistency across Open mHealth applications and to improve expressivity and ease of use. The data points it returns will not be affected, only the URLs used to request data and perhaps some book-keeping information at the top level of the response.
  
 ## Supported APIs and endpoints
 
-The following is a table of the currently supported shims, their endpoints, and the Open mHealth compliant data that each endpoint can produce. The values in the `shim` and `endPoint` columns are the values for the parameters of the same names used in [programmatic access](#reading-data-programmatically) of the API.
+The following is a table of the currently supported shims, their endpoints, and the Open mHealth compliant data that each endpoint can produce. The values in the `shim` and `endpoint` columns are the values for the parameters of the same names used in [programmatic access](#reading-data-programmatically) of the API.
 
 The currently supported shims are:
 
