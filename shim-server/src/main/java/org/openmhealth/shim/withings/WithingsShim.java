@@ -61,7 +61,7 @@ public class WithingsShim extends OAuth1ShimBase {
 
     private static final String REQUEST_TOKEN_URL = "https://developer.health.nokia.com/account/request_token";
 
-    private static final String AUTHORIZE_URL = "https://developer.health.nokia.com/account/authorizee";
+    private static final String AUTHORIZE_URL = "https://developer.health.nokia.com/account/authorize";
 
     private static final String TOKEN_URL = "https://developer.health.nokia.com/account/access_token";
 
