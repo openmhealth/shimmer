@@ -57,13 +57,13 @@ public class WithingsShim extends OAuth1ShimBase {
 
     public static final String SHIM_KEY = "withings";
 
-    private static final String DATA_URL = "http://wbsapi.withings.net";
+    private static final String DATA_URL = "https://api.health.nokia.com";
 
-    private static final String REQUEST_TOKEN_URL = "https://oauth.withings.com/account/request_token";
+    private static final String REQUEST_TOKEN_URL = "https://developer.health.nokia.com/account/request_token";
 
-    private static final String AUTHORIZE_URL = "https://oauth.withings.com/account/authorize";
+    private static final String AUTHORIZE_URL = "https://developer.health.nokia.com/account/authorizee";
 
-    private static final String TOKEN_URL = "https://oauth.withings.com/account/access_token";
+    private static final String TOKEN_URL = "https://developer.health.nokia.com/account/access_token";
 
     private static final String PARTNER_ACCESS_ACTIVITY_ENDPOINT = "getintradayactivity";
 
