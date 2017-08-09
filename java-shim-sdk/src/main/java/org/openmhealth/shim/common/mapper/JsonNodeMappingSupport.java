@@ -1,3 +1,20 @@
+/*
+ * Copyright 2017 Open mHealth
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+
 package org.openmhealth.shim.common.mapper;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -221,8 +238,8 @@ public class JsonNodeMappingSupport {
      * @param typeChecker the function to check if the type is compatible
      * @param converter the function to convert the node to a value
      * @param <T> the type of the value to convert to
-     * @return the value of the child node, or an empty optional if the child doesn't exist or if the
-     * value of the child node isn't compatible
+     * @return the value of the child node, or an empty optional if the child doesn't exist or if the value of the child
+     * node isn't compatible
      */
     public static <T> Optional<T> asOptionalValue(JsonNode parentNode, String path,
             Function<JsonNode, Boolean> typeChecker, Function<JsonNode, T> converter) {
@@ -244,8 +261,8 @@ public class JsonNodeMappingSupport {
     /**
      * @param parentNode a parent node
      * @param path the path to a child node
-     * @return the value of the child node as a string, or an empty optional if the child doesn't exist or if the
-     * value of the child node isn't textual
+     * @return the value of the child node as a string, or an empty optional if the child doesn't exist or if the value
+     * of the child node isn't textual
      */
     public static Optional<String> asOptionalString(JsonNode parentNode, String path) {
 
@@ -255,8 +272,8 @@ public class JsonNodeMappingSupport {
     /**
      * @param parentNode a parent node
      * @param path the path to a child node
-     * @return the value of the child node as a boolean, or an empty optional if the child doesn't exist or if the
-     * value of the child node isn't boolean
+     * @return the value of the child node as a boolean, or an empty optional if the child doesn't exist or if the value
+     * of the child node isn't boolean
      */
     public static Optional<Boolean> asOptionalBoolean(JsonNode parentNode, String path) {
 
@@ -382,8 +399,8 @@ public class JsonNodeMappingSupport {
     /**
      * @param parentNode a parent node
      * @param path the path to a child node
-     * @return the value of the child node as a double, or an empty optional if the child doesn't exist or if the
-     * value of the child node isn't numeric
+     * @return the value of the child node as a double, or an empty optional if the child doesn't exist or if the value
+     * of the child node isn't numeric
      */
     public static Optional<Double> asOptionalDouble(JsonNode parentNode, String path) {
 
@@ -393,8 +410,8 @@ public class JsonNodeMappingSupport {
     /**
      * @param parentNode a parent node
      * @param path the path to a child node
-     * @return the value of the child node as a long, or an empty optional if the child doesn't exist or if the
-     * value of the child node isn't an integer
+     * @return the value of the child node as a long, or an empty optional if the child doesn't exist or if the value of
+     * the child node isn't an integer
      */
     public static Optional<Long> asOptionalLong(JsonNode parentNode, String path) {
 
