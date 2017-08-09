@@ -90,15 +90,15 @@ public class HealthvaultShim extends ShimBase {
 
     private AuthorizationRequestParametersRepo authorizationRequestParametersRepo;
 
-    private ShimServerConfig shimServerConfig;
+    private DeploymentSettings deploymentSettings;
 
     @Autowired
     public HealthvaultShim(ApplicationAccessParametersRepo applicationParametersRepo,
                            AuthorizationRequestParametersRepo authorizationRequestParametersRepo,
-                           ShimServerConfig shimServerConfig) {
+                           DeploymentSettings deploymentSettings) {
         super(applicationParametersRepo);
         this.authorizationRequestParametersRepo = authorizationRequestParametersRepo;
-        this.shimServerConfig = shimServerConfig;
+        this.deploymentSettings = deploymentSettings;
         String apiKey = findApplicationAccessParameters().getClientId();
         if (apiKey != null){
             this.connection = ConnectionFactory.getConnection(apiKey);
@@ -527,7 +527,7 @@ public class HealthvaultShim extends ShimBase {
         authParams.setStateKey(stateKey);
 
         //Callback URL
-        String callbackUrl = shimServerConfig.getCallbackUrl(getShimKey(), stateKey);
+        String callbackUrl = deploymentSettings.getCallbackUrl(getShimKey(), stateKey);
         authParams.setAuthorizationUrl(getAuthorizationUrl(callbackUrl, ACTION_QS));
 
         authorizationRequestParametersRepo.save(authParams);
