@@ -30,7 +30,7 @@ import java.time.OffsetDateTime;
 import java.util.List;
 
 import static java.util.Collections.singletonList;
-import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.openmhealth.schema.domain.omh.TimeInterval.ofStartDateTimeAndDuration;
 import static org.openmhealth.shim.fitbit.mapper.FitbitDataPointMapper.RESOURCE_API_SOURCE_NAME;
@@ -54,8 +54,19 @@ public class FitbitIntradayStepCountDataPointMapperUnitTests extends DataPointMa
 
     @Test
     public void asDataPointsShouldReturnCorrectNumberOfDataPoints() {
-
         assertThat(mapper.asDataPoints(singletonList(responseNode)).size(), equalTo(2));
+    }
+
+    @Test
+    public void asDataPointsShouldSetExternalId() {
+
+        final List<DataPoint<StepCount>> dataPoints = mapper.asDataPoints(singletonList(responseNode));
+
+        for (DataPoint<?> dataPoint : dataPoints) {
+            assertThat(
+                    dataPoint.getHeader().getAcquisitionProvenance().getAdditionalProperties().get("external_id"),
+                    is(not(nullValue())));
+        }
     }
 
     @Test
@@ -85,19 +96,19 @@ public class FitbitIntradayStepCountDataPointMapperUnitTests extends DataPointMa
     public void asDataPointsShouldReturnNoDataPointsWhenDataSetArrayIsEmpty() throws IOException {
 
         JsonNode emptyDataSetNode = objectMapper.readTree(
-            "{\n" +
-                "\"activities-steps\": [ \n" +
-                    "{\n" +
+                "{\n" +
+                        "\"activities-steps\": [ \n" +
+                        "{\n" +
                         "\"dateTime\": \"2015-05-24\"\n," +
                         "\"value\": 0\n" +
-                    "}\n" +
-                "],\n" +
-                "\"activities-steps-intraday\": {\n" +
-                    "\"dataset\": [],\n" +
-                    "\"datasetInterval\": 1,\n" +
-                    "\"datasetType\": \"minute\"\n" +
-                "}\n" +
-            "}");
+                        "}\n" +
+                        "],\n" +
+                        "\"activities-steps-intraday\": {\n" +
+                        "\"dataset\": [],\n" +
+                        "\"datasetInterval\": 1,\n" +
+                        "\"datasetType\": \"minute\"\n" +
+                        "}\n" +
+                        "}");
 
         List<DataPoint<StepCount>> dataPoints = mapper.asDataPoints(singletonList(emptyDataSetNode));
         assertThat(dataPoints.isEmpty(), equalTo(true));

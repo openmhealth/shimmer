@@ -19,16 +19,22 @@ package org.openmhealth.shim.fitbit.mapper;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.Lists;
 import org.openmhealth.schema.domain.omh.DataPoint;
+import org.openmhealth.schema.domain.omh.DurationUnitValue;
+import org.openmhealth.schema.domain.omh.Measure;
 import org.openmhealth.schema.domain.omh.SchemaSupport;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asOptionalLocalDate;
-import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asRequiredNode;
+import static java.time.ZoneOffset.UTC;
+import static org.openmhealth.schema.domain.omh.DurationUnit.MINUTE;
+import static org.openmhealth.schema.domain.omh.TimeInterval.ofStartDateTimeAndDuration;
+import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.*;
 
 
 /**
@@ -58,6 +64,23 @@ public abstract class FitbitIntradayDataPointMapper<T extends SchemaSupport> ext
         return dataPoints;
     }
 
+    protected Long getExternalIdFromTimeSeriesElementTimestamp(JsonNode listEntryNode) {
+        Optional<LocalDate> dateFromParent = getDateFromSummaryForDay();
+
+        if (dateFromParent.isPresent()) {
+            final Optional<String> time = asOptionalString(listEntryNode, "time");
+
+            if (time.isPresent()) {
+
+                final OffsetDateTime effectiveTimeFrame =
+                        dateFromParent.get().atTime(LocalTime.parse(time.get())).atOffset(UTC);
+                return effectiveTimeFrame.toEpochSecond();
+            }
+        }
+
+        return null;
+    }
+
     /**
      * Allows specific intraday activity measure mappers to access the date that the datapoint occured, which is stored
      * outside the individual list nodes
@@ -74,4 +97,25 @@ public abstract class FitbitIntradayDataPointMapper<T extends SchemaSupport> ext
      */
     // TODO discuss naming
     public abstract String getSummaryForDayNodeName();
+
+    protected void setEffectiveTimeFrameFromTimeSeriesElementTimestamp(
+            JsonNode listEntryNode,
+            Measure.Builder builder) {
+
+        Optional<LocalDate> dateFromParent = getDateFromSummaryForDay();
+
+        if (dateFromParent.isPresent()) {
+
+            // Set the effective time frame only if we have access to the date and time
+            final Optional<String> time = asOptionalString(listEntryNode, "time");
+
+            // We use 1 minute since the shim requests data at 1 minute granularity
+            time.ifPresent(
+                    s -> builder
+                            .setEffectiveTimeFrame(
+                                    ofStartDateTimeAndDuration(
+                                            dateFromParent.get().atTime(LocalTime.parse(s)).atOffset(UTC),
+                                            new DurationUnitValue(MINUTE, 1))));
+        }
+    }
 }

@@ -18,20 +18,11 @@ package org.openmhealth.shim.fitbit.mapper;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.openmhealth.schema.domain.omh.DataPoint;
-import org.openmhealth.schema.domain.omh.DurationUnitValue;
 import org.openmhealth.schema.domain.omh.HeartRate;
-import org.openmhealth.schema.domain.omh.Measure;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.time.OffsetDateTime;
 import java.util.Optional;
 
-import static java.time.ZoneOffset.UTC;
-import static org.openmhealth.schema.domain.omh.DurationUnit.MINUTE;
-import static org.openmhealth.schema.domain.omh.TimeInterval.ofStartDateTimeAndDuration;
-import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asOptionalString;
 import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asRequiredBigDecimal;
 
 
@@ -70,46 +61,5 @@ public class FitbitIntradayHeartRateDataPointMapper extends FitbitIntradayDataPo
     @Override
     public String getSummaryForDayNodeName() {
         return "activities-heart";
-    }
-
-    protected Long getExternalIdFromTimeSeriesElementTimestamp(JsonNode listEntryNode) {
-        Optional<LocalDate> dateFromParent = getDateFromSummaryForDay();
-
-        if (dateFromParent.isPresent()) {
-
-            // Set the effective time frame only if we have access to the date and time
-            final Optional<String> time = asOptionalString(listEntryNode, "time");
-
-            if (time.isPresent()) {
-
-                // We use 1 minute since the shim requests data at 1 minute granularity
-                final OffsetDateTime effectiveTimeFrame =
-                        dateFromParent.get().atTime(LocalTime.parse(time.get())).atOffset(UTC);
-                return effectiveTimeFrame.toEpochSecond();
-            }
-        }
-
-        return null;
-    }
-
-    protected void setEffectiveTimeFrameFromTimeSeriesElementTimestamp(
-            JsonNode listEntryNode,
-            Measure.Builder builder) {
-
-        Optional<LocalDate> dateFromParent = getDateFromSummaryForDay();
-
-        if (dateFromParent.isPresent()) {
-
-            // Set the effective time frame only if we have access to the date and time
-            final Optional<String> time = asOptionalString(listEntryNode, "time");
-
-            // We use 1 minute since the shim requests data at 1 minute granularity
-            time.ifPresent(
-                    s -> builder
-                            .setEffectiveTimeFrame(
-                                    ofStartDateTimeAndDuration(
-                                            dateFromParent.get().atTime(LocalTime.parse(s)).atOffset(UTC),
-                                            new DurationUnitValue(MINUTE, 1))));
-        }
     }
 }

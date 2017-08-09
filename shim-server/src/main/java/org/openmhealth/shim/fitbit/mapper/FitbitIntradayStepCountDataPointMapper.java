@@ -17,17 +17,12 @@
 package org.openmhealth.shim.fitbit.mapper;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import org.openmhealth.schema.domain.omh.*;
+import org.openmhealth.schema.domain.omh.DataPoint;
+import org.openmhealth.schema.domain.omh.StepCount;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.Optional;
 
-import static java.time.ZoneOffset.UTC;
-import static org.openmhealth.schema.domain.omh.DurationUnit.MINUTE;
-import static org.openmhealth.schema.domain.omh.TimeInterval.ofStartDateTimeAndDuration;
-import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asOptionalString;
 import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asRequiredBigDecimal;
 
 
@@ -62,18 +57,9 @@ public class FitbitIntradayStepCountDataPointMapper extends FitbitIntradayDataPo
 
         StepCount.Builder stepCountBuilder = new StepCount.Builder(stepCountValue);
 
-        Optional<LocalDate> dateFromParent = getDateFromSummaryForDay();
+        setEffectiveTimeFrameFromTimeSeriesElementTimestamp(listEntryNode, stepCountBuilder);
 
-        if (dateFromParent.isPresent()) {
-
-            // Set the effective time frame only if we have access to the date and time
-            asOptionalString(listEntryNode, "time").ifPresent(time -> stepCountBuilder
-                    .setEffectiveTimeFrame(ofStartDateTimeAndDuration(
-                            dateFromParent.get().atTime(LocalTime.parse(time)).atOffset(UTC),
-                            new DurationUnitValue(MINUTE,
-                                    1)))); // We use 1 minute since the shim requests data at 1 minute granularity
-        }
-
-        return Optional.of(newDataPoint(stepCountBuilder.build(), null));
+        return Optional.of(
+                newDataPoint(stepCountBuilder.build(), getExternalIdFromTimeSeriesElementTimestamp(listEntryNode)));
     }
 }
