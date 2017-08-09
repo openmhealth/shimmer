@@ -1,8 +1,8 @@
-// TODO when Grunt is called from Gradle, rethink this section
 subprojects {
     apply plugin: "java"
 
     repositories {
+        mavenLocal()
         jcenter()
     }
 
