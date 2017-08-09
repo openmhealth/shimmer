@@ -19,6 +19,7 @@ package org.openmhealth.shim;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -26,62 +27,37 @@ import java.util.Map;
 
 import static java.lang.String.format;
 
+
 /**
  * @author Danilo Bonilla
+ * @author Emerson Farrugia
  */
 @Component
 public class ShimRegistryImpl implements ShimRegistry {
 
     @Autowired
-    private AccessParametersRepo accessParametersRepo;
+    private List<Shim> allShims;
 
-    @Autowired
-    private AuthorizationRequestParametersRepo authParametersRepo;
+    private Map<String, Shim> configuredShims = new LinkedHashMap<>();
 
-    @Autowired
-    private ShimServerConfig shimServerConfig;
 
-    @Autowired
-    private List<Shim> shims;
+    @PostConstruct
+    public void initializeRegistry() {
 
-    private Map<String, Shim> registryMap;
-
-    public ShimRegistryImpl() {
-    }
-
-    public void init() {
-        Map<String, Shim> registryMap = new LinkedHashMap<>();
-        for (Shim shim : shims) {
+        for (Shim shim : allShims) {
             if (shim.isConfigured()) {
-                registryMap.put(shim.getShimKey(), shim);
+                configuredShims.put(shim.getShimKey(), shim);
             }
         }
-        this.registryMap = registryMap;
     }
 
     @Override
     public Shim getShim(String shimKey) {
-        if (registryMap == null) {
-            init();
-        }
 
-        if (!registryMap.containsKey(shimKey)) {
+        if (!configuredShims.containsKey(shimKey)) {
             throw new RuntimeException(format("A configuration for shim '%s' wasn't found.", shimKey));
         }
 
-        return registryMap.get(shimKey);
-    }
-
-    @Override
-    public List<Shim> getAvailableShims() {
-        return shims;
-    }
-
-    @Override
-    public List<Shim> getShims() {
-        if (registryMap == null) {
-            init();
-        }
-        return new ArrayList<>(registryMap.values());
+        return configuredShims.get(shimKey);
     }
 }
