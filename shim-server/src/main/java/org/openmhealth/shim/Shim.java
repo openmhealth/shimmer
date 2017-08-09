@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Open mHealth
+ * Copyright 2017 Open mHealth
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
  */
 
 package org.openmhealth.shim;
@@ -19,6 +20,7 @@ package org.openmhealth.shim;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
+
 
 /**
  * High level abstraction contract for shims. This version
@@ -36,34 +38,19 @@ public interface Shim {
     String getShimKey();
 
     /**
-     * Parameters (such as client ID and secret) provided by the external data provider.
-     *
-     * @return - the parameters for this shim
-     */
-    ApplicationAccessParameters findApplicationAccessParameters();
-
-    /**
      * Base of the URL to which the user will
      * be sent to authenticate.
      *
      * @return - Absolute URL for authorizing.
      */
-    String getBaseAuthorizeUrl();
+    String getUserAuthorizationUrl();
 
     /**
      * Base of the URL queried to request an access token.
      *
      * @return - Absolute URL for getting an access token
      */
-    String getBaseTokenUrl();
-
-    /**
-     * List of 'scopes' to which the shim will request
-     * access from the external data provider.
-     *
-     * @return - a list of strings representing scopes.
-     */
-    List<String> getScopes();
+    String getAccessTokenUrl();
 
     /**
      * Get a list of the shim's data types.
@@ -74,6 +61,7 @@ public interface Shim {
 
     /**
      * A formal display label for the shim.
+     *
      * @return -  The label.
      */
     String getLabel();
@@ -82,26 +70,23 @@ public interface Shim {
      * Retrieve authorization parameter object so that an external
      * endpoint can take control of the flow.
      *
-     * @param addlParameters - any parameters that should be added
-     *                       to the authorization request.
+     * @param additionalParameters - any parameters that should be added to the authorization request.
      * @return AuthorizationParameters needed to iniate oauth flow.
      */
     AuthorizationRequestParameters getAuthorizationRequestParameters(
-        final String username,
-        final Map<String, String> addlParameters) throws ShimException;
+            final String username,
+            final Map<String, String> additionalParameters)
+            throws ShimException;
 
     /**
-     * Handles the authorization response from the external data provider.
-     * In most cases this handler's details will depend on the type of oauth
-     * or any other custom parameters.
-     * <p/>
-     * AuthorizationResponse is agnostic to the type of authentication.
+     * Handles a redirect from an external data provider.
      *
-     * @param servletRequest - HTTP request to be handled externally
-     * @return Authorization response.
+     * @param servletRequest - the HTTP request corresponding to the redirect
+     * @return Authorization response
      */
-    AuthorizationResponse handleAuthorizationResponse(
-        final HttpServletRequest servletRequest) throws ShimException;
+    AuthorizationResponse processRedirect(
+            final HttpServletRequest servletRequest)
+            throws ShimException;
 
     /**
      * Obtain data from the external data provider using access parameters
@@ -113,7 +98,7 @@ public interface Shim {
 
 
     /**
-     * Check if this shim is properly configured.
+     * Checks if this shim is properly configured.
      *
      * @return true if this shim is properly configured.
      */

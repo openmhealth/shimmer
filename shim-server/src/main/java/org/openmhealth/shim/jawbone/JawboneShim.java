@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Open mHealth
+ * Copyright 2017 Open mHealth
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
  */
 
 package org.openmhealth.shim.jawbone;
@@ -21,7 +22,6 @@ import org.openmhealth.shim.*;
 import org.openmhealth.shim.jawbone.mapper.*;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -39,8 +39,7 @@ import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.time.OffsetDateTime;
-import java.util.Arrays;
-import java.util.List;
+import java.util.Map;
 
 import static java.util.Collections.singletonList;
 import static org.slf4j.LoggerFactory.getLogger;
@@ -53,29 +52,17 @@ import static org.slf4j.LoggerFactory.getLogger;
  * @author Chris Schaefbauer
  */
 @Component
-@ConfigurationProperties(prefix = "openmhealth.shim.jawbone")
-public class JawboneShim extends OAuth2ShimBase {
-
-    public static final String SHIM_KEY = "jawbone";
-
-    private static final String DATA_URL = "https://jawbone.com/nudge/api/v.1.1/users/@me/";
-
-    private static final String AUTHORIZE_URL = "https://jawbone.com/auth/oauth2/auth";
-
-    private static final String TOKEN_URL = "https://jawbone.com/auth/oauth2/token";
-
-    public static final List<String> JAWBONE_SCOPES = Arrays.asList(
-            "extended_read", "weight_read", "heartrate_read", "meal_read", "move_read", "sleep_read");
+public class JawboneShim extends OAuth2Shim {
 
     private static final Logger logger = getLogger(JawboneShim.class);
 
+    public static final String SHIM_KEY = "jawbone";
+    private static final String DATA_URL = "https://jawbone.com/nudge/api/v.1.1/users/@me/";
+    private static final String USER_AUTHORIZATION_URL = "https://jawbone.com/auth/oauth2/auth";
+    private static final String ACCESS_TOKEN_URL = "https://jawbone.com/auth/oauth2/token";
+
     @Autowired
-    public JawboneShim(ApplicationAccessParametersRepo applicationParametersRepo,
-            AuthorizationRequestParametersRepo authorizationRequestParametersRepo,
-            AccessParametersRepo accessParametersRepo,
-            ShimServerConfig shimServerConfig1) {
-        super(applicationParametersRepo, authorizationRequestParametersRepo, accessParametersRepo, shimServerConfig1);
-    }
+    private JawboneClientSettings clientSettings;
 
     @Override
     public String getLabel() {
@@ -88,18 +75,19 @@ public class JawboneShim extends OAuth2ShimBase {
     }
 
     @Override
-    public String getBaseAuthorizeUrl() {
-        return AUTHORIZE_URL;
+    public String getUserAuthorizationUrl() {
+        return USER_AUTHORIZATION_URL;
     }
 
     @Override
-    public String getBaseTokenUrl() {
-        return TOKEN_URL;
+    public String getAccessTokenUrl() {
+        return ACCESS_TOKEN_URL;
     }
 
     @Override
-    public List<String> getScopes() {
-        return JAWBONE_SCOPES;
+    protected OAuth2ClientSettings getClientSettings() {
+
+        return clientSettings;
     }
 
     public AuthorizationCodeAccessTokenProvider getAuthorizationCodeAccessTokenProvider() {
@@ -221,7 +209,7 @@ public class JawboneShim extends OAuth2ShimBase {
     }
 
     @Override
-    protected String getAuthorizationUrl(UserRedirectRequiredException exception) {
+    protected String getAuthorizationUrl(UserRedirectRequiredException exception, Map<String, String> addlParameters) {
 
         final OAuth2ProtectedResourceDetails resource = getResource();
 
@@ -231,7 +219,7 @@ public class JawboneShim extends OAuth2ShimBase {
                 .queryParam("client_id", resource.getClientId())
                 .queryParam("response_type", "code")
                 .queryParam("scope", StringUtils.collectionToDelimitedString(resource.getScope(), " "))
-                .queryParam("redirect_uri", getCallbackUrl());
+                .queryParam("redirect_uri", getDefaultRedirectUrl());
 
         return uriBuilder.build().encode().toUriString();
 

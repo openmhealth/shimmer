@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Open mHealth
+ * Copyright 2017 Open mHealth
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
  */
 
 package org.openmhealth.shim.ihealth;
@@ -25,8 +26,6 @@ import org.openmhealth.shim.*;
 import org.openmhealth.shim.ihealth.mapper.*;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -53,7 +52,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.io.IOException;
 import java.net.URI;
 import java.time.OffsetDateTime;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -71,67 +69,60 @@ import static org.slf4j.LoggerFactory.getLogger;
  * @author Emerson Farrugia
  */
 @Component
-@EnableConfigurationProperties
-@ConfigurationProperties(prefix = "openmhealth.shim.ihealth")
-public class IHealthShim extends OAuth2ShimBase {
-
-    public static final String SHIM_KEY = "ihealth";
-
-    private static final String API_URL = "https://api.ihealthlabs.com:8443/openapiv2/";
-
-    private static final String AUTHORIZE_URL = "https://api.ihealthlabs.com:8443/OpenApiV2/OAuthv2/userauthorization/";
-
-    private static final String TOKEN_URL = AUTHORIZE_URL;
-
-    public static final List<String> IHEALTH_SCOPES = Arrays.asList("OpenApiActivity", "OpenApiBP", "OpenApiSleep",
-            "OpenApiWeight", "OpenApiBG", "OpenApiSpO2", "OpenApiUserInfo", "OpenApiFood", "OpenApiSport");
+public class IHealthShim extends OAuth2Shim {
 
     private static final Logger logger = getLogger(IHealthShim.class);
 
+    public static final String SHIM_KEY = "ihealth";
+    private static final String USER_AUTHORIZATION_URL_SUFFIX = "/OAuthv2/userauthorization/";
+    private static final String ACCESS_TOKEN_URL_SUFFIX = USER_AUTHORIZATION_URL_SUFFIX;
+
     @Autowired
-    public IHealthShim(ApplicationAccessParametersRepo applicationParametersRepo,
-            AuthorizationRequestParametersRepo authorizationRequestParametersRepo,
-            AccessParametersRepo accessParametersRepo,
-            ShimServerConfig shimServerConfig) {
-        super(applicationParametersRepo, authorizationRequestParametersRepo, accessParametersRepo, shimServerConfig);
-    }
+    private IHealthClientSettings clientSettings;
 
     @Override
     public String getLabel() {
+
         return "iHealth";
     }
 
     @Override
     public String getShimKey() {
+
         return SHIM_KEY;
     }
 
     @Override
-    public String getBaseAuthorizeUrl() {
-        return AUTHORIZE_URL;
+    public String getUserAuthorizationUrl() {
+
+        return clientSettings.getApiBaseUrl() + USER_AUTHORIZATION_URL_SUFFIX;
     }
 
     @Override
-    public String getBaseTokenUrl() {
-        return TOKEN_URL;
+    public String getAccessTokenUrl() {
+
+        return clientSettings.getApiBaseUrl() + ACCESS_TOKEN_URL_SUFFIX;
     }
 
     @Override
-    public List<String> getScopes() {
-        return IHEALTH_SCOPES;
+    protected OAuth2ClientSettings getClientSettings() {
+
+        return clientSettings;
     }
 
     @Override
     public AuthorizationCodeAccessTokenProvider getAuthorizationCodeAccessTokenProvider() {
+
         return new IHealthAuthorizationCodeAccessTokenProvider();
     }
 
     @Override
     public ShimDataType[] getShimDataTypes() {
+
         return new ShimDataType[] {
-                PHYSICAL_ACTIVITY,
+                BLOOD_PRESSURE, // TODO the order matters here since the first is used as a trigger request
                 BLOOD_GLUCOSE,
-                BLOOD_PRESSURE,
+                PHYSICAL_ACTIVITY,
                 BODY_WEIGHT,
                 BODY_MASS_INDEX,
                 HEART_RATE,
@@ -139,21 +130,6 @@ public class IHealthShim extends OAuth2ShimBase {
                 SLEEP_DURATION,
                 OXYGEN_SATURATION
         };
-    }
-
-    /**
-     * Map of values auto-configured from the application.yaml.
-     */
-    Map<String, String> serialValues;
-
-    public Map<String, String> getSerialValues() {
-
-        return serialValues;
-    }
-
-    public void setSerialValues(Map<String, String> serialValues) {
-
-        this.serialValues = serialValues;
     }
 
     public enum IHealthDataTypes implements ShimDataType {
@@ -176,6 +152,7 @@ public class IHealthShim extends OAuth2ShimBase {
         }
 
         public List<String> getEndPoint() {
+
             return endPoint;
         }
 
@@ -212,8 +189,8 @@ public class IHealthShim extends OAuth2ShimBase {
         }
 
         // SC and SV values are client-based keys that are unique to each endpoint within a project
-        String scValue = getScValue();
-        List<String> svValues = getSvValues(dataType);
+        String scValue = clientSettings.getClientSerialNumber();
+        List<String> svValues = getEndpointSecrets(dataType);
 
         List<JsonNode> responseEntities = newArrayList();
 
@@ -223,7 +200,7 @@ public class IHealthShim extends OAuth2ShimBase {
         // requests to each of these endpoints, map the responses separately and then combine them
         for (String endPoint : dataType.getEndPoint()) {
 
-            UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromUriString(API_URL);
+            UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromUriString(clientSettings.getApiBaseUrl() + "/");
 
             // Need to use a dummy userId if we haven't authenticated yet. This is the case where we are using
             // getData to trigger Spring to conduct the OAuth exchange
@@ -247,6 +224,7 @@ public class IHealthShim extends OAuth2ShimBase {
                     .queryParam("end_time", endDate.toEpochSecond())
                     .queryParam("locale", "default")
                     .queryParam("sc", scValue)
+                    // TODO this is way too brittle, retrieve endpoint secret by endpoint instead of by measure type
                     .queryParam("sv", svValues.get(i));
 
             ResponseEntity<JsonNode> responseEntity;
@@ -256,7 +234,7 @@ public class IHealthShim extends OAuth2ShimBase {
                 responseEntity = restTemplate.getForEntity(url, JsonNode.class);
             }
             catch (HttpClientErrorException | HttpServerErrorException e) {
-                // FIXME figure out how to handle this
+                // TODO figure out how to handle this
                 logger.error("A request for iHealth data failed.", e);
                 throw e;
             }
@@ -265,7 +243,7 @@ public class IHealthShim extends OAuth2ShimBase {
 
                 IHealthDataPointMapper mapper;
 
-                switch ( dataType ) {
+                switch (dataType) {
 
                     case PHYSICAL_ACTIVITY:
                         mapper = new IHealthPhysicalActivityDataPointMapper();
@@ -306,46 +284,41 @@ public class IHealthShim extends OAuth2ShimBase {
                 }
 
                 responseEntities.addAll(mapper.asDataPoints(singletonList(responseEntity.getBody())));
-
             }
             else {
                 responseEntities.add(responseEntity.getBody());
             }
 
             i++;
-
         }
 
         return ResponseEntity.ok().body(
                 ShimDataResponse.result(SHIM_KEY, responseEntities));
     }
 
-    private String getScValue() {
+    private List<String> getEndpointSecrets(IHealthDataTypes dataType) {
 
-        return serialValues.get("SC");
-    }
-
-    private List<String> getSvValues(IHealthDataTypes dataType) {
-
-        switch ( dataType ) {
+        switch (dataType) {
             case PHYSICAL_ACTIVITY:
-                return singletonList(serialValues.get("sportSV"));
+                return singletonList(clientSettings.getSportEndpointSecret());
             case BODY_WEIGHT:
-                return singletonList(serialValues.get("weightSV"));
+                return singletonList(clientSettings.getWeightEndpointSecret());
             case BODY_MASS_INDEX:
-                return singletonList(serialValues.get("weightSV")); // body mass index comes from the weight endpoint
+                return singletonList(
+                        clientSettings.getWeightEndpointSecret()); // body mass index comes from the weight endpoint
             case BLOOD_PRESSURE:
-                return singletonList(serialValues.get("bloodPressureSV"));
+                return singletonList(clientSettings.getBloodPressureEndpointSecret());
             case BLOOD_GLUCOSE:
-                return singletonList(serialValues.get("bloodGlucoseSV"));
+                return singletonList(clientSettings.getBloodGlucoseEndpointSecret());
             case STEP_COUNT:
-                return singletonList(serialValues.get("activitySV"));
+                return singletonList(clientSettings.getActivityEndpointSecret());
             case SLEEP_DURATION:
-                return singletonList(serialValues.get("sleepSV"));
+                return singletonList(clientSettings.getSleepEndpointSecret());
             case HEART_RATE:
-                return newArrayList(serialValues.get("bloodPressureSV"), serialValues.get("spo2SV"));
+                return newArrayList(clientSettings.getBloodPressureEndpointSecret(),
+                        clientSettings.getSpO2EndpointSecret());
             case OXYGEN_SATURATION:
-                return singletonList(serialValues.get("spo2SV"));
+                return singletonList(clientSettings.getSpO2EndpointSecret());
             default:
                 throw new UnsupportedOperationException();
         }
@@ -353,22 +326,25 @@ public class IHealthShim extends OAuth2ShimBase {
 
     @Override
     public OAuth2ProtectedResourceDetails getResource() {
+
         AuthorizationCodeResourceDetails resource = (AuthorizationCodeResourceDetails) super.getResource();
         resource.setAuthenticationScheme(AuthenticationScheme.none);
         return resource;
     }
 
     @Override
-    protected String getAuthorizationUrl(UserRedirectRequiredException exception) {
+    protected String getAuthorizationUrl(UserRedirectRequiredException exception, Map<String, String> addlParameters) {
+
         final OAuth2ProtectedResourceDetails resource = getResource();
 
-        UriComponentsBuilder callBackUriBuilder = UriComponentsBuilder.fromUriString(getCallbackUrl())
+        UriComponentsBuilder callBackUriBuilder = UriComponentsBuilder.fromUriString(getDefaultRedirectUrl())
                 .queryParam("state", exception.getStateKey());
 
         UriComponentsBuilder authorizationUriBuilder = UriComponentsBuilder.fromUriString(exception.getRedirectUri())
                 .queryParam("client_id", resource.getClientId())
                 .queryParam("response_type", "code")
                 .queryParam("APIName", Joiner.on(' ').join(resource.getScope()))
+                .queryParam("RequiredAPIName", Joiner.on(' ').join(resource.getScope()))
                 .queryParam("redirect_uri", callBackUriBuilder.build().toString());
 
         return authorizationUriBuilder.build().encode().toString();
@@ -377,6 +353,7 @@ public class IHealthShim extends OAuth2ShimBase {
     public class IHealthAuthorizationCodeAccessTokenProvider extends AuthorizationCodeAccessTokenProvider {
 
         public IHealthAuthorizationCodeAccessTokenProvider() {
+
             this.setTokenRequestEnhancer(new RequestEnhancer() {
 
                 @Override
@@ -386,7 +363,7 @@ public class IHealthShim extends OAuth2ShimBase {
 
                     form.set("client_id", resource.getClientId());
                     form.set("client_secret", resource.getClientSecret());
-                    form.set("redirect_uri", getCallbackUrl());
+                    form.set("redirect_uri", getDefaultRedirectUrl());
                     form.set("state", request.getStateKey());
                 }
             });
@@ -394,11 +371,13 @@ public class IHealthShim extends OAuth2ShimBase {
 
         @Override
         protected HttpMethod getHttpMethod() {
+
             return HttpMethod.GET;
         }
 
         @Override
         protected ResponseExtractor<OAuth2AccessToken> getResponseExtractor() {
+
             return new ResponseExtractor<OAuth2AccessToken>() {
 
                 @Override

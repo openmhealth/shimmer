@@ -1,3 +1,20 @@
+/*
+ * Copyright 2017 Open mHealth
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+
 package org.openmhealth.shim.moves;
 
 import com.fasterxml.jackson.databind.JsonDeserializer;
@@ -10,7 +27,6 @@ import org.openmhealth.shim.moves.mapper.MovesStepCountDataPointMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -30,45 +46,30 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.time.Duration;
 import java.time.OffsetDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.Map;
 
 import static java.util.Collections.singletonList;
 import static org.springframework.http.ResponseEntity.ok;
 
 
 /**
- * Created by Cheng-Kang Hsieh on 3/3/15.
+ * @author Cheng-Kang Hsieh
+ * @author Emerson Farrugia
  */
 @Component
-@ConfigurationProperties(prefix = "openmhealth.shim.moves")
-public class MovesShim extends OAuth2ShimBase{
+public class MovesShim extends OAuth2Shim {
+
     private static final Logger logger = LoggerFactory.getLogger(MovesShim.class);
 
     public static final String SHIM_KEY = "moves";
-
     private static final String DATA_URL = "https://api.moves-app.com/api/1.1";
-
-    private static final String AUTHORIZE_URL = "https://api.moves-app.com/oauth/v1/authorize";
-
-    private static final String TOKEN_URL = "https://api.moves-app.com/oauth/v1/access_token";
-
-
-    public static final ArrayList<String> MOVES_SCOPES =
-            new ArrayList<>(Arrays.asList(
-                    "activity", "location"
-            ));
+    private static final String USER_AUTHORIZATION_URL = "https://api.moves-app.com/oauth/v1/authorize";
+    private static final String ACCESS_TOKEN_URL = "https://api.moves-app.com/oauth/v1/access_token";
 
     private static final long MAX_DURATION_IN_DAYS = 31;
 
     @Autowired
-    public MovesShim(ApplicationAccessParametersRepo applicationParametersRepo,
-                     AuthorizationRequestParametersRepo authorizationRequestParametersRepo,
-                     AccessParametersRepo accessParametersRepo,
-                     ShimServerConfig shimServerConfig) {
-        super(applicationParametersRepo, authorizationRequestParametersRepo, accessParametersRepo, shimServerConfig);
-    }
+    private MovesClientSettings clientSettings;
 
     private MovesStepCountDataPointMapper stepCountMapper = new MovesStepCountDataPointMapper();
     private MovesPhysicalActivityDataPointMapper physicalActivityMapper = new MovesPhysicalActivityDataPointMapper();
@@ -84,18 +85,19 @@ public class MovesShim extends OAuth2ShimBase{
     }
 
     @Override
-    public String getBaseAuthorizeUrl() {
-        return AUTHORIZE_URL;
+    public String getUserAuthorizationUrl() {
+        return USER_AUTHORIZATION_URL;
     }
 
     @Override
-    public String getBaseTokenUrl() {
-        return TOKEN_URL;
+    public String getAccessTokenUrl() {
+        return ACCESS_TOKEN_URL;
     }
 
     @Override
-    public List<String> getScopes() {
-        return MOVES_SCOPES;
+    protected OAuth2ClientSettings getClientSettings() {
+
+        return clientSettings;
     }
 
     public enum MovesDataType implements ShimDataType {
@@ -129,15 +131,18 @@ public class MovesShim extends OAuth2ShimBase{
     }
 
     @Override
-    protected ResponseEntity<ShimDataResponse> getData(OAuth2RestOperations restTemplate,
-                                                       ShimDataRequest shimDataRequest) throws ShimException {
+    protected ResponseEntity<ShimDataResponse> getData(
+            OAuth2RestOperations restTemplate,
+            ShimDataRequest shimDataRequest)
+            throws ShimException {
 
         String dataTypeKey = shimDataRequest.getDataTypeKey().trim().toUpperCase();
 
         MovesDataType movesDataType;
         try {
             movesDataType = MovesDataType.valueOf(dataTypeKey);
-        } catch (NullPointerException | IllegalArgumentException e) {
+        }
+        catch (NullPointerException | IllegalArgumentException e) {
             throw new ShimException("Null or Invalid data type parameter: "
                     + dataTypeKey + " in shimDataRequest, cannot retrieve data.");
         }
@@ -173,7 +178,8 @@ public class MovesShim extends OAuth2ShimBase{
 
         ResponseEntity<JsonNode> responseEntity;
         try {
-            responseEntity = restTemplate.exchange(uriBuilder.build().encode().toUri(), HttpMethod.GET, entity, JsonNode.class);
+            responseEntity =
+                    restTemplate.exchange(uriBuilder.build().encode().toUri(), HttpMethod.GET, entity, JsonNode.class);
         }
         catch (HttpClientErrorException | HttpServerErrorException e) {
             // FIXME figure out how to handle this
@@ -202,11 +208,11 @@ public class MovesShim extends OAuth2ShimBase{
         else {
             return ok().body(ShimDataResponse.result(SHIM_KEY, responseEntity.getBody()));
         }
-
     }
 
     @Override
-    protected String getAuthorizationUrl(UserRedirectRequiredException exception) {
+    protected String getAuthorizationUrl(UserRedirectRequiredException exception, Map<String, String> addlParameters) {
+
         final OAuth2ProtectedResourceDetails resource = getResource();
 
         UriComponentsBuilder uriBuilder = UriComponentsBuilder
@@ -217,7 +223,7 @@ public class MovesShim extends OAuth2ShimBase{
                 .queryParam("access_type", "offline")
                 .queryParam("approval_prompt", "force")
                 .queryParam("scope", StringUtils.collectionToDelimitedString(resource.getScope(), " "))
-                .queryParam("redirect_uri", getCallbackUrl());
+                .queryParam("redirect_uri", getDefaultRedirectUrl());
 
         return uriBuilder.build().encode().toUriString();
     }
@@ -226,13 +232,15 @@ public class MovesShim extends OAuth2ShimBase{
      * Adds required parameters to authorization token requests.
      */
     private class MovesTokenRequestEnhancer implements RequestEnhancer {
+
         @Override
         public void enhance(AccessTokenRequest request,
-                            OAuth2ProtectedResourceDetails resource,
-                            MultiValueMap<String, String> form, HttpHeaders headers) {
+                OAuth2ProtectedResourceDetails resource,
+                MultiValueMap<String, String> form, HttpHeaders headers) {
+
             form.set("client_id", resource.getClientId());
             form.set("client_secret", resource.getClientSecret());
-            form.set("redirect_uri", getCallbackUrl());
+            form.set("redirect_uri", getDefaultRedirectUrl());
         }
     }
 }

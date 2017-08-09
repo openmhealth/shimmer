@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Open mHealth
+ * Copyright 2017 Open mHealth
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
  */
 
 package org.openmhealth.shim.withings;
@@ -26,8 +27,6 @@ import org.openmhealth.shim.*;
 import org.openmhealth.shim.withings.domain.WithingsBodyMeasureType;
 import org.openmhealth.shim.withings.mapper.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -45,93 +44,88 @@ import java.util.Map;
 import java.util.Objects;
 
 import static java.util.Collections.singletonList;
+import static org.openmhealth.shim.withings.WithingsShim.WithingsDataType.*;
 
 
 /**
  * @author Danilo Bonilla
  * @author Chris Schaefbauer
+ * @author Emerson Farrugia
  */
 @Component
-@ConfigurationProperties(prefix = "openmhealth.shim.withings")
-public class WithingsShim extends OAuth1ShimBase {
+public class WithingsShim extends OAuth1Shim {
 
     public static final String SHIM_KEY = "withings";
-
     private static final String DATA_URL = "http://wbsapi.withings.net";
-
     private static final String REQUEST_TOKEN_URL = "https://oauth.withings.com/account/request_token";
-
-    private static final String AUTHORIZE_URL = "https://oauth.withings.com/account/authorize";
-
-    private static final String TOKEN_URL = "https://oauth.withings.com/account/access_token";
-
-    private static final String PARTNER_ACCESS_ACTIVITY_ENDPOINT = "getintradayactivity";
-
-    @Value("${openmhealth.shim.withings.partnerAccess:false}")
-    protected boolean partnerAccess;
+    private static final String USER_AUTHORIZATION_URL = "https://oauth.withings.com/account/authorize";
+    private static final String ACCESS_TOKEN_URL = "https://oauth.withings.com/account/access_token";
+    private static final String INTRADAY_ACTIVITY_ENDPOINT = "getintradayactivity";
 
     @Autowired
-    public WithingsShim(ApplicationAccessParametersRepo applicationParametersRepo,
-            AuthorizationRequestParametersRepo authorizationRequestParametersRepo,
-            ShimServerConfig shimServerConfig,
-            AccessParametersRepo accessParametersRepo) {
-
-        super(applicationParametersRepo, authorizationRequestParametersRepo, shimServerConfig, accessParametersRepo);
-
-    }
+    private WithingsClientSettings clientSettings;
 
     @Override
     public String getLabel() {
+
         return "Withings";
     }
 
     @Override
-    public List<String> getScopes() {
-        return null; //noop!
-    }
-
-    @Override
     public String getShimKey() {
+
         return SHIM_KEY;
     }
 
     @Override
-    public String getBaseRequestTokenUrl() {
+    public String getRequestTokenUrl() {
+
         return REQUEST_TOKEN_URL;
     }
 
     @Override
-    public String getBaseAuthorizeUrl() {
-        return AUTHORIZE_URL;
+    public String getUserAuthorizationUrl() {
+
+        return USER_AUTHORIZATION_URL;
     }
 
     @Override
-    public String getBaseTokenUrl() {
-        return TOKEN_URL;
+    public String getAccessTokenUrl() {
+
+        return ACCESS_TOKEN_URL;
+    }
+
+    @Override
+    protected OAuth1ClientSettings getClientSettings() {
+
+        return clientSettings;
     }
 
     @Override
     public ShimDataType[] getShimDataTypes() {
 
         return new ShimDataType[] {
-                WithingsDataType.HEART_RATE, WithingsDataType.BLOOD_PRESSURE, WithingsDataType.SLEEP,
-                WithingsDataType.CALORIES,
-                WithingsDataType.BODY_HEIGHT, WithingsDataType.STEPS, WithingsDataType.BODY_WEIGHT
+                BLOOD_PRESSURE,
+                BODY_HEIGHT,
+                BODY_WEIGHT,
+                CALORIES,
+                HEART_RATE,
+                SLEEP,
+                STEPS
         };
-
     }
 
     @Override
     protected void loadAdditionalAccessParameters(
 
             HttpServletRequest request, AccessParameters accessParameters) {
+
         Map<String, Object> addlParams =
                 accessParameters.getAdditionalParameters();
         addlParams = addlParams != null ? addlParams : new LinkedHashMap<>();
         // Withings maintains a unique id, separate from username, for each user and requires that as a parameter
         // for requests. Userid is exposed during the authentication process and needed to construct the request URI.
         addlParams.put("userid", request.getParameter("userid"));
-
     }
 
     public enum WithingsDataType implements ShimDataType {
@@ -149,16 +143,19 @@ public class WithingsShim extends OAuth1ShimBase {
         private boolean usesUnixEpochSecondsDate;
 
         WithingsDataType(String endpoint, String measureParameter, boolean usesUnixEpochSecondsDate) {
+
             this.endpoint = endpoint;
             this.measureParameter = measureParameter;
             this.usesUnixEpochSecondsDate = usesUnixEpochSecondsDate;
         }
 
         public String getEndpoint() {
+
             return endpoint;
         }
 
         public String getMeasureParameter() {
+
             return measureParameter;
         }
 
@@ -210,8 +207,8 @@ public class WithingsShim extends OAuth1ShimBase {
                         mapper = new WithingsBodyHeightDataPointMapper();
                         break;
                     case STEPS:
-                        if (partnerAccess) {
-                            // Use a different mapper because the partner-access endpoint generates a different response
+                        if (clientSettings.isIntradayDataAvailable()) {
+                            // Use a different mapper because the intraday endpoint generates a different response
                             mapper = new WithingsIntradayStepCountDataPointMapper();
                         }
                         else {
@@ -219,7 +216,7 @@ public class WithingsShim extends OAuth1ShimBase {
                         }
                         break;
                     case CALORIES:
-                        if (partnerAccess) {
+                        if (clientSettings.isIntradayDataAvailable()) {
                             mapper = new WithingsIntradayCaloriesBurnedDataPointMapper();
                         }
                         else {
@@ -237,7 +234,6 @@ public class WithingsShim extends OAuth1ShimBase {
                         break;
                     default:
                         throw new UnsupportedOperationException();
-
                 }
 
                 InputStream content = responseEntity.getContent();
@@ -250,7 +246,6 @@ public class WithingsShim extends OAuth1ShimBase {
                 return ShimDataResponse
                         .result(WithingsShim.SHIM_KEY, objectMapper.readTree(responseEntity.getContent()));
             }
-
         }
         catch (IOException e) {
             throw new ShimException("Could not fetch data", e);
@@ -264,8 +259,8 @@ public class WithingsShim extends OAuth1ShimBase {
             WithingsDataType withingsDataType) {
 
         MultiValueMap<String, String> dateTimeMap = new LinkedMultiValueMap<>();
-        if (withingsDataType.usesUnixEpochSecondsDate || isPartnerAccessActivityMeasure(withingsDataType)) {
-            //the partner access endpoints for activity also use epoch secs
+        if (withingsDataType.usesUnixEpochSecondsDate || isIntradayActivityMeasure(withingsDataType)) {
+            //the intraday endpoints for activity also use epoch secs
 
             dateTimeMap.add("startdate", String.valueOf(shimDataRequest.getStartDateTime().toEpochSecond()));
             dateTimeMap.add("enddate", String.valueOf(shimDataRequest.getEndDateTime().plusDays(1).toEpochSecond()));
@@ -273,15 +268,14 @@ public class WithingsShim extends OAuth1ShimBase {
         else {
             dateTimeMap.add("startdateymd", shimDataRequest.getStartDateTime().toLocalDate().toString());
             dateTimeMap.add("enddateymd", shimDataRequest.getEndDateTime().toLocalDate().toString());
-
         }
 
         UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder.fromUriString(DATA_URL).pathSegment(
                 withingsDataType.getEndpoint());
         String measureParameter;
-        if (isPartnerAccessActivityMeasure(withingsDataType)) {
-            // partner level access allows greater detail around activity, but uses a different endpoint
-            measureParameter = PARTNER_ACCESS_ACTIVITY_ENDPOINT;
+        if (isIntradayActivityMeasure(withingsDataType)) {
+            // intraday data uses a different endpoint
+            measureParameter = INTRADAY_ACTIVITY_ENDPOINT;
         }
         else {
             measureParameter = withingsDataType.getMeasureParameter();
@@ -298,32 +292,28 @@ public class WithingsShim extends OAuth1ShimBase {
                 namely a diastolic and a systolic measure, when the measure type is blood pressure we ask for all
                 measures and then filter out the ones we don't care about.
              */
-            if (withingsDataType != WithingsDataType.BLOOD_PRESSURE) {
+            if (withingsDataType != BLOOD_PRESSURE) {
 
                 WithingsBodyMeasureType measureType = WithingsBodyMeasureType.valueOf(withingsDataType.name());
                 uriComponentsBuilder.queryParam("meastype", measureType.getMagicNumber());
             }
 
             uriComponentsBuilder.queryParam("category", 1); //filter out goal datapoints
-
         }
 
         UriComponents uriComponents = uriComponentsBuilder.build();
         return uriComponents.toUri();
-
     }
 
     /**
-     * Determines whether the request is a Withings partner-access level activity request based on the configuration
+     * Determines whether the request is a Withings intraday request based on the configuration
      * setup and the data type from the Shim API request. This case requires a different endpoint and different time
      * parameters than the standard activity endpoint.
      *
      * @param withingsDataType the withings data type retrieved from the Shim API request
      */
-    private boolean isPartnerAccessActivityMeasure(WithingsDataType withingsDataType) {
+    private boolean isIntradayActivityMeasure(WithingsDataType withingsDataType) {
 
-        return (partnerAccess &&
-                (withingsDataType == WithingsDataType.STEPS || withingsDataType == WithingsDataType.CALORIES));
-
+        return clientSettings.isIntradayDataAvailable() && (withingsDataType == STEPS || withingsDataType == CALORIES);
     }
 }

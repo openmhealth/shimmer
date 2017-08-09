@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Open mHealth
+ * Copyright 2017 Open mHealth
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,15 +12,20 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
  */
 
 package org.openmhealth.shimmer.common.controller;
 
+import com.google.common.collect.Maps;
 import org.openmhealth.shim.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -33,8 +38,11 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.*;
 
-import static java.util.Collections.singletonList;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static org.openmhealth.shim.OAuth2Shim.REDIRECT_URL_KEY;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.http.ResponseEntity.badRequest;
+import static org.springframework.http.ResponseEntity.ok;
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 
@@ -48,21 +56,16 @@ import static org.springframework.web.bind.annotation.RequestMethod.*;
 @RestController
 public class LegacyAuthorizationController {
 
-    // TODO these should get passed in from the console
-    private static final String AUTH_SUCCESS_URL = "/#authorizationComplete/success";
-    private static final String AUTH_FAILURE_URL = "/#authorizationComplete/failure";
+    private static final Logger logger = LoggerFactory.getLogger(LegacyAuthorizationController.class);
 
     @Autowired
     private AccessParametersRepo accessParametersRepo;
 
     @Autowired
-    private AuthorizationRequestParametersRepo authParametersRepo;
+    private AuthorizationRequestParametersRepo authorizationRequestParametersRepo;
 
     @Autowired
     private ShimRegistry shimRegistry;
-
-    @Autowired
-    private ShimServerConfig shimServerProperties;
 
 
     /**
@@ -98,30 +101,32 @@ public class LegacyAuthorizationController {
      * Endpoint for triggering domain approval.
      *
      * @param username The user record for which we're authorizing a shim.
-     * @param clientRedirectUrl The URL to which the external shim client  will be redirected after authorization is
-     * complete.
+     * @param dataProviderRedirectUrl The URL to which the the data provider will redirect the user's browser after an
+     * authorization
      * @param shim The shim registry key of the shim we're approving
      * @return AuthorizationRequest parameters, including a boolean flag if already authorized.
      */
     @RequestMapping(value = "/authorize/{shim}", produces = APPLICATION_JSON_VALUE)
-    public AuthorizationRequestParameters authorize(
+    public AuthorizationRequestParameters initiateAuthorization(
             @RequestParam(value = "username") String username,
-            @RequestParam(value = "client_redirect_url", required = false) String clientRedirectUrl,
+            @RequestParam(value = "redirect_url", required = false) String dataProviderRedirectUrl,
             @PathVariable("shim") String shim) throws ShimException {
 
+        logger.debug("Received /authorize/{} request with username {}", shim, username);
+
         setPassThroughAuthentication(username, shim);
-        AuthorizationRequestParameters authParams = shimRegistry.getShim(shim)
-                .getAuthorizationRequestParameters(username, Collections.emptyMap());
-        /**
-         * Save authorization parameters to local repo. They will be
-         * re-fetched via stateKey upon approval.
-         */
-        authParams.setUsername(username);
-        authParams.setClientRedirectUrl(clientRedirectUrl);
 
-        authParametersRepo.save(authParams);
+        Map<String, String> additionalParameters = Maps.newHashMap();
 
-        return authParams;
+        additionalParameters.put(REDIRECT_URL_KEY, dataProviderRedirectUrl);
+
+        AuthorizationRequestParameters authorizationRequestParameters = shimRegistry
+                .getShim(shim)
+                .getAuthorizationRequestParameters(username, additionalParameters);
+
+        authorizationRequestParameters.setUsername(username);
+
+        return authorizationRequestParametersRepo.save(authorizationRequestParameters);
     }
 
     /**
@@ -131,86 +136,97 @@ public class LegacyAuthorizationController {
      * @param shim The shim registry key of the shim authorization we're removing.
      * @return Simple response message.
      */
-    @RequestMapping(value = "/de-authorize/{shim}", method = DELETE, produces = APPLICATION_JSON_VALUE)
-    public List<String> removeAuthorization(
+    @RequestMapping(value = "/deauthorize/{shim}", method = DELETE, produces = APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> removeAuthorization(
             @RequestParam(value = "username") String username,
             @PathVariable("shim") String shim)
             throws ShimException {
 
+        // TODO revoke tokens from data provider
         List<AccessParameters> accessParameters = accessParametersRepo.findAllByUsernameAndShimKey(username, shim);
 
-        accessParameters.forEach(accessParametersRepo::delete);
+        accessParametersRepo.delete(accessParameters);
 
-        return singletonList("Success: Authorization Removed.");
+        return ok().build();
     }
 
     /**
-     * Endpoint for handling approvals from external data providers
+     * Endpoint for handling redirects from external data providers
      *
      * @param servletRequest Request posted by the external data provider.
      * @return AuthorizationResponse object with details and result: authorize, error, or denied.
      */
+    // TODO harmonize handling of ShimException, returning correct status codes where relevant
     @RequestMapping(value = "/authorize/{shim}/callback", method = {POST, GET}, produces = APPLICATION_JSON_VALUE)
-    public AuthorizationResponse approve(
-            @PathVariable("shim") String shim,
+    public ResponseEntity<AuthorizationResponse> processRedirect(
+            @PathVariable("shim") String shimKey,
+            @RequestParam("state") String stateKey,
             HttpServletRequest servletRequest,
             HttpServletResponse servletResponse)
             throws ShimException {
 
-        String stateKey = servletRequest.getParameter("state");
-        AuthorizationRequestParameters authParams = authParametersRepo.findByStateKey(stateKey);
+        logger.debug("A redirect has been received for shim '{}' with state key '{}'.", shimKey, stateKey);
+
+        AuthorizationRequestParameters authParams = authorizationRequestParametersRepo.findByStateKey(stateKey);
+
         if (authParams == null) {
-            throw new ShimException("Invalid state key, original access request not found. Cannot authorize.");
+            logger.warn(
+                    "The redirect can't be processed because an authorization request with state key '{}' doesn't exist.",
+                    stateKey);
+
+            return badRequest().build();
         }
-        else {
-            setPassThroughAuthentication(authParams.getUsername(), shim);
-            AuthorizationResponse response = shimRegistry.getShim(shim).handleAuthorizationResponse(servletRequest);
-            /**
-             * Save the access parameters to local repo.
-             * They will be re-fetched via username and path parameters
-             * for future requests.
-             */
-            response.getAccessParameters().setUsername(authParams.getUsername());
-            response.getAccessParameters().setShimKey(shim);
-            accessParametersRepo.save(response.getAccessParameters());
 
-            /**
-             * At this point the authorization is complete, if the authorization request
-             * required a client redirect we do it now
-             */
-            if (authParams.getClientRedirectUrl() != null) {
-                try {
-                    servletResponse.sendRedirect(authParams.getClientRedirectUrl());
-                }
-                catch (IOException e) {
-                    e.printStackTrace();
-                    throw new ShimException("Error occurred redirecting to :" + authParams.getRedirectUri());
-                }
-                return null;
-            }
+        setPassThroughAuthentication(authParams.getUsername(), shimKey);
 
-            String authorizationStatusURL = AUTH_FAILURE_URL;
-            if (response.getType().equals(AuthorizationResponse.Type.AUTHORIZED)) {
+        AuthorizationResponse response =
+                shimRegistry
+                        .getShim(shimKey)
+                        .processRedirect(servletRequest);
 
-                authorizationStatusURL = AUTH_SUCCESS_URL;
-            }
+        // TODO determine what the HTTP status code should be here
+        if (response.getType() != AuthorizationResponse.Type.AUTHORIZED) {
+            return ok(response);
+        }
 
-            try{
-                servletResponse.sendRedirect(shimServerProperties.getCallbackUrlBase() + authorizationStatusURL);
+        /**
+         * Save the access parameters to local repo.
+         * They will be re-fetched via username and path parameters
+         * for future requests.
+         */
+        checkNotNull(response);
+        checkNotNull(response.getAccessParameters());
+        checkNotNull(authParams);
+
+        response.getAccessParameters().setUsername(authParams.getUsername());
+        response.getAccessParameters().setShimKey(shimKey);
+        response.setRequestParameters(authParams.getRequestParams());
+
+        accessParametersRepo.save(response.getAccessParameters());
+
+        /**
+         * At this point the authorization is complete, if the authorization request
+         * required a client redirect we do it now
+         */
+        if (authParams.getClientRedirectUrl() != null) {
+            try {
+                servletResponse.sendRedirect(authParams.getClientRedirectUrl());
             }
             catch (IOException e) {
                 e.printStackTrace();
-                throw new ShimException("Error occurred in redirecting to completion URL");
+                throw new ShimException("Error occurred redirecting to :" + authParams.getRedirectUri());
             }
-
-            return response;
+            return null;
         }
+
+        return ok(response);
     }
 
     /**
      * Sets pass through authentication required by spring.
      */
     private void setPassThroughAuthentication(String username, String shim) {
+
         SecurityContextHolder.getContext().setAuthentication(new ShimAuthentication(username, shim));
     }
 }

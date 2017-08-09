@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Open mHealth
+ * Copyright 2017 Open mHealth
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,33 +12,27 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
  */
 
 package org.openmhealth.shim.fitbit;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import org.openmhealth.schema.domain.omh.DataPoint;
 import org.openmhealth.shim.*;
 import org.openmhealth.shim.fitbit.mapper.*;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.client.OAuth2RestOperations;
 import org.springframework.security.oauth2.client.resource.OAuth2ProtectedResourceDetails;
 import org.springframework.security.oauth2.client.resource.UserRedirectRequiredException;
-import org.springframework.security.oauth2.client.token.AccessTokenRequest;
-import org.springframework.security.oauth2.client.token.RequestEnhancer;
 import org.springframework.security.oauth2.client.token.grant.code.AuthorizationCodeAccessTokenProvider;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.MultiValueMap;
-import org.springframework.util.StringUtils;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -49,8 +43,8 @@ import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import static java.util.Collections.singletonList;
 import static org.openmhealth.shim.ShimDataResponse.result;
@@ -65,65 +59,61 @@ import static org.springframework.http.ResponseEntity.ok;
  * @author Emerson Farrugia
  */
 @Component
-@ConfigurationProperties(prefix = "openmhealth.shim.fitbit")
-public class FitbitShim extends OAuth2ShimBase {
+public class FitbitShim extends OAuth2Shim {
 
     public static final String SHIM_KEY = "fitbit";
-
     private static final String DATA_URL = "https://api.fitbit.com";
-
-    private static final String AUTHORIZE_URL = "https://www.fitbit.com/oauth2/authorize";
-
-    private static final String TOKEN_URL = "https://api.fitbit.com/oauth2/token";
+    private static final String USER_AUTHORIZATION_URL = "https://www.fitbit.com/oauth2/authorize";
+    private static final String ACCESS_TOKEN_URL = "https://api.fitbit.com/oauth2/token";
 
     private static final Logger logger = getLogger(FitbitShim.class);
 
-    public static final List<String> FITBIT_SCOPES = Arrays.asList("activity", "heartrate", "sleep", "weight");
-
-    @Value("${openmhealth.shim.fitbit.partnerAccess:false}")
-    protected boolean partnerAccess;
+    @Autowired
+    private FitbitClientSettings fitbitClientSettings;
 
     @Autowired
-    public FitbitShim(ApplicationAccessParametersRepo applicationParametersRepo,
-            AuthorizationRequestParametersRepo authorizationRequestParametersRepo,
-            AccessParametersRepo accessParametersRepo,
-            ShimServerConfig shimServerConfig) {
-        super(applicationParametersRepo, authorizationRequestParametersRepo, accessParametersRepo, shimServerConfig);
-    }
+    private FitbitAuthorizationCodeAccessTokenProvider fitbitAuthorizationCodeAccessTokenProvider;
 
     @Override
     public String getLabel() {
+
         return "Fitbit";
     }
 
     @Override
-    public List<String> getScopes() {
-        return FITBIT_SCOPES;
-    }
-
-    @Override
     public String getShimKey() {
+
         return SHIM_KEY;
     }
 
     @Override
-    public String getBaseAuthorizeUrl() {
-        return AUTHORIZE_URL;
+    public String getUserAuthorizationUrl() {
+
+        return USER_AUTHORIZATION_URL;
     }
 
     @Override
-    public String getBaseTokenUrl() {
-        return TOKEN_URL;
+    public String getAccessTokenUrl() {
+
+        return ACCESS_TOKEN_URL;
+    }
+
+    @Override
+    protected OAuth2ClientSettings getClientSettings() {
+
+        return fitbitClientSettings;
     }
 
     @Override
     public ShimDataType[] getShimDataTypes() {
-        return values();
+
+        return FitbitDataType.values();
     }
 
     @Override
     public AuthorizationCodeAccessTokenProvider getAuthorizationCodeAccessTokenProvider() {
-        return new FitbitAuthorizationCodeAccessTokenProvider();
+
+        return fitbitAuthorizationCodeAccessTokenProvider;
     }
 
     public enum FitbitDataType implements ShimDataType {
@@ -143,26 +133,32 @@ public class FitbitShim extends OAuth2ShimBase {
         }
 
         public String getEndPoint() {
+
             return endPoint;
         }
 
     }
 
     @Override
-    protected String getAuthorizationUrl(UserRedirectRequiredException exception) {
+    protected String getAuthorizationUrl(
+            UserRedirectRequiredException exception,
+            Map<String, String> additionalParameters) {
 
         final OAuth2ProtectedResourceDetails resource = getResource();
 
-        String callbackUri = getCallbackUrl();
+        // TODO this override won't work, see FitbitAccessTokenRequestEnhancer for details
+        String redirectUrl = additionalParameters.get(REDIRECT_URL_KEY) == null
+                ? getDefaultRedirectUrl()
+                : additionalParameters.get(REDIRECT_URL_KEY);
 
         UriComponentsBuilder uriBuilder = UriComponentsBuilder
                 .fromUriString(exception.getRedirectUri())
                 .queryParam("response_type", "code")
                 .queryParam("client_id", resource.getClientId())
-                .queryParam("redirect_uri", callbackUri)
-                .queryParam("scope", StringUtils.collectionToDelimitedString(resource.getScope(), " "))
+                .queryParam("redirect_uri", redirectUrl)
+                .queryParam("scope", Joiner.on(" ").join(resource.getScope()))
                 .queryParam("state", exception.getStateKey())
-                .queryParam("prompt", "login");
+                .queryParam("prompt", fitbitClientSettings.getPromptType().getQueryParameterValue());
 
         return uriBuilder.build().encode().toUriString();
     }
@@ -174,7 +170,7 @@ public class FitbitShim extends OAuth2ShimBase {
         FitbitDataType fitbitDataType;
 
         try {
-            fitbitDataType = valueOf(shimDataRequest.getDataTypeKey().trim().toUpperCase());
+            fitbitDataType = FitbitDataType.valueOf(shimDataRequest.getDataTypeKey().trim().toUpperCase());
         }
         catch (NullPointerException | IllegalArgumentException e) {
 
@@ -234,7 +230,7 @@ public class FitbitShim extends OAuth2ShimBase {
         // partnerAccess means that intraday steps will be used, which are not accessible from a ranged query
         return fitbitDataType.equals(WEIGHT)
                 || fitbitDataType.equals(BODY_MASS_INDEX)
-                || (fitbitDataType.equals(STEPS) && !partnerAccess);
+                || (fitbitDataType.equals(STEPS) && !fitbitClientSettings.isIntradayDataAvailable());
     }
 
     /**
@@ -259,7 +255,6 @@ public class FitbitShim extends OAuth2ShimBase {
 
                     aggregateDataPoints.add(dataPoint);
                 }
-
             }
         }
 
@@ -273,6 +268,7 @@ public class FitbitShim extends OAuth2ShimBase {
      * @return - Combined shim response.
      */
     private ShimDataResponse aggregateIntoList(List<ShimDataResponse> dayResponses) {
+
         if (CollectionUtils.isEmpty(dayResponses)) {
             return ShimDataResponse.empty(FitbitShim.SHIM_KEY);
         }
@@ -291,15 +287,15 @@ public class FitbitShim extends OAuth2ShimBase {
             URI requestUri,
             boolean normalize,
             FitbitDataType fitbitDataType,
-            String dateString
-    ) throws ShimException {
+            String dateString)
+            throws ShimException {
 
         ResponseEntity<JsonNode> responseEntity;
         try {
             responseEntity = restTemplate.getForEntity(requestUri, JsonNode.class);
         }
         catch (HttpClientErrorException | HttpServerErrorException e) {
-            // FIXME figure out how to handle this
+            // TODO figure out how to handle this
             logger.error("A request for Fitbit data failed.", e);
             throw e;
         }
@@ -308,21 +304,20 @@ public class FitbitShim extends OAuth2ShimBase {
 
             FitbitDataPointMapper dataPointMapper;
 
-            switch ( fitbitDataType ) {
+            switch (fitbitDataType) {
                 case STEPS:
-                    if (partnerAccess) {
+                    if (fitbitClientSettings.isIntradayDataAvailable()) {
                         dataPointMapper = new FitbitIntradayStepCountDataPointMapper();
                     }
                     else {
                         dataPointMapper = new FitbitStepCountDataPointMapper();
                     }
                     break;
-
-                case HEART:
-                     dataPointMapper = new FitbitIntradayHeartRateDataPointMapper();
-                     break;
                 case ACTIVITY:
                     dataPointMapper = new FitbitPhysicalActivityDataPointMapper();
+                    break;
+                case HEART:
+                    dataPointMapper = new FitbitIntradayHeartRateDataPointMapper();
                     break;
                 case WEIGHT:
                     dataPointMapper = new FitbitBodyWeightDataPointMapper();
@@ -339,7 +334,6 @@ public class FitbitShim extends OAuth2ShimBase {
 
             return ok().body(result(FitbitShim.SHIM_KEY,
                     dataPointMapper.asDataPoints(singletonList(responseEntity.getBody()))));
-
         }
         else {
 
@@ -402,29 +396,5 @@ public class FitbitShim extends OAuth2ShimBase {
                 (fitbitDataType == STEPS || fitbitDataType == HEART ? "/1d/1min" : "")).encode().toUri();
 
         return executeRequest(restTemplate, endpointUrl, normalize, fitbitDataType, dateString);
-    }
-
-    public class FitbitAuthorizationCodeAccessTokenProvider extends AuthorizationCodeAccessTokenProvider {
-
-        public FitbitAuthorizationCodeAccessTokenProvider() {
-            this.setTokenRequestEnhancer(new FitbitTokenRequestEnhancer());
-        }
-
-        @Override
-        protected HttpMethod getHttpMethod() {
-            return HttpMethod.POST;
-        }
-    }
-
-
-    private class FitbitTokenRequestEnhancer implements RequestEnhancer {
-
-        @Override
-        public void enhance(AccessTokenRequest request, OAuth2ProtectedResourceDetails resource,
-                MultiValueMap<String, String> form, HttpHeaders headers) {
-
-            form.set("client_id", resource.getClientId());
-            form.set("redirect_uri", getCallbackUrl());
-        }
     }
 }

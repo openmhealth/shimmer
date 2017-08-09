@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Open mHealth
+ * Copyright 2017 Open mHealth
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
  */
 
 package org.openmhealth.shim.runkeeper;
@@ -23,7 +24,6 @@ import org.openmhealth.shim.runkeeper.mapper.RunkeeperDataPointMapper;
 import org.openmhealth.shim.runkeeper.mapper.RunkeeperPhysicalActivityDataPointMapper;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -40,8 +40,7 @@ import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.time.OffsetDateTime;
-import java.util.Arrays;
-import java.util.List;
+import java.util.Map;
 
 import static java.util.Collections.singletonList;
 import static org.slf4j.LoggerFactory.getLogger;
@@ -55,57 +54,51 @@ import static org.springframework.http.ResponseEntity.ok;
  * @author Chris Schaefbauer
  */
 @Component
-@ConfigurationProperties(prefix = "openmhealth.shim.runkeeper")
-public class RunkeeperShim extends OAuth2ShimBase {
+public class RunkeeperShim extends OAuth2Shim {
 
     private static final Logger logger = getLogger(RunkeeperShim.class);
 
     public static final String SHIM_KEY = "runkeeper";
-
     private static final String DATA_URL = "https://api.runkeeper.com";
-
-    private static final String AUTHORIZE_URL = "https://runkeeper.com/apps/authorize";
-
-    private static final String TOKEN_URL = "https://runkeeper.com/apps/token";
-
-    public static final List<String> RUNKEEPER_SCOPES = Arrays.asList(
-            "application/vnd.com.runkeeper.FitnessActivityFeed+json");
+    private static final String USER_AUTHORIZATION_URL = "https://runkeeper.com/apps/authorize";
+    private static final String ACCESS_TOKEN_URL = "https://runkeeper.com/apps/token";
 
     @Autowired
-    public RunkeeperShim(ApplicationAccessParametersRepo applicationParametersRepo,
-            AuthorizationRequestParametersRepo authorizationRequestParametersRepo,
-            AccessParametersRepo accessParametersRepo,
-            ShimServerConfig shimServerConfig1) {
-        super(applicationParametersRepo, authorizationRequestParametersRepo, accessParametersRepo, shimServerConfig1);
-    }
+    private RunkeeperClientSettings clientSettings;
 
     @Override
     public String getLabel() {
+
         return "Runkeeper";
     }
 
     @Override
     public String getShimKey() {
+
         return SHIM_KEY;
     }
 
     @Override
-    public String getBaseAuthorizeUrl() {
-        return AUTHORIZE_URL;
+    public String getUserAuthorizationUrl() {
+
+        return USER_AUTHORIZATION_URL;
     }
 
     @Override
-    public String getBaseTokenUrl() {
-        return TOKEN_URL;
+    public String getAccessTokenUrl() {
+
+        return ACCESS_TOKEN_URL;
     }
 
     @Override
-    public List<String> getScopes() {
-        return RUNKEEPER_SCOPES;
+    protected OAuth2ClientSettings getClientSettings() {
+
+        return clientSettings;
     }
 
     @Override
     public AuthorizationCodeAccessTokenProvider getAuthorizationCodeAccessTokenProvider() {
+
         AuthorizationCodeAccessTokenProvider provider = new AuthorizationCodeAccessTokenProvider();
         provider.setTokenRequestEnhancer(new RunkeeperTokenRequestEnhancer());
         return provider;
@@ -113,6 +106,7 @@ public class RunkeeperShim extends OAuth2ShimBase {
 
     @Override
     public ShimDataType[] getShimDataTypes() {
+
         return RunkeeperDataType.values();
     }
 
@@ -127,15 +121,18 @@ public class RunkeeperShim extends OAuth2ShimBase {
         private String endPointUrl;
 
         RunkeeperDataType(String dataTypeHeader, String endPointUrl) {
+
             this.dataTypeHeader = dataTypeHeader;
             this.endPointUrl = endPointUrl;
         }
 
         public String getDataTypeHeader() {
+
             return dataTypeHeader;
         }
 
         public String getEndPointUrl() {
+
             return endPointUrl;
         }
     }
@@ -196,7 +193,7 @@ public class RunkeeperShim extends OAuth2ShimBase {
 
         if (shimDataRequest.getNormalize()) {
             RunkeeperDataPointMapper<?> dataPointMapper;
-            switch ( runkeeperDataType ) {
+            switch (runkeeperDataType) {
                 case ACTIVITY:
                     dataPointMapper = new RunkeeperPhysicalActivityDataPointMapper();
                     break;
@@ -216,7 +213,7 @@ public class RunkeeperShim extends OAuth2ShimBase {
     }
 
     @Override
-    protected String getAuthorizationUrl(UserRedirectRequiredException exception) {
+    protected String getAuthorizationUrl(UserRedirectRequiredException exception, Map<String, String> addlParameters) {
 
         final OAuth2ProtectedResourceDetails resource = getResource();
 
@@ -225,7 +222,7 @@ public class RunkeeperShim extends OAuth2ShimBase {
                 .queryParam("state", exception.getStateKey())
                 .queryParam("client_id", resource.getClientId())
                 .queryParam("response_type", "code")
-                .queryParam("redirect_uri", getCallbackUrl());
+                .queryParam("redirect_uri", getDefaultRedirectUrl());
 
         return uriBuilder.build().encode().toUriString();
     }
@@ -241,7 +238,7 @@ public class RunkeeperShim extends OAuth2ShimBase {
             form.set("client_id", resource.getClientId());
             form.set("client_secret", resource.getClientSecret());
             form.set("grant_type", resource.getGrantType());
-            form.set("redirect_uri", getCallbackUrl());
+            form.set("redirect_uri", getDefaultRedirectUrl());
         }
     }
 }
