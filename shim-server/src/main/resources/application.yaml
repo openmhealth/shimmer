@@ -61,4 +61,4 @@ openmhealth:
    # withings:
    #   client-id: "set-value-here"
    #   client-secret: "set-value-here"
-   #   partnerAccess: true
+   #   intraday-data-available: false
