@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Open mHealth
+ * Copyright 2017 Open mHealth
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@ import org.springframework.security.oauth2.common.util.SerializationUtils;
 
 import java.util.List;
 
+
 /**
  * @author Danilo Bonilla
  */
@@ -34,17 +35,20 @@ public class AccessParameterClientTokenServices implements ClientTokenServices {
     private AccessParametersRepo accessParametersRepo;
 
     public AccessParameterClientTokenServices(AccessParametersRepo accessParametersRepo) {
+
         this.accessParametersRepo = accessParametersRepo;
     }
 
     @Override
-    public OAuth2AccessToken getAccessToken(OAuth2ProtectedResourceDetails resource,
-                                            Authentication authentication) {
+    public OAuth2AccessToken getAccessToken(
+            OAuth2ProtectedResourceDetails resource,
+            Authentication authentication) {
+
         String username = authentication.getPrincipal().toString();
         String shimKey = authentication.getDetails().toString();
 
         AccessParameters accessParameters = accessParametersRepo.findByUsernameAndShimKey(
-            username, shimKey, new Sort(Sort.Direction.DESC, "dateCreated"));
+                username, shimKey, new Sort(Sort.Direction.DESC, "dateCreated"));
 
         if (accessParameters == null || accessParameters.getSerializedToken() == null) {
             return null; //No token was found!
@@ -54,12 +58,18 @@ public class AccessParameterClientTokenServices implements ClientTokenServices {
     }
 
     @Override
-    public void saveAccessToken(OAuth2ProtectedResourceDetails resource,
-                                Authentication authentication, OAuth2AccessToken accessToken) {
+    public void saveAccessToken(
+            OAuth2ProtectedResourceDetails resource,
+            Authentication authentication, OAuth2AccessToken accessToken) {
+
         String username = authentication.getPrincipal().toString();
         String shimKey = authentication.getDetails().toString();
-        AccessParameters accessParameters = accessParametersRepo.findByUsernameAndShimKey(
-            username, shimKey, new Sort(Sort.Direction.DESC, "dateCreated"));
+
+        AccessParameters accessParameters =
+                accessParametersRepo.findByUsernameAndShimKey(
+                        username,
+                        shimKey,
+                        new Sort(Sort.Direction.DESC, "dateCreated"));
 
         if (accessParameters == null) {
             accessParameters = new AccessParameters();
@@ -68,18 +78,18 @@ public class AccessParameterClientTokenServices implements ClientTokenServices {
         }
 
         accessParameters.setSerializedToken(SerializationUtils.serialize(accessToken));
+
         accessParametersRepo.save(accessParameters);
     }
 
     @Override
     public void removeAccessToken(OAuth2ProtectedResourceDetails resource, Authentication authentication) {
+
         String username = authentication.getPrincipal().toString();
         String shimKey = authentication.getDetails().toString();
 
-        List<AccessParameters> accessParameters =
-            accessParametersRepo.findAllByUsernameAndShimKey(username, shimKey);
-        for (AccessParameters accessParameter : accessParameters) {
-            accessParametersRepo.delete(accessParameter);
-        }
+        List<AccessParameters> accessParameters = accessParametersRepo.findAllByUsernameAndShimKey(username, shimKey);
+
+        accessParametersRepo.delete(accessParameters);
     }
 }
