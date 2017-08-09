@@ -52,45 +52,53 @@ public class ShimDataRequest {
      */
     private boolean normalize = true;
 
-
-    public void setDataTypeKey(String dataTypeKey) {
-        this.dataTypeKey = dataTypeKey;
-    }
-
-    public void setAccessParameters(AccessParameters accessParameters) {
-        this.accessParameters = accessParameters;
-    }
-
     public OffsetDateTime getStartDateTime() {
+
         return startDateTime;
     }
 
     public void setStartDateTime(OffsetDateTime startDateTime) {
+
         this.startDateTime = startDateTime;
     }
 
     public OffsetDateTime getEndDateTime() {
+
         return endDateTime;
     }
 
     public void setEndDateTime(OffsetDateTime endDateTime) {
+
         this.endDateTime = endDateTime;
     }
 
-
     public String getDataTypeKey() {
+
         return dataTypeKey;
     }
 
+    public void setDataTypeKey(String dataTypeKey) {
+
+        this.dataTypeKey = dataTypeKey;
+    }
+
     public AccessParameters getAccessParameters() {
+
         return accessParameters;
     }
 
+    public void setAccessParameters(AccessParameters accessParameters) {
+
+        this.accessParameters = accessParameters;
+    }
+
     public boolean getNormalize() {
+
         return normalize;
     }
 
     public void setNormalize(boolean normalize) {
+
         this.normalize = normalize;
     }
 }
