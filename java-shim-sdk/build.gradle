@@ -16,8 +16,10 @@
 
 buildscript {
     repositories {
+        mavenLocal()
         jcenter()
     }
+
     dependencies {
         classpath "com.jfrog.bintray.gradle:gradle-bintray-plugin:1.2"
     }
@@ -31,11 +33,11 @@ archivesBaseName = "omh-shim-sdk"
 version = "1.0.0"
 
 ext {
-    jacksonVersion = "2.6.1"
+    jacksonVersion = '2.8.9'
 }
 
 dependencies {
-    compile "com.google.guava:guava:18.0"
+    compile 'com.google.guava:guava:23.0'
     compile "com.fasterxml.jackson.core:jackson-annotations:${jacksonVersion}"
     compile "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}"
     compile "org.openmhealth.schema:omh-schema-sdk:${omhSchemaSdkVersion}"
