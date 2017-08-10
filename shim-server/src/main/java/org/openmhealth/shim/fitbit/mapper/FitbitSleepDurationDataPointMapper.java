@@ -54,7 +54,7 @@ public class FitbitSleepDurationDataPointMapper extends FitbitDataPointMapper<Sl
 
         if (localStartTime.isPresent()) {
 
-            OffsetDateTime offsetStartDateTime = combineDateTimeAndTimezone(localStartTime.get());
+            OffsetDateTime offsetStartDateTime = asOffsetDateTimeWithFakeUtcTimeZone(localStartTime.get());
             Optional<Double> timeInBed = asOptionalDouble(node, "timeInBed");
 
             if (timeInBed.isPresent()) {

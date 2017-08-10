@@ -65,7 +65,7 @@ public class FitbitPhysicalActivityDataPointMapper extends FitbitDataPointMapper
 
             if (localStartDateTime.isPresent()) {
 
-                OffsetDateTime offsetStartDateTime = combineDateTimeAndTimezone(localStartDateTime.get());
+                OffsetDateTime offsetStartDateTime = asOffsetDateTimeWithFakeUtcTimeZone(localStartDateTime.get());
                 if (duration.isPresent()) {
                     activityBuilder.setEffectiveTimeFrame(TimeInterval.ofStartDateTimeAndDuration(offsetStartDateTime,
                             new DurationUnitValue(MILLISECOND, duration.get())));
@@ -82,7 +82,7 @@ public class FitbitPhysicalActivityDataPointMapper extends FitbitDataPointMapper
                 // in this case we have a date, but no time, so we set the startTime to beginning of day on the
                 // startDate, add the offset, then set the duration as the entire day
                 LocalDateTime localStartDateTime = localStartDate.get().atStartOfDay();
-                OffsetDateTime offsetStartDateTime = combineDateTimeAndTimezone(localStartDateTime);
+                OffsetDateTime offsetStartDateTime = asOffsetDateTimeWithFakeUtcTimeZone(localStartDateTime);
                 activityBuilder.setEffectiveTimeFrame(TimeInterval
                         .ofStartDateTimeAndDuration(offsetStartDateTime, new DurationUnitValue(DAY, 1)));
             }

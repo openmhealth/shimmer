@@ -21,12 +21,14 @@ import org.openmhealth.schema.domain.omh.BodyWeight;
 import org.openmhealth.schema.domain.omh.DataPoint;
 import org.openmhealth.schema.domain.omh.MassUnitValue;
 
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.Optional;
 
 import static org.openmhealth.schema.domain.omh.MassUnit.KILOGRAM;
 import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asOptionalLong;
 import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asRequiredDouble;
+import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asRequiredLocalDateTime;
 
 
 /**
@@ -47,13 +49,12 @@ public class FitbitBodyWeightDataPointMapper extends FitbitDataPointMapper<BodyW
     protected Optional<DataPoint<BodyWeight>> asDataPoint(JsonNode node) {
 
         MassUnitValue bodyWeight = new MassUnitValue(KILOGRAM, asRequiredDouble(node, "weight"));
-        BodyWeight.Builder builder = new BodyWeight.Builder(bodyWeight);
 
-        Optional<OffsetDateTime> dateTime = combineDateTimeAndTimezone(node);
+        LocalDateTime effectiveLocalDateTime = asRequiredLocalDateTime(node, "date", "time");
+        OffsetDateTime effectiveDateTime = asOffsetDateTimeWithFakeUtcTimeZone(effectiveLocalDateTime);
 
-        if (dateTime.isPresent()) {
-            builder.setEffectiveTimeFrame(dateTime.get());
-        }
+        BodyWeight.Builder builder = new BodyWeight.Builder(bodyWeight)
+                .setEffectiveTimeFrame(effectiveDateTime);
 
         Optional<Long> externalId = asOptionalLong(node, "logId");
 

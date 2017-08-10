@@ -24,15 +24,14 @@ import org.openmhealth.shim.common.mapper.JsonNodeDataPointMapper;
 import javax.annotation.Nullable;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static java.time.ZoneOffset.UTC;
 import static org.openmhealth.schema.domain.omh.DataPointHeader.Builder;
-import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asOptionalLocalDateTime;
 import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asRequiredNode;
 
 
@@ -96,33 +95,13 @@ public abstract class FitbitDataPointMapper<T extends SchemaSupport> implements 
     }
 
     /**
-     * TODO rewrite this, the names don't make sense
-     * @param node a JSON node containing <code>date</code> and <code>time</code> properties
-     * @return the equivalent OffsetDateTime
+     * @param dateTime a local date time
+     * @return the equivalent {@link OffsetDateTime} assuming a UTC offset, since Fitbit doesn't provide time zone
+     * offsets
      */
-    protected Optional<OffsetDateTime> combineDateTimeAndTimezone(JsonNode node) {
+    protected OffsetDateTime asOffsetDateTimeWithFakeUtcTimeZone(LocalDateTime dateTime) {
 
-        Optional<LocalDateTime> dateTime = asOptionalLocalDateTime(node, "date", "time");
-        Optional<OffsetDateTime> offsetDateTime = null;
-
-        if (dateTime.isPresent()) {
-            // FIXME fix the time zone offset to use the correct offset for the data point once it is fixed by Fitbit
-            offsetDateTime = Optional.of(OffsetDateTime.of(dateTime.get(), ZoneOffset.UTC));
-        }
-
-        return offsetDateTime;
-    }
-
-    /**
-     * Transforms a {@link LocalDateTime} object into an {@link OffsetDateTime} object with a UTC time zone
-     *
-     * @param dateTime local date and time for the Fitbit response JSON node
-     * @return the date and time based on the input dateTime parameter
-     */
-    protected OffsetDateTime combineDateTimeAndTimezone(LocalDateTime dateTime) {
-
-        // FIXME fix the time zone offset to use the appropriate offset for the data point once it is fixed by Fitbit
-        return OffsetDateTime.of(dateTime, ZoneOffset.UTC);
+        return OffsetDateTime.of(dateTime, UTC);
     }
 
     /**

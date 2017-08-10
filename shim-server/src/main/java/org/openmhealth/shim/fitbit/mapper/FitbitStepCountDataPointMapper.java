@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Open mHealth
+ * Copyright 2017 Open mHealth
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,11 +19,11 @@ package org.openmhealth.shim.fitbit.mapper;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.openmhealth.schema.domain.omh.DataPoint;
 import org.openmhealth.schema.domain.omh.DurationUnitValue;
-import org.openmhealth.schema.domain.omh.StepCount1;
+import org.openmhealth.schema.domain.omh.StepCount2;
 import org.openmhealth.schema.domain.omh.TimeInterval;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.Optional;
 
 import static org.openmhealth.schema.domain.omh.DurationUnit.DAY;
@@ -31,38 +31,12 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.*;
 
 
 /**
- * A mapper from Fitbit Resource API <code>activities/date</code> responses to {@link StepCount1} objects.
+ * A mapper from Fitbit Resource API <code>activities/date</code> responses to {@link StepCount2} objects.
  *
  * @author Chris Schaefbauer
+ * @author Emerson Farrugia
  */
-public class FitbitStepCountDataPointMapper extends FitbitDataPointMapper<StepCount1> {
-
-    @Override
-    protected Optional<DataPoint<StepCount1>> asDataPoint(JsonNode node) {
-
-        int stepCountValue = Integer.parseInt(asRequiredString(node, "value"));
-
-        if (stepCountValue == 0) {
-            return Optional.empty();
-        }
-
-        StepCount1.Builder builder = new StepCount1.Builder(stepCountValue);
-
-        Optional<LocalDate> stepDate = asOptionalLocalDate(node, "dateTime");
-
-        if (stepDate.isPresent()) {
-            LocalDateTime startDateTime = stepDate.get().atTime(0, 0, 0, 0);
-
-            builder.setEffectiveTimeFrame(
-                    TimeInterval.ofStartDateTimeAndDuration(combineDateTimeAndTimezone(startDateTime),
-                            new DurationUnitValue(DAY, 1)));
-        }
-
-        StepCount1 measure = builder.build();
-        Optional<Long> externalId = asOptionalLong(node, "logId");
-
-        return Optional.of(newDataPoint(measure, externalId.orElse(null)));
-    }
+public class FitbitStepCountDataPointMapper extends FitbitDataPointMapper<StepCount2> {
 
     /**
      * @return the name of the list node returned from the activities/steps Fitbit endpoint
@@ -70,5 +44,28 @@ public class FitbitStepCountDataPointMapper extends FitbitDataPointMapper<StepCo
     @Override
     protected String getListNodeName() {
         return "activities-steps";
+    }
+
+    @Override
+    protected Optional<DataPoint<StepCount2>> asDataPoint(JsonNode node) {
+
+        Integer stepCountValue = asRequiredInteger(node, "value");
+
+        if (stepCountValue == 0) {
+            return Optional.empty();
+        }
+
+        LocalDate effectiveLocalDate = asRequiredLocalDate(node, "dateTime");
+
+        OffsetDateTime effectiveStartDateTime = asOffsetDateTimeWithFakeUtcTimeZone(effectiveLocalDate.atStartOfDay());
+
+        TimeInterval effectiveTimeInterval =
+                TimeInterval.ofStartDateTimeAndDuration(effectiveStartDateTime, new DurationUnitValue(DAY, 1));
+
+        StepCount2 measure = new StepCount2.Builder(stepCountValue, effectiveTimeInterval).build();
+
+        Optional<Long> externalId = asOptionalLong(node, "logId");
+
+        return Optional.of(newDataPoint(measure, externalId.orElse(null)));
     }
 }
