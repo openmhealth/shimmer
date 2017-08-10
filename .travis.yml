@@ -8,6 +8,7 @@ notifications:
       secure: F+o9FPgJxD6KnpcvCGm2VgvY72aCo/+RwBoIZoArB68L41rgiOUoKbqkH3Y1vLaqw6isyqa6dkuBKyFoKVwyjuDYn7Iaw2z86WZWRCB4SkqcAnVWQCUGZVPrFh38hUl++gUEYbzIPDLm8RgKOJr/9XBZaMoATJlmoenI9ZMuncI=
 sudo: false
 
+# TODO determine what these should be for Gradle 4.x
 cache:
   directories:
     - $HOME/.gradle/wrapper/dists/gradle-2.6-bin
