@@ -26,10 +26,12 @@ import java.math.BigDecimal;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.time.temporal.Temporal;
 import java.util.Optional;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
-import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME;
+import static java.time.format.DateTimeFormatter.*;
 import static java.util.Optional.empty;
 
 
@@ -155,7 +157,7 @@ public class JsonNodeMappingSupport {
     /**
      * @param parentNode a parent node
      * @param path the path to a child node
-     * @return the value of the child node as a BigDecimal
+     * @return the value of the child node as a {@link BigDecimal}
      * @throws MissingJsonNodeMappingException if the child doesn't exist
      * @throws IncompatibleJsonNodeMappingException if the value of the child node isn't numeric
      */
@@ -167,21 +169,131 @@ public class JsonNodeMappingSupport {
     /**
      * @param parentNode a parent node
      * @param path the path to a child node
-     * @return the value of the child node as a {@link LocalDate}
+     * @param formatter the formatter to use to parse the value of the child node
+     * @param clazz the class of the temporal
+     * @param parseFunction the function to use to parse the value
+     * @param <T> the generic temporal type
+     * @return the value of the child node as an instance of the temporal type
      * @throws MissingJsonNodeMappingException if the child doesn't exist
-     * @throws IncompatibleJsonNodeMappingException if the value of the child node isn't a date
+     * @throws IncompatibleJsonNodeMappingException if the value of the child node can't be parsed
      */
-    // TODO overload with a DateTimeFormatter parameter
-    public static LocalDate asRequiredLocalDate(JsonNode parentNode, String path) {
+    public static <T extends Temporal> T asRequiredTemporal(
+            JsonNode parentNode,
+            String path,
+            DateTimeFormatter formatter,
+            Class<T> clazz,
+            BiFunction<String, DateTimeFormatter, T> parseFunction) {
 
         String string = asRequiredString(parentNode, path);
 
         try {
-            return LocalDate.parse(string);
+            return parseFunction.apply(string, formatter);
         }
         catch (DateTimeParseException e) {
-            throw new IncompatibleJsonNodeMappingException(parentNode, path, LocalDate.class, e);
+            throw new IncompatibleJsonNodeMappingException(parentNode, path, clazz, e);
         }
+    }
+
+    /**
+     * @param parentNode a parent node
+     * @param path the path to a child node
+     * @param formatter the formatter to use to parse the value of the child node
+     * @return the value of the child node as a {@link LocalDate}
+     * @throws MissingJsonNodeMappingException if the child doesn't exist
+     * @throws IncompatibleJsonNodeMappingException if the value of the child node isn't a date
+     */
+    public static LocalDate asRequiredLocalDate(JsonNode parentNode, String path, DateTimeFormatter formatter) {
+
+        return asRequiredTemporal(parentNode, path, formatter, LocalDate.class, LocalDate::parse);
+    }
+
+    /**
+     * @param parentNode a parent node
+     * @param path the path to a child node
+     * @return the value of the child node as a {@link LocalDate}
+     * @throws MissingJsonNodeMappingException if the child doesn't exist
+     * @throws IncompatibleJsonNodeMappingException if the value of the child node isn't a date matching {@link
+     * DateTimeFormatter#ISO_LOCAL_DATE}
+     */
+    public static LocalDate asRequiredLocalDate(JsonNode parentNode, String path) {
+
+        return asRequiredLocalDate(parentNode, path, ISO_LOCAL_DATE);
+    }
+
+    /**
+     * @param parentNode a parent node
+     * @param path the path to a child node
+     * @param formatter the formatter to use to parse the value of the child node
+     * @return the value of the child node as a {@link LocalTime}
+     * @throws MissingJsonNodeMappingException if the child doesn't exist
+     * @throws IncompatibleJsonNodeMappingException if the value of the child node isn't a time
+     */
+    public static LocalTime asRequiredLocalTime(JsonNode parentNode, String path, DateTimeFormatter formatter) {
+
+        return asRequiredTemporal(parentNode, path, formatter, LocalTime.class, LocalTime::parse);
+    }
+
+    /**
+     * @param parentNode a parent node
+     * @param path the path to a child node
+     * @return the value of the child node as a {@link LocalTime}
+     * @throws MissingJsonNodeMappingException if the child doesn't exist
+     * @throws IncompatibleJsonNodeMappingException if the value of the child node isn't a time matching {@link
+     * DateTimeFormatter#ISO_LOCAL_TIME}
+     */
+    public static LocalTime asRequiredLocalTime(JsonNode parentNode, String path) {
+
+        return asRequiredLocalTime(parentNode, path, ISO_LOCAL_TIME);
+    }
+
+    /**
+     * @param parentNode a parent node
+     * @param datePath the path to a date child node
+     * @param dateFormatter the formatter to use to parse the value of the date child node
+     * @param timePath the path to a time child node
+     * @param timeFormatter the formatter to use to parse the value of the time child node
+     * @return the combined value of the child nodes as a {@link LocalDateTime}
+     * @throws MissingJsonNodeMappingException if a child doesn't exist
+     * @throws IncompatibleJsonNodeMappingException if the value of a child node isn't parseable
+     */
+    public static LocalDateTime asRequiredLocalDateTime(
+            JsonNode parentNode,
+            String datePath,
+            DateTimeFormatter dateFormatter,
+            String timePath,
+            DateTimeFormatter timeFormatter) {
+
+        LocalDate localDate = asRequiredLocalDate(parentNode, datePath, dateFormatter);
+        LocalTime localTime = asRequiredLocalTime(parentNode, timePath, timeFormatter);
+
+        return LocalDateTime.of(localDate, localTime);
+    }
+
+    /**
+     * @param parentNode a parent node
+     * @param datePath the path to a date child node
+     * @param timePath the path to a time child node
+     * @return the combined value of the child nodes as a {@link LocalDateTime}
+     * @throws MissingJsonNodeMappingException if a child doesn't exist
+     * @throws IncompatibleJsonNodeMappingException if the value of a child node isn't parseable
+     */
+    public static LocalDateTime asRequiredLocalDateTime(JsonNode parentNode, String datePath, String timePath) {
+
+        return asRequiredLocalDateTime(parentNode, datePath, ISO_LOCAL_DATE, timePath, ISO_LOCAL_TIME);
+    }
+
+    /**
+     * @param parentNode a parent node
+     * @param path the path to a child node
+     * @param formatter the formatter to use to parse the value of the child node
+     * @return the value of the child node as an {@link OffsetDateTime}
+     * @throws MissingJsonNodeMappingException if the child doesn't exist
+     * @throws IncompatibleJsonNodeMappingException if the value of the child node isn't a date time
+     */
+    public static OffsetDateTime asRequiredOffsetDateTime(JsonNode parentNode, String path,
+            DateTimeFormatter formatter) {
+
+        return asRequiredTemporal(parentNode, path, formatter, OffsetDateTime.class, OffsetDateTime::parse);
     }
 
     /**
@@ -189,18 +301,12 @@ public class JsonNodeMappingSupport {
      * @param path the path to a child node
      * @return the value of the child node as an {@link OffsetDateTime}
      * @throws MissingJsonNodeMappingException if the child doesn't exist
-     * @throws IncompatibleJsonNodeMappingException if the value of the child node isn't a date time
+     * @throws IncompatibleJsonNodeMappingException if the value of the child node isn't a date time matching {@link
+     * DateTimeFormatter#ISO_OFFSET_DATE_TIME}
      */
     public static OffsetDateTime asRequiredOffsetDateTime(JsonNode parentNode, String path) {
 
-        String string = asRequiredString(parentNode, path);
-
-        try {
-            return OffsetDateTime.parse(string);
-        }
-        catch (DateTimeParseException e) {
-            throw new IncompatibleJsonNodeMappingException(parentNode, path, OffsetDateTime.class, e);
-        }
+        return asRequiredOffsetDateTime(parentNode, path, ISO_OFFSET_DATE_TIME);
     }
 
     /**
@@ -283,10 +389,17 @@ public class JsonNodeMappingSupport {
     /**
      * @param parentNode a parent node
      * @param path the path to a child node
-     * @return the value of the child node as a date time, or an empty optional if the child doesn't exist or if the
-     * value of the child node isn't a date time
+     * @param formatter the formatter to use to parse the value of the child node
+     * @param parseFunction the function to use to parse the value
+     * @param <T> the generic temporal type
+     * @return the value of the child node as an instance of the temporal type, or an empty optional if the child
+     * doesn't exist or if the value of the child node isn't parseable
      */
-    public static Optional<OffsetDateTime> asOptionalOffsetDateTime(JsonNode parentNode, String path) {
+    public static <T extends Temporal> Optional<T> asOptionalTemporal(
+            JsonNode parentNode,
+            String path,
+            DateTimeFormatter formatter,
+            BiFunction<String, DateTimeFormatter, T> parseFunction) {
 
         Optional<String> string = asOptionalString(parentNode, path);
 
@@ -294,53 +407,85 @@ public class JsonNodeMappingSupport {
             return empty();
         }
 
-        OffsetDateTime dateTime = null;
+        T temporal = null;
 
         try {
-            dateTime = OffsetDateTime.parse(string.get());
+            temporal = parseFunction.apply(string.get(), formatter);
         }
         catch (DateTimeParseException e) {
-            logger.warn("The '{}' field in node '{}' with value '{}' isn't a valid timestamp.",
+            logger.warn("The '{}' field in node '{}' with value '{}' isn't a valid temporal.",
                     path, parentNode, string.get(), e);
         }
 
-        return Optional.ofNullable(dateTime);
+        return Optional.ofNullable(temporal);
     }
 
     /**
      * @param parentNode a parent node
      * @param path the path to a child node
      * @param formatter the formatter to use to parse the value of the child node
-     * @return the value of the child node as a date time, or an empty optional if the child doesn't exist or if the
-     * value of the child node isn't a date time
+     * @return the value of the child node as a {@link OffsetDateTime}, or an empty optional if the child doesn't exist
+     * or if the value of the child node isn't a date time
      */
-    public static Optional<LocalDateTime> asOptionalLocalDateTime(JsonNode parentNode, String path,
+    public static Optional<OffsetDateTime> asOptionalOffsetDateTime(JsonNode parentNode, String path,
             DateTimeFormatter formatter) {
 
-        Optional<String> string = asOptionalString(parentNode, path);
-
-        if (!string.isPresent()) {
-            return empty();
-        }
-
-        LocalDateTime dateTime = null;
-
-        try {
-            dateTime = LocalDateTime.parse(string.get(), formatter);
-        }
-        catch (DateTimeParseException e) {
-            logger.warn("The '{}' field in node '{}' with value '{}' isn't a valid timestamp.",
-                    path, parentNode, string.get(), e);
-        }
-
-        return Optional.ofNullable(dateTime);
+        return asOptionalTemporal(parentNode, path, formatter, OffsetDateTime::parse);
     }
 
     /**
      * @param parentNode a parent node
      * @param path the path to a child node
-     * @return the value of the child node as a date time, or an empty optional if the child doesn't exist or if the
-     * value of the child node isn't a date time matching {@link DateTimeFormatter#ISO_LOCAL_DATE_TIME}
+     * @return the value of the child node as a {@link OffsetDateTime}, or an empty optional if the child doesn't exist
+     * or if the value of the child node isn't a date time matching {@link DateTimeFormatter#ISO_OFFSET_DATE_TIME}
+     */
+    public static Optional<OffsetDateTime> asOptionalOffsetDateTime(JsonNode parentNode, String path) {
+
+        return asOptionalOffsetDateTime(parentNode, path, ISO_OFFSET_DATE_TIME);
+    }
+
+    /**
+     * @param parentNode a parent node
+     * @param path the path to a child node
+     * @param formatter the formatter to use to parse the value of the child node
+     * @return the value of the child node as a {@link LocalDate}, or an empty optional if the child doesn't exist or if
+     * the value of the child node isn't a date
+     */
+    public static Optional<LocalDate> asOptionalLocalDate(JsonNode parentNode, String path,
+            DateTimeFormatter formatter) {
+
+        return asOptionalTemporal(parentNode, path, formatter, LocalDate::parse);
+    }
+
+    /**
+     * @param parentNode a parent node
+     * @param path the path to a child node
+     * @return the value of the child node as a {@link LocalDate}, or an empty optional if the child doesn't exist or if
+     * the value of the child node isn't a date time matching {@link DateTimeFormatter#ISO_LOCAL_DATE}
+     */
+    public static Optional<LocalDate> asOptionalLocalDate(JsonNode parentNode, String path) {
+
+        return asOptionalLocalDate(parentNode, path, ISO_LOCAL_DATE);
+    }
+
+    /**
+     * @param parentNode a parent node
+     * @param path the path to a child node
+     * @param formatter the formatter to use to parse the value of the child node
+     * @return the value of the child node as a {@link LocalDateTime}, or an empty optional if the child doesn't exist
+     * or if the value of the child node isn't a date time
+     */
+    public static Optional<LocalDateTime> asOptionalLocalDateTime(JsonNode parentNode, String path,
+            DateTimeFormatter formatter) {
+
+        return asOptionalTemporal(parentNode, path, formatter, LocalDateTime::parse);
+    }
+
+    /**
+     * @param parentNode a parent node
+     * @param path the path to a child node
+     * @return the value of the child node as a {@link LocalDateTime}, or an empty optional if the child doesn't exist
+     * or if the value of the child node isn't a date time matching {@link DateTimeFormatter#ISO_LOCAL_DATE_TIME}
      */
     public static Optional<LocalDateTime> asOptionalLocalDateTime(JsonNode parentNode, String path) {
 
@@ -365,35 +510,6 @@ public class JsonNodeMappingSupport {
                     pathToDate, pathToTime, parentNode, date.get(), time.get(), e);
         }
         return Optional.ofNullable(dateTime);
-    }
-
-    // TODO add Javadoc and tests
-    public static Optional<LocalDate> asOptionalLocalDate(JsonNode parentNode, String path) {
-
-        return asOptionalLocalDate(parentNode, path, DateTimeFormatter.ISO_LOCAL_DATE);
-    }
-
-    // TODO add Javadoc and tests
-    public static Optional<LocalDate> asOptionalLocalDate(JsonNode parentNode, String path,
-            DateTimeFormatter dateFormat) {
-
-        Optional<String> string = asOptionalString(parentNode, path);
-
-        if (!string.isPresent()) {
-            return empty();
-        }
-
-        LocalDate localDate = null;
-
-        try {
-            localDate = LocalDate.parse(string.get(), dateFormat);
-        }
-        catch (DateTimeParseException e) {
-            logger.warn("The '{}' field in node '{}' with value '{}' isn't a valid date.",
-                    path, parentNode, string.get(), e);
-        }
-
-        return Optional.ofNullable(localDate);
     }
 
     /**
