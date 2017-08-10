@@ -17,27 +17,27 @@
 package org.openmhealth.shim.fitbit.mapper;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import org.openmhealth.schema.domain.omh.BodyMassIndex;
-import org.openmhealth.schema.domain.omh.BodyMassIndexUnit;
+import org.openmhealth.schema.domain.omh.BodyMassIndex1;
+import org.openmhealth.schema.domain.omh.BodyMassIndexUnit1;
 import org.openmhealth.schema.domain.omh.DataPoint;
 import org.openmhealth.schema.domain.omh.TypedUnitValue;
 
 import java.time.OffsetDateTime;
 import java.util.Optional;
 
-import static org.openmhealth.schema.domain.omh.BodyMassIndexUnit.KILOGRAMS_PER_SQUARE_METER;
+import static org.openmhealth.schema.domain.omh.BodyMassIndexUnit1.KILOGRAMS_PER_SQUARE_METER;
 import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asOptionalLong;
 import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asRequiredDouble;
 
 
 /**
  * A mapper that translates responses from the Fitbit Resource API <code>body/log/weight</code> endpoint into {@link
- * BodyMassIndex} data points.
+ * BodyMassIndex1} data points.
  *
  * @author Chris Schaefbauer
  * @see <a href="https://dev.fitbit.com/docs/body/#weight">API documentation</a>
  */
-public class FitbitBodyMassIndexDataPointMapper extends FitbitDataPointMapper<BodyMassIndex> {
+public class FitbitBodyMassIndexDataPointMapper extends FitbitDataPointMapper<BodyMassIndex1> {
 
     @Override
     protected String getListNodeName() {
@@ -45,12 +45,12 @@ public class FitbitBodyMassIndexDataPointMapper extends FitbitDataPointMapper<Bo
     }
 
     @Override
-    protected Optional<DataPoint<BodyMassIndex>> asDataPoint(JsonNode node) {
+    protected Optional<DataPoint<BodyMassIndex1>> asDataPoint(JsonNode node) {
 
-        TypedUnitValue<BodyMassIndexUnit> bmiValue =
+        TypedUnitValue<BodyMassIndexUnit1> bmiValue =
                 new TypedUnitValue<>(KILOGRAMS_PER_SQUARE_METER, asRequiredDouble(node, "bmi"));
 
-        BodyMassIndex.Builder builder = new BodyMassIndex.Builder(bmiValue);
+        BodyMassIndex1.Builder builder = new BodyMassIndex1.Builder(bmiValue);
 
         Optional<OffsetDateTime> dateTime = combineDateTimeAndTimezone(node);
 

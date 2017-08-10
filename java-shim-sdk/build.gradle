@@ -40,7 +40,7 @@ dependencies {
     compile 'com.google.guava:guava:23.0'
     compile "com.fasterxml.jackson.core:jackson-annotations:${jacksonVersion}"
     compile "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}"
-    compile "org.openmhealth.schema:omh-schema-sdk:${omhSchemaSdkVersion}"
+    compile ("org.openmhealth.schema:omh-schema-sdk:${omhSchemaSdkVersion}") { changing = true }
     compile "org.slf4j:slf4j-api:1.7.12"
 
     testCompile "org.testng:testng:6.8.21"

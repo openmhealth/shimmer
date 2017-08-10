@@ -17,7 +17,7 @@
 package org.openmhealth.shim.jawbone.mapper;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import org.openmhealth.schema.domain.omh.StepCount;
+import org.openmhealth.schema.domain.omh.StepCount1;
 
 import java.util.Optional;
 
@@ -27,10 +27,10 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asRequir
 /**
  * @author Chris Schaefbauer
  */
-public class JawboneStepCountDataPointMapper extends JawboneDataPointMapper<StepCount> {
+public class JawboneStepCountDataPointMapper extends JawboneDataPointMapper<StepCount1> {
 
     @Override
-    protected Optional<StepCount> getMeasure(JsonNode listEntryNode) {
+    protected Optional<StepCount1> getMeasure(JsonNode listEntryNode) {
 
         long stepCountValue = asRequiredLong(listEntryNode, "details.steps");
 
@@ -38,7 +38,7 @@ public class JawboneStepCountDataPointMapper extends JawboneDataPointMapper<Step
             return Optional.empty();
         }
 
-        StepCount.Builder stepCountBuilder = new StepCount.Builder(stepCountValue);
+        StepCount1.Builder stepCountBuilder = new StepCount1.Builder(stepCountValue);
 
         setEffectiveTimeFrame(stepCountBuilder, listEntryNode);
 

@@ -79,9 +79,9 @@ public abstract class JawboneDataPointMapperUnitTests<T extends Measure> extends
                 "\"time_updated\": 1439867504\n" +
                 "}");
 
-        StepCount.Builder testBuilder = new StepCount.Builder(10);
+        StepCount1.Builder testBuilder = new StepCount1.Builder(10);
         sensedMapper.setEffectiveTimeFrame(testBuilder, testDateTimeNode);
-        StepCount stepCount = testBuilder.build();
+        StepCount1 stepCount = testBuilder.build();
 
         assertThat(stepCount.getEffectiveTimeFrame().getDateTime(),
                 equalTo(OffsetDateTime.parse("2015-08-04T22:00:00-06:00")));
@@ -99,9 +99,9 @@ public abstract class JawboneDataPointMapperUnitTests<T extends Measure> extends
                 "\"time_completed\": 1439994003\n" +
                 "}");
 
-        StepCount.Builder testBuilder = new StepCount.Builder(10);
+        StepCount1.Builder testBuilder = new StepCount1.Builder(10);
         sensedMapper.setEffectiveTimeFrame(testBuilder, testDateTimeNode);
-        StepCount stepCount = testBuilder.build();
+        StepCount1 stepCount = testBuilder.build();
 
         assertThat(stepCount.getEffectiveTimeFrame().getTimeInterval(), equalTo(
                 TimeInterval.ofStartDateTimeAndEndDateTime(OffsetDateTime.parse("2015-08-19T11:20:03-02:00"),
@@ -113,7 +113,7 @@ public abstract class JawboneDataPointMapperUnitTests<T extends Measure> extends
     public void getHeaderShouldReturnSensedInHeaderWhenIsSensedIsTrue() throws IOException {
 
         JsonNode headerInfoNode = objectMapper.readTree("{}");
-        DataPointHeader header = sensedMapper.getHeader(headerInfoNode, (T) new StepCount.Builder(10).build());
+        DataPointHeader header = sensedMapper.getHeader(headerInfoNode, (T) new StepCount1.Builder(10).build());
         assertThat(header.getAcquisitionProvenance().getModality(), equalTo(DataPointModality.SENSED));
     }
 
@@ -121,7 +121,7 @@ public abstract class JawboneDataPointMapperUnitTests<T extends Measure> extends
     public void getHeaderShouldReturnNullForSensedInHeaderWhenIsSensedIsFalse() throws IOException {
 
         JsonNode headerInfoNode = objectMapper.readTree("{}");
-        DataPointHeader header = unsensedMapper.getHeader(headerInfoNode, (T) new StepCount.Builder(10).build());
+        DataPointHeader header = unsensedMapper.getHeader(headerInfoNode, (T) new StepCount1.Builder(10).build());
         assertThat(header.getAcquisitionProvenance().getModality(), nullValue());
     }
 
@@ -131,7 +131,7 @@ public abstract class JawboneDataPointMapperUnitTests<T extends Measure> extends
         JsonNode sharedNode = objectMapper.readTree("{\n" +
                 "\"shared\": true\n" +
                 "}");
-        DataPointHeader sharedHeader = sensedMapper.getHeader(sharedNode, (T) new StepCount.Builder(10).build());
+        DataPointHeader sharedHeader = sensedMapper.getHeader(sharedNode, (T) new StepCount1.Builder(10).build());
         assertThat(sharedHeader.getAdditionalProperty("shared").get(), equalTo(true));
     }
 
@@ -141,7 +141,7 @@ public abstract class JawboneDataPointMapperUnitTests<T extends Measure> extends
         JsonNode sharedNode = objectMapper.readTree("{\n" +
                 "\"shared\": false\n" +
                 "}");
-        DataPointHeader sharedHeader = sensedMapper.getHeader(sharedNode, (T) new StepCount.Builder(10).build());
+        DataPointHeader sharedHeader = sensedMapper.getHeader(sharedNode, (T) new StepCount1.Builder(10).build());
         assertThat(sharedHeader.getAdditionalProperty("shared").get(), equalTo(false));
     }
 
@@ -149,7 +149,7 @@ public abstract class JawboneDataPointMapperUnitTests<T extends Measure> extends
     public void getHeaderShouldReturnNullForSharedInHeaderWhenSharedPropertyDoesNotExist() throws IOException {
 
         JsonNode sharedNode = objectMapper.readTree("{}");
-        DataPointHeader sharedHeader = sensedMapper.getHeader(sharedNode, (T) new StepCount.Builder(10).build());
+        DataPointHeader sharedHeader = sensedMapper.getHeader(sharedNode, (T) new StepCount1.Builder(10).build());
         assertThat(sharedHeader.getAdditionalProperties().get("shared"), nullValue());
     }
 
@@ -159,7 +159,7 @@ public abstract class JawboneDataPointMapperUnitTests<T extends Measure> extends
         JsonNode xidNode = objectMapper.readTree("{\n" +
                 "\"xid\": \"40F7_htRRnT8Vo7nRBZO1X\"\n" +
                 "}");
-        DataPointHeader headerWithXid = sensedMapper.getHeader(xidNode, (T) new StepCount.Builder(10).build());
+        DataPointHeader headerWithXid = sensedMapper.getHeader(xidNode, (T) new StepCount1.Builder(10).build());
         assertThat(headerWithXid.getAcquisitionProvenance().getAdditionalProperty("external_id").get(), equalTo(
                 "40F7_htRRnT8Vo7nRBZO1X"));
     }
@@ -168,7 +168,7 @@ public abstract class JawboneDataPointMapperUnitTests<T extends Measure> extends
     public void getHeaderShouldReturnNullForExternalIdInHeaderWhenXidPropertyDoesNotExist() throws IOException {
 
         JsonNode xidNode = objectMapper.readTree("{}");
-        DataPointHeader headerWithXid = sensedMapper.getHeader(xidNode, (T) new StepCount.Builder(10).build());
+        DataPointHeader headerWithXid = sensedMapper.getHeader(xidNode, (T) new StepCount1.Builder(10).build());
         assertThat(headerWithXid.getAcquisitionProvenance().getAdditionalProperties().get("external_id"), nullValue());
     }
 
@@ -179,7 +179,7 @@ public abstract class JawboneDataPointMapperUnitTests<T extends Measure> extends
                 "\"time_updated\": 1439354240\n" +
                 "}");
         DataPointHeader headerWithTimeUpdated =
-                sensedMapper.getHeader(updatedNode, (T) new StepCount.Builder(10).build());
+                sensedMapper.getHeader(updatedNode, (T) new StepCount1.Builder(10).build());
         assertThat(headerWithTimeUpdated.getAcquisitionProvenance().getAdditionalProperty("source_updated_date_time")
                 .get(), equalTo(OffsetDateTime.parse("2015-08-12T04:37:20Z")));
     }
@@ -189,7 +189,7 @@ public abstract class JawboneDataPointMapperUnitTests<T extends Measure> extends
 
         JsonNode updatedNode = objectMapper.readTree("{}");
         DataPointHeader headerWithTimeUpdated =
-                sensedMapper.getHeader(updatedNode, (T) new StepCount.Builder(10).build());
+                sensedMapper.getHeader(updatedNode, (T) new StepCount1.Builder(10).build());
         assertThat(headerWithTimeUpdated.getAcquisitionProvenance().getAdditionalProperties()
                 .get("source_updated_date_time"), nullValue());
     }

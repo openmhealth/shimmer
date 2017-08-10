@@ -17,7 +17,7 @@
 package org.openmhealth.shim.ihealth.mapper;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import org.openmhealth.schema.domain.omh.BodyMassIndex;
+import org.openmhealth.schema.domain.omh.BodyMassIndex1;
 import org.openmhealth.schema.domain.omh.DataPoint;
 import org.openmhealth.schema.domain.omh.TypedUnitValue;
 import org.testng.annotations.BeforeMethod;
@@ -32,8 +32,8 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
-import static org.openmhealth.schema.domain.omh.BodyMassIndex.SCHEMA_ID;
-import static org.openmhealth.schema.domain.omh.BodyMassIndexUnit.KILOGRAMS_PER_SQUARE_METER;
+import static org.openmhealth.schema.domain.omh.BodyMassIndex1.SCHEMA_ID;
+import static org.openmhealth.schema.domain.omh.BodyMassIndexUnit1.KILOGRAMS_PER_SQUARE_METER;
 import static org.openmhealth.schema.domain.omh.DataPointModality.SELF_REPORTED;
 import static org.openmhealth.schema.domain.omh.DataPointModality.SENSED;
 
@@ -45,7 +45,7 @@ public class IHealthBodyMassIndexDataPointMapperUnitTests extends IHealthDataPoi
 
     private JsonNode responseNode;
     private final IHealthBodyMassIndexDataPointMapper mapper = new IHealthBodyMassIndexDataPointMapper();
-    private List<DataPoint<BodyMassIndex>> dataPoints;
+    private List<DataPoint<BodyMassIndex1>> dataPoints;
 
     @BeforeTest
     public void initializeResponse() throws IOException {
@@ -68,7 +68,7 @@ public class IHealthBodyMassIndexDataPointMapperUnitTests extends IHealthDataPoi
     @Test
     public void asDataPointsShouldReturnCorrectSensedDataPoints() {
 
-        BodyMassIndex expectedBodyMassIndex = new BodyMassIndex.Builder(new TypedUnitValue<>(
+        BodyMassIndex1 expectedBodyMassIndex = new BodyMassIndex1.Builder(new TypedUnitValue<>(
                 KILOGRAMS_PER_SQUARE_METER, 22.56052563257619))
                 .setEffectiveTimeFrame(OffsetDateTime.parse("2015-09-17T12:04:09-08:00"))
                 .build();
@@ -82,7 +82,7 @@ public class IHealthBodyMassIndexDataPointMapperUnitTests extends IHealthDataPoi
     @Test
     public void asDataPointsShouldReturnCorrectSelfReportedDataPoints() {
 
-        BodyMassIndex expectedBodyMassIndex = new BodyMassIndex.Builder(
+        BodyMassIndex1 expectedBodyMassIndex = new BodyMassIndex1.Builder(
                 new TypedUnitValue<>(KILOGRAMS_PER_SQUARE_METER, 22.56052398681641))
                 .setEffectiveTimeFrame(OffsetDateTime.parse("2015-09-17T14:07:57-06:00"))
                 .setUserNotes("Weight so good, look at me now")

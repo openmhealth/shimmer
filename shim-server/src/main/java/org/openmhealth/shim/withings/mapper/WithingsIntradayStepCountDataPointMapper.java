@@ -31,7 +31,7 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.*;
 
 
 /**
- * A mapper from Withings Intraday Activity endpoint responses (/measure?action=getactivity) to {@link StepCount}
+ * A mapper from Withings Intraday Activity endpoint responses (/measure?action=getactivity) to {@link StepCount1}
  * objects.
  * <p>
  * <p>This mapper handles responses from an API request that requires special permissions from Withings. This special
@@ -41,19 +41,19 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.*;
  * @author Chris Schaefbauer
  * @see <a href="http://oauth.withings.com/api/doc#api-Measure-get_activity">Activity Measures API documentation</a>
  */
-public class WithingsIntradayStepCountDataPointMapper extends WithingsDataPointMapper<StepCount> {
+public class WithingsIntradayStepCountDataPointMapper extends WithingsDataPointMapper<StepCount1> {
 
     /**
      * Maps JSON response nodes from the intraday activities endpoint (measure?action=getintradayactivity) in the
-     * Withings API into a list of {@link StepCount} {@link DataPoint} objects.
+     * Withings API into a list of {@link StepCount1} {@link DataPoint} objects.
      *
      * @param responseNodes a list of a single JSON node containing the entire response from the intraday activities
      * endpoint
-     * @return a list of DataPoint objects of type {@link StepCount} with the appropriate values mapped from the input
+     * @return a list of DataPoint objects of type {@link StepCount1} with the appropriate values mapped from the input
      * JSON
      */
     @Override
-    public List<DataPoint<StepCount>> asDataPoints(List<JsonNode> responseNodes) {
+    public List<DataPoint<StepCount1>> asDataPoints(List<JsonNode> responseNodes) {
 
         checkNotNull(responseNodes);
         checkNotNull(responseNodes.size() == 1, "A single response node is allowed per call.");
@@ -68,7 +68,7 @@ public class WithingsIntradayStepCountDataPointMapper extends WithingsDataPointM
         //ensure the datapoints are in order of passing time (data points that are earlier in time come before data
         // points that are later)
         Collections.sort(startDateTimesInUnixEpochSeconds);
-        ArrayList<DataPoint<StepCount>> dataPoints = Lists.newArrayList();
+        ArrayList<DataPoint<StepCount1>> dataPoints = Lists.newArrayList();
         for (Long startDateTime : startDateTimesInUnixEpochSeconds) {
             asDataPoint(nodesWithSteps.get(startDateTime), startDateTime).ifPresent(dataPoints::add);
         }
@@ -79,15 +79,15 @@ public class WithingsIntradayStepCountDataPointMapper extends WithingsDataPointM
 
     /**
      * Maps an individual list node from the array in the Withings activity measure endpoint response into a {@link
-     * StepCount} data point.
+     * StepCount1} data point.
      *
      * @param nodeWithSteps activity node from the array "activites" contained in the "body" of the endpoint response
-     * @return a {@link DataPoint} object containing a {@link StepCount} measure with the appropriate values from
+     * @return a {@link DataPoint} object containing a {@link StepCount1} measure with the appropriate values from
      * the JSON node parameter, wrapped as an {@link Optional}
      */
-    private Optional<DataPoint<StepCount>> asDataPoint(JsonNode nodeWithSteps, Long startDateTimeInUnixEpochSeconds) {
+    private Optional<DataPoint<StepCount1>> asDataPoint(JsonNode nodeWithSteps, Long startDateTimeInUnixEpochSeconds) {
         Long stepCountValue = asRequiredLong(nodeWithSteps, "steps");
-        StepCount.Builder stepCountBuilder = new StepCount.Builder(stepCountValue);
+        StepCount1.Builder stepCountBuilder = new StepCount1.Builder(stepCountValue);
 
         Optional<Long> duration = asOptionalLong(nodeWithSteps, "duration");
         if (duration.isPresent()) {
@@ -103,7 +103,7 @@ public class WithingsIntradayStepCountDataPointMapper extends WithingsDataPointM
             stepCountBuilder.setUserNotes(userComment.get());
         }
 
-        StepCount stepCount = stepCountBuilder.build();
+        StepCount1 stepCount = stepCountBuilder.build();
         return Optional.of(newDataPoint(stepCount, null, true, null));
     }
 

@@ -17,14 +17,14 @@
 package org.openmhealth.shim.jawbone.mapper;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import org.openmhealth.schema.domain.omh.BodyMassIndex;
-import org.openmhealth.schema.domain.omh.BodyMassIndexUnit;
+import org.openmhealth.schema.domain.omh.BodyMassIndex1;
+import org.openmhealth.schema.domain.omh.BodyMassIndexUnit1;
 import org.openmhealth.schema.domain.omh.Measure;
 import org.openmhealth.schema.domain.omh.TypedUnitValue;
 
 import java.util.Optional;
 
-import static org.openmhealth.schema.domain.omh.BodyMassIndexUnit.KILOGRAMS_PER_SQUARE_METER;
+import static org.openmhealth.schema.domain.omh.BodyMassIndexUnit1.KILOGRAMS_PER_SQUARE_METER;
 import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asRequiredDouble;
 import static org.openmhealth.shim.jawbone.mapper.JawboneBodyEventType.BODY_MASS_INDEX;
 
@@ -33,15 +33,15 @@ import static org.openmhealth.shim.jawbone.mapper.JawboneBodyEventType.BODY_MASS
  * @author Chris Schaefbauer
  * @see <a href="https://jawbone.com/up/developer/endpoints/body">API documentation</a>
  */
-public class JawboneBodyMassIndexDataPointMapper extends JawboneBodyEventsDataPointMapper<BodyMassIndex>{
+public class JawboneBodyMassIndexDataPointMapper extends JawboneBodyEventsDataPointMapper<BodyMassIndex1>{
 
     @Override
-    Optional<Measure.Builder<BodyMassIndex, ?>> newMeasureBuilder(JsonNode listEntryNode) {
+    Optional<Measure.Builder<BodyMassIndex1, ?>> newMeasureBuilder(JsonNode listEntryNode) {
 
-        TypedUnitValue<BodyMassIndexUnit> bmiValue =
+        TypedUnitValue<BodyMassIndexUnit1> bmiValue =
                 new TypedUnitValue<>(KILOGRAMS_PER_SQUARE_METER, asRequiredDouble(listEntryNode, "bmi"));
 
-        return Optional.of(new BodyMassIndex.Builder(bmiValue));
+        return Optional.of(new BodyMassIndex1.Builder(bmiValue));
     }
 
     @Override

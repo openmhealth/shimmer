@@ -1,8 +1,8 @@
 package org.openmhealth.shim.fitbit.mapper;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import org.openmhealth.schema.domain.omh.BodyMassIndex;
-import org.openmhealth.schema.domain.omh.BodyMassIndexUnit;
+import org.openmhealth.schema.domain.omh.BodyMassIndex1;
+import org.openmhealth.schema.domain.omh.BodyMassIndexUnit1;
 import org.openmhealth.schema.domain.omh.DataPoint;
 import org.openmhealth.schema.domain.omh.TypedUnitValue;
 import org.openmhealth.shim.common.mapper.DataPointMapperUnitTests;
@@ -15,7 +15,7 @@ import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
-import static org.openmhealth.schema.domain.omh.BodyMassIndexUnit.KILOGRAMS_PER_SQUARE_METER;
+import static org.openmhealth.schema.domain.omh.BodyMassIndexUnit1.KILOGRAMS_PER_SQUARE_METER;
 
 
 /**
@@ -43,7 +43,7 @@ public class FitbitBodyMassIndexDataPointMapperUnitTests extends DataPointMapper
     @Test
     public void asDataPointsShouldReturnCorrectDataPoints() {
 
-        List<DataPoint<BodyMassIndex>> dataPoints = mapper.asDataPoints(responseNode);
+        List<DataPoint<BodyMassIndex1>> dataPoints = mapper.asDataPoints(responseNode);
 
         assertThatDataPointMatches(dataPoints.get(0), 21.48, "2015-05-13T18:28:59Z", 1431541739000L);
         assertThatDataPointMatches(dataPoints.get(1), 21.17, "2015-05-14T11:51:57Z", 1431604317000L);
@@ -52,18 +52,18 @@ public class FitbitBodyMassIndexDataPointMapperUnitTests extends DataPointMapper
 
     }
 
-    public void assertThatDataPointMatches(DataPoint<BodyMassIndex> dataPoint, double expectedBmiValue,
+    public void assertThatDataPointMatches(DataPoint<BodyMassIndex1> dataPoint, double expectedBmiValue,
             String expectedEffectiveDateTime, long expectedExternalId) {
 
-        TypedUnitValue<BodyMassIndexUnit> bmiUnitValue =
+        TypedUnitValue<BodyMassIndexUnit1> bmiUnitValue =
                 new TypedUnitValue<>(KILOGRAMS_PER_SQUARE_METER, expectedBmiValue);
 
-        BodyMassIndex expectedBodyMassIndex = new BodyMassIndex.Builder(bmiUnitValue)
+        BodyMassIndex1 expectedBodyMassIndex = new BodyMassIndex1.Builder(bmiUnitValue)
                 .setEffectiveTimeFrame(OffsetDateTime.parse(expectedEffectiveDateTime))
                 .build();
 
         assertThat(dataPoint.getBody(), equalTo(expectedBodyMassIndex));
-        assertThat(dataPoint.getHeader().getBodySchemaId(), equalTo(BodyMassIndex.SCHEMA_ID));
+        assertThat(dataPoint.getHeader().getBodySchemaId(), equalTo(BodyMassIndex1.SCHEMA_ID));
         assertThat(dataPoint.getHeader().getAcquisitionProvenance().getAdditionalProperties().get("external_id"),
                 equalTo(expectedExternalId));
         assertThat(dataPoint.getHeader().getAcquisitionProvenance().getSourceName(),

@@ -18,7 +18,7 @@ package org.openmhealth.shim.withings.mapper;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.openmhealth.schema.domain.omh.DataPoint;
-import org.openmhealth.schema.domain.omh.StepCount;
+import org.openmhealth.schema.domain.omh.StepCount1;
 import org.openmhealth.schema.domain.omh.TimeInterval;
 
 import java.time.*;
@@ -29,10 +29,10 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asRequir
 
 
 /**
- * A mapper from Withings Activity Measures endpoint responses (/measure?action=getactivity) to {@link StepCount}
+ * A mapper from Withings Activity Measures endpoint responses (/measure?action=getactivity) to {@link StepCount1}
  * objects.
  * <p>
- * <p>Note: the start datetime and end datetime values for the mapped {@link StepCount} {@link DataPoint} assume that
+ * <p>Note: the start datetime and end datetime values for the mapped {@link StepCount1} {@link DataPoint} assume that
  * the start timezone and end time zone are the same, both equal to the "timezone" property in the Withings response
  * datapoints. However, according to Withings, the property value they provide is specifically the end datetime
  * timezone.</p>
@@ -40,21 +40,21 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asRequir
  * @author Chris Schaefbauer
  * @see <a href="http://oauth.withings.com/api/doc#api-Measure-get_activity">Activity Measures API documentation</a>
  */
-public class WithingsDailyStepCountDataPointMapper extends WithingsListDataPointMapper<StepCount> {
+public class WithingsDailyStepCountDataPointMapper extends WithingsListDataPointMapper<StepCount1> {
 
     /**
      * Maps an individual list node from the array in the Withings activity measure endpoint response into a {@link
-     * StepCount} data point.
+     * StepCount1} data point.
      *
      * @param node activity node from the array "activites" contained in the "body" of the endpoint response
-     * @return a {@link DataPoint} object containing a {@link StepCount} measure with the appropriate values from
+     * @return a {@link DataPoint} object containing a {@link StepCount1} measure with the appropriate values from
      * the JSON node parameter, wrapped as an {@link Optional}
      */
     @Override
-    Optional<DataPoint<StepCount>> asDataPoint(JsonNode node) {
+    Optional<DataPoint<StepCount1>> asDataPoint(JsonNode node) {
 
         long stepValue = asRequiredLong(node, "steps");
-        StepCount.Builder stepCountBuilder = new StepCount.Builder(stepValue);
+        StepCount1.Builder stepCountBuilder = new StepCount1.Builder(stepValue);
         Optional<String> dateString = asOptionalString(node, "date");
         Optional<String> timeZoneFullName = asOptionalString(node, "timezone");
         // We assume that timezone is the same for both the startdate and enddate timestamps, even though Withings only
@@ -77,8 +77,8 @@ public class WithingsDailyStepCountDataPointMapper extends WithingsListDataPoint
             stepCountBuilder.setUserNotes(userComment.get());
         }
 
-        StepCount stepCount = stepCountBuilder.build();
-        DataPoint<StepCount> stepCountDataPoint = newDataPoint(stepCount, null, true, null);
+        StepCount1 stepCount = stepCountBuilder.build();
+        DataPoint<StepCount1> stepCountDataPoint = newDataPoint(stepCount, null, true, null);
 
         return Optional.of(stepCountDataPoint);
     }

@@ -74,7 +74,7 @@ public class MisfitSleepDurationDataPointMapperUnitTests extends DataPointMapper
                 "    ]\n" +
                 "}");
 
-        List<DataPoint<SleepDuration>> dataPoints = mapper.asDataPoints(node);
+        List<DataPoint<SleepDuration1>> dataPoints = mapper.asDataPoints(node);
 
         assertThat(dataPoints, notNullValue());
         assertThat(dataPoints, empty());
@@ -83,7 +83,7 @@ public class MisfitSleepDurationDataPointMapperUnitTests extends DataPointMapper
     @Test
     public void asDataPointsShouldReturnCorrectNumberOfDataPoints() {
 
-        List<DataPoint<SleepDuration>> dataPoints = mapper.asDataPoints(responseNode);
+        List<DataPoint<SleepDuration1>> dataPoints = mapper.asDataPoints(responseNode);
 
         assertThat(dataPoints, notNullValue());
         assertThat(dataPoints.size(), equalTo(2));
@@ -102,7 +102,7 @@ public class MisfitSleepDurationDataPointMapperUnitTests extends DataPointMapper
     @Test
     public void asDataPointsShouldReturnCorrectDataPoints() {
 
-        List<DataPoint<SleepDuration>> dataPoints = mapper.asDataPoints(responseNode);
+        List<DataPoint<SleepDuration1>> dataPoints = mapper.asDataPoints(responseNode);
 
         assertThat(dataPoints, notNullValue());
         assertThat(dataPoints.size(), greaterThan(0));
@@ -113,11 +113,11 @@ public class MisfitSleepDurationDataPointMapperUnitTests extends DataPointMapper
                 OffsetDateTime.of(2015, 2, 24, 0, 53, 59, 0, ZoneOffset.ofHours(-5)));
 
         // the sleep duration is the total duration minus the sum of the awake segment durations
-        SleepDuration sleepDuration = new SleepDuration.Builder(new DurationUnitValue(SECOND, 10140))
+        SleepDuration1 sleepDuration = new SleepDuration1.Builder(new DurationUnitValue(SECOND, 10140))
                 .setEffectiveTimeFrame(effectiveTimeInterval)
                 .build();
 
-        DataPoint<SleepDuration> firstDataPoint = dataPoints.get(0);
+        DataPoint<SleepDuration1> firstDataPoint = dataPoints.get(0);
 
         assertThat(firstDataPoint.getBody(), equalTo(sleepDuration));
 
@@ -134,7 +134,7 @@ public class MisfitSleepDurationDataPointMapperUnitTests extends DataPointMapper
         JsonNode responseNodeForSleepSensing =
                 asJsonNode("org/openmhealth/shim/misfit/mapper/misfit-sleeps-detected-and-not.json");
 
-        List<DataPoint<SleepDuration>> dataPoints = mapper.asDataPoints(responseNodeForSleepSensing);
+        List<DataPoint<SleepDuration1>> dataPoints = mapper.asDataPoints(responseNodeForSleepSensing);
 
         assertThat(dataPoints.get(0).getHeader().getAcquisitionProvenance().getModality(), equalTo(SENSED));
         assertThat(dataPoints.get(1).getHeader().getAcquisitionProvenance().getModality(), nullValue());

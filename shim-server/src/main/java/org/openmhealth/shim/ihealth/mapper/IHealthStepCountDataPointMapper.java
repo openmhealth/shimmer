@@ -19,7 +19,7 @@ package org.openmhealth.shim.ihealth.mapper;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.openmhealth.schema.domain.omh.DataPoint;
 import org.openmhealth.schema.domain.omh.DurationUnitValue;
-import org.openmhealth.schema.domain.omh.StepCount;
+import org.openmhealth.schema.domain.omh.StepCount1;
 
 import java.math.BigDecimal;
 import java.util.Optional;
@@ -30,14 +30,14 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.*;
 
 
 /**
- * A mapper that translates responses from the iHealth <code>/activity.json</code> endpoint into {@link StepCount}
+ * A mapper that translates responses from the iHealth <code>/activity.json</code> endpoint into {@link StepCount1}
  * measures.
  *
  * @author Chris Schaefbauer
  * @see <a href="http://developer.ihealthlabs.com/dev_documentation_RequestfordataofActivityReport.htm">endpoint
  * documentation</a>
  */
-public class IHealthStepCountDataPointMapper extends IHealthDataPointMapper<StepCount> {
+public class IHealthStepCountDataPointMapper extends IHealthDataPointMapper<StepCount1> {
 
     @Override
     protected String getListNodeName() {
@@ -50,7 +50,7 @@ public class IHealthStepCountDataPointMapper extends IHealthDataPointMapper<Step
     }
 
     @Override
-    protected Optional<DataPoint<StepCount>> asDataPoint(JsonNode listEntryNode, Integer measureUnitMagicNumber) {
+    protected Optional<DataPoint<StepCount1>> asDataPoint(JsonNode listEntryNode, Integer measureUnitMagicNumber) {
 
         BigDecimal steps = asRequiredBigDecimal(listEntryNode, "Steps");
 
@@ -58,7 +58,7 @@ public class IHealthStepCountDataPointMapper extends IHealthDataPointMapper<Step
             return Optional.empty();
         }
 
-        StepCount.Builder stepCountBuilder = new StepCount.Builder(steps);
+        StepCount1.Builder stepCountBuilder = new StepCount1.Builder(steps);
 
         Optional<Long> dateTimeString = asOptionalLong(listEntryNode, "MDate");
 
@@ -78,7 +78,7 @@ public class IHealthStepCountDataPointMapper extends IHealthDataPointMapper<Step
 
         getUserNoteIfExists(listEntryNode).ifPresent(stepCountBuilder::setUserNotes);
 
-        StepCount stepCount = stepCountBuilder.build();
+        StepCount1 stepCount = stepCountBuilder.build();
 
         return Optional.of(new DataPoint<>(createDataPointHeader(listEntryNode, stepCount), stepCount));
     }

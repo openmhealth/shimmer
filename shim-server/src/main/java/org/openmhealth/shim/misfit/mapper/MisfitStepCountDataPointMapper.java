@@ -19,7 +19,7 @@ package org.openmhealth.shim.misfit.mapper;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.openmhealth.schema.domain.omh.DataPoint;
 import org.openmhealth.schema.domain.omh.DurationUnitValue;
-import org.openmhealth.schema.domain.omh.StepCount;
+import org.openmhealth.schema.domain.omh.StepCount1;
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
@@ -34,13 +34,13 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asRequir
 
 
 /**
- * A mapper from Misfit Resource API /activity/summary?detail=true responses to {@link StepCount} objects.
+ * A mapper from Misfit Resource API /activity/summary?detail=true responses to {@link StepCount1} objects.
  *
  * @author Emerson Farrugia
  * @author Eric Jain
  * @see <a href="https://build.misfit.com/docs/references#APIReferences-Summary">API documentation</a>
  */
-public class MisfitStepCountDataPointMapper extends MisfitDataPointMapper<StepCount> {
+public class MisfitStepCountDataPointMapper extends MisfitDataPointMapper<StepCount1> {
 
     @Override
     protected String getListNodeName() {
@@ -48,7 +48,7 @@ public class MisfitStepCountDataPointMapper extends MisfitDataPointMapper<StepCo
     }
 
     @Override
-    public Optional<DataPoint<StepCount>> asDataPoint(JsonNode summaryNode) {
+    public Optional<DataPoint<StepCount1>> asDataPoint(JsonNode summaryNode) {
 
         checkNotNull(summaryNode);
 
@@ -58,7 +58,7 @@ public class MisfitStepCountDataPointMapper extends MisfitDataPointMapper<StepCo
             return Optional.empty();
         }
 
-        StepCount.Builder builder = new StepCount.Builder(stepCount);
+        StepCount1.Builder builder = new StepCount1.Builder(stepCount);
 
         // this property isn't listed in the table, but does appear in the second Example section where detail is true
         LocalDate localDate = asRequiredLocalDate(summaryNode, "date");
@@ -69,7 +69,7 @@ public class MisfitStepCountDataPointMapper extends MisfitDataPointMapper<StepCo
         DurationUnitValue durationUnitValue = new DurationUnitValue(DAY, 1);
         builder.setEffectiveTimeFrame(ofStartDateTimeAndDuration(startDateTime, durationUnitValue));
 
-        StepCount measure = builder.build();
+        StepCount1 measure = builder.build();
 
         return Optional.of(newDataPoint(measure, RESOURCE_API_SOURCE_NAME, null, null));
     }

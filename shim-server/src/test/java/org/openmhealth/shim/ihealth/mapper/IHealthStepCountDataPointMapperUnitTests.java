@@ -20,7 +20,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import org.hamcrest.Matchers;
 import org.openmhealth.schema.domain.omh.DataPoint;
 import org.openmhealth.schema.domain.omh.DurationUnitValue;
-import org.openmhealth.schema.domain.omh.StepCount;
+import org.openmhealth.schema.domain.omh.StepCount1;
 import org.openmhealth.schema.domain.omh.TimeInterval;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
@@ -37,7 +37,7 @@ import static org.hamcrest.core.Is.is;
 import static org.openmhealth.schema.domain.omh.DataPointModality.SELF_REPORTED;
 import static org.openmhealth.schema.domain.omh.DataPointModality.SENSED;
 import static org.openmhealth.schema.domain.omh.DurationUnit.DAY;
-import static org.openmhealth.schema.domain.omh.StepCount.SCHEMA_ID;
+import static org.openmhealth.schema.domain.omh.StepCount1.SCHEMA_ID;
 
 
 /**
@@ -47,7 +47,7 @@ public class IHealthStepCountDataPointMapperUnitTests extends IHealthDataPointMa
 
     private JsonNode responseNode;
     private IHealthStepCountDataPointMapper mapper = new IHealthStepCountDataPointMapper();
-    private List<DataPoint<StepCount>> dataPoints;
+    private List<DataPoint<StepCount1>> dataPoints;
 
 
     @BeforeClass
@@ -79,7 +79,7 @@ public class IHealthStepCountDataPointMapperUnitTests extends IHealthDataPointMa
     @Test
     public void asDataPointsShouldReturnCorrectDataPointsWhenSensed() {
 
-        StepCount expectedStepCount = new StepCount.Builder(21)
+        StepCount1 expectedStepCount = new StepCount1.Builder(21)
                 .setEffectiveTimeFrame(
                         TimeInterval.ofStartDateTimeAndDuration(OffsetDateTime.parse("2015-11-16T00:00:00+05:00"),
                                 new DurationUnitValue(DAY, 1)))
@@ -94,7 +94,7 @@ public class IHealthStepCountDataPointMapperUnitTests extends IHealthDataPointMa
     @Test
     public void asDataPointsShouldReturnDataPointWithUserNoteWhenNoteIsPresent() {
 
-        StepCount expectedStepCount = new StepCount.Builder(4398)
+        StepCount1 expectedStepCount = new StepCount1.Builder(4398)
                 .setEffectiveTimeFrame(
                         TimeInterval.ofStartDateTimeAndDuration(OffsetDateTime.parse("2015-11-18T00:00:00Z"),
                                 new DurationUnitValue(DAY, 1))).setUserNotes("Great steps")

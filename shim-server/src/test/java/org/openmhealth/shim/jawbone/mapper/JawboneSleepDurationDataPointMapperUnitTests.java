@@ -20,7 +20,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 /**
  * @author Chris Schaefbauer
  */
-public class JawboneSleepDurationDataPointMapperUnitTests extends JawboneDataPointMapperUnitTests<SleepDuration> {
+public class JawboneSleepDurationDataPointMapperUnitTests extends JawboneDataPointMapperUnitTests<SleepDuration1> {
 
     JawboneSleepDurationDataPointMapper mapper = new JawboneSleepDurationDataPointMapper();
 
@@ -42,16 +42,16 @@ public class JawboneSleepDurationDataPointMapperUnitTests extends JawboneDataPoi
     @Test
     public void asDataPointsShouldReturnCorrectNumberOfDataPoints() {
 
-        List<DataPoint<SleepDuration>> dataPoints = mapper.asDataPoints(singletonList(responseNode));
+        List<DataPoint<SleepDuration1>> dataPoints = mapper.asDataPoints(singletonList(responseNode));
         assertThat(dataPoints.size(), equalTo(2));
     }
 
     @Test
     public void asDataPointsShouldReturnCorrectDataPointsWhenWakeUpCountEqualZeroAndShared() {
 
-        List<DataPoint<SleepDuration>> dataPoints = mapper.asDataPoints(singletonList(responseNode));
+        List<DataPoint<SleepDuration1>> dataPoints = mapper.asDataPoints(singletonList(responseNode));
 
-        SleepDuration expectedSleepDuration = new SleepDuration
+        SleepDuration1 expectedSleepDuration = new SleepDuration1
                 .Builder(new DurationUnitValue(DurationUnit.SECOND, 10356))
                 .setEffectiveTimeFrame(
                         TimeInterval.ofStartDateTimeAndEndDateTime(OffsetDateTime.parse("2015-08-04T22:48:51-06:00"),
@@ -66,7 +66,7 @@ public class JawboneSleepDurationDataPointMapperUnitTests extends JawboneDataPoi
 
         testProperties.put(HEADER_EXTERNAL_ID_KEY, "QkfTizSpRdsDKwErMhvMqG9VDhpfyDGd");
         testProperties.put(HEADER_SOURCE_UPDATE_KEY, "2015-08-05T09:52:00Z");
-        testProperties.put(HEADER_SCHEMA_ID_KEY, SleepDuration.SCHEMA_ID);
+        testProperties.put(HEADER_SCHEMA_ID_KEY, SleepDuration1.SCHEMA_ID);
         testProperties.put(HEADER_SHARED_KEY, true);
         testProperties.put(HEADER_SENSED_KEY, DataPointModality.SENSED);
 
@@ -76,10 +76,10 @@ public class JawboneSleepDurationDataPointMapperUnitTests extends JawboneDataPoi
     @Test
     public void asDataPointsShouldReturnCorrectDataPointsWhenWakeUpCountGreaterThanZeroAndNotShared() {
 
-        List<DataPoint<SleepDuration>> dataPoints = mapper.asDataPoints(singletonList(responseNode));
+        List<DataPoint<SleepDuration1>> dataPoints = mapper.asDataPoints(singletonList(responseNode));
 
-        SleepDuration expectedSleepDuration =
-                new SleepDuration.Builder(new DurationUnitValue(DurationUnit.SECOND, 27900)).setEffectiveTimeFrame(
+        SleepDuration1 expectedSleepDuration =
+                new SleepDuration1.Builder(new DurationUnitValue(DurationUnit.SECOND, 27900)).setEffectiveTimeFrame(
                         TimeInterval.ofStartDateTimeAndEndDateTime(OffsetDateTime.parse("2015-08-03T23:05:00-04:00"),
                                 OffsetDateTime.parse("2015-08-04T07:15:00-04:00"))).build();
         expectedSleepDuration.setAdditionalProperty("wakeup_count", 2);
@@ -90,7 +90,7 @@ public class JawboneSleepDurationDataPointMapperUnitTests extends JawboneDataPoi
 
         testProperties.put(HEADER_SHARED_KEY, false);
         testProperties.put(HEADER_EXTERNAL_ID_KEY, "QkfTizSpRdvIs6MMJbKP6ulqeYwu5c2v");
-        testProperties.put(HEADER_SCHEMA_ID_KEY, SleepDuration.SCHEMA_ID);
+        testProperties.put(HEADER_SCHEMA_ID_KEY, SleepDuration1.SCHEMA_ID);
         testProperties.put(HEADER_SOURCE_UPDATE_KEY, "2015-08-04T12:10:56Z");
         testProperties.put(HEADER_SENSED_KEY, DataPointModality.SENSED);
 

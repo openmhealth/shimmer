@@ -27,14 +27,14 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.*;
 
 
 /**
- * A mapper that translates responses from the iHealth <code>/sleep.json</code> endpoint into {@link SleepDuration}
+ * A mapper that translates responses from the iHealth <code>/sleep.json</code> endpoint into {@link SleepDuration1}
  * measures.
  *
  * @author Chris Schaefbauer
  * @see <a href="http://developer.ihealthlabs.com/dev_documentation_RequestfordataofSleepReport.htm">endpoint
  * documentation</a>
  */
-public class IHealthSleepDurationDataPointMapper extends IHealthDataPointMapper<SleepDuration> {
+public class IHealthSleepDurationDataPointMapper extends IHealthDataPointMapper<SleepDuration1> {
 
     @Override
     protected String getListNodeName() {
@@ -47,9 +47,9 @@ public class IHealthSleepDurationDataPointMapper extends IHealthDataPointMapper<
     }
 
     @Override
-    protected Optional<DataPoint<SleepDuration>> asDataPoint(JsonNode listEntryNode, Integer measureUnitMagicNumber) {
+    protected Optional<DataPoint<SleepDuration1>> asDataPoint(JsonNode listEntryNode, Integer measureUnitMagicNumber) {
 
-        SleepDuration.Builder sleepDurationBuilder = new SleepDuration.Builder(
+        SleepDuration1.Builder sleepDurationBuilder = new SleepDuration1.Builder(
                 new DurationUnitValue(DurationUnit.MINUTE, asRequiredBigDecimal(listEntryNode, "HoursSlept")));
 
         Optional<Long> startTime = asOptionalLong(listEntryNode, "StartTime");
@@ -69,7 +69,7 @@ public class IHealthSleepDurationDataPointMapper extends IHealthDataPointMapper<
 
         getUserNoteIfExists(listEntryNode).ifPresent(sleepDurationBuilder::setUserNotes);
 
-        SleepDuration sleepDuration = sleepDurationBuilder.build();
+        SleepDuration1 sleepDuration = sleepDurationBuilder.build();
 
         asOptionalBigDecimal(listEntryNode, "Awaken")
                 .ifPresent(awaken -> sleepDuration.setAdditionalProperty("wakeup_count", awaken));

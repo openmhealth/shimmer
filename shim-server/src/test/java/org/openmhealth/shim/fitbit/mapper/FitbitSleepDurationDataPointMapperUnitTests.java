@@ -3,7 +3,7 @@ package org.openmhealth.shim.fitbit.mapper;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.openmhealth.schema.domain.omh.DataPoint;
 import org.openmhealth.schema.domain.omh.DurationUnitValue;
-import org.openmhealth.schema.domain.omh.SleepDuration;
+import org.openmhealth.schema.domain.omh.SleepDuration1;
 import org.openmhealth.shim.common.mapper.DataPointMapperUnitTests;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -48,17 +48,17 @@ public class FitbitSleepDurationDataPointMapperUnitTests extends DataPointMapper
     @Test
     public void asDataPointsShouldReturnCorrectDataPoints() {
 
-        SleepDuration expectedSleepDuration = new SleepDuration.Builder(new DurationUnitValue(MINUTE, 831))
+        SleepDuration1 expectedSleepDuration = new SleepDuration1.Builder(new DurationUnitValue(MINUTE, 831))
                 .setEffectiveTimeFrame(ofStartDateTimeAndDuration(
                         OffsetDateTime.parse("2014-07-19T11:58:00Z"), new DurationUnitValue(MINUTE, 961)))
                 .build();
 
-        List<DataPoint<SleepDuration>> dataPoints = mapper.asDataPoints(singleSleepResponseNode);
+        List<DataPoint<SleepDuration1>> dataPoints = mapper.asDataPoints(singleSleepResponseNode);
 
-        DataPoint<SleepDuration> dataPoint = dataPoints.get(0);
+        DataPoint<SleepDuration1> dataPoint = dataPoints.get(0);
 
         assertThat(dataPoint.getBody(), equalTo(expectedSleepDuration));
-        assertThat(dataPoint.getHeader().getBodySchemaId(), equalTo(SleepDuration.SCHEMA_ID));
+        assertThat(dataPoint.getHeader().getBodySchemaId(), equalTo(SleepDuration1.SCHEMA_ID));
         assertThat(dataPoint.getHeader().getAcquisitionProvenance().getSourceName(),
                 equalTo(FitbitDataPointMapper.RESOURCE_API_SOURCE_NAME));
     }

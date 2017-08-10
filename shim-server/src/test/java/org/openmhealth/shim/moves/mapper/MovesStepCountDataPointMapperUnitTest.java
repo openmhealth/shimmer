@@ -8,7 +8,6 @@ import org.testng.annotations.Test;
 
 import java.io.IOException;
 import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
 import java.util.List;
 
 import static java.time.ZoneOffset.UTC;
@@ -35,7 +34,7 @@ public class MovesStepCountDataPointMapperUnitTest extends DataPointMapperUnitTe
 
     @Test
     public void asDataPointsShouldReturnCorrectNumberOfDataPoints() {
-        List<DataPoint<StepCount>> dataPoints = mapper.asDataPoints(responseNode);
+        List<DataPoint<StepCount1>> dataPoints = mapper.asDataPoints(responseNode);
 
         assertThat(dataPoints, notNullValue());
         assertThat(dataPoints.size(), equalTo(3));
@@ -54,7 +53,7 @@ public class MovesStepCountDataPointMapperUnitTest extends DataPointMapperUnitTe
 
     @Test
     public void asDataPointsShouldReturnCorrectDataPoints() {
-        List<DataPoint<StepCount>> dataPoints = mapper.asDataPoints(responseNode);
+        List<DataPoint<StepCount1>> dataPoints = mapper.asDataPoints(responseNode);
 
         assertThat(dataPoints, notNullValue());
         assertThat(dataPoints.size(), greaterThan(0));
@@ -63,11 +62,11 @@ public class MovesStepCountDataPointMapperUnitTest extends DataPointMapperUnitTe
                 OffsetDateTime.of(2016, 4, 3, 0, 0, 0, 0, UTC),
                 new DurationUnitValue(DAY, 1));
 
-        StepCount stepCount = new StepCount.Builder(1741)
+        StepCount1 stepCount = new StepCount1.Builder(1741)
                 .setEffectiveTimeFrame(effectiveTimeInterval)
                 .build();
 
-        DataPoint<StepCount> firstDataPoint = dataPoints.get(0);
+        DataPoint<StepCount1> firstDataPoint = dataPoints.get(0);
 
         assertThat(firstDataPoint.getBody(), equalTo(stepCount));
 

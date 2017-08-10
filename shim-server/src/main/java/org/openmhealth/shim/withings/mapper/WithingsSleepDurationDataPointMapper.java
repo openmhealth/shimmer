@@ -31,24 +31,24 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asRequir
 
 
 /**
- * A mapper from Withings Sleep Summary endpoint responses (/sleep?action=getsummary) to {@link SleepDuration}
+ * A mapper from Withings Sleep Summary endpoint responses (/sleep?action=getsummary) to {@link SleepDuration1}
  * objects.
  *
  * @author Chris Schaefbauer
  * @see <a href="http://oauth.withings.com/api/doc#api-Measure-get_sleep_summary">Sleep Summary API documentation</a>
  */
-public class WithingsSleepDurationDataPointMapper extends WithingsListDataPointMapper<SleepDuration> {
+public class WithingsSleepDurationDataPointMapper extends WithingsListDataPointMapper<SleepDuration1> {
 
     /**
      * Maps an individual list node from the array in the Withings sleep summary endpoint response into a {@link
-     * SleepDuration} data point.
+     * SleepDuration1} data point.
      *
      * @param node activity node from the array "series" contained in the "body" of the endpoint response
-     * @return a {@link DataPoint} object containing a {@link SleepDuration} measure with the appropriate values from
+     * @return a {@link DataPoint} object containing a {@link SleepDuration1} measure with the appropriate values from
      * the JSON node parameter, wrapped as an {@link Optional}
      */
     @Override
-    Optional<DataPoint<SleepDuration>> asDataPoint(JsonNode node) {
+    Optional<DataPoint<SleepDuration1>> asDataPoint(JsonNode node) {
 
         Long lightSleepInSeconds = asRequiredLong(node, "data.lightsleepduration");
         Long deepSleepInSeconds = asRequiredLong(node, "data.deepsleepduration");
@@ -56,8 +56,8 @@ public class WithingsSleepDurationDataPointMapper extends WithingsListDataPointM
 
         Long totalSleepInSeconds = lightSleepInSeconds + deepSleepInSeconds + remSleepInSeconds;
 
-        SleepDuration.Builder sleepDurationBuilder =
-                new SleepDuration.Builder(new DurationUnitValue(DurationUnit.SECOND, totalSleepInSeconds));
+        SleepDuration1.Builder sleepDurationBuilder =
+                new SleepDuration1.Builder(new DurationUnitValue(DurationUnit.SECOND, totalSleepInSeconds));
 
 
         Optional<Long> startDateInEpochSeconds = asOptionalLong(node, "startdate");
@@ -80,7 +80,7 @@ public class WithingsSleepDurationDataPointMapper extends WithingsListDataPointM
             modelName = SleepDeviceTypes.valueOf(modelId.get());
         }
 
-        SleepDuration sleepDuration = sleepDurationBuilder.build();
+        SleepDuration1 sleepDuration = sleepDurationBuilder.build();
         Optional<Long> wakeupCount = asOptionalLong(node, "data.wakeupcount");
         if (wakeupCount.isPresent()) {
             sleepDuration.setAdditionalProperty("wakeup_count", new Integer(wakeupCount.get().intValue()));

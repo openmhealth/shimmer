@@ -19,7 +19,7 @@ package org.openmhealth.shim.fitbit.mapper;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.openmhealth.schema.domain.omh.DataPoint;
 import org.openmhealth.schema.domain.omh.DurationUnitValue;
-import org.openmhealth.schema.domain.omh.StepCount;
+import org.openmhealth.schema.domain.omh.StepCount1;
 import org.openmhealth.schema.domain.omh.TimeInterval;
 
 import java.time.LocalDate;
@@ -31,14 +31,14 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.*;
 
 
 /**
- * A mapper from Fitbit Resource API <code>activities/date</code> responses to {@link StepCount} objects.
+ * A mapper from Fitbit Resource API <code>activities/date</code> responses to {@link StepCount1} objects.
  *
  * @author Chris Schaefbauer
  */
-public class FitbitStepCountDataPointMapper extends FitbitDataPointMapper<StepCount> {
+public class FitbitStepCountDataPointMapper extends FitbitDataPointMapper<StepCount1> {
 
     @Override
-    protected Optional<DataPoint<StepCount>> asDataPoint(JsonNode node) {
+    protected Optional<DataPoint<StepCount1>> asDataPoint(JsonNode node) {
 
         int stepCountValue = Integer.parseInt(asRequiredString(node, "value"));
 
@@ -46,7 +46,7 @@ public class FitbitStepCountDataPointMapper extends FitbitDataPointMapper<StepCo
             return Optional.empty();
         }
 
-        StepCount.Builder builder = new StepCount.Builder(stepCountValue);
+        StepCount1.Builder builder = new StepCount1.Builder(stepCountValue);
 
         Optional<LocalDate> stepDate = asOptionalLocalDate(node, "dateTime");
 
@@ -58,7 +58,7 @@ public class FitbitStepCountDataPointMapper extends FitbitDataPointMapper<StepCo
                             new DurationUnitValue(DAY, 1)));
         }
 
-        StepCount measure = builder.build();
+        StepCount1 measure = builder.build();
         Optional<Long> externalId = asOptionalLong(node, "logId");
 
         return Optional.of(newDataPoint(measure, externalId.orElse(null)));

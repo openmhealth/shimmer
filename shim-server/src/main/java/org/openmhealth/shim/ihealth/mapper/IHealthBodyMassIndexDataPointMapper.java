@@ -17,18 +17,18 @@
 package org.openmhealth.shim.ihealth.mapper;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import org.openmhealth.schema.domain.omh.BodyMassIndex;
+import org.openmhealth.schema.domain.omh.BodyMassIndex1;
 import org.openmhealth.schema.domain.omh.DataPoint;
 import org.openmhealth.schema.domain.omh.TypedUnitValue;
 
 import java.util.Optional;
 
-import static org.openmhealth.schema.domain.omh.BodyMassIndexUnit.KILOGRAMS_PER_SQUARE_METER;
+import static org.openmhealth.schema.domain.omh.BodyMassIndexUnit1.KILOGRAMS_PER_SQUARE_METER;
 import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asRequiredDouble;
 
 
 /**
- * A mapper that translates responses from the iHealth <code>/weight.json</code> endpoint into {@link BodyMassIndex}
+ * A mapper that translates responses from the iHealth <code>/weight.json</code> endpoint into {@link BodyMassIndex1}
  * measures.
  *
  * @author Emerson Farrugia
@@ -36,7 +36,7 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asRequir
  * @see <a href="http://developer.ihealthlabs.com/dev_documentation_RequestfordataofWeight.htm">endpoint
  * documentation</a>
  */
-public class IHealthBodyMassIndexDataPointMapper extends IHealthDataPointMapper<BodyMassIndex> {
+public class IHealthBodyMassIndexDataPointMapper extends IHealthDataPointMapper<BodyMassIndex1> {
 
     @Override
     protected String getListNodeName() {
@@ -49,7 +49,7 @@ public class IHealthBodyMassIndexDataPointMapper extends IHealthDataPointMapper<
     }
 
     @Override
-    protected Optional<DataPoint<BodyMassIndex>> asDataPoint(JsonNode listEntryNode, Integer measureUnitMagicNumber) {
+    protected Optional<DataPoint<BodyMassIndex1>> asDataPoint(JsonNode listEntryNode, Integer measureUnitMagicNumber) {
 
         Double bmiValue = asRequiredDouble(listEntryNode, "BMI");
 
@@ -57,14 +57,14 @@ public class IHealthBodyMassIndexDataPointMapper extends IHealthDataPointMapper<
             return Optional.empty();
         }
 
-        BodyMassIndex.Builder bodyMassIndexBuilder =
-                new BodyMassIndex.Builder(new TypedUnitValue<>(KILOGRAMS_PER_SQUARE_METER, bmiValue));
+        BodyMassIndex1.Builder bodyMassIndexBuilder =
+                new BodyMassIndex1.Builder(new TypedUnitValue<>(KILOGRAMS_PER_SQUARE_METER, bmiValue));
 
         getEffectiveTimeFrameAsDateTime(listEntryNode).ifPresent(bodyMassIndexBuilder::setEffectiveTimeFrame);
 
         getUserNoteIfExists(listEntryNode).ifPresent(bodyMassIndexBuilder::setUserNotes);
 
-        BodyMassIndex bodyMassIndex = bodyMassIndexBuilder.build();
+        BodyMassIndex1 bodyMassIndex = bodyMassIndexBuilder.build();
         return Optional.of(new DataPoint<>(createDataPointHeader(listEntryNode, bodyMassIndex), bodyMassIndex));
 
     }

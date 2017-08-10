@@ -3,7 +3,7 @@ package org.openmhealth.shim.moves.mapper;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.openmhealth.schema.domain.omh.DataPoint;
 import org.openmhealth.schema.domain.omh.DurationUnitValue;
-import org.openmhealth.schema.domain.omh.StepCount;
+import org.openmhealth.schema.domain.omh.StepCount1;
 import org.openmhealth.schema.domain.omh.TimeInterval;
 
 import java.time.LocalDate;
@@ -15,15 +15,15 @@ import static org.openmhealth.schema.domain.omh.DurationUnit.DAY;
 import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asOptionalLocalDate;
 
 /**
- * A mapper from Moves Resource API /user/summary/daily responses to {@link StepCount} objects.
+ * A mapper from Moves Resource API /user/summary/daily responses to {@link StepCount1} objects.
  *
  * @author Jared Sieling
  * @see <a href="https://dev.moves-app.com/docs/api_summaries">API documentation</a>
  */
-public class MovesStepCountDataPointMapper extends MovesDataPointMapper<StepCount>{
+public class MovesStepCountDataPointMapper extends MovesDataPointMapper<StepCount1>{
 
     @Override
-    protected Optional<DataPoint<StepCount>> asDataPoint(JsonNode node) {
+    protected Optional<DataPoint<StepCount1>> asDataPoint(JsonNode node) {
 
         // Sum steps from all individual activities
         int stepCountValue = 0;
@@ -37,7 +37,7 @@ public class MovesStepCountDataPointMapper extends MovesDataPointMapper<StepCoun
             return Optional.empty();
         }
 
-        StepCount.Builder builder = new StepCount.Builder(stepCountValue);
+        StepCount1.Builder builder = new StepCount1.Builder(stepCountValue);
 
         Optional<LocalDate> stepDate = asOptionalLocalDate(node, "date", DateTimeFormatter.BASIC_ISO_DATE);
 
@@ -51,7 +51,7 @@ public class MovesStepCountDataPointMapper extends MovesDataPointMapper<StepCoun
                             new DurationUnitValue(DAY, 1)));
         }
 
-        StepCount measure = builder.build();
+        StepCount1 measure = builder.build();
 
         return Optional.of(newDataPoint(measure, null));
     }

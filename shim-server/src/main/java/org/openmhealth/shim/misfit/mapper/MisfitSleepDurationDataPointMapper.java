@@ -19,7 +19,7 @@ package org.openmhealth.shim.misfit.mapper;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.openmhealth.schema.domain.omh.DataPoint;
 import org.openmhealth.schema.domain.omh.DurationUnitValue;
-import org.openmhealth.schema.domain.omh.SleepDuration;
+import org.openmhealth.schema.domain.omh.SleepDuration1;
 import org.openmhealth.shim.common.mapper.JsonNodeMappingException;
 
 import java.time.Duration;
@@ -33,7 +33,7 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.*;
 
 
 /**
- * A mapper from Misfit Resource API /activity/sleeps responses to {@link SleepDuration} objects. This mapper
+ * A mapper from Misfit Resource API /activity/sleeps responses to {@link SleepDuration1} objects. This mapper
  * currently creates a single data point per sleep node in the response, subtracting the duration of awake segments
  * from the sleep duration. It's also possible to create a single data point per sleep segment, which would help
  * preserve the granularity of the original data. This mapper may be updated to return a data point per segment in the
@@ -42,7 +42,7 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.*;
  * @author Emerson Farrugia
  * @see <a href="https://build.misfit.com/docs/references#APIReferences-Sleep">API documentation</a>
  */
-public class MisfitSleepDurationDataPointMapper extends MisfitDataPointMapper<SleepDuration> {
+public class MisfitSleepDurationDataPointMapper extends MisfitDataPointMapper<SleepDuration1> {
 
     public static final int AWAKE_SEGMENT_TYPE = 1;
 
@@ -52,7 +52,7 @@ public class MisfitSleepDurationDataPointMapper extends MisfitDataPointMapper<Sl
     }
 
     @Override
-    public Optional<DataPoint<SleepDuration>> asDataPoint(JsonNode sleepNode) {
+    public Optional<DataPoint<SleepDuration1>> asDataPoint(JsonNode sleepNode) {
 
         // The sleep details array contains segments corresponding to whether the user was awake, sleeping lightly,
         // or sleeping restfully for the duration of that segment. To discount the awake segments, we have to deduct
@@ -98,7 +98,7 @@ public class MisfitSleepDurationDataPointMapper extends MisfitDataPointMapper<Sl
             return Optional.empty();
         }
 
-        SleepDuration measure = new SleepDuration.Builder(new DurationUnitValue(SECOND, sleepDurationInSec))
+        SleepDuration1 measure = new SleepDuration1.Builder(new DurationUnitValue(SECOND, sleepDurationInSec))
                 .setEffectiveTimeFrame(ofStartDateTimeAndEndDateTime(startDateTime, endDateTime))
                 .build();
 

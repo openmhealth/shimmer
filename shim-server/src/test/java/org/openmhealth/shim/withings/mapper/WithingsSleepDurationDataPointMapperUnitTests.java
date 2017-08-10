@@ -20,7 +20,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import org.openmhealth.schema.domain.omh.DataPoint;
 import org.openmhealth.schema.domain.omh.DataPointAcquisitionProvenance;
 import org.openmhealth.schema.domain.omh.DurationUnitValue;
-import org.openmhealth.schema.domain.omh.SleepDuration;
+import org.openmhealth.schema.domain.omh.SleepDuration1;
 import org.openmhealth.shim.common.mapper.DataPointMapperUnitTests;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -33,7 +33,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.openmhealth.schema.domain.omh.DataPointModality.SENSED;
 import static org.openmhealth.schema.domain.omh.DurationUnit.SECOND;
-import static org.openmhealth.schema.domain.omh.SleepDuration.*;
 import static org.openmhealth.schema.domain.omh.TimeInterval.ofStartDateTimeAndEndDateTime;
 
 
@@ -60,9 +59,9 @@ public class WithingsSleepDurationDataPointMapperUnitTests extends DataPointMapp
     @Test
     public void asDataPointsShouldReturnCorrectDataPoints() {
 
-        List<DataPoint<SleepDuration>> dataPoints = mapper.asDataPoints(responseNode);
+        List<DataPoint<SleepDuration1>> dataPoints = mapper.asDataPoints(responseNode);
 
-        SleepDuration expectedSleepDuration = new SleepDuration.Builder(new DurationUnitValue(SECOND, 37460))
+        SleepDuration1 expectedSleepDuration = new SleepDuration1.Builder(new DurationUnitValue(SECOND, 37460))
                 .setEffectiveTimeFrame(ofStartDateTimeAndEndDateTime(OffsetDateTime.parse("2014-09-12T11:34:19Z"),
                         OffsetDateTime.parse("2014-09-12T17:22:57Z")))
                 .build();
@@ -84,6 +83,6 @@ public class WithingsSleepDurationDataPointMapperUnitTests extends DataPointMapp
         assertThat(acquisitionProvenance.getModality(), equalTo(SENSED));
         assertThat(acquisitionProvenance.getAdditionalProperties().get("external_id"), equalTo(16616514L));
         assertThat(acquisitionProvenance.getAdditionalProperties().get("device_name"), equalTo("Aura"));
-        assertThat(dataPoints.get(0).getHeader().getBodySchemaId(), equalTo(SCHEMA_ID));
+        assertThat(dataPoints.get(0).getHeader().getBodySchemaId(), equalTo(SleepDuration1.SCHEMA_ID));
     }
 }

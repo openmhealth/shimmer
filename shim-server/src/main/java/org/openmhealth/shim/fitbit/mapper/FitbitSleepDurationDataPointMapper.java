@@ -19,7 +19,7 @@ package org.openmhealth.shim.fitbit.mapper;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.openmhealth.schema.domain.omh.DataPoint;
 import org.openmhealth.schema.domain.omh.DurationUnitValue;
-import org.openmhealth.schema.domain.omh.SleepDuration;
+import org.openmhealth.schema.domain.omh.SleepDuration1;
 import org.openmhealth.schema.domain.omh.TimeInterval;
 
 import java.time.LocalDateTime;
@@ -32,12 +32,12 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.*;
 
 /**
  * A mapper that translates responses from the Fitbit Resource API <code>sleep/date</code> endpoint into {@link
- * SleepDuration} data points.
+ * SleepDuration1} data points.
  *
  * @author Chris Schaefbauer
  * @see <a href="https://dev.fitbit.com/docs/sleep/#get-sleep-logs">API documentation</a>
  */
-public class FitbitSleepDurationDataPointMapper extends FitbitDataPointMapper<SleepDuration> {
+public class FitbitSleepDurationDataPointMapper extends FitbitDataPointMapper<SleepDuration1> {
 
     @Override
     protected String getListNodeName() {
@@ -45,10 +45,10 @@ public class FitbitSleepDurationDataPointMapper extends FitbitDataPointMapper<Sl
     }
 
     @Override
-    protected Optional<DataPoint<SleepDuration>> asDataPoint(JsonNode node) {
+    protected Optional<DataPoint<SleepDuration1>> asDataPoint(JsonNode node) {
 
         DurationUnitValue unitValue = new DurationUnitValue(MINUTE, asRequiredDouble(node, "minutesAsleep"));
-        SleepDuration.Builder sleepDurationBuilder = new SleepDuration.Builder(unitValue);
+        SleepDuration1.Builder sleepDurationBuilder = new SleepDuration1.Builder(unitValue);
 
         Optional<LocalDateTime> localStartTime = asOptionalLocalDateTime(node, "startTime");
 
@@ -68,7 +68,7 @@ public class FitbitSleepDurationDataPointMapper extends FitbitDataPointMapper<Sl
             }
         }
 
-        SleepDuration measure = sleepDurationBuilder.build();
+        SleepDuration1 measure = sleepDurationBuilder.build();
 
         Optional<Long> externalId = asOptionalLong(node, "logId");
 

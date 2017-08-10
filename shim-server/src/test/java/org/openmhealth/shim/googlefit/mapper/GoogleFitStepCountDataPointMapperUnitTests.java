@@ -2,7 +2,7 @@ package org.openmhealth.shim.googlefit.mapper;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.openmhealth.schema.domain.omh.DataPoint;
-import org.openmhealth.schema.domain.omh.StepCount;
+import org.openmhealth.schema.domain.omh.StepCount1;
 import org.openmhealth.shim.googlefit.common.GoogleFitTestProperties;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -17,13 +17,13 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.collection.IsEmptyCollection.empty;
 import static org.openmhealth.schema.domain.omh.DataPointModality.SELF_REPORTED;
-import static org.openmhealth.schema.domain.omh.StepCount.SCHEMA_ID;
+import static org.openmhealth.schema.domain.omh.StepCount1.SCHEMA_ID;
 
 
 /**
  * @author Chris Schaefbauer
  */
-public class GoogleFitStepCountDataPointMapperUnitTests extends GoogleFitDataPointMapperUnitTests<StepCount> {
+public class GoogleFitStepCountDataPointMapperUnitTests extends GoogleFitDataPointMapperUnitTests<StepCount1> {
 
     private final GoogleFitStepCountDataPointMapper mapper = new GoogleFitStepCountDataPointMapper();
 
@@ -43,7 +43,7 @@ public class GoogleFitStepCountDataPointMapperUnitTests extends GoogleFitDataPoi
     @Test
     public void asDataPointsShouldReturnCorrectDataPoints() {
 
-        List<DataPoint<StepCount>> dataPoints = mapper.asDataPoints(singletonList(responseNode));
+        List<DataPoint<StepCount1>> dataPoints = mapper.asDataPoints(singletonList(responseNode));
 
         assertThatDataPointMatches(dataPoints.get(0),
                 createIntegerTestProperties(4146, "2015-02-02T22:49:39.811Z", "2015-02-02T23:25:20.811Z",
@@ -58,7 +58,7 @@ public class GoogleFitStepCountDataPointMapperUnitTests extends GoogleFitDataPoi
     @Test
     public void asDataPointsShouldReturnSelfReportedAsModalityWhenDataSourceContainsUserInput() {
 
-        List<DataPoint<StepCount>> dataPoints = mapper.asDataPoints(singletonList(responseNode));
+        List<DataPoint<StepCount1>> dataPoints = mapper.asDataPoints(singletonList(responseNode));
 
         assertThat(dataPoints.get(2).getHeader().getAcquisitionProvenance().getModality(),
                 equalTo(SELF_REPORTED));
@@ -78,9 +78,9 @@ public class GoogleFitStepCountDataPointMapperUnitTests extends GoogleFitDataPoi
     /* Helper methods */
 
     @Override
-    public void assertThatMeasureMatches(StepCount testMeasure, GoogleFitTestProperties testProperties) {
+    public void assertThatMeasureMatches(StepCount1 testMeasure, GoogleFitTestProperties testProperties) {
 
-        StepCount.Builder expectedStepCountBuilder = new StepCount.Builder(testProperties.getIntValue());
+        StepCount1.Builder expectedStepCountBuilder = new StepCount1.Builder(testProperties.getIntValue());
 
         setExpectedEffectiveTimeFrame(expectedStepCountBuilder, testProperties);
 

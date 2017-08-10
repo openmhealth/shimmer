@@ -19,7 +19,7 @@ package org.openmhealth.shim.ihealth.mapper;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.openmhealth.schema.domain.omh.DataPoint;
 import org.openmhealth.schema.domain.omh.DurationUnitValue;
-import org.openmhealth.schema.domain.omh.SleepDuration;
+import org.openmhealth.schema.domain.omh.SleepDuration1;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -34,7 +34,7 @@ import static org.hamcrest.Matchers.empty;
 import static org.openmhealth.schema.domain.omh.DataPointModality.SELF_REPORTED;
 import static org.openmhealth.schema.domain.omh.DataPointModality.SENSED;
 import static org.openmhealth.schema.domain.omh.DurationUnit.MINUTE;
-import static org.openmhealth.schema.domain.omh.SleepDuration.SCHEMA_ID;
+import static org.openmhealth.schema.domain.omh.SleepDuration1.SCHEMA_ID;
 import static org.openmhealth.schema.domain.omh.TimeInterval.ofStartDateTimeAndEndDateTime;
 
 
@@ -45,7 +45,7 @@ public class IHealthSleepDurationDataPointMapperUnitTests extends IHealthDataPoi
 
     private JsonNode responseNode;
     private IHealthSleepDurationDataPointMapper mapper = new IHealthSleepDurationDataPointMapper();
-    private List<DataPoint<SleepDuration>> dataPoints;
+    private List<DataPoint<SleepDuration1>> dataPoints;
 
     @BeforeClass
     public void initializeResponse() {
@@ -68,7 +68,7 @@ public class IHealthSleepDurationDataPointMapperUnitTests extends IHealthDataPoi
     @Test
     public void asDataPointsShouldReturnCorrectDataPointsWhenSensed() {
 
-        SleepDuration expectedSleepDuration = new SleepDuration.Builder(new DurationUnitValue(
+        SleepDuration1 expectedSleepDuration = new SleepDuration1.Builder(new DurationUnitValue(
                 MINUTE, 345))
                 .setEffectiveTimeFrame(ofStartDateTimeAndEndDateTime(
                         OffsetDateTime.parse("2015-11-15T01:51:00-07:00"),
@@ -94,7 +94,7 @@ public class IHealthSleepDurationDataPointMapperUnitTests extends IHealthDataPoi
     @Test
     public void asDataPointsShouldReturnDataPointWithUserNoteWhenNoteIsPresent() {
 
-        SleepDuration expectedSleepDuration = new SleepDuration.Builder(new DurationUnitValue(MINUTE, 195))
+        SleepDuration1 expectedSleepDuration = new SleepDuration1.Builder(new DurationUnitValue(MINUTE, 195))
                 .setEffectiveTimeFrame(ofStartDateTimeAndEndDateTime(
                         OffsetDateTime.parse("2015-11-15T13:51:00+01:00"),
                         OffsetDateTime.parse("2015-11-15T17:16:00+01:00")))
