@@ -248,6 +248,33 @@ public class JsonNodeMappingSupport {
 
     /**
      * @param parentNode a parent node
+     * @param path the path to a child node
+     * @param formatter the formatter to use to parse the value of the child node
+     * @return the value of the child node as an {@link LocalDateTime}
+     * @throws MissingJsonNodeMappingException if the child doesn't exist
+     * @throws IncompatibleJsonNodeMappingException if the value of the child node isn't a date time
+     */
+    public static LocalDateTime asRequiredLocalDateTime(JsonNode parentNode, String path,
+            DateTimeFormatter formatter) {
+
+        return asRequiredTemporal(parentNode, path, formatter, LocalDateTime.class, LocalDateTime::parse);
+    }
+
+    /**
+     * @param parentNode a parent node
+     * @param path the path to a child node
+     * @return the value of the child node as an {@link LocalDateTime}
+     * @throws MissingJsonNodeMappingException if the child doesn't exist
+     * @throws IncompatibleJsonNodeMappingException if the value of the child node isn't a date time matching {@link
+     * DateTimeFormatter#ISO_LOCAL_DATE_TIME}
+     */
+    public static LocalDateTime asRequiredLocalDateTime(JsonNode parentNode, String path) {
+
+        return asRequiredLocalDateTime(parentNode, path, ISO_LOCAL_DATE_TIME);
+    }
+
+    /**
+     * @param parentNode a parent node
      * @param datePath the path to a date child node
      * @param dateFormatter the formatter to use to parse the value of the date child node
      * @param timePath the path to a time child node
