@@ -5,7 +5,7 @@ buildscript {
     }
 
     ext {
-        springBootVersion = "1.5.2.RELEASE"
+        springBootVersion = "1.5.6.RELEASE"
     }
 
     dependencies {
@@ -14,7 +14,7 @@ buildscript {
 }
 
 apply plugin: "war"
-apply plugin: "spring-boot"
+apply plugin: "org.springframework.boot"
 
 version = shimmerVersion
 
