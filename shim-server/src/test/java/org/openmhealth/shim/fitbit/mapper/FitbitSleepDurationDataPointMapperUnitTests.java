@@ -3,7 +3,7 @@ package org.openmhealth.shim.fitbit.mapper;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.openmhealth.schema.domain.omh.DataPoint;
 import org.openmhealth.schema.domain.omh.DurationUnitValue;
-import org.openmhealth.schema.domain.omh.SleepDuration1;
+import org.openmhealth.schema.domain.omh.SleepDuration2;
 import org.openmhealth.shim.common.mapper.DataPointMapperUnitTests;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -17,7 +17,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
 import static org.openmhealth.schema.domain.omh.DurationUnit.MINUTE;
-import static org.openmhealth.schema.domain.omh.TimeInterval.ofStartDateTimeAndDuration;
+import static org.openmhealth.schema.domain.omh.TimeInterval.ofStartDateTimeAndEndDateTime;
 
 
 /**
@@ -26,49 +26,52 @@ import static org.openmhealth.schema.domain.omh.TimeInterval.ofStartDateTimeAndD
 public class FitbitSleepDurationDataPointMapperUnitTests extends DataPointMapperUnitTests {
 
     private final FitbitSleepDurationDataPointMapper mapper = new FitbitSleepDurationDataPointMapper();
-    private JsonNode singleSleepResponseNode;
-    private JsonNode multipleSleepResponseNode;
+    private JsonNode sleepDateResponseNode;
+    private JsonNode sleepDateEmptySleepListResponseNode;
+    private JsonNode sleepDateRangeResponseNode;
+    private JsonNode sleepDateRangeEmptySleepListResponseNode;
 
 
     @BeforeTest
     public void initializeResponseNode() throws IOException {
 
-        singleSleepResponseNode = asJsonNode("org/openmhealth/shim/fitbit/mapper/fitbit-sleep-date.json");
-        multipleSleepResponseNode =
-                asJsonNode("org/openmhealth/shim/fitbit/mapper/fitbit-sleep-date-multiple-in-sleep-list.json");
+        sleepDateResponseNode =
+                asJsonNode("org/openmhealth/shim/fitbit/mapper/fitbit-sleep-date.json");
+        sleepDateEmptySleepListResponseNode =
+                asJsonNode("org/openmhealth/shim/fitbit/mapper/fitbit-sleep-date-empty-sleep-list.json");
+        sleepDateRangeResponseNode =
+                asJsonNode("org/openmhealth/shim/fitbit/mapper/fitbit-sleep-date-range.json");
+        sleepDateRangeEmptySleepListResponseNode =
+                asJsonNode("org/openmhealth/shim/fitbit/mapper/fitbit-sleep-date-range-empty-sleep-list.json");
     }
 
     @Test
     public void asDataPointsShouldReturnCorrectNumberOfDataPoints() {
 
-        assertThat(mapper.asDataPoints(singleSleepResponseNode).size(), equalTo(1));
-        assertThat(mapper.asDataPoints(multipleSleepResponseNode).size(), equalTo(2));
+        assertThat(mapper.asDataPoints(sleepDateResponseNode).size(), equalTo(2));
+        assertThat(mapper.asDataPoints(sleepDateEmptySleepListResponseNode), is(empty()));
+        assertThat(mapper.asDataPoints(sleepDateRangeResponseNode).size(), equalTo(2));
+        assertThat(mapper.asDataPoints(sleepDateRangeEmptySleepListResponseNode), is(empty()));
     }
 
     @Test
     public void asDataPointsShouldReturnCorrectDataPoints() {
 
-        SleepDuration1 expectedSleepDuration = new SleepDuration1.Builder(new DurationUnitValue(MINUTE, 831))
-                .setEffectiveTimeFrame(ofStartDateTimeAndDuration(
-                        OffsetDateTime.parse("2014-07-19T11:58:00Z"), new DurationUnitValue(MINUTE, 961)))
+        SleepDuration2 expectedSleepDuration = new SleepDuration2.Builder(
+                new DurationUnitValue(MINUTE, 63),
+                ofStartDateTimeAndEndDateTime(
+                        OffsetDateTime.parse("2016-12-13T09:59:00.000Z"),
+                        OffsetDateTime.parse("2016-12-13T11:02:00.000Z")
+                ))
                 .build();
 
-        List<DataPoint<SleepDuration1>> dataPoints = mapper.asDataPoints(singleSleepResponseNode);
+        List<DataPoint<SleepDuration2>> dataPoints = mapper.asDataPoints(sleepDateResponseNode);
 
-        DataPoint<SleepDuration1> dataPoint = dataPoints.get(0);
+        DataPoint<SleepDuration2> dataPoint = dataPoints.get(0);
 
         assertThat(dataPoint.getBody(), equalTo(expectedSleepDuration));
-        assertThat(dataPoint.getHeader().getBodySchemaId(), equalTo(SleepDuration1.SCHEMA_ID));
+        assertThat(dataPoint.getHeader().getBodySchemaId(), equalTo(SleepDuration2.SCHEMA_ID));
         assertThat(dataPoint.getHeader().getAcquisitionProvenance().getSourceName(),
                 equalTo(FitbitDataPointMapper.RESOURCE_API_SOURCE_NAME));
-    }
-
-    @Test
-    public void asDataPointsShouldReturnEmptyListWhenResponseIsEmpty() throws IOException {
-
-        JsonNode responseNode =
-                asJsonNode("org/openmhealth/shim/fitbit/mapper/fitbit-sleep-date-empty-sleep-list.json");
-
-        assertThat(mapper.asDataPoints(responseNode), is(empty()));
     }
 }

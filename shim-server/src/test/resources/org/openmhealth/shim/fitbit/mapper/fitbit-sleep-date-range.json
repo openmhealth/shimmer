@@ -6,7 +6,6 @@
             "efficiency": 100,
             "endTime": "2016-12-13T11:02:30.000",
             "infoCode": 0,
-            "isMainSleep": false,
             "levels": {
                 "data": [
                     {
@@ -45,7 +44,6 @@
             "efficiency": 95,
             "endTime": "2016-12-13T03:14:00.000",
             "infoCode": 0,
-            "isMainSleep": true,
             "levels": {
                 "data": [
                     {
@@ -108,10 +106,5 @@
             "timeInBed": 118,
             "type": "classic"
         }
-    ],
-    "summary": {
-        "totalMinutesAsleep": 175,
-        "totalSleepRecords": 2,
-        "totalTimeInBed": 181
-    }
+    ]
 }
