@@ -1,4 +1,4 @@
-FROM java:openjdk-8-jre
+FROM openjdk:8-jre-alpine
 MAINTAINER Emerson Farrugia <emerson@openmhealth.org>
 
 ENV SERVER_PREFIX /opt/omh/shimmer
