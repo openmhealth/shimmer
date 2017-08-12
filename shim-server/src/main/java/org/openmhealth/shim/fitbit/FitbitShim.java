@@ -40,14 +40,11 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.io.IOException;
 import java.net.URI;
 import java.time.LocalDate;
-import java.time.OffsetDateTime;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import static java.lang.String.format;
-import static java.util.Collections.singletonList;
 import static org.openmhealth.shim.ShimDataResponse.result;
 import static org.openmhealth.shim.fitbit.FitbitShim.FitbitDataType.HEART_RATE;
 import static org.openmhealth.shim.fitbit.FitbitShim.FitbitDataType.STEP_COUNT;
@@ -125,6 +122,7 @@ public class FitbitShim extends OAuth2Shim {
         HEART_RATE("activities/heart"),
         PHYSICAL_ACTIVITY("activities"),
         SLEEP_DURATION("sleep"),
+        SLEEP_EPISODE("sleep"),
         STEP_COUNT("activities/steps");
 
         private String endPoint;
@@ -166,8 +164,10 @@ public class FitbitShim extends OAuth2Shim {
     }
 
     @Override
-    public ResponseEntity<ShimDataResponse> getData(OAuth2RestOperations restTemplate,
-            ShimDataRequest shimDataRequest) throws ShimException {
+    public ResponseEntity<ShimDataResponse> getData(
+            OAuth2RestOperations restTemplate,
+            ShimDataRequest shimDataRequest)
+            throws ShimException {
 
         FitbitDataType fitbitDataType;
 
@@ -178,21 +178,18 @@ public class FitbitShim extends OAuth2Shim {
 
             throw new ShimException("Null or Invalid data type parameter: "
                     + shimDataRequest.getDataTypeKey()
-                    + " in shimDataRequest, cannot retrieve data.");
+                    + " in shimDataRequest, cannot retrieve data.", e);
         }
 
-        /***
-         * Setup default date parameters
-         */
-        OffsetDateTime today = LocalDate.now().atStartOfDay(ZoneId.of("Z")).toOffsetDateTime();
+        LocalDate today = LocalDate.now();
 
-        OffsetDateTime startDate = shimDataRequest.getStartDateTime() == null ?
-                today.minusDays(1) : shimDataRequest.getStartDateTime();
+        LocalDate startDate = shimDataRequest.getStartDateTime() == null
+                ? today
+                : shimDataRequest.getStartDateTime().toLocalDate();
 
-        OffsetDateTime endDate = shimDataRequest.getEndDateTime() == null ?
-                today.plusDays(1) : shimDataRequest.getEndDateTime();
-
-        OffsetDateTime currentDate = startDate;
+        LocalDate endDate = shimDataRequest.getEndDateTime() == null
+                ? today
+                : shimDataRequest.getEndDateTime().toLocalDate();
 
         if (usesDateRangeQuery(fitbitDataType)) {
 
@@ -204,23 +201,24 @@ public class FitbitShim extends OAuth2Shim {
                     shimDataRequest.getNormalize());
         }
         else {
-            /**
-             * Fitbit's API forces you to make a request for each given day of data for some endpoints. Thus we
-             * make a request for each day in the submitted time range and then aggregate the response based on the
-             * normalization parameter.
+            /*
+              Fitbit's API forces you to make a request for each given day of data for some endpoints. Thus we
+              make a request for each day in the submitted time range and then aggregate the response based on the
+              normalization parameter.
              */
             List<ShimDataResponse> dayResponses = new ArrayList<>();
+            LocalDate indexDate = startDate;
 
-            while (currentDate.toLocalDate().isBefore(endDate.toLocalDate()) ||
-                    currentDate.toLocalDate().isEqual(endDate.toLocalDate())) {
+            while (!startDate.isAfter(endDate)) {
 
-                dayResponses.add(getDataForSingleDate(restTemplate, currentDate, fitbitDataType,
+                dayResponses.add(getDataForSingleDate(restTemplate, indexDate, fitbitDataType,
                         shimDataRequest.getNormalize()).getBody());
-                currentDate = currentDate.plusDays(1);
+
+                indexDate = indexDate.plusDays(1);
             }
 
-            return shimDataRequest.getNormalize() ?
-                    ok(aggregateNormalized(dayResponses))
+            return shimDataRequest.getNormalize()
+                    ? ok(aggregateNormalized(dayResponses))
                     : ok(aggregateIntoList(dayResponses));
         }
     }
@@ -233,8 +231,10 @@ public class FitbitShim extends OAuth2Shim {
     private boolean usesDateRangeQuery(FitbitDataType fitbitDataType) {
 
         switch (fitbitDataType) {
-            case BODY_WEIGHT:
             case BODY_MASS_INDEX:
+            case BODY_WEIGHT:
+            case SLEEP_DURATION:
+            case SLEEP_EPISODE:
                 return true;
 
             case HEART_RATE:
@@ -252,7 +252,7 @@ public class FitbitShim extends OAuth2Shim {
     @SuppressWarnings("unchecked")
     private ShimDataResponse aggregateNormalized(List<ShimDataResponse> dayResponses) {
 
-        if (CollectionUtils.isEmpty(dayResponses)) {
+        if (dayResponses.isEmpty()) {
             return ShimDataResponse.empty(FitbitShim.SHIM_KEY);
         }
 
@@ -296,41 +296,41 @@ public class FitbitShim extends OAuth2Shim {
             URI requestUri,
             boolean normalize,
             FitbitDataType fitbitDataType,
-            String dateString)
+            LocalDate date)
             throws ShimException {
 
         ResponseEntity<JsonNode> responseEntity;
+
         try {
             responseEntity = restTemplate.getForEntity(requestUri, JsonNode.class);
         }
         catch (HttpClientErrorException | HttpServerErrorException e) {
             // TODO figure out how to handle this
-            logger.error("A request for Fitbit data failed.", e);
-            throw e;
+            throw new ShimException("A request for Fitbit data has failed.", e);
         }
 
         if (normalize) {
+            FitbitDataPointMapper<?> dataPointMapper = getDataPointMapper(fitbitDataType);
 
-            FitbitDataPointMapper dataPointMapper = getDataPointMapper(fitbitDataType);
+            List<? extends DataPoint<?>> dataPoints = dataPointMapper.asDataPoints(responseEntity.getBody());
 
-            return ok().body(result(FitbitShim.SHIM_KEY,
-                    dataPointMapper.asDataPoints(singletonList(responseEntity.getBody()))));
+            return ok().body(ShimDataResponse.result(FitbitShim.SHIM_KEY, dataPoints));
         }
         else {
 
-            /**
-             * For types that only allow us to retrieve a single day at a time, Fitbit does not always provide
-             * date information since it is assumed we know what date we requested. However, this is problematic
-             * when we are aggregating multiple single date responses, so we wrap each single day Fitbit data
-             * point with date information.
+            /*
+              For types that only allow us to retrieve a single day at a time, Fitbit does not always provide
+              date information since it is assumed we know what date we requested. However, this is problematic
+              when we are aggregating multiple single date responses, so we wrap each single day Fitbit data
+              point with date information.
              */
-
             ObjectMapper objectMapper = new ObjectMapper();
 
             String jsonContent = responseEntity.getBody().toString();
 
-            if (dateString != null) {
-                jsonContent = "{\"result\": {\"date\": \"" + dateString + "\" " +
+            // TODO replace with proper wrapping
+            if (date != null) {
+                jsonContent = "{\"result\": {\"date\": \"" + date.toString() + "\" " +
                         ",\"content\": " + responseEntity.getBody().toString() + "}}";
             }
 
@@ -338,8 +338,7 @@ public class FitbitShim extends OAuth2Shim {
                 return ok().body(ShimDataResponse.result(FitbitShim.SHIM_KEY, objectMapper.readTree(jsonContent)));
             }
             catch (IOException e) {
-                logger.error("Data returned in Fitbit request was not valid JSON.", e);
-                throw new ShimException("Data returned in Fitbit request was not valid JSON");
+                throw new ShimException("A Fitbit response doesn't contain valid JSON.", e);
             }
         }
     }
@@ -362,6 +361,12 @@ public class FitbitShim extends OAuth2Shim {
 
                 throw new UnsupportedOperationException();
 
+            case SLEEP_DURATION:
+                return new FitbitSleepDurationDataPointMapper();
+
+            case SLEEP_EPISODE:
+                return new FitbitSleepEpisodeDataPointMapper();
+
             case STEP_COUNT:
                 if (fitbitClientSettings.isIntradayDataAvailable()) {
                     return new FitbitIntradayStepCountDataPointMapper(intradayDataGranularityInMinutes);
@@ -371,40 +376,33 @@ public class FitbitShim extends OAuth2Shim {
 
             case PHYSICAL_ACTIVITY:
                 return new FitbitPhysicalActivityDataPointMapper();
-
-            case SLEEP_DURATION:
-                return new FitbitSleepDurationDataPointMapper();
         }
 
         throw new UnsupportedOperationException();
     }
 
     private ResponseEntity<ShimDataResponse> getDataForDateRange(OAuth2RestOperations restTemplate,
-            OffsetDateTime fromTime,
-            OffsetDateTime toTime,
+            LocalDate startDate,
+            LocalDate endDate,
             FitbitDataType fitbitDataType,
             boolean normalize) throws ShimException {
 
-        String fromDateString = fromTime.toLocalDate().toString();
-        String toDateString = toTime.toLocalDate().toString();
+        URI url = UriComponentsBuilder
+                .fromUriString(DATA_URL)
+                .path("/1/user/-/{endpoint}/date/{baseDate}/{endDate}.json")
+                .buildAndExpand(fitbitDataType.getEndPoint(), startDate.toString(), endDate.toString())
+                .encode()
+                .toUri();
 
-        UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder.fromUriString(DATA_URL).
-                path("/1/user/-/{fitbitDataTypeEndpoint}/date/{fromDateString}/{toDateString}.json");
-
-        URI requestUri =
-                uriComponentsBuilder.buildAndExpand(fitbitDataType.getEndPoint(), fromDateString, toDateString).encode()
-                        .toUri();
-
-        return executeRequest(restTemplate, requestUri, normalize, fitbitDataType, null);
+        return executeRequest(restTemplate, url, normalize, fitbitDataType, null);
     }
 
     private ResponseEntity<ShimDataResponse> getDataForSingleDate(
             OAuth2RestOperations restTemplate,
-            OffsetDateTime dateTime,
+            LocalDate date,
             FitbitDataType fitbitDataType,
             boolean normalize) throws ShimException {
 
-        String dateString = dateTime.toLocalDate().toString();
         String detailLevel = "";
 
         // TODO generalise this
@@ -414,13 +412,13 @@ public class FitbitShim extends OAuth2Shim {
             }
         }
 
-        URI endpointUrl = UriComponentsBuilder
+        URI url = UriComponentsBuilder
                 .fromUriString(DATA_URL)
-                .path("/1/user/-/{endpoint}/date/{dateString}{detailLevel}.json")
-                .buildAndExpand(fitbitDataType.getEndPoint(), dateString, detailLevel)
+                .path("/1/user/-/{endpoint}/date/{date}{detailLevel}.json")
+                .buildAndExpand(fitbitDataType.getEndPoint(), date.toString(), detailLevel)
                 .encode()
                 .toUri();
 
-        return executeRequest(restTemplate, endpointUrl, normalize, fitbitDataType, dateString);
+        return executeRequest(restTemplate, url, normalize, fitbitDataType, date);
     }
 }
