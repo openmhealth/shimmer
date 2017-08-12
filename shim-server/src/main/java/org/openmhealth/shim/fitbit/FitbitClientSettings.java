@@ -34,6 +34,7 @@ public class FitbitClientSettings extends OAuth2ClientSettings {
 
     private List<String> scopes = Arrays.asList("activity", "heartrate", "sleep", "weight");
     private boolean intradayDataAvailable = false;
+    private Integer intradayDataGranularityInMinutes = 1;
     private FitbitPromptType promptType = FitbitPromptType.LOGIN_AND_CONSENT;
 
 
@@ -56,6 +57,21 @@ public class FitbitClientSettings extends OAuth2ClientSettings {
     public void setIntradayDataAvailable(boolean intradayDataAvailable) {
 
         this.intradayDataAvailable = intradayDataAvailable;
+    }
+
+    public Integer getIntradayDataGranularityInMinutes() {
+        return intradayDataGranularityInMinutes;
+    }
+
+    public void setIntradayDataGranularityInMinutes(Integer granularity) {
+
+        // TODO move this into a Constraint
+        // TODO revise data type and nullability
+        if (granularity != 1 && granularity != 15) {
+            throw new IllegalArgumentException("The intraday granularity must be 1 or 15 minutes.");
+        }
+
+        this.intradayDataGranularityInMinutes = granularity;
     }
 
     public FitbitPromptType getPromptType() {
