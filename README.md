@@ -7,12 +7,12 @@ We currently support the following APIs
 
 * [Fitbit](https://www.fitbit.com/)
 * [Google Fit](https://developers.google.com/fit/?hl=en)
+* [iHealth](http://www.ihealthlabs.com/)
 * [Jawbone UP](https://jawbone.com/up)
 * [Misfit](http://misfit.com/)
 * [Moves](https://www.moves-app.com/)
 * [RunKeeper](https://runkeeper.com/index)
 * [Withings](http://www.withings.com/)
-* [iHealth](http://www.ihealthlabs.com/)
 
 This README should have everything you need to get started. If you have any questions, feel free to [open an issue](https://github.com/openmhealth/shimmer/issues), [email us](mailto://support@openmhealth.org), [post on our form](https://groups.google.com/forum/#!forum/omh-developers), or [visit our website](http://www.openmhealth.org/documentation/#/data-providers/get-started).
 
