@@ -209,7 +209,7 @@ public class FitbitShim extends OAuth2Shim {
             List<ShimDataResponse> dayResponses = new ArrayList<>();
             LocalDate indexDate = startDate;
 
-            while (!startDate.isAfter(endDate)) {
+            while (!indexDate.isAfter(endDate)) {
 
                 dayResponses.add(getDataForSingleDate(restTemplate, indexDate, fitbitDataType,
                         shimDataRequest.getNormalize()).getBody());
