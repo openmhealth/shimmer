@@ -19,6 +19,7 @@ package org.openmhealth.shim.fitbit.mapper;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.openmhealth.schema.domain.omh.DataPoint;
 import org.openmhealth.schema.domain.omh.HeartRate;
+import org.openmhealth.schema.domain.omh.TimeFrame;
 
 import java.math.BigDecimal;
 import java.util.Optional;
@@ -28,17 +29,25 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asRequir
 
 /**
  * A mapper that translates responses from the Fitbit Resource API <code>activities/heart</code> endpoint into {@link
- * HeartRate} data points. This mapper assumes one minute granularity, i.e. that the request specified a
- * <code>detail-level</code> of <code>1min</code>.
+ * HeartRate} data points.
  *
  * @author Wallace Wadge
  * @see <a href="https://dev.fitbit.com/docs/heart-rate/#get-heart-rate-intraday-time-series">API documentation</a>
  */
 public class FitbitIntradayHeartRateDataPointMapper extends FitbitIntradayDataPointMapper<HeartRate> {
 
+    public FitbitIntradayHeartRateDataPointMapper(Integer intradayDataGranularityInMinutes) {
+        super(intradayDataGranularityInMinutes);
+    }
+
     @Override
     protected String getListNodeName() {
         return "activities-heart-intraday.dataset";
+    }
+
+    @Override
+    public String getDateSummaryNodeName() {
+        return "activities-heart";
     }
 
     @Override
@@ -50,16 +59,12 @@ public class FitbitIntradayHeartRateDataPointMapper extends FitbitIntradayDataPo
             return Optional.empty();
         }
 
-        HeartRate.Builder heartRateBuilder = new HeartRate.Builder(heartRateValue);
+        TimeFrame effectiveTimeFrame = getTimeSeriesEntryEffectiveTimeFrame(listEntryNode);
 
-        setEffectiveTimeFrameFromTimeSeriesElementTimestamp(listEntryNode, heartRateBuilder);
+        HeartRate.Builder heartRateBuilder = new HeartRate.Builder(heartRateValue)
+                .setEffectiveTimeFrame(effectiveTimeFrame);
 
         return Optional.of(
-                newDataPoint(heartRateBuilder.build(), getExternalIdFromTimeSeriesElementTimestamp(listEntryNode)));
-    }
-
-    @Override
-    public String getSummaryForDayNodeName() {
-        return "activities-heart";
+                newDataPoint(heartRateBuilder.build(), getTimeSeriesEntryExternalId(listEntryNode)));
     }
 }

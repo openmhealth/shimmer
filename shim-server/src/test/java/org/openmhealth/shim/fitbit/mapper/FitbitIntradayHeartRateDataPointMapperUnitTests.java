@@ -41,9 +41,8 @@ import static org.openmhealth.shim.fitbit.mapper.FitbitDataPointMapper.RESOURCE_
  */
 public class FitbitIntradayHeartRateDataPointMapperUnitTests extends DataPointMapperUnitTests {
 
-
     private JsonNode responseNode;
-    private FitbitIntradayHeartRateDataPointMapper mapper = new FitbitIntradayHeartRateDataPointMapper();
+    private FitbitIntradayHeartRateDataPointMapper mapper = new FitbitIntradayHeartRateDataPointMapper(1);
 
 
     @BeforeTest

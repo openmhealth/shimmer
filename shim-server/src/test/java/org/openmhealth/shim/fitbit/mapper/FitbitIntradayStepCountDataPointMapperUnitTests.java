@@ -20,7 +20,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import org.openmhealth.schema.domain.omh.DataPoint;
 import org.openmhealth.schema.domain.omh.DurationUnit;
 import org.openmhealth.schema.domain.omh.DurationUnitValue;
-import org.openmhealth.schema.domain.omh.StepCount1;
+import org.openmhealth.schema.domain.omh.StepCount2;
 import org.openmhealth.shim.common.mapper.DataPointMapperUnitTests;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -41,9 +41,8 @@ import static org.openmhealth.shim.fitbit.mapper.FitbitDataPointMapper.RESOURCE_
  */
 public class FitbitIntradayStepCountDataPointMapperUnitTests extends DataPointMapperUnitTests {
 
-
     private JsonNode responseNode;
-    private FitbitIntradayStepCountDataPointMapper mapper = new FitbitIntradayStepCountDataPointMapper();
+    private FitbitIntradayStepCountDataPointMapper mapper = new FitbitIntradayStepCountDataPointMapper(1);
 
 
     @BeforeTest
@@ -60,7 +59,7 @@ public class FitbitIntradayStepCountDataPointMapperUnitTests extends DataPointMa
     @Test
     public void asDataPointsShouldSetExternalId() {
 
-        final List<DataPoint<StepCount1>> dataPoints = mapper.asDataPoints(singletonList(responseNode));
+        final List<DataPoint<StepCount2>> dataPoints = mapper.asDataPoints(singletonList(responseNode));
 
         for (DataPoint<?> dataPoint : dataPoints) {
             assertThat(
@@ -72,22 +71,24 @@ public class FitbitIntradayStepCountDataPointMapperUnitTests extends DataPointMa
     @Test
     public void asDataPointsShouldReturnCorrectDataPoints() {
 
-        List<DataPoint<StepCount1>> dataPoints = mapper.asDataPoints(singletonList(responseNode));
-        StepCount1.Builder stepCountBuilder = new StepCount1.Builder(7)
-                .setEffectiveTimeFrame(ofStartDateTimeAndDuration(OffsetDateTime.parse("2015-08-21T00:00:00Z"),
+        List<DataPoint<StepCount2>> dataPoints = mapper.asDataPoints(singletonList(responseNode));
+        StepCount2.Builder stepCountBuilder;
+
+        stepCountBuilder = new StepCount2.Builder(7,
+                ofStartDateTimeAndDuration(OffsetDateTime.parse("2015-08-21T00:00:00Z"),
                         new DurationUnitValue(DurationUnit.MINUTE, 1)));
 
         assertThat(dataPoints.get(0).getBody(), equalTo(stepCountBuilder.build()));
-        assertThat(dataPoints.get(0).getHeader().getBodySchemaId(), equalTo(StepCount1.SCHEMA_ID));
+        assertThat(dataPoints.get(0).getHeader().getBodySchemaId(), equalTo(StepCount2.SCHEMA_ID));
         assertThat(dataPoints.get(0).getHeader().getAcquisitionProvenance().getSourceName(),
                 equalTo(RESOURCE_API_SOURCE_NAME));
 
-        stepCountBuilder = new StepCount1.Builder(52)
-                .setEffectiveTimeFrame(ofStartDateTimeAndDuration(OffsetDateTime.parse("2015-08-21T14:28:00Z"),
+        stepCountBuilder = new StepCount2.Builder(52,
+                ofStartDateTimeAndDuration(OffsetDateTime.parse("2015-08-21T14:28:00Z"),
                         new DurationUnitValue(DurationUnit.MINUTE, 1)));
 
         assertThat(dataPoints.get(1).getBody(), equalTo(stepCountBuilder.build()));
-        assertThat(dataPoints.get(1).getHeader().getBodySchemaId(), equalTo(StepCount1.SCHEMA_ID));
+        assertThat(dataPoints.get(1).getHeader().getBodySchemaId(), equalTo(StepCount2.SCHEMA_ID));
         assertThat(dataPoints.get(1).getHeader().getAcquisitionProvenance().getSourceName(),
                 equalTo(RESOURCE_API_SOURCE_NAME));
     }
@@ -110,7 +111,7 @@ public class FitbitIntradayStepCountDataPointMapperUnitTests extends DataPointMa
                         "}\n" +
                         "}");
 
-        List<DataPoint<StepCount1>> dataPoints = mapper.asDataPoints(singletonList(emptyDataSetNode));
+        List<DataPoint<StepCount2>> dataPoints = mapper.asDataPoints(singletonList(emptyDataSetNode));
         assertThat(dataPoints.isEmpty(), equalTo(true));
     }
 }
