@@ -16,13 +16,15 @@
 
 package org.openmhealth.shim;
 
-import java.util.Calendar;
+import static java.time.OffsetDateTime.now;
+
 
 /**
  * Wrapper for responses received from shims.
  * <p/>
- * todo: expand to include original parameters
- * TODO there's no pagination information, how does a caller know how to proceed?
+ * todo: expand to include original parameters TODO there's no pagination information, how does a caller know how to
+ * proceed?
+ *
  * @author Danilo Bonilla
  */
 public class ShimDataResponse {
@@ -59,21 +61,24 @@ public class ShimDataResponse {
     }
 
     public static ShimDataResponse empty(String shimKey) {
+
         ShimDataResponse response = new ShimDataResponse();
+
         response.setShim(shimKey);
         response.setBody(null);
+        response.setTimeStamp(now().toEpochSecond());
 
-        response.setTimeStamp(
-            Calendar.getInstance().getTimeInMillis() / 1000);
         return response;
     }
 
     public static ShimDataResponse result(String shimKey, Object object) {
+
         ShimDataResponse response = new ShimDataResponse();
+
         response.setShim(shimKey);
         response.setBody(object);
-        response.setTimeStamp(
-            Calendar.getInstance().getTimeInMillis() / 1000);
+        response.setTimeStamp(now().toEpochSecond());
+
         return response;
     }
 }
