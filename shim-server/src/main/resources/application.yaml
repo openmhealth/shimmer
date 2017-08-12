@@ -28,6 +28,7 @@ openmhealth:
    #   client-id: "set-value-here"
    #   client-secret: "set-value-here"
    #   intraday-data-available: false
+   #   intraday-data-granularity-in-minutes: 1
    # googlefit:
    #   client-id: "set-value-here"
    #   client-secret: "set-value-here"
