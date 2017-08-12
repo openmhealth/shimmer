@@ -488,11 +488,35 @@ public class JsonNodeMappingSupport {
      * @param parentNode a parent node
      * @param path the path to a child node
      * @return the value of the child node as a {@link LocalDate}, or an empty optional if the child doesn't exist or if
-     * the value of the child node isn't a date time matching {@link DateTimeFormatter#ISO_LOCAL_DATE}
+     * the value of the child node isn't a date matching {@link DateTimeFormatter#ISO_LOCAL_DATE}
      */
     public static Optional<LocalDate> asOptionalLocalDate(JsonNode parentNode, String path) {
 
         return asOptionalLocalDate(parentNode, path, ISO_LOCAL_DATE);
+    }
+
+    /**
+     * @param parentNode a parent node
+     * @param path the path to a child node
+     * @param formatter the formatter to use to parse the value of the child node
+     * @return the value of the child node as a {@link LocalTime}, or an empty optional if the child doesn't exist or if
+     * the value of the child node isn't a time
+     */
+    public static Optional<LocalTime> asOptionalLocalTime(JsonNode parentNode, String path,
+            DateTimeFormatter formatter) {
+
+        return asOptionalTemporal(parentNode, path, formatter, LocalTime::parse);
+    }
+
+    /**
+     * @param parentNode a parent node
+     * @param path the path to a child node
+     * @return the value of the child node as a {@link LocalTime}, or an empty optional if the child doesn't exist or if
+     * the value of the child node isn't a time matching {@link DateTimeFormatter#ISO_LOCAL_TIME}
+     */
+    public static Optional<LocalTime> asOptionalLocalTime(JsonNode parentNode, String path) {
+
+        return asOptionalLocalTime(parentNode, path, ISO_LOCAL_TIME);
     }
 
     /**
