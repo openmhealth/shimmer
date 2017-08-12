@@ -53,14 +53,16 @@ public class FitbitStepCountDataPointMapperUnitTests extends DataPointMapperUnit
     public void assertThatDataPointMatches(DataPoint<StepCount2> dataPoint, long expectedStepCountValue,
             String expectedEffectiveDate) {
 
-        StepCount1 expectedStepCount = new StepCount1.Builder(expectedStepCountValue)
-                .setEffectiveTimeFrame(ofStartDateTimeAndDuration(
+        StepCount2 expectedStepCount = new StepCount2.Builder(
+                expectedStepCountValue,
+                ofStartDateTimeAndDuration(
                         OffsetDateTime.of(LocalDate.parse(expectedEffectiveDate).atStartOfDay(), UTC),
-                        new DurationUnitValue(DurationUnit.DAY, 1)))
+                        new DurationUnitValue(DurationUnit.DAY, 1)
+                ))
                 .build();
 
         assertThat(dataPoint.getBody(), equalTo(expectedStepCount));
-        assertThat(dataPoint.getHeader().getBodySchemaId(), equalTo(StepCount1.SCHEMA_ID));
+        assertThat(dataPoint.getHeader().getBodySchemaId(), equalTo(StepCount2.SCHEMA_ID));
         assertThat(dataPoint.getHeader().getAcquisitionProvenance().getAdditionalProperties().get("external_id"),
                 nullValue());
         assertThat(dataPoint.getHeader().getAcquisitionProvenance().getSourceName(),

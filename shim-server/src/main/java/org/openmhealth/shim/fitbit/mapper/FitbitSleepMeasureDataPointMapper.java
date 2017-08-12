@@ -42,7 +42,7 @@ public abstract class FitbitSleepMeasureDataPointMapper<T extends SchemaSupport>
     }
 
     /**
-     * @param node a "levels.data" array node from a Fitbit sleep log response
+     * @param node a "levels.data" array entry node from a Fitbit sleep log response
      * @return the end time of the last non-awake entry, if any
      */
     protected Optional<OffsetDateTime> getArisingDateTime(JsonNode node) {
@@ -51,6 +51,6 @@ public abstract class FitbitSleepMeasureDataPointMapper<T extends SchemaSupport>
                 .filter(this::isAsleepEntry)
                 .map(s -> asRequiredLocalDateTime(s, "dateTime").plusSeconds(asRequiredInteger(s, "seconds")))
                 .map(this::asOffsetDateTimeWithFakeUtcTimeZone)
-                .reduce((first, second) -> second);
+                .reduce((first, second) -> second); // get last
     }
 }

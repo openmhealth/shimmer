@@ -49,7 +49,9 @@ public class FitbitStepCountDataPointMapper extends FitbitDataPointMapper<StepCo
     @Override
     protected Optional<DataPoint<StepCount2>> asDataPoint(JsonNode node) {
 
-        Integer stepCountValue = asRequiredInteger(node, "value");
+        // TODO consider adding type casting support to mapper tools
+        // Integer stepCountValue = asRequiredInteger(node, "value");
+        int stepCountValue = Integer.parseInt(asRequiredString(node, "value"));
 
         if (stepCountValue == 0) {
             return Optional.empty();
