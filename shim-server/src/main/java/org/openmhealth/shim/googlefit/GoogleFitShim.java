@@ -111,22 +111,23 @@ public class GoogleFitShim extends OAuth2Shim {
     public ShimDataType[] getShimDataTypes() {
 
         return new GoogleFitDataTypes[] {
-                GoogleFitDataTypes.ACTIVITY,
                 GoogleFitDataTypes.BODY_HEIGHT,
                 GoogleFitDataTypes.BODY_WEIGHT,
+                GoogleFitDataTypes.CALORIES_BURNED,
                 GoogleFitDataTypes.HEART_RATE,
-                GoogleFitDataTypes.STEP_COUNT,
-                GoogleFitDataTypes.CALORIES_BURNED};
+                GoogleFitDataTypes.PHYSICAL_ACTIVITY,
+                GoogleFitDataTypes.STEP_COUNT
+        };
     }
 
     public enum GoogleFitDataTypes implements ShimDataType {
 
-        ACTIVITY("derived:com.google.activity.segment:com.google.android.gms:merge_activity_segments"),
         BODY_HEIGHT("derived:com.google.height:com.google.android.gms:merge_height"),
         BODY_WEIGHT("derived:com.google.weight:com.google.android.gms:merge_weight"),
+        CALORIES_BURNED("derived:com.google.calories.expended:com.google.android.gms:merge_calories_expended"),
         HEART_RATE("derived:com.google.heart_rate.bpm:com.google.android.gms:merge_heart_rate_bpm"),
-        STEP_COUNT("derived:com.google.step_count.delta:com.google.android.gms:merge_step_deltas"),
-        CALORIES_BURNED("derived:com.google.calories.expended:com.google.android.gms:merge_calories_expended");
+        PHYSICAL_ACTIVITY("derived:com.google.activity.segment:com.google.android.gms:merge_activity_segments"),
+        STEP_COUNT("derived:com.google.step_count.delta:com.google.android.gms:merge_step_deltas");
 
         private final String streamId;
 
@@ -197,7 +198,7 @@ public class GoogleFitShim extends OAuth2Shim {
                 case BODY_HEIGHT:
                     dataPointMapper = new GoogleFitBodyHeightDataPointMapper();
                     break;
-                case ACTIVITY:
+                case PHYSICAL_ACTIVITY:
                     dataPointMapper = new GoogleFitPhysicalActivityDataPointMapper();
                     break;
                 case STEP_COUNT:
