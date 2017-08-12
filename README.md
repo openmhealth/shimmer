@@ -38,7 +38,7 @@ This README should have everything you need to get started. If you have any ques
 Shimmer is made up of different components - individual shims, a resource server, and a console - which are each described below.
 
 ### Shims
-A *shim* is a library that can communicate with a specific third-party API, e.g. Withings. It handles the process of authenticating with the API, requesting data from it, and mapping that data into an Open mHealth compliant data format. 
+A *shim* is a library that can communicate with a specific third-party API, e.g. Fitbit. It handles the process of authenticating with the API, requesting data from it, and mapping that data into an Open mHealth compliant data format. 
 
 A shim generates *data points*, which are self-contained pieces of data that not only contain the health data of interest, but also include header information such as date of creation, acquisition provenance, and data source. This metadata helps describe the data and where it came from. The library is called a shim because such clean and clinically significant data is not provided natively by the third-party API.
 
@@ -57,21 +57,22 @@ There are two ways to install Shimmer.
 
 ### Option 1. Download and run Docker images
 
-If you don't have Docker, Docker Compose, and Docker Machine installed, download [Docker Toolbox](https://www.docker.com/toolbox) and follow the installation instructions for your platform. If you don't have a running Docker machine, follow these instructions to [deploy one locally](https://docs.docker.com/machine/get-started/), or these instructions to [deploy to the cloud](https://docs.docker.com/machine/get-started-cloud/) on any of these [cloud platforms](https://docs.docker.com/machine/drivers/). 
+If you don't have Docker and Docker Compose, please set them up. ([Docker for Mac](https://docs.docker.com/docker-for-mac/), [Docker for Windows](https://docs.docker.com/docker-for-windows/).
 
-Once you have a running Docker host, in a terminal 
+Once you're set up, in a terminal 
 
 1. Clone this Git repository.
-1. Run `docker-machine ls` to find the name and IP address of your active Docker host.
-1. Run `eval "$(docker-machine env host)"` to prepare environment variables, *replacing `host` with the name of your Docker host*.
-1. Run the `./update-compose-files.sh` script.
-  * This step should be removed once Compose 1.5 is released.
-1. Download and start the containers by running
+1. Download and start the containers using either
   * `docker-compose up -d`
+    * to bring up the resource server and the console
+  * `docker-compose up -d resourceserver`
+    * to bring up only the resource server
   * If you want to see logs and keep the containers in the foreground, omit the `-d`.
-  * This will download up to 1 GB of Docker images if you don't already have them, the bulk of which are MongoDB, nginx and OpenJDK base images. 
-  * It can take up to a minute for the containers to start up. You can check their progress using `docker-compose logs` if you started with `-d`.
-1. Visit `http://<your-docker-host-ip>:8083` in a browser.
+  * This will download up to 0.5 GB of Docker images if you don't already have them, the bulk of which are the underlying MongoDB, nginx and OpenJDK images. 
+1. It can take up to a minute for the containers to start up. You can check their progress using `docker-compose logs` if you started with `-d`.
+1. The console container publishes port 8083 and the resource server container publishes port 8084.
+  * The console container proxies all API requests to the resource server container, so you can send API requests to port 8083 or port 8084.
+1. Visit `http://<shimmer-host>:8083` in a browser to open the console.
 
 ### Option 2. Build the code and run it natively or in Docker
 
@@ -84,8 +85,7 @@ If you prefer to build the code yourself,
 1. To run the code natively,
   1. You need a running [MongoDB](http://docs.mongodb.org/manual/) instance.
 1. To run the code in Docker,
-  1. You need Docker, Docker Compose, and Docker Machine, available in [Docker Toolbox](https://www.docker.com/toolbox).
-  1. You need a running Docker host. If you don't have a running Docker host, follow these instructions to [deploy one locally](https://docs.docker.com/machine/get-started/), or these instructions to [deploy to the cloud](https://docs.docker.com/machine/get-started-cloud/) on any of these [cloud platforms](https://docs.docker.com/machine/drivers/). 
+  1. You need Docker and Docker Compose.
 
 If you want to build and run the code natively, in a terminal
  
@@ -94,17 +94,15 @@ If you want to build and run the code natively, in a terminal
 1. When the script blocks with the message `Started Application`, the components are running.
   * Press Ctrl-C to stop them.
   * The script creates a WAR file which you can alternatively drop into an application server. [This issue](https://github.com/openmhealth/shimmer/issues/31) has details.
-1. Visit `http://localhost:8083` in a browser.
+1. Visit `http://<shimmer-host>:8083` in a browser to open the console.
 
 If you want to build and run the code in Docker, in a terminal 
  
 1. Clone this Git repository.
-1. Run `docker-machine ls` to find the name of your active Docker host.
-1. Run `eval "$(docker-machine env host)"` to prepare environment variables, *replacing `host` with the name of your Docker host*.
 1. Run the `./run-dockerized.sh` script and follow the instructions.
-  * The containers should now be running on your Docker host and expose port 8083.
+  * The containers should now be running on your Docker host and expose ports 8083 and 8084.
   * It can take up to a minute for the containers to start up.
-1. Visit `http://<your-docker-host>:8083` in a browser.
+1. Visit `http://<shimmer-host>:8083` in a browser to open the console.
 
 > If you can't run the Bash scripts on your system, open them and take a look at the commands they run. The important commands are marked with a "#CMD" comment.
 
@@ -136,7 +134,7 @@ API                                                               | requires TLS
 <sup>1</sup> *Fitbit has deprecated OAuth 1.0a authorization in favour of OAuth 2.0. You will need OAuth 2.0 credentials.*
 
 <sup>2</sup> *You'll need to copy the iHealth SC and SV values found via the [application management page](http://developer.ihealthlabs.com/developermanagepage.htm)
-into the `openmhealth.shim.ihealth` section of the `application.yaml` file.*
+into the `application.yaml` or `resource-server.env` file.*
 
 <sup>3</sup> *The [documentation](https://jawbone.com/up/developer/authentication) states TLS is required, but authorization does work without it.*
 
@@ -144,11 +142,7 @@ into the `openmhealth.shim.ihealth` section of the `application.yaml` file.*
 > This table will be fully populated in in the coming days.
 
 Visit the links to register and configure your application for each of the APIs you want to use. Once credentials are
-obtained for a particular API, navigate to the settings tab of the console and fill them in.
-
-> If you didn't build the console, uncomment and replace the corresponding `client-id` and `client-secret` placeholders in the `application.yaml` file
-with your new credentials and rebuild.
-
+obtained for a particular API, you can either set the corresponding values in the `application.yaml` file and rebuild, or if you're running using Docker, set the corresponding values in the `resource-server.env` file.
 
 
 ## Authorizing access to a third-party user account
@@ -171,11 +165,12 @@ To initiate the authorization process from the console,
 
 To initiate the authorization process programmatically,
  
-1. Make a GET request to `http://<host>:8083/authorize/{shimKey}?username={userId}`
+1. Make a GET request to `http://<shimmer-host>:8083/authorize/{shimKey}?username={userId}`
+  * Use port 8084 if you're not running the console container.
   * The `shimKey` path parameter should be one of the keys listed [below](#supported-apis-and-endpoints), e.g. `fitbit`. 
   * The `username` query parameter can be set to any unique identifier you'd like to use to identify the user. 
 1. Find the `authorizationUrl` value in the returned JSON response and redirect your user to this URL. Your user will land on the third-party website where they can login and authorize access to their third-party user account. 
-1. Once authorized, they will be redirected to `http://<host>:8083/authorize/{shimKey}/callback`. 
+1. Once authorized, they will be redirected to `http://<<shimmer-host>:8083/authorize/{shimKey}/callback`. 
 
 ## Reading data
 A shim can produce JSON data that is either *normalized* to Open mHealth schemas or in the *raw* format produced by the third-party API. Raw data is passed through from the third-party API. Normalized data conforms to [Open mHealth schemas](http://www.openmhealth.org/documentation/#/schema-docs/schema-library).
@@ -222,7 +217,9 @@ To pull data from a third-party API using the console,
 
 To pull data from a third-party API programmatically, make requests in the format
  
-`http://<host>:8083/data/{shimKey}/{endpoint}?username={userId}&dateStart=yyyy-MM-dd&dateEnd=yyyy-MM-dd&normalize={true|false}`
+`http://<<shimmer-host>>:8083/data/{shimKey}/{endpoint}?username={userId}&dateStart=yyyy-MM-dd&dateEnd=yyyy-MM-dd&normalize={true|false}`
+
+Use port 8084 if you're not running the console container.
 
 The URL can be broken down as follows
 * The `shimKey` and `username` path variables are the same as [above](#authorizing-access-to-a-third-party-user-account).

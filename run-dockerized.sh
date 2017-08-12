@@ -19,9 +19,6 @@ then
     exit 1
 fi
 
-# check for Docker Compose tooling and update configuration
-. update-compose-files.sh
-
 # remove the symlink which may have been created by running natively earlier
 rm -f ${BASEDIR}/shim-server/src/main/resources/public #CMD
 
