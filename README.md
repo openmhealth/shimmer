@@ -79,7 +79,7 @@ Once you're set up, in a terminal
 If you prefer to build the code yourself,  
 
 1. You must have a Java 8 or higher JDK installed. You can use either [OpenJDK](http://openjdk.java.net/install/) or the [Oracle JDK](http://www.oracle.com/technetwork/java/javase/downloads/index.html).
-1. You technically don't need to run the console, but it makes your life easier. If you're building the console,
+1. If you're building the optional console,
   1. You need [Node.js](http://nodejs.org/download/).
   1. You need [Xcode Command Line Tools](https://developer.apple.com/xcode/) if you're on a Mac.
 1. To run the code natively,
@@ -145,21 +145,45 @@ Visit the links to register and configure your application for each of the APIs 
 obtained for a particular API, you can either set the corresponding values in the `application.yaml` file and rebuild, or if you're running using Docker, set the corresponding values in the `resource-server.env` file.
 
 
+## Postman collection
+
+A [Postman](https://www.getpostman.com/) collection is provided that makes it easy to experiment with Shimmer's API.
+An environment is also provided that contains settings for making API requests, such as Shimmer's host, port, and
+request parameters.
+
+### Setting up the Postman environment
+
+To set up the Postman environment,
+
+1. Click the cog wheel in the top right.
+1. Choose _Manage Environments_.
+1. Click the _Import_ button and choose the file called `resources/postman/environment.json` from this repo.
+1. Close the _Manage Environments_ modal.
+1. Select the environment you just created from the drop-down in the top right.
+
+### Importing the Postman collection
+
+To import the Postman collection,
+
+1. Click the _Import_ button in the top left.
+1. In the _Import File_ tab, click _Choose Files_ and choose the file called `resources/postman/collection.json` from this repo.
+1. If you already have a collection with the same name, replace it.
+
 ## Authorizing access to a third-party user account
 
 The data produced by a third-party API belongs to some user account registered on the third-party system. To allow 
  a shim to read that data, you'll need to initiate an authorization process. This process lets the user account holder explicitly grant the shim access to their data.
 
-### Authorize access from the console
+### Authorize access using Postman
 
-To initiate the authorization process from the console,
- 
-1. Type in an arbitrary user handle. This handle can be anything, it's just your way of referring to third-party API users. 
-1. Press *Find* and the console will show you a *Connect* button for each API with [configured](#setting-up-your-credentials) authentication credentials.
-1. Click *Connect* and a pop-up will open.
-1. Follow the authorization prompts. 
-1. After following the prompts, you should see an `authorization successful` response in the pop-up. 
-1. The pop-up will then automatically close.
+To initiate the authorization process using Postman,
+
+1. Click the _Environment quick look_ button in the top right of Postman and click _Edit_ to edit the environment.
+1. Set the `username` value to any unique identifier you'd like to use to identify the user.
+1. Set the `shim-key` value to one of the keys listed [below](#supported-apis-and-endpoints), e.g. `fitbit`.
+1. Run the _Authorization\Initiate Authorization` request.
+1. Find the `authorizationUrl` value in the returned JSON response and load the URL in a browser. You will land on the third-party website where you can login and authorize access to your third-party user account. You should then be automatically redirected back to Shimmer where the OAuth flow will
+complete.
 
 ### Authorize access programmatically
 
@@ -171,6 +195,17 @@ To initiate the authorization process programmatically,
   * The `username` query parameter can be set to any unique identifier you'd like to use to identify the user. 
 1. Find the `authorizationUrl` value in the returned JSON response and redirect your user to this URL. Your user will land on the third-party website where they can login and authorize access to their third-party user account. 
 1. Once authorized, they will be redirected to `http://<<shimmer-host>:8083/authorize/{shimKey}/callback`. 
+
+### Authorize access from the console
+
+To initiate the authorization process from the console,
+ 
+1. Type in an arbitrary user handle. This handle can be anything, it's just your way of referring to a user. 
+1. Press *Find* and the console will show you a *Connect* button for each API with [configured](#setting-up-your-credentials) authentication credentials.
+1. Click *Connect* and a pop-up will open.
+1. Follow the authorization prompts. 
+1. After following the prompts, you should see an `authorization successful` response in the pop-up. 
+1. The pop-up will then automatically close.
 
 ## Reading data
 A shim can produce JSON data that is either *normalized* to Open mHealth schemas or in the *raw* format produced by the third-party API. Raw data is passed through from the third-party API. Normalized data conforms to [Open mHealth schemas](http://www.openmhealth.org/documentation/#/schema-docs/schema-library).
@@ -204,6 +239,18 @@ The following is an example of a normalized step count data point retrieved from
     }
 }
 ```
+
+### Read data using Postman
+
+To pull data from a third-party API using Postman,
+ 
+1. If you need to modify the environment, click the _Environment quick look_ button in the top right of Postman and click _Edit_ to edit the environment.
+1. Fill in the date range you're interested in by setting the `start-date` and `end-date` values.
+1. Set the `normalized` value to `true` for data that has been converted to an Open mHealth compliant format, or `false` for raw data. 
+1. Run the _Data points_ request you're interested in.
+
+> Most requests also have sample responses you can look at by clicking the _Examples_ button in Postman.
+Please let us know if any examples you need are missing, or provide pull requests to contribute.
 
 ### Read data using the console
 
