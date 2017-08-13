@@ -121,22 +121,30 @@ public class FitbitShim extends OAuth2Shim {
         BODY_WEIGHT("body/log/weight"),
         HEART_RATE("activities/heart"),
         PHYSICAL_ACTIVITY("activities"),
-        SLEEP_DURATION("sleep"),
-        SLEEP_EPISODE("sleep"),
+        SLEEP_DURATION("sleep", "1.2"),
+        SLEEP_EPISODE("sleep", "1.2"),
         STEP_COUNT("activities/steps");
 
-        private String endPoint;
+        private String endpoint;
+        private String version = "1";
 
-        FitbitDataType(String endPoint) {
-
-            this.endPoint = endPoint;
+        FitbitDataType(String endpoint) {
+            this.endpoint = endpoint;
         }
 
-        public String getEndPoint() {
-
-            return endPoint;
+        FitbitDataType(String endpoint, String version) {
+            this.endpoint = endpoint;
+            this.version = version;
         }
 
+        public String getEndpoint() {
+
+            return endpoint;
+        }
+
+        public String getVersion() {
+            return version;
+        }
     }
 
     @Override
@@ -384,41 +392,41 @@ public class FitbitShim extends OAuth2Shim {
     private ResponseEntity<ShimDataResponse> getDataForDateRange(OAuth2RestOperations restTemplate,
             LocalDate startDate,
             LocalDate endDate,
-            FitbitDataType fitbitDataType,
+            FitbitDataType dataType,
             boolean normalize) throws ShimException {
 
         URI url = UriComponentsBuilder
                 .fromUriString(DATA_URL)
-                .path("/1/user/-/{endpoint}/date/{baseDate}/{endDate}.json")
-                .buildAndExpand(fitbitDataType.getEndPoint(), startDate.toString(), endDate.toString())
+                .path("/{apiVersion}/user/-/{endpoint}/date/{baseDate}/{endDate}.json")
+                .buildAndExpand(dataType.getVersion(), dataType.getEndpoint(), startDate.toString(), endDate.toString())
                 .encode()
                 .toUri();
 
-        return executeRequest(restTemplate, url, normalize, fitbitDataType, null);
+        return executeRequest(restTemplate, url, normalize, dataType, null);
     }
 
     private ResponseEntity<ShimDataResponse> getDataForSingleDate(
             OAuth2RestOperations restTemplate,
             LocalDate date,
-            FitbitDataType fitbitDataType,
+            FitbitDataType dataType,
             boolean normalize) throws ShimException {
 
         String detailLevel = "";
 
         // TODO generalise this
         if (fitbitClientSettings.isIntradayDataAvailable()) {
-            if (fitbitDataType == STEP_COUNT || fitbitDataType == HEART_RATE) {
+            if (dataType == STEP_COUNT || dataType == HEART_RATE) {
                 detailLevel = format("/1d/%dmin", fitbitClientSettings.getIntradayDataGranularityInMinutes());
             }
         }
 
         URI url = UriComponentsBuilder
                 .fromUriString(DATA_URL)
-                .path("/1/user/-/{endpoint}/date/{date}{detailLevel}.json")
-                .buildAndExpand(fitbitDataType.getEndPoint(), date.toString(), detailLevel)
+                .path("/{apiVersion}/user/-/{endpoint}/date/{date}{detailLevel}.json")
+                .buildAndExpand(dataType.getVersion(), dataType.getEndpoint(), date.toString(), detailLevel)
                 .encode()
                 .toUri();
 
-        return executeRequest(restTemplate, url, normalize, fitbitDataType, date);
+        return executeRequest(restTemplate, url, normalize, dataType, date);
     }
 }
