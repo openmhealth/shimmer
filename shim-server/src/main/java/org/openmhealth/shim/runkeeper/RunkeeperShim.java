@@ -114,8 +114,8 @@ public class RunkeeperShim extends OAuth2Shim {
     // TODO remove this structure once endpoints are figured out
     public enum RunkeeperDataType implements ShimDataType {
 
-        ACTIVITY("application/vnd.com.runkeeper.FitnessActivityFeed+json", "fitnessActivities"),
-        CALORIES("application/vnd.com.runkeeper.FitnessActivityFeed+json", "fitnessActivities");
+        CALORIES_BURNED("application/vnd.com.runkeeper.FitnessActivityFeed+json", "fitnessActivities"),
+        PHYSICAL_ACTIVITY("application/vnd.com.runkeeper.FitnessActivityFeed+json", "fitnessActivities");
 
         private String dataTypeHeader;
         private String endPointUrl;
@@ -194,11 +194,11 @@ public class RunkeeperShim extends OAuth2Shim {
         if (shimDataRequest.getNormalize()) {
             RunkeeperDataPointMapper<?> dataPointMapper;
             switch (runkeeperDataType) {
-                case ACTIVITY:
-                    dataPointMapper = new RunkeeperPhysicalActivityDataPointMapper();
-                    break;
-                case CALORIES:
+                case CALORIES_BURNED:
                     dataPointMapper = new RunkeeperCaloriesBurnedDataPointMapper();
+                    break;
+                case PHYSICAL_ACTIVITY:
+                    dataPointMapper = new RunkeeperPhysicalActivityDataPointMapper();
                     break;
                 default:
                     throw new UnsupportedOperationException();

@@ -108,10 +108,10 @@ public class WithingsShim extends OAuth1Shim {
                 BLOOD_PRESSURE,
                 BODY_HEIGHT,
                 BODY_WEIGHT,
-                CALORIES,
+                CALORIES_BURNED,
                 HEART_RATE,
-                SLEEP,
-                STEPS
+                SLEEP_DURATION,
+                STEP_COUNT
         };
     }
 
@@ -130,13 +130,13 @@ public class WithingsShim extends OAuth1Shim {
 
     public enum WithingsDataType implements ShimDataType {
 
-        BODY_WEIGHT("measure", "getmeas", true),
+        BLOOD_PRESSURE("measure", "getmeas", true),
         BODY_HEIGHT("measure", "getmeas", true),
-        STEPS("v2/measure", "getactivity", false),
-        CALORIES("v2/measure", "getactivity", false),
-        SLEEP("v2/sleep", "getsummary", false),
+        BODY_WEIGHT("measure", "getmeas", true),
+        CALORIES_BURNED("v2/measure", "getactivity", false),
         HEART_RATE("measure", "getmeas", true),
-        BLOOD_PRESSURE("measure", "getmeas", true);
+        SLEEP_DURATION("v2/sleep", "getsummary", false),
+        STEP_COUNT("v2/measure", "getactivity", false);
 
         private String endpoint;
         private String measureParameter;
@@ -200,22 +200,16 @@ public class WithingsShim extends OAuth1Shim {
 
                 switch (withingsDataType) {
 
-                    case BODY_WEIGHT:
-                        mapper = new WithingsBodyWeightDataPointMapper();
+                    case BLOOD_PRESSURE:
+                        mapper = new WithingsBloodPressureDataPointMapper();
                         break;
                     case BODY_HEIGHT:
                         mapper = new WithingsBodyHeightDataPointMapper();
                         break;
-                    case STEPS:
-                        if (clientSettings.isIntradayDataAvailable()) {
-                            // Use a different mapper because the intraday endpoint generates a different response
-                            mapper = new WithingsIntradayStepCountDataPointMapper();
-                        }
-                        else {
-                            mapper = new WithingsDailyStepCountDataPointMapper();
-                        }
+                    case BODY_WEIGHT:
+                        mapper = new WithingsBodyWeightDataPointMapper();
                         break;
-                    case CALORIES:
+                    case CALORIES_BURNED:
                         if (clientSettings.isIntradayDataAvailable()) {
                             mapper = new WithingsIntradayCaloriesBurnedDataPointMapper();
                         }
@@ -223,14 +217,19 @@ public class WithingsShim extends OAuth1Shim {
                             mapper = new WithingsDailyCaloriesBurnedDataPointMapper();
                         }
                         break;
-                    case SLEEP:
-                        mapper = new WithingsSleepDurationDataPointMapper();
-                        break;
-                    case BLOOD_PRESSURE:
-                        mapper = new WithingsBloodPressureDataPointMapper();
-                        break;
                     case HEART_RATE:
                         mapper = new WithingsHeartRateDataPointMapper();
+                        break;
+                    case SLEEP_DURATION:
+                        mapper = new WithingsSleepDurationDataPointMapper();
+                        break;
+                    case STEP_COUNT:
+                        if (clientSettings.isIntradayDataAvailable()) {
+                            mapper = new WithingsIntradayStepCountDataPointMapper();
+                        }
+                        else {
+                            mapper = new WithingsDailyStepCountDataPointMapper();
+                        }
                         break;
                     default:
                         throw new UnsupportedOperationException();
@@ -314,6 +313,7 @@ public class WithingsShim extends OAuth1Shim {
      */
     private boolean isIntradayActivityMeasure(WithingsDataType withingsDataType) {
 
-        return clientSettings.isIntradayDataAvailable() && (withingsDataType == STEPS || withingsDataType == CALORIES);
+        return clientSettings.isIntradayDataAvailable() && (withingsDataType == STEP_COUNT || withingsDataType ==
+                CALORIES_BURNED);
     }
 }

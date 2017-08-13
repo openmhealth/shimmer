@@ -98,18 +98,23 @@ public class JawboneShim extends OAuth2Shim {
     public ShimDataType[] getShimDataTypes() {
 
         return new JawboneDataTypes[] {
-                JawboneDataTypes.SLEEP, JawboneDataTypes.ACTIVITY, JawboneDataTypes.BODY_MASS_INDEX,
-                JawboneDataTypes.WEIGHT, JawboneDataTypes.HEART_RATE, JawboneDataTypes.STEPS};
+                JawboneDataTypes.BODY_MASS_INDEX,
+                JawboneDataTypes.BODY_WEIGHT,
+                JawboneDataTypes.HEART_RATE,
+                JawboneDataTypes.PHYSICAL_ACTIVITY,
+                JawboneDataTypes.SLEEP_DURATION,
+                JawboneDataTypes.STEP_COUNT
+        };
     }
 
     public enum JawboneDataTypes implements ShimDataType {
 
-        SLEEP("sleeps"),
-        ACTIVITY("workouts"),
-        WEIGHT("body_events"),
-        STEPS("moves"),
         BODY_MASS_INDEX("body_events"),
-        HEART_RATE("heartrates");
+        BODY_WEIGHT("body_events"),
+        HEART_RATE("heartrates"),
+        PHYSICAL_ACTIVITY("workouts"),
+        SLEEP_DURATION("sleeps"),
+        STEP_COUNT("moves");
 
         private String endPoint;
 
@@ -174,24 +179,24 @@ public class JawboneShim extends OAuth2Shim {
         if (shimDataRequest.getNormalize()) {
 
             JawboneDataPointMapper mapper;
-            switch ( jawboneDataType ) {
-                case WEIGHT:
-                    mapper = new JawboneBodyWeightDataPointMapper();
-                    break;
-                case STEPS:
-                    mapper = new JawboneStepCountDataPointMapper();
-                    break;
+            switch (jawboneDataType) {
                 case BODY_MASS_INDEX:
                     mapper = new JawboneBodyMassIndexDataPointMapper();
                     break;
-                case ACTIVITY:
-                    mapper = new JawbonePhysicalActivityDataPointMapper();
-                    break;
-                case SLEEP:
-                    mapper = new JawboneSleepDurationDataPointMapper();
+                case BODY_WEIGHT:
+                    mapper = new JawboneBodyWeightDataPointMapper();
                     break;
                 case HEART_RATE:
                     mapper = new JawboneHeartRateDataPointMapper();
+                    break;
+                case PHYSICAL_ACTIVITY:
+                    mapper = new JawbonePhysicalActivityDataPointMapper();
+                    break;
+                case SLEEP_DURATION:
+                    mapper = new JawboneSleepDurationDataPointMapper();
+                    break;
+                case STEP_COUNT:
+                    mapper = new JawboneStepCountDataPointMapper();
                     break;
                 default:
                     throw new UnsupportedOperationException();
@@ -199,13 +204,11 @@ public class JawboneShim extends OAuth2Shim {
 
             return ResponseEntity.ok().body(ShimDataResponse
                     .result(JawboneShim.SHIM_KEY, mapper.asDataPoints(singletonList(responseEntity.getBody()))));
-
         }
         else {
 
             return ResponseEntity.ok().body(ShimDataResponse.result(JawboneShim.SHIM_KEY, responseEntity.getBody()));
         }
-
     }
 
     @Override
@@ -222,7 +225,6 @@ public class JawboneShim extends OAuth2Shim {
                 .queryParam("redirect_uri", getDefaultRedirectUrl());
 
         return uriBuilder.build().encode().toUriString();
-
     }
 
 

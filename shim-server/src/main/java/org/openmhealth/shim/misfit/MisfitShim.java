@@ -119,9 +119,9 @@ public class MisfitShim extends OAuth2Shim {
     // TODO remove this structure once endpoints are figured out
     public enum MisfitDataTypes implements ShimDataType {
 
-        SLEEP("activity/sleeps"),
-        ACTIVITIES("activity/sessions"),
-        STEPS("activity/summary");
+        PHYSICAL_ACTIVITY("activity/sessions"),
+        SLEEP_DURATION("activity/sleeps"),
+        STEP_COUNT("activity/summary");
 
         private String endPoint;
 
@@ -190,13 +190,13 @@ public class MisfitShim extends OAuth2Shim {
             MisfitDataPointMapper<?> dataPointMapper;
 
             switch (misfitDataType) {
-                case ACTIVITIES:
+                case PHYSICAL_ACTIVITY:
                     dataPointMapper = physicalActivityMapper;
                     break;
-                case SLEEP:
+                case SLEEP_DURATION:
                     dataPointMapper = sleepDurationMapper;
                     break;
-                case STEPS:
+                case STEP_COUNT:
                     dataPointMapper = stepCountMapper;
                     break;
                 default:
