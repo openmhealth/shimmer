@@ -1,0 +1,1217 @@
+{
+	"variables": [],
+	"info": {
+		"name": "Shimmer",
+		"_postman_id": "bb44c8d3-ff67-574f-957c-a75de7de25d1",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Authorization",
+			"description": "",
+			"item": [
+				{
+					"name": "Initiate authorization",
+					"request": {
+						"url": {
+							"raw": "{{api-base-url}}/authorize/{{shim-key}}?username={{username}}",
+							"host": [
+								"{{api-base-url}}"
+							],
+							"path": [
+								"authorize",
+								"{{shim-key}}"
+							],
+							"query": [
+								{
+									"key": "username",
+									"value": "{{username}}",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Process authorization redirect (debugging)",
+					"request": {
+						"url": {
+							"raw": "{{api-base-url}}/authorize/{{shim-key}}/callback?code=set-authorization-code-here&state=foo",
+							"host": [
+								"{{api-base-url}}"
+							],
+							"path": [
+								"authorize",
+								"{{shim-key}}",
+								"callback"
+							],
+							"query": [
+								{
+									"key": "code",
+									"value": "set-authorization-code-here",
+									"equals": true,
+									"description": ""
+								},
+								{
+									"key": "state",
+									"value": "foo",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Data points",
+			"description": "",
+			"item": [
+				{
+					"name": "Get body mass index data points",
+					"request": {
+						"url": {
+							"raw": "{{api-base-url}}/data/{{shim-key}}/body_mass_index?username={{username}}&normalize={{normalize}}&dateStart={{start-date}}&dateEnd={{end-date}}",
+							"host": [
+								"{{api-base-url}}"
+							],
+							"path": [
+								"data",
+								"{{shim-key}}",
+								"body_mass_index"
+							],
+							"query": [
+								{
+									"key": "username",
+									"value": "{{username}}",
+									"equals": true,
+									"description": ""
+								},
+								{
+									"key": "normalize",
+									"value": "{{normalize}}",
+									"equals": true,
+									"description": ""
+								},
+								{
+									"key": "dateStart",
+									"value": "{{start-date}}",
+									"equals": true,
+									"description": ""
+								},
+								{
+									"key": "dateEnd",
+									"value": "{{end-date}}",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"description": "supported by: Fitbit, iHealth, Jawbone"
+					},
+					"response": [
+						{
+							"id": "714934ce-d2f1-4445-b68f-6321bb40887b",
+							"name": "Fitbit",
+							"originalRequest": {
+								"url": {
+									"raw": "{{api-base-url}}/data/{{shim-key}}/body_mass_index?username={{username}}&normalize={{normalize}}&dateStart={{start-date}}&dateEnd={{end-date}}",
+									"host": [
+										"{{api-base-url}}"
+									],
+									"path": [
+										"data",
+										"{{shim-key}}",
+										"body_mass_index"
+									],
+									"query": [
+										{
+											"key": "username",
+											"value": "{{username}}",
+											"equals": true,
+											"description": ""
+										},
+										{
+											"key": "normalize",
+											"value": "{{normalize}}",
+											"equals": true,
+											"description": ""
+										},
+										{
+											"key": "dateStart",
+											"value": "{{start-date}}",
+											"equals": true,
+											"description": ""
+										},
+										{
+											"key": "dateEnd",
+											"value": "{{end-date}}",
+											"equals": true,
+											"description": ""
+										}
+									],
+									"variable": []
+								},
+								"method": "GET",
+								"header": [],
+								"body": {}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"_postman_previewtype": "text",
+							"header": [
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, no-store, max-age=0, must-revalidate",
+									"name": "Cache-Control",
+									"description": "Tells all caching mechanisms from server to client whether they may cache this object. It is measured in seconds"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json;charset=utf-8",
+									"name": "Content-Type",
+									"description": "The mime type of this content"
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 13 Aug 2017 22:39:46 GMT",
+									"name": "Date",
+									"description": "The date and time that the message was sent"
+								},
+								{
+									"key": "Expires",
+									"value": "0",
+									"name": "Expires",
+									"description": "Gives the date/time after which the response is considered stale"
+								},
+								{
+									"key": "Pragma",
+									"value": "no-cache",
+									"name": "Pragma",
+									"description": "Implementation-specific headers that may have various effects anywhere along the request-response chain."
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked",
+									"name": "Transfer-Encoding",
+									"description": "The form of encoding used to safely transfer the entity to the user. Currently defined methods are: chunked, compress, deflate, gzip, identity."
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff",
+									"name": "X-Content-Type-Options",
+									"description": "The only defined value, \"nosniff\", prevents Internet Explorer from MIME-sniffing a response away from the declared content-type"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "DENY",
+									"name": "X-Frame-Options",
+									"description": "Clickjacking protection: \"deny\" - no rendering within a frame, \"sameorigin\" - no rendering if origin mismatch"
+								},
+								{
+									"key": "X-XSS-Protection",
+									"value": "1; mode=block",
+									"name": "X-XSS-Protection",
+									"description": "Cross-site scripting (XSS) filter"
+								}
+							],
+							"responseTime": 1630,
+							"body": "{\"shim\":\"fitbit\",\"timeStamp\":1502663987,\"body\":[{\"header\":{\"id\":\"744b627d-3769-4f5f-bea2-db30c1273b2f\",\"creation_date_time\":\"2017-08-13T22:39:47.648Z\",\"acquisition_provenance\":{\"source_name\":\"Fitbit Resource API\",\"external_id\":1481673599000},\"schema_id\":{\"namespace\":\"omh\",\"name\":\"body-mass-index\",\"version\":\"2.0\"}},\"body\":{\"effective_time_frame\":{\"date_time\":\"2016-12-13T23:59:59Z\"},\"body_mass_index\":{\"unit\":\"kg/m^2\",\"value\":21.72}}}]}"
+						}
+					]
+				},
+				{
+					"name": "Get body height data points",
+					"request": {
+						"url": {
+							"raw": "{{api-base-url}}/data/{{shim-key}}/body_height?username={{username}}&normalize={{normalize}}&dateStart={{start-date}}&dateEnd={{end-date}}",
+							"host": [
+								"{{api-base-url}}"
+							],
+							"path": [
+								"data",
+								"{{shim-key}}",
+								"body_height"
+							],
+							"query": [
+								{
+									"key": "username",
+									"value": "{{username}}",
+									"equals": true,
+									"description": ""
+								},
+								{
+									"key": "normalize",
+									"value": "{{normalize}}",
+									"equals": true,
+									"description": ""
+								},
+								{
+									"key": "dateStart",
+									"value": "{{start-date}}",
+									"equals": true,
+									"description": ""
+								},
+								{
+									"key": "dateEnd",
+									"value": "{{end-date}}",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"description": "supported by: Google Fit, Withings"
+					},
+					"response": []
+				},
+				{
+					"name": "Get body weight data points",
+					"request": {
+						"url": {
+							"raw": "{{api-base-url}}/data/{{shim-key}}/body_weight?username={{username}}&normalize={{normalize}}&dateStart={{start-date}}&dateEnd={{end-date}}",
+							"host": [
+								"{{api-base-url}}"
+							],
+							"path": [
+								"data",
+								"{{shim-key}}",
+								"body_weight"
+							],
+							"query": [
+								{
+									"key": "username",
+									"value": "{{username}}",
+									"equals": true,
+									"description": ""
+								},
+								{
+									"key": "normalize",
+									"value": "{{normalize}}",
+									"equals": true,
+									"description": ""
+								},
+								{
+									"key": "dateStart",
+									"value": "{{start-date}}",
+									"equals": true,
+									"description": ""
+								},
+								{
+									"key": "dateEnd",
+									"value": "{{end-date}}",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"description": "supported by: Fitbit, Google Fit, iHealth, Jawbone, Withings"
+					},
+					"response": [
+						{
+							"id": "5f85cf65-f167-4e36-874b-a066d86c918c",
+							"name": "Fitbit",
+							"originalRequest": {
+								"url": {
+									"raw": "{{api-base-url}}/data/{{shim-key}}/body_weight?username={{username}}&normalize={{normalize}}&dateStart=2017-07-01&dateEnd=2017-07-30",
+									"host": [
+										"{{api-base-url}}"
+									],
+									"path": [
+										"data",
+										"{{shim-key}}",
+										"body_weight"
+									],
+									"query": [
+										{
+											"key": "username",
+											"value": "{{username}}",
+											"equals": true,
+											"description": ""
+										},
+										{
+											"key": "normalize",
+											"value": "{{normalize}}",
+											"equals": true,
+											"description": ""
+										},
+										{
+											"key": "dateStart",
+											"value": "2017-07-01",
+											"equals": true,
+											"description": ""
+										},
+										{
+											"key": "dateEnd",
+											"value": "2017-07-30",
+											"equals": true,
+											"description": ""
+										}
+									],
+									"variable": []
+								},
+								"method": "GET",
+								"header": [],
+								"body": {}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"_postman_previewtype": "text",
+							"header": [
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, no-store, max-age=0, must-revalidate",
+									"name": "Cache-Control",
+									"description": "Tells all caching mechanisms from server to client whether they may cache this object. It is measured in seconds"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json;charset=utf-8",
+									"name": "Content-Type",
+									"description": "The mime type of this content"
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 13 Aug 2017 22:37:24 GMT",
+									"name": "Date",
+									"description": "The date and time that the message was sent"
+								},
+								{
+									"key": "Expires",
+									"value": "0",
+									"name": "Expires",
+									"description": "Gives the date/time after which the response is considered stale"
+								},
+								{
+									"key": "Pragma",
+									"value": "no-cache",
+									"name": "Pragma",
+									"description": "Implementation-specific headers that may have various effects anywhere along the request-response chain."
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked",
+									"name": "Transfer-Encoding",
+									"description": "The form of encoding used to safely transfer the entity to the user. Currently defined methods are: chunked, compress, deflate, gzip, identity."
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff",
+									"name": "X-Content-Type-Options",
+									"description": "The only defined value, \"nosniff\", prevents Internet Explorer from MIME-sniffing a response away from the declared content-type"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "DENY",
+									"name": "X-Frame-Options",
+									"description": "Clickjacking protection: \"deny\" - no rendering within a frame, \"sameorigin\" - no rendering if origin mismatch"
+								},
+								{
+									"key": "X-XSS-Protection",
+									"value": "1; mode=block",
+									"name": "X-XSS-Protection",
+									"description": "Cross-site scripting (XSS) filter"
+								}
+							],
+							"responseTime": 1723,
+							"body": "{\"shim\":\"fitbit\",\"timeStamp\":1502663846,\"body\":[{\"header\":{\"id\":\"fea79692-d24d-4edb-b73c-b9c2329b9eac\",\"creation_date_time\":\"2017-08-13T22:37:26.336Z\",\"acquisition_provenance\":{\"source_name\":\"Fitbit Resource API\",\"external_id\":1501027199000},\"schema_id\":{\"namespace\":\"omh\",\"name\":\"body-weight\",\"version\":\"1.0\"}},\"body\":{\"effective_time_frame\":{\"date_time\":\"2017-07-25T23:59:59Z\"},\"body_weight\":{\"unit\":\"kg\",\"value\":89.8}}},{\"header\":{\"id\":\"f719669b-fa9d-44f6-a4ec-a9d1d8aa5d25\",\"creation_date_time\":\"2017-08-13T22:37:26.336Z\",\"acquisition_provenance\":{\"source_name\":\"Fitbit Resource API\",\"external_id\":1501113599000},\"schema_id\":{\"namespace\":\"omh\",\"name\":\"body-weight\",\"version\":\"1.0\"}},\"body\":{\"effective_time_frame\":{\"date_time\":\"2017-07-26T23:59:59Z\"},\"body_weight\":{\"unit\":\"kg\",\"value\":86.1}}}]}"
+						}
+					]
+				},
+				{
+					"name": "Get heart rate data points",
+					"request": {
+						"url": {
+							"raw": "{{api-base-url}}/data/{{shim-key}}/heart_rate?username={{username}}&normalize={{normalize}}&dateStart={{start-date}}&dateEnd={{end-date}}",
+							"host": [
+								"{{api-base-url}}"
+							],
+							"path": [
+								"data",
+								"{{shim-key}}",
+								"heart_rate"
+							],
+							"query": [
+								{
+									"key": "username",
+									"value": "{{username}}",
+									"equals": true,
+									"description": ""
+								},
+								{
+									"key": "normalize",
+									"value": "{{normalize}}",
+									"equals": true,
+									"description": ""
+								},
+								{
+									"key": "dateStart",
+									"value": "{{start-date}}",
+									"equals": true,
+									"description": ""
+								},
+								{
+									"key": "dateEnd",
+									"value": "{{end-date}}",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"description": "supported by: Fitbit, Google Fit, iHealth, Jawbone, Withings"
+					},
+					"response": [
+						{
+							"id": "fd62589f-5126-4fc0-bb16-881ef76cc5f8",
+							"name": "Fitbit (intraday @ 1min, truncated)",
+							"originalRequest": {
+								"url": {
+									"raw": "{{api-base-url}}/data/{{shim-key}}/heart_rate?username={{username}}&normalize={{normalize}}&dateStart={{start-date}}&dateEnd={{end-date}}",
+									"host": [
+										"{{api-base-url}}"
+									],
+									"path": [
+										"data",
+										"{{shim-key}}",
+										"heart_rate"
+									],
+									"query": [
+										{
+											"key": "username",
+											"value": "{{username}}",
+											"equals": true,
+											"description": ""
+										},
+										{
+											"key": "normalize",
+											"value": "{{normalize}}",
+											"equals": true,
+											"description": ""
+										},
+										{
+											"key": "dateStart",
+											"value": "{{start-date}}",
+											"equals": true,
+											"description": ""
+										},
+										{
+											"key": "dateEnd",
+											"value": "{{end-date}}",
+											"equals": true,
+											"description": ""
+										}
+									],
+									"variable": []
+								},
+								"method": "GET",
+								"header": [],
+								"body": {}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"_postman_previewtype": "text",
+							"header": [
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, no-store, max-age=0, must-revalidate",
+									"name": "Cache-Control",
+									"description": "Tells all caching mechanisms from server to client whether they may cache this object. It is measured in seconds"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json;charset=utf-8",
+									"name": "Content-Type",
+									"description": "The mime type of this content"
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 13 Aug 2017 22:45:41 GMT",
+									"name": "Date",
+									"description": "The date and time that the message was sent"
+								},
+								{
+									"key": "Expires",
+									"value": "0",
+									"name": "Expires",
+									"description": "Gives the date/time after which the response is considered stale"
+								},
+								{
+									"key": "Pragma",
+									"value": "no-cache",
+									"name": "Pragma",
+									"description": "Implementation-specific headers that may have various effects anywhere along the request-response chain."
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked",
+									"name": "Transfer-Encoding",
+									"description": "The form of encoding used to safely transfer the entity to the user. Currently defined methods are: chunked, compress, deflate, gzip, identity."
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff",
+									"name": "X-Content-Type-Options",
+									"description": "The only defined value, \"nosniff\", prevents Internet Explorer from MIME-sniffing a response away from the declared content-type"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "DENY",
+									"name": "X-Frame-Options",
+									"description": "Clickjacking protection: \"deny\" - no rendering within a frame, \"sameorigin\" - no rendering if origin mismatch"
+								},
+								{
+									"key": "X-XSS-Protection",
+									"value": "1; mode=block",
+									"name": "X-XSS-Protection",
+									"description": "Cross-site scripting (XSS) filter"
+								}
+							],
+							"responseTime": 1521,
+							"body": "{\n    \"shim\": \"fitbit\",\n    \"timeStamp\": 1502664343,\n    \"body\": [\n        {\n            \"header\": {\n                \"id\": \"027b944c-ac5b-4de8-87a6-b76e3fc602c4\",\n                \"creation_date_time\": \"2017-08-13T22:45:43.147Z\",\n                \"acquisition_provenance\": {\n                    \"source_name\": \"Fitbit Resource API\",\n                    \"external_id\": 1481629800\n                },\n                \"schema_id\": {\n                    \"namespace\": \"omh\",\n                    \"name\": \"heart-rate\",\n                    \"version\": \"1.1\"\n                }\n            },\n            \"body\": {\n                \"effective_time_frame\": {\n                    \"time_interval\": {\n                        \"start_date_time\": \"2016-12-13T11:50:00Z\",\n                        \"duration\": {\n                            \"unit\": \"min\",\n                            \"value\": 1\n                        }\n                    }\n                },\n                \"heart_rate\": {\n                    \"unit\": \"beats/min\",\n                    \"value\": 76\n                }\n            }\n        },\n        {\n            \"header\": {\n                \"id\": \"6df6c161-e7c4-4c25-93ff-f123a2d85d4e\",\n                \"creation_date_time\": \"2017-08-13T22:45:43.147Z\",\n                \"acquisition_provenance\": {\n                    \"source_name\": \"Fitbit Resource API\",\n                    \"external_id\": 1481629860\n                },\n                \"schema_id\": {\n                    \"namespace\": \"omh\",\n                    \"name\": \"heart-rate\",\n                    \"version\": \"1.1\"\n                }\n            },\n            \"body\": {\n                \"effective_time_frame\": {\n                    \"time_interval\": {\n                        \"start_date_time\": \"2016-12-13T11:51:00Z\",\n                        \"duration\": {\n                            \"unit\": \"min\",\n                            \"value\": 1\n                        }\n                    }\n                },\n                \"heart_rate\": {\n                    \"unit\": \"beats/min\",\n                    \"value\": 75\n                }\n            }\n        },\n        {\n            \"header\": {\n                \"id\": \"88ccec15-cf36-4455-bc76-29a70614644b\",\n                \"creation_date_time\": \"2017-08-13T22:45:43.147Z\",\n                \"acquisition_provenance\": {\n                    \"source_name\": \"Fitbit Resource API\",\n                    \"external_id\": 1481629920\n                },\n                \"schema_id\": {\n                    \"namespace\": \"omh\",\n                    \"name\": \"heart-rate\",\n                    \"version\": \"1.1\"\n                }\n            },\n            \"body\": {\n                \"effective_time_frame\": {\n                    \"time_interval\": {\n                        \"start_date_time\": \"2016-12-13T11:52:00Z\",\n                        \"duration\": {\n                            \"unit\": \"min\",\n                            \"value\": 1\n                        }\n                    }\n                },\n                \"heart_rate\": {\n                    \"unit\": \"beats/min\",\n                    \"value\": 75\n                }\n            }\n        },\n        {\n            \"header\": {\n                \"id\": \"6d7f0762-b761-4c5f-9ae7-a2bf7b7830fd\",\n                \"creation_date_time\": \"2017-08-13T22:45:43.148Z\",\n                \"acquisition_provenance\": {\n                    \"source_name\": \"Fitbit Resource API\",\n                    \"external_id\": 1481629980\n                },\n                \"schema_id\": {\n                    \"namespace\": \"omh\",\n                    \"name\": \"heart-rate\",\n                    \"version\": \"1.1\"\n                }\n            },\n            \"body\": {\n                \"effective_time_frame\": {\n                    \"time_interval\": {\n                        \"start_date_time\": \"2016-12-13T11:53:00Z\",\n                        \"duration\": {\n                            \"unit\": \"min\",\n                            \"value\": 1\n                        }\n                    }\n                },\n                \"heart_rate\": {\n                    \"unit\": \"beats/min\",\n                    \"value\": 75\n                }\n            }\n        },\n        {\n            \"header\": {\n                \"id\": \"ca78b10d-6100-4ee7-991e-067e898f76ed\",\n                \"creation_date_time\": \"2017-08-13T22:45:43.148Z\",\n                \"acquisition_provenance\": {\n                    \"source_name\": \"Fitbit Resource API\",\n                    \"external_id\": 1481630040\n                },\n                \"schema_id\": {\n                    \"namespace\": \"omh\",\n                    \"name\": \"heart-rate\",\n                    \"version\": \"1.1\"\n                }\n            },\n            \"body\": {\n                \"effective_time_frame\": {\n                    \"time_interval\": {\n                        \"start_date_time\": \"2016-12-13T11:54:00Z\",\n                        \"duration\": {\n                            \"unit\": \"min\",\n                            \"value\": 1\n                        }\n                    }\n                },\n                \"heart_rate\": {\n                    \"unit\": \"beats/min\",\n                    \"value\": 75\n                }\n            }\n        },\n        {\n            \"header\": {\n                \"id\": \"320ed227-5987-4fcd-a4b1-06f24947f705\",\n                \"creation_date_time\": \"2017-08-13T22:45:43.148Z\",\n                \"acquisition_provenance\": {\n                    \"source_name\": \"Fitbit Resource API\",\n                    \"external_id\": 1481630100\n                },\n                \"schema_id\": {\n                    \"namespace\": \"omh\",\n                    \"name\": \"heart-rate\",\n                    \"version\": \"1.1\"\n                }\n            },\n            \"body\": {\n                \"effective_time_frame\": {\n                    \"time_interval\": {\n                        \"start_date_time\": \"2016-12-13T11:55:00Z\",\n                        \"duration\": {\n                            \"unit\": \"min\",\n                            \"value\": 1\n                        }\n                    }\n                },\n                \"heart_rate\": {\n                    \"unit\": \"beats/min\",\n                    \"value\": 75\n                }\n            }\n        },\n        {\n            \"header\": {\n                \"id\": \"7e326c93-35c8-4b1a-b544-b03b114b7858\",\n                \"creation_date_time\": \"2017-08-13T22:45:43.148Z\",\n                \"acquisition_provenance\": {\n                    \"source_name\": \"Fitbit Resource API\",\n                    \"external_id\": 1481633820\n                },\n                \"schema_id\": {\n                    \"namespace\": \"omh\",\n                    \"name\": \"heart-rate\",\n                    \"version\": \"1.1\"\n                }\n            },\n            \"body\": {\n                \"effective_time_frame\": {\n                    \"time_interval\": {\n                        \"start_date_time\": \"2016-12-13T12:57:00Z\",\n                        \"duration\": {\n                            \"unit\": \"min\",\n                            \"value\": 1\n                        }\n                    }\n                },\n                \"heart_rate\": {\n                    \"unit\": \"beats/min\",\n                    \"value\": 104\n                }\n            }\n        },\n        {\n            \"header\": {\n                \"id\": \"b98a920d-d3b6-4a9a-8cb1-8c06a46ef8df\",\n                \"creation_date_time\": \"2017-08-13T22:45:43.148Z\",\n                \"acquisition_provenance\": {\n                    \"source_name\": \"Fitbit Resource API\",\n                    \"external_id\": 1481633880\n                },\n                \"schema_id\": {\n                    \"namespace\": \"omh\",\n                    \"name\": \"heart-rate\",\n                    \"version\": \"1.1\"\n                }\n            },\n            \"body\": {\n                \"effective_time_frame\": {\n                    \"time_interval\": {\n                        \"start_date_time\": \"2016-12-13T12:58:00Z\",\n                        \"duration\": {\n                            \"unit\": \"min\",\n                            \"value\": 1\n                        }\n                    }\n                },\n                \"heart_rate\": {\n                    \"unit\": \"beats/min\",\n                    \"value\": 106\n                }\n            }\n        },\n        {\n            \"header\": {\n                \"id\": \"5224b0ce-f1f3-45e8-9440-245d1f821c00\",\n                \"creation_date_time\": \"2017-08-13T22:45:43.148Z\",\n                \"acquisition_provenance\": {\n                    \"source_name\": \"Fitbit Resource API\",\n                    \"external_id\": 1481633940\n                },\n                \"schema_id\": {\n                    \"namespace\": \"omh\",\n                    \"name\": \"heart-rate\",\n                    \"version\": \"1.1\"\n                }\n            },\n            \"body\": {\n                \"effective_time_frame\": {\n                    \"time_interval\": {\n                        \"start_date_time\": \"2016-12-13T12:59:00Z\",\n                        \"duration\": {\n                            \"unit\": \"min\",\n                            \"value\": 1\n                        }\n                    }\n                },\n                \"heart_rate\": {\n                    \"unit\": \"beats/min\",\n                    \"value\": 110\n                }\n            }\n        },\n        {\n            \"header\": {\n                \"id\": \"9e5e6673-3b3b-445b-a5d2-360a5e119f19\",\n                \"creation_date_time\": \"2017-08-13T22:45:43.148Z\",\n                \"acquisition_provenance\": {\n                    \"source_name\": \"Fitbit Resource API\",\n                    \"external_id\": 1481634000\n                },\n                \"schema_id\": {\n                    \"namespace\": \"omh\",\n                    \"name\": \"heart-rate\",\n                    \"version\": \"1.1\"\n                }\n            },\n            \"body\": {\n                \"effective_time_frame\": {\n                    \"time_interval\": {\n                        \"start_date_time\": \"2016-12-13T13:00:00Z\",\n                        \"duration\": {\n                            \"unit\": \"min\",\n                            \"value\": 1\n                        }\n                    }\n                },\n                \"heart_rate\": {\n                    \"unit\": \"beats/min\",\n                    \"value\": 123\n                }\n            }\n        },\n        {\n            \"header\": {\n                \"id\": \"64c72e2f-7e3b-4b76-82b7-59329646f122\",\n                \"creation_date_time\": \"2017-08-13T22:45:43.148Z\",\n                \"acquisition_provenance\": {\n                    \"source_name\": \"Fitbit Resource API\",\n                    \"external_id\": 1481634060\n                },\n                \"schema_id\": {\n                    \"namespace\": \"omh\",\n                    \"name\": \"heart-rate\",\n                    \"version\": \"1.1\"\n                }\n            },\n            \"body\": {\n                \"effective_time_frame\": {\n                    \"time_interval\": {\n                        \"start_date_time\": \"2016-12-13T13:01:00Z\",\n                        \"duration\": {\n                            \"unit\": \"min\",\n                            \"value\": 1\n                        }\n                    }\n                },\n                \"heart_rate\": {\n                    \"unit\": \"beats/min\",\n                    \"value\": 125\n                }\n            }\n        },\n        {\n            \"header\": {\n                \"id\": \"e27ff2f4-78ed-498a-9936-baebe67f4fd5\",\n                \"creation_date_time\": \"2017-08-13T22:45:43.148Z\",\n                \"acquisition_provenance\": {\n                    \"source_name\": \"Fitbit Resource API\",\n                    \"external_id\": 1481634120\n                },\n                \"schema_id\": {\n                    \"namespace\": \"omh\",\n                    \"name\": \"heart-rate\",\n                    \"version\": \"1.1\"\n                }\n            },\n            \"body\": {\n                \"effective_time_frame\": {\n                    \"time_interval\": {\n                        \"start_date_time\": \"2016-12-13T13:02:00Z\",\n                        \"duration\": {\n                            \"unit\": \"min\",\n                            \"value\": 1\n                        }\n                    }\n                },\n                \"heart_rate\": {\n                    \"unit\": \"beats/min\",\n                    \"value\": 123\n                }\n            }\n        },\n        {\n            \"header\": {\n                \"id\": \"c2a6b7b4-6a24-454f-8a73-eb3e85ea4ebd\",\n                \"creation_date_time\": \"2017-08-13T22:45:43.148Z\",\n                \"acquisition_provenance\": {\n                    \"source_name\": \"Fitbit Resource API\",\n                    \"external_id\": 1481634180\n                },\n                \"schema_id\": {\n                    \"namespace\": \"omh\",\n                    \"name\": \"heart-rate\",\n                    \"version\": \"1.1\"\n                }\n            },\n            \"body\": {\n                \"effective_time_frame\": {\n                    \"time_interval\": {\n                        \"start_date_time\": \"2016-12-13T13:03:00Z\",\n                        \"duration\": {\n                            \"unit\": \"min\",\n                            \"value\": 1\n                        }\n                    }\n                },\n                \"heart_rate\": {\n                    \"unit\": \"beats/min\",\n                    \"value\": 116\n                }\n            }\n        },\n        {\n            \"header\": {\n                \"id\": \"2c6af00b-fe9c-463a-90a8-664207ea857d\",\n                \"creation_date_time\": \"2017-08-13T22:45:43.148Z\",\n                \"acquisition_provenance\": {\n                    \"source_name\": \"Fitbit Resource API\",\n                    \"external_id\": 1481634240\n                },\n                \"schema_id\": {\n                    \"namespace\": \"omh\",\n                    \"name\": \"heart-rate\",\n                    \"version\": \"1.1\"\n                }\n            },\n            \"body\": {\n                \"effective_time_frame\": {\n                    \"time_interval\": {\n                        \"start_date_time\": \"2016-12-13T13:04:00Z\",\n                        \"duration\": {\n                            \"unit\": \"min\",\n                            \"value\": 1\n                        }\n                    }\n                },\n                \"heart_rate\": {\n                    \"unit\": \"beats/min\",\n                    \"value\": 116\n                }\n            }\n        },\n        {\n            \"header\": {\n                \"id\": \"58d3c1ae-b191-4fa0-8b3f-433bad0ad1ae\",\n                \"creation_date_time\": \"2017-08-13T22:45:43.148Z\",\n                \"acquisition_provenance\": {\n                    \"source_name\": \"Fitbit Resource API\",\n                    \"external_id\": 1481634300\n                },\n                \"schema_id\": {\n                    \"namespace\": \"omh\",\n                    \"name\": \"heart-rate\",\n                    \"version\": \"1.1\"\n                }\n            },\n            \"body\": {\n                \"effective_time_frame\": {\n                    \"time_interval\": {\n                        \"start_date_time\": \"2016-12-13T13:05:00Z\",\n                        \"duration\": {\n                            \"unit\": \"min\",\n                            \"value\": 1\n                        }\n                    }\n                },\n                \"heart_rate\": {\n                    \"unit\": \"beats/min\",\n                    \"value\": 66\n                }\n            }\n        },\n        {\n            \"header\": {\n                \"id\": \"f0c59349-9e35-4fa8-a63f-a9db7145ad20\",\n                \"creation_date_time\": \"2017-08-13T22:45:43.149Z\",\n                \"acquisition_provenance\": {\n                    \"source_name\": \"Fitbit Resource API\",\n                    \"external_id\": 1481634360\n                },\n                \"schema_id\": {\n                    \"namespace\": \"omh\",\n                    \"name\": \"heart-rate\",\n                    \"version\": \"1.1\"\n                }\n            },\n            \"body\": {\n                \"effective_time_frame\": {\n                    \"time_interval\": {\n                        \"start_date_time\": \"2016-12-13T13:06:00Z\",\n                        \"duration\": {\n                            \"unit\": \"min\",\n                            \"value\": 1\n                        }\n                    }\n                },\n                \"heart_rate\": {\n                    \"unit\": \"beats/min\",\n                    \"value\": 59\n                }\n            }\n        },\n        {\n            \"header\": {\n                \"id\": \"1f156abf-ab87-4918-b67e-f26562931266\",\n                \"creation_date_time\": \"2017-08-13T22:45:43.149Z\",\n                \"acquisition_provenance\": {\n                    \"source_name\": \"Fitbit Resource API\",\n                    \"external_id\": 1481634420\n                },\n                \"schema_id\": {\n                    \"namespace\": \"omh\",\n                    \"name\": \"heart-rate\",\n                    \"version\": \"1.1\"\n                }\n            },\n            \"body\": {\n                \"effective_time_frame\": {\n                    \"time_interval\": {\n                        \"start_date_time\": \"2016-12-13T13:07:00Z\",\n                        \"duration\": {\n                            \"unit\": \"min\",\n                            \"value\": 1\n                        }\n                    }\n                },\n                \"heart_rate\": {\n                    \"unit\": \"beats/min\",\n                    \"value\": 62\n                }\n            }\n        },\n        {\n            \"header\": {\n                \"id\": \"37270cc0-57f4-4b9f-accc-38d5488b25d8\",\n                \"creation_date_time\": \"2017-08-13T22:45:43.149Z\",\n                \"acquisition_provenance\": {\n                    \"source_name\": \"Fitbit Resource API\",\n                    \"external_id\": 1481634480\n                },\n                \"schema_id\": {\n                    \"namespace\": \"omh\",\n                    \"name\": \"heart-rate\",\n                    \"version\": \"1.1\"\n                }\n            },\n            \"body\": {\n                \"effective_time_frame\": {\n                    \"time_interval\": {\n                        \"start_date_time\": \"2016-12-13T13:08:00Z\",\n                        \"duration\": {\n                            \"unit\": \"min\",\n                            \"value\": 1\n                        }\n                    }\n                },\n                \"heart_rate\": {\n                    \"unit\": \"beats/min\",\n                    \"value\": 57\n                }\n            }\n        },\n        {\n            \"header\": {\n                \"id\": \"a1a842f4-f327-4fd4-b952-2b8ef9bf201d\",\n                \"creation_date_time\": \"2017-08-13T22:45:43.149Z\",\n                \"acquisition_provenance\": {\n                    \"source_name\": \"Fitbit Resource API\",\n                    \"external_id\": 1481634540\n                },\n                \"schema_id\": {\n                    \"namespace\": \"omh\",\n                    \"name\": \"heart-rate\",\n                    \"version\": \"1.1\"\n                }\n            },\n            \"body\": {\n                \"effective_time_frame\": {\n                    \"time_interval\": {\n                        \"start_date_time\": \"2016-12-13T13:09:00Z\",\n                        \"duration\": {\n                            \"unit\": \"min\",\n                            \"value\": 1\n                        }\n                    }\n                },\n                \"heart_rate\": {\n                    \"unit\": \"beats/min\",\n                    \"value\": 56\n                }\n            }\n        },\n        {\n            \"header\": {\n                \"id\": \"9f724f42-5966-4b8f-99b2-484b4347decb\",\n                \"creation_date_time\": \"2017-08-13T22:45:43.149Z\",\n                \"acquisition_provenance\": {\n                    \"source_name\": \"Fitbit Resource API\",\n                    \"external_id\": 1481634600\n                },\n                \"schema_id\": {\n                    \"namespace\": \"omh\",\n                    \"name\": \"heart-rate\",\n                    \"version\": \"1.1\"\n                }\n            },\n            \"body\": {\n                \"effective_time_frame\": {\n                    \"time_interval\": {\n                        \"start_date_time\": \"2016-12-13T13:10:00Z\",\n                        \"duration\": {\n                            \"unit\": \"min\",\n                            \"value\": 1\n                        }\n                    }\n                },\n                \"heart_rate\": {\n                    \"unit\": \"beats/min\",\n                    \"value\": 56\n                }\n            }\n        },\n        {\n            \"header\": {\n                \"id\": \"04b09db4-a445-46fa-a1b0-0e1e1b874418\",\n                \"creation_date_time\": \"2017-08-13T22:45:43.149Z\",\n                \"acquisition_provenance\": {\n                    \"source_name\": \"Fitbit Resource API\",\n                    \"external_id\": 1481634660\n                },\n                \"schema_id\": {\n                    \"namespace\": \"omh\",\n                    \"name\": \"heart-rate\",\n                    \"version\": \"1.1\"\n                }\n            },\n            \"body\": {\n                \"effective_time_frame\": {\n                    \"time_interval\": {\n                        \"start_date_time\": \"2016-12-13T13:11:00Z\",\n                        \"duration\": {\n                            \"unit\": \"min\",\n                            \"value\": 1\n                        }\n                    }\n                },\n                \"heart_rate\": {\n                    \"unit\": \"beats/min\",\n                    \"value\": 64\n                }\n            }\n        },\n        {\n            \"header\": {\n                \"id\": \"10c4272b-1ae3-4cee-8f01-9d74950573fc\",\n                \"creation_date_time\": \"2017-08-13T22:45:43.149Z\",\n                \"acquisition_provenance\": {\n                    \"source_name\": \"Fitbit Resource API\",\n                    \"external_id\": 1481634720\n                },\n                \"schema_id\": {\n                    \"namespace\": \"omh\",\n                    \"name\": \"heart-rate\",\n                    \"version\": \"1.1\"\n                }\n            },\n            \"body\": {\n                \"effective_time_frame\": {\n                    \"time_interval\": {\n                        \"start_date_time\": \"2016-12-13T13:12:00Z\",\n                        \"duration\": {\n                            \"unit\": \"min\",\n                            \"value\": 1\n                        }\n                    }\n                },\n                \"heart_rate\": {\n                    \"unit\": \"beats/min\",\n                    \"value\": 63\n                }\n            }\n        },\n        {\n            \"header\": {\n                \"id\": \"f991f34a-80e9-4540-81d4-43d39810e1f4\",\n                \"creation_date_time\": \"2017-08-13T22:45:43.149Z\",\n                \"acquisition_provenance\": {\n                    \"source_name\": \"Fitbit Resource API\",\n                    \"external_id\": 1481634780\n                },\n                \"schema_id\": {\n                    \"namespace\": \"omh\",\n                    \"name\": \"heart-rate\",\n                    \"version\": \"1.1\"\n                }\n            },\n            \"body\": {\n                \"effective_time_frame\": {\n                    \"time_interval\": {\n                        \"start_date_time\": \"2016-12-13T13:13:00Z\",\n                        \"duration\": {\n                            \"unit\": \"min\",\n                            \"value\": 1\n                        }\n                    }\n                },\n                \"heart_rate\": {\n                    \"unit\": \"beats/min\",\n                    \"value\": 69\n                }\n            }\n        },\n        {\n            \"header\": {\n                \"id\": \"5e6de9bf-3511-49bb-a9a1-49db31fbb8e6\",\n                \"creation_date_time\": \"2017-08-13T22:45:43.149Z\",\n                \"acquisition_provenance\": {\n                    \"source_name\": \"Fitbit Resource API\",\n                    \"external_id\": 1481634840\n                },\n                \"schema_id\": {\n                    \"namespace\": \"omh\",\n                    \"name\": \"heart-rate\",\n                    \"version\": \"1.1\"\n                }\n            },\n            \"body\": {\n                \"effective_time_frame\": {\n                    \"time_interval\": {\n                        \"start_date_time\": \"2016-12-13T13:14:00Z\",\n                        \"duration\": {\n                            \"unit\": \"min\",\n                            \"value\": 1\n                        }\n                    }\n                },\n                \"heart_rate\": {\n                    \"unit\": \"beats/min\",\n                    \"value\": 66\n                }\n            }\n        },\n        {\n            \"header\": {\n                \"id\": \"e1f7180b-ee88-48bf-afd4-8ae55b1c2bc7\",\n                \"creation_date_time\": \"2017-08-13T22:45:43.149Z\",\n                \"acquisition_provenance\": {\n                    \"source_name\": \"Fitbit Resource API\",\n                    \"external_id\": 1481634900\n                },\n                \"schema_id\": {\n                    \"namespace\": \"omh\",\n                    \"name\": \"heart-rate\",\n                    \"version\": \"1.1\"\n                }\n            },\n            \"body\": {\n                \"effective_time_frame\": {\n                    \"time_interval\": {\n                        \"start_date_time\": \"2016-12-13T13:15:00Z\",\n                        \"duration\": {\n                            \"unit\": \"min\",\n                            \"value\": 1\n                        }\n                    }\n                },\n                \"heart_rate\": {\n                    \"unit\": \"beats/min\",\n                    \"value\": 63\n                }\n            }\n        },\n        {\n            \"header\": {\n                \"id\": \"d949a4cb-f674-43c7-9458-bb0f0593a305\",\n                \"creation_date_time\": \"2017-08-13T22:45:43.149Z\",\n                \"acquisition_provenance\": {\n                    \"source_name\": \"Fitbit Resource API\",\n                    \"external_id\": 1481634960\n                },\n                \"schema_id\": {\n                    \"namespace\": \"omh\",\n                    \"name\": \"heart-rate\",\n                    \"version\": \"1.1\"\n                }\n            },\n            \"body\": {\n                \"effective_time_frame\": {\n                    \"time_interval\": {\n                        \"start_date_time\": \"2016-12-13T13:16:00Z\",\n                        \"duration\": {\n                            \"unit\": \"min\",\n                            \"value\": 1\n                        }\n                    }\n                },\n                \"heart_rate\": {\n                    \"unit\": \"beats/min\",\n                    \"value\": 72\n                }\n            }\n        },\n        {\n            \"header\": {\n                \"id\": \"8bf3dca8-dfad-45cb-9b6b-9cbc42eabb2a\",\n                \"creation_date_time\": \"2017-08-13T22:45:43.149Z\",\n                \"acquisition_provenance\": {\n                    \"source_name\": \"Fitbit Resource API\",\n                    \"external_id\": 1481635020\n                },\n                \"schema_id\": {\n                    \"namespace\": \"omh\",\n                    \"name\": \"heart-rate\",\n                    \"version\": \"1.1\"\n                }\n            },\n            \"body\": {\n                \"effective_time_frame\": {\n                    \"time_interval\": {\n                        \"start_date_time\": \"2016-12-13T13:17:00Z\",\n                        \"duration\": {\n                            \"unit\": \"min\",\n                            \"value\": 1\n                        }\n                    }\n                },\n                \"heart_rate\": {\n                    \"unit\": \"beats/min\",\n                    \"value\": 59\n                }\n            }\n        },\n        {\n            \"header\": {\n                \"id\": \"7f6e9839-1e13-4e3a-b53e-1f08d0f1579a\",\n                \"creation_date_time\": \"2017-08-13T22:45:43.149Z\",\n                \"acquisition_provenance\": {\n                    \"source_name\": \"Fitbit Resource API\",\n                    \"external_id\": 1481635080\n                },\n                \"schema_id\": {\n                    \"namespace\": \"omh\",\n                    \"name\": \"heart-rate\",\n                    \"version\": \"1.1\"\n                }\n            },\n            \"body\": {\n                \"effective_time_frame\": {\n                    \"time_interval\": {\n                        \"start_date_time\": \"2016-12-13T13:18:00Z\",\n                        \"duration\": {\n                            \"unit\": \"min\",\n                            \"value\": 1\n                        }\n                    }\n                },\n                \"heart_rate\": {\n                    \"unit\": \"beats/min\",\n                    \"value\": 61\n                }\n            }\n        },\n        {\n            \"header\": {\n                \"id\": \"dcedb199-30fe-467e-97f1-db820a1f1ba6\",\n                \"creation_date_time\": \"2017-08-13T22:45:43.150Z\",\n                \"acquisition_provenance\": {\n                    \"source_name\": \"Fitbit Resource API\",\n                    \"external_id\": 1481635140\n                },\n                \"schema_id\": {\n                    \"namespace\": \"omh\",\n                    \"name\": \"heart-rate\",\n                    \"version\": \"1.1\"\n                }\n            },\n            \"body\": {\n                \"effective_time_frame\": {\n                    \"time_interval\": {\n                        \"start_date_time\": \"2016-12-13T13:19:00Z\",\n                        \"duration\": {\n                            \"unit\": \"min\",\n                            \"value\": 1\n                        }\n                    }\n                },\n                \"heart_rate\": {\n                    \"unit\": \"beats/min\",\n                    \"value\": 59\n                }\n            }\n        },\n        {\n            \"header\": {\n                \"id\": \"07898abb-aa83-4743-83c2-4a555b849fc7\",\n                \"creation_date_time\": \"2017-08-13T22:45:43.150Z\",\n                \"acquisition_provenance\": {\n                    \"source_name\": \"Fitbit Resource API\",\n                    \"external_id\": 1481635200\n                },\n                \"schema_id\": {\n                    \"namespace\": \"omh\",\n                    \"name\": \"heart-rate\",\n                    \"version\": \"1.1\"\n                }\n            },\n            \"body\": {\n                \"effective_time_frame\": {\n                    \"time_interval\": {\n                        \"start_date_time\": \"2016-12-13T13:20:00Z\",\n                        \"duration\": {\n                            \"unit\": \"min\",\n                            \"value\": 1\n                        }\n                    }\n                },\n                \"heart_rate\": {\n                    \"unit\": \"beats/min\",\n                    \"value\": 67\n                }\n            }\n        },\n        {\n            \"header\": {\n                \"id\": \"527b0fbc-6816-4751-99eb-c3f0332bf6dc\",\n                \"creation_date_time\": \"2017-08-13T22:45:43.150Z\",\n                \"acquisition_provenance\": {\n                    \"source_name\": \"Fitbit Resource API\",\n                    \"external_id\": 1481635260\n                },\n                \"schema_id\": {\n                    \"namespace\": \"omh\",\n                    \"name\": \"heart-rate\",\n                    \"version\": \"1.1\"\n                }\n            },\n            \"body\": {\n                \"effective_time_frame\": {\n                    \"time_interval\": {\n                        \"start_date_time\": \"2016-12-13T13:21:00Z\",\n                        \"duration\": {\n                            \"unit\": \"min\",\n                            \"value\": 1\n                        }\n                    }\n                },\n                \"heart_rate\": {\n                    \"unit\": \"beats/min\",\n                    \"value\": 61\n                }\n            }\n        }\n    ]\n}"
+						}
+					]
+				},
+				{
+					"name": "Get physical activity data points",
+					"request": {
+						"url": {
+							"raw": "{{api-base-url}}/data/{{shim-key}}/physical_activity?username={{username}}&normalize={{normalize}}&dateStart={{start-date}}&dateEnd={{end-date}}",
+							"host": [
+								"{{api-base-url}}"
+							],
+							"path": [
+								"data",
+								"{{shim-key}}",
+								"physical_activity"
+							],
+							"query": [
+								{
+									"key": "username",
+									"value": "{{username}}",
+									"equals": true,
+									"description": ""
+								},
+								{
+									"key": "normalize",
+									"value": "{{normalize}}",
+									"equals": true,
+									"description": ""
+								},
+								{
+									"key": "dateStart",
+									"value": "{{start-date}}",
+									"equals": true,
+									"description": ""
+								},
+								{
+									"key": "dateEnd",
+									"value": "{{end-date}}",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"description": "supported by: Fitbit, Google Fit, iHealth, Jawbone, Misfit, Moves, Runkeeper"
+					},
+					"response": []
+				},
+				{
+					"name": "Get step count data points",
+					"request": {
+						"url": {
+							"raw": "{{api-base-url}}/data/{{shim-key}}/step_count?username={{username}}&normalize={{normalize}}&dateStart={{start-date}}&dateEnd={{end-date}}",
+							"host": [
+								"{{api-base-url}}"
+							],
+							"path": [
+								"data",
+								"{{shim-key}}",
+								"step_count"
+							],
+							"query": [
+								{
+									"key": "username",
+									"value": "{{username}}",
+									"equals": true,
+									"description": ""
+								},
+								{
+									"key": "normalize",
+									"value": "{{normalize}}",
+									"equals": true,
+									"description": ""
+								},
+								{
+									"key": "dateStart",
+									"value": "{{start-date}}",
+									"equals": true,
+									"description": ""
+								},
+								{
+									"key": "dateEnd",
+									"value": "{{end-date}}",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"description": "supported by: Fitbit, Google Fit, iHealth, Jawbone, Misfit, Moves, Withings"
+					},
+					"response": [
+						{
+							"id": "262b01d8-f873-42ef-9b05-52e1d470cf00",
+							"name": "Fitbit (intraday @ 1min)",
+							"originalRequest": {
+								"url": {
+									"raw": "{{api-base-url}}/data/{{shim-key}}/step_count?username={{username}}&normalize={{normalize}}&dateStart={{start-date}}&dateEnd={{end-date}}",
+									"host": [
+										"{{api-base-url}}"
+									],
+									"path": [
+										"data",
+										"{{shim-key}}",
+										"step_count"
+									],
+									"query": [
+										{
+											"key": "username",
+											"value": "{{username}}",
+											"equals": true,
+											"description": ""
+										},
+										{
+											"key": "normalize",
+											"value": "{{normalize}}",
+											"equals": true,
+											"description": ""
+										},
+										{
+											"key": "dateStart",
+											"value": "{{start-date}}",
+											"equals": true,
+											"description": ""
+										},
+										{
+											"key": "dateEnd",
+											"value": "{{end-date}}",
+											"equals": true,
+											"description": ""
+										}
+									],
+									"variable": []
+								},
+								"method": "GET",
+								"header": [],
+								"body": {}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"_postman_previewtype": "text",
+							"header": [
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, no-store, max-age=0, must-revalidate",
+									"name": "Cache-Control",
+									"description": "Tells all caching mechanisms from server to client whether they may cache this object. It is measured in seconds"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json;charset=utf-8",
+									"name": "Content-Type",
+									"description": "The mime type of this content"
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 13 Aug 2017 22:34:41 GMT",
+									"name": "Date",
+									"description": "The date and time that the message was sent"
+								},
+								{
+									"key": "Expires",
+									"value": "0",
+									"name": "Expires",
+									"description": "Gives the date/time after which the response is considered stale"
+								},
+								{
+									"key": "Pragma",
+									"value": "no-cache",
+									"name": "Pragma",
+									"description": "Implementation-specific headers that may have various effects anywhere along the request-response chain."
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked",
+									"name": "Transfer-Encoding",
+									"description": "The form of encoding used to safely transfer the entity to the user. Currently defined methods are: chunked, compress, deflate, gzip, identity."
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff",
+									"name": "X-Content-Type-Options",
+									"description": "The only defined value, \"nosniff\", prevents Internet Explorer from MIME-sniffing a response away from the declared content-type"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "DENY",
+									"name": "X-Frame-Options",
+									"description": "Clickjacking protection: \"deny\" - no rendering within a frame, \"sameorigin\" - no rendering if origin mismatch"
+								},
+								{
+									"key": "X-XSS-Protection",
+									"value": "1; mode=block",
+									"name": "X-XSS-Protection",
+									"description": "Cross-site scripting (XSS) filter"
+								}
+							],
+							"responseTime": 3101,
+							"body": "{\"shim\":\"fitbit\",\"timeStamp\":1502663684,\"body\":[{\"header\":{\"id\":\"2ca34b79-2d79-4559-a266-3e19f73bb2b0\",\"creation_date_time\":\"2017-08-13T22:34:44.460Z\",\"acquisition_provenance\":{\"source_name\":\"Fitbit Resource API\",\"external_id\":1481587200},\"schema_id\":{\"namespace\":\"omh\",\"name\":\"step-count\",\"version\":\"2.0\"}},\"body\":{\"effective_time_frame\":{\"time_interval\":{\"start_date_time\":\"2016-12-13T00:00:00Z\",\"duration\":{\"unit\":\"min\",\"value\":1}}},\"step_count\":86}},{\"header\":{\"id\":\"f23799e4-4267-4978-9a44-7dc627cd4605\",\"creation_date_time\":\"2017-08-13T22:34:44.460Z\",\"acquisition_provenance\":{\"source_name\":\"Fitbit Resource API\",\"external_id\":1481587260},\"schema_id\":{\"namespace\":\"omh\",\"name\":\"step-count\",\"version\":\"2.0\"}},\"body\":{\"effective_time_frame\":{\"time_interval\":{\"start_date_time\":\"2016-12-13T00:01:00Z\",\"duration\":{\"unit\":\"min\",\"value\":1}}},\"step_count\":77}},{\"header\":{\"id\":\"72a20bb5-e672-40b4-bdfb-5af2015e985b\",\"creation_date_time\":\"2017-08-13T22:34:44.461Z\",\"acquisition_provenance\":{\"source_name\":\"Fitbit Resource API\",\"external_id\":1481587320},\"schema_id\":{\"namespace\":\"omh\",\"name\":\"step-count\",\"version\":\"2.0\"}},\"body\":{\"effective_time_frame\":{\"time_interval\":{\"start_date_time\":\"2016-12-13T00:02:00Z\",\"duration\":{\"unit\":\"min\",\"value\":1}}},\"step_count\":32}},{\"header\":{\"id\":\"ebec5b34-de7e-46c5-85bf-40e1bad75f24\",\"creation_date_time\":\"2017-08-13T22:34:44.462Z\",\"acquisition_provenance\":{\"source_name\":\"Fitbit Resource API\",\"external_id\":1481587380},\"schema_id\":{\"namespace\":\"omh\",\"name\":\"step-count\",\"version\":\"2.0\"}},\"body\":{\"effective_time_frame\":{\"time_interval\":{\"start_date_time\":\"2016-12-13T00:03:00Z\",\"duration\":{\"unit\":\"min\",\"value\":1}}},\"step_count\":4}},{\"header\":{\"id\":\"3a2fdaea-c39f-4db3-bb47-42edf56ee448\",\"creation_date_time\":\"2017-08-13T22:34:44.462Z\",\"acquisition_provenance\":{\"source_name\":\"Fitbit Resource API\",\"external_id\":1481587440},\"schema_id\":{\"namespace\":\"omh\",\"name\":\"step-count\",\"version\":\"2.0\"}},\"body\":{\"effective_time_frame\":{\"time_interval\":{\"start_date_time\":\"2016-12-13T00:04:00Z\",\"duration\":{\"unit\":\"min\",\"value\":1}}},\"step_count\":3}},{\"header\":{\"id\":\"3f1eb07b-6dcd-4cbe-91e6-db7e453f9af5\",\"creation_date_time\":\"2017-08-13T22:34:44.462Z\",\"acquisition_provenance\":{\"source_name\":\"Fitbit Resource API\",\"external_id\":1481587500},\"schema_id\":{\"namespace\":\"omh\",\"name\":\"step-count\",\"version\":\"2.0\"}},\"body\":{\"effective_time_frame\":{\"time_interval\":{\"start_date_time\":\"2016-12-13T00:05:00Z\",\"duration\":{\"unit\":\"min\",\"value\":1}}},\"step_count\":10}},{\"header\":{\"id\":\"e1306c8e-5791-49d7-bde0-7846a77fd19f\",\"creation_date_time\":\"2017-08-13T22:34:44.462Z\",\"acquisition_provenance\":{\"source_name\":\"Fitbit Resource API\",\"external_id\":1481587680},\"schema_id\":{\"namespace\":\"omh\",\"name\":\"step-count\",\"version\":\"2.0\"}},\"body\":{\"effective_time_frame\":{\"time_interval\":{\"start_date_time\":\"2016-12-13T00:08:00Z\",\"duration\":{\"unit\":\"min\",\"value\":1}}},\"step_count\":8}},{\"header\":{\"id\":\"6d31fbf5-c519-461c-8ec0-965b33c466b6\",\"creation_date_time\":\"2017-08-13T22:34:44.462Z\",\"acquisition_provenance\":{\"source_name\":\"Fitbit Resource API\",\"external_id\":1481587740},\"schema_id\":{\"namespace\":\"omh\",\"name\":\"step-count\",\"version\":\"2.0\"}},\"body\":{\"effective_time_frame\":{\"time_interval\":{\"start_date_time\":\"2016-12-13T00:09:00Z\",\"duration\":{\"unit\":\"min\",\"value\":1}}},\"step_count\":6}},{\"header\":{\"id\":\"966d6cfa-bc22-4633-88b1-3fe0b010cbb2\",\"creation_date_time\":\"2017-08-13T22:34:44.462Z\",\"acquisition_provenance\":{\"source_name\":\"Fitbit Resource API\",\"external_id\":1481588040},\"schema_id\":{\"namespace\":\"omh\",\"name\":\"step-count\",\"version\":\"2.0\"}},\"body\":{\"effective_time_frame\":{\"time_interval\":{\"start_date_time\":\"2016-12-13T00:14:00Z\",\"duration\":{\"unit\":\"min\",\"value\":1}}},\"step_count\":45}},{\"header\":{\"id\":\"122d8797-be87-4275-a904-62d162898365\",\"creation_date_time\":\"2017-08-13T22:34:44.462Z\",\"acquisition_provenance\":{\"source_name\":\"Fitbit Resource API\",\"external_id\":1481588100},\"schema_id\":{\"namespace\":\"omh\",\"name\":\"step-count\",\"version\":\"2.0\"}},\"body\":{\"effective_time_frame\":{\"time_interval\":{\"start_date_time\":\"2016-12-13T00:15:00Z\",\"duration\":{\"unit\":\"min\",\"value\":1}}},\"step_count\":79}},{\"header\":{\"id\":\"ddb5ffa3-a98a-4b0d-9358-98e20f986671\",\"creation_date_time\":\"2017-08-13T22:34:44.462Z\",\"acquisition_provenance\":{\"source_name\":\"Fitbit Resource API\",\"external_id\":1481588280},\"schema_id\":{\"namespace\":\"omh\",\"name\":\"step-count\",\"version\":\"2.0\"}},\"body\":{\"effective_time_frame\":{\"time_interval\":{\"start_date_time\":\"2016-12-13T00:18:00Z\",\"duration\":{\"unit\":\"min\",\"value\":1}}},\"step_count\":15}},{\"header\":{\"id\":\"a2dceb3e-fd69-464b-8350-70bdb5ae99b6\",\"creation_date_time\":\"2017-08-13T22:34:44.463Z\",\"acquisition_provenance\":{\"source_name\":\"Fitbit Resource API\",\"external_id\":1481588340},\"schema_id\":{\"namespace\":\"omh\",\"name\":\"step-count\",\"version\":\"2.0\"}},\"body\":{\"effective_time_frame\":{\"time_interval\":{\"start_date_time\":\"2016-12-13T00:19:00Z\",\"duration\":{\"unit\":\"min\",\"value\":1}}},\"step_count\":14}},{\"header\":{\"id\":\"3fd3ce00-ab13-45a5-8ca0-a92c61a77e7a\",\"creation_date_time\":\"2017-08-13T22:34:44.463Z\",\"acquisition_provenance\":{\"source_name\":\"Fitbit Resource API\",\"external_id\":1481588580},\"schema_id\":{\"namespace\":\"omh\",\"name\":\"step-count\",\"version\":\"2.0\"}},\"body\":{\"effective_time_frame\":{\"time_interval\":{\"start_date_time\":\"2016-12-13T00:23:00Z\",\"duration\":{\"unit\":\"min\",\"value\":1}}},\"step_count\":8}},{\"header\":{\"id\":\"1f6e707c-64c7-44ba-a7cc-a7ae18f8a4b1\",\"creation_date_time\":\"2017-08-13T22:34:44.463Z\",\"acquisition_provenance\":{\"source_name\":\"Fitbit Resource API\",\"external_id\":1481588700},\"schema_id\":{\"namespace\":\"omh\",\"name\":\"step-count\",\"version\":\"2.0\"}},\"body\":{\"effective_time_frame\":{\"time_interval\":{\"start_date_time\":\"2016-12-13T00:25:00Z\",\"duration\":{\"unit\":\"min\",\"value\":1}}},\"step_count\":7}},{\"header\":{\"id\":\"610cc0c8-a122-44f4-9499-bd6b5f00a347\",\"creation_date_time\":\"2017-08-13T22:34:44.463Z\",\"acquisition_provenance\":{\"source_name\":\"Fitbit Resource API\",\"external_id\":1481601060},\"schema_id\":{\"namespace\":\"omh\",\"name\":\"step-count\",\"version\":\"2.0\"}},\"body\":{\"effective_time_frame\":{\"time_interval\":{\"start_date_time\":\"2016-12-13T03:51:00Z\",\"duration\":{\"unit\":\"min\",\"value\":1}}},\"step_count\":5}},{\"header\":{\"id\":\"87133226-e523-484c-9e0f-abb8714b8797\",\"creation_date_time\":\"2017-08-13T22:34:44.463Z\",\"acquisition_provenance\":{\"source_name\":\"Fitbit Resource API\",\"external_id\":1481601120},\"schema_id\":{\"namespace\":\"omh\",\"name\":\"step-count\",\"version\":\"2.0\"}},\"body\":{\"effective_time_frame\":{\"time_interval\":{\"start_date_time\":\"2016-12-13T03:52:00Z\",\"duration\":{\"unit\":\"min\",\"value\":1}}},\"step_count\":24}},{\"header\":{\"id\":\"e619bb1e-d91a-4e3b-b4d0-bce9b8d308c3\",\"creation_date_time\":\"2017-08-13T22:34:44.463Z\",\"acquisition_provenance\":{\"source_name\":\"Fitbit Resource API\",\"external_id\":1481601480},\"schema_id\":{\"namespace\":\"omh\",\"name\":\"step-count\",\"version\":\"2.0\"}},\"body\":{\"effective_time_frame\":{\"time_interval\":{\"start_date_time\":\"2016-12-13T03:58:00Z\",\"duration\":{\"unit\":\"min\",\"value\":1}}},\"step_count\":17}},{\"header\":{\"id\":\"713b449e-5c71-432e-a24c-2146a9f804ed\",\"creation_date_time\":\"2017-08-13T22:34:44.463Z\",\"acquisition_provenance\":{\"source_name\":\"Fitbit Resource API\",\"external_id\":1481601540},\"schema_id\":{\"namespace\":\"omh\",\"name\":\"step-count\",\"version\":\"2.0\"}},\"body\":{\"effective_time_frame\":{\"time_interval\":{\"start_date_time\":\"2016-12-13T03:59:00Z\",\"duration\":{\"unit\":\"min\",\"value\":1}}},\"step_count\":75}},{\"header\":{\"id\":\"78322799-44ea-46ea-aeef-f7bf3a85aa2b\",\"creation_date_time\":\"2017-08-13T22:34:44.464Z\",\"acquisition_provenance\":{\"source_name\":\"Fitbit Resource API\",\"external_id\":1481601600},\"schema_id\":{\"namespace\":\"omh\",\"name\":\"step-count\",\"version\":\"2.0\"}},\"body\":{\"effective_time_frame\":{\"time_interval\":{\"start_date_time\":\"2016-12-13T04:00:00Z\",\"duration\":{\"unit\":\"min\",\"value\":1}}},\"step_count\":7}},{\"header\":{\"id\":\"98297e84-f24c-474b-88da-f056806b11cc\",\"creation_date_time\":\"2017-08-13T22:34:44.464Z\",\"acquisition_provenance\":{\"source_name\":\"Fitbit Resource API\",\"external_id\":1481609160},\"schema_id\":{\"namespace\":\"omh\",\"name\":\"step-count\",\"version\":\"2.0\"}},\"body\":{\"effective_time_frame\":{\"time_interval\":{\"start_date_time\":\"2016-12-13T06:06:00Z\",\"duration\":{\"unit\":\"min\",\"value\":1}}},\"step_count\":7}},{\"header\":{\"id\":\"2c4baf64-3b4a-433e-a5e9-da9180cdd19c\",\"creation_date_time\":\"2017-08-13T22:34:44.464Z\",\"acquisition_provenance\":{\"source_name\":\"Fitbit Resource API\",\"external_id\":1481609220},\"schema_id\":{\"namespace\":\"omh\",\"name\":\"step-count\",\"version\":\"2.0\"}},\"body\":{\"effective_time_frame\":{\"time_interval\":{\"start_date_time\":\"2016-12-13T06:07:00Z\",\"duration\":{\"unit\":\"min\",\"value\":1}}},\"step_count\":55}},{\"header\":{\"id\":\"f56748ff-2297-4021-bf4d-9f00cafbf852\",\"creation_date_time\":\"2017-08-13T22:34:44.464Z\",\"acquisition_provenance\":{\"source_name\":\"Fitbit Resource API\",\"external_id\":1481609280},\"schema_id\":{\"namespace\":\"omh\",\"name\":\"step-count\",\"version\":\"2.0\"}},\"body\":{\"effective_time_frame\":{\"time_interval\":{\"start_date_time\":\"2016-12-13T06:08:00Z\",\"duration\":{\"unit\":\"min\",\"value\":1}}},\"step_count\":92}},{\"header\":{\"id\":\"2451d754-44b6-4377-893f-9fd6b45fa1f4\",\"creation_date_time\":\"2017-08-13T22:34:44.464Z\",\"acquisition_provenance\":{\"source_name\":\"Fitbit Resource API\",\"external_id\":1481609340},\"schema_id\":{\"namespace\":\"omh\",\"name\":\"step-count\",\"version\":\"2.0\"}},\"body\":{\"effective_time_frame\":{\"time_interval\":{\"start_date_time\":\"2016-12-13T06:09:00Z\",\"duration\":{\"unit\":\"min\",\"value\":1}}},\"step_count\":104}},{\"header\":{\"id\":\"684963f0-c905-49a7-901a-3564f7c949c2\",\"creation_date_time\":\"2017-08-13T22:34:44.464Z\",\"acquisition_provenance\":{\"source_name\":\"Fitbit Resource API\",\"external_id\":1481609400},\"schema_id\":{\"namespace\":\"omh\",\"name\":\"step-count\",\"version\":\"2.0\"}},\"body\":{\"effective_time_frame\":{\"time_interval\":{\"start_date_time\":\"2016-12-13T06:10:00Z\",\"duration\":{\"unit\":\"min\",\"value\":1}}},\"step_count\":104}},{\"header\":{\"id\":\"cc6a7c89-dc00-4fff-ac84-7ef686fb0c34\",\"creation_date_time\":\"2017-08-13T22:34:44.464Z\",\"acquisition_provenance\":{\"source_name\":\"Fitbit Resource API\",\"external_id\":1481609460},\"schema_id\":{\"namespace\":\"omh\",\"name\":\"step-count\",\"version\":\"2.0\"}},\"body\":{\"effective_time_frame\":{\"time_interval\":{\"start_date_time\":\"2016-12-13T06:11:00Z\",\"duration\":{\"unit\":\"min\",\"value\":1}}},\"step_count\":102}},{\"header\":{\"id\":\"c3deb3dc-ad25-4bfe-be4d-d03876851190\",\"creation_date_time\":\"2017-08-13T22:34:44.464Z\",\"acquisition_provenance\":{\"source_name\":\"Fitbit Resource API\",\"external_id\":1481609520},\"schema_id\":{\"namespace\":\"omh\",\"name\":\"step-count\",\"version\":\"2.0\"}},\"body\":{\"effective_time_frame\":{\"time_interval\":{\"start_date_time\":\"2016-12-13T06:12:00Z\",\"duration\":{\"unit\":\"min\",\"value\":1}}},\"step_count\":83}},{\"header\":{\"id\":\"d45a66f3-e724-4a6e-85a5-016701ca2e92\",\"creation_date_time\":\"2017-08-13T22:34:44.465Z\",\"acquisition_provenance\":{\"source_name\":\"Fitbit Resource API\",\"external_id\":1481609580},\"schema_id\":{\"namespace\":\"omh\",\"name\":\"step-count\",\"version\":\"2.0\"}},\"body\":{\"effective_time_frame\":{\"time_interval\":{\"start_date_time\":\"2016-12-13T06:13:00Z\",\"duration\":{\"unit\":\"min\",\"value\":1}}},\"step_count\":83}},{\"header\":{\"id\":\"d559b995-0658-4946-b76c-8d0c38c8204a\",\"creation_date_time\":\"2017-08-13T22:34:44.465Z\",\"acquisition_provenance\":{\"source_name\":\"Fitbit Resource API\",\"external_id\":1481609640},\"schema_id\":{\"namespace\":\"omh\",\"name\":\"step-count\",\"version\":\"2.0\"}},\"body\":{\"effective_time_frame\":{\"time_interval\":{\"start_date_time\":\"2016-12-13T06:14:00Z\",\"duration\":{\"unit\":\"min\",\"value\":1}}},\"step_count\":96}},{\"header\":{\"id\":\"c4304f89-4f58-4074-8d16-a7adde00a403\",\"creation_date_time\":\"2017-08-13T22:34:44.465Z\",\"acquisition_provenance\":{\"source_name\":\"Fitbit Resource API\",\"external_id\":1481609700},\"schema_id\":{\"namespace\":\"omh\",\"name\":\"step-count\",\"version\":\"2.0\"}},\"body\":{\"effective_time_frame\":{\"time_interval\":{\"start_date_time\":\"2016-12-13T06:15:00Z\",\"duration\":{\"unit\":\"min\",\"value\":1}}},\"step_count\":13}},{\"header\":{\"id\":\"f9185430-3839-47ba-9315-8c074cfbaa2a\",\"creation_date_time\":\"2017-08-13T22:34:44.465Z\",\"acquisition_provenance\":{\"source_name\":\"Fitbit Resource API\",\"external_id\":1481609760},\"schema_id\":{\"namespace\":\"omh\",\"name\":\"step-count\",\"version\":\"2.0\"}},\"body\":{\"effective_time_frame\":{\"time_interval\":{\"start_date_time\":\"2016-12-13T06:16:00Z\",\"duration\":{\"unit\":\"min\",\"value\":1}}},\"step_count\":15}},{\"header\":{\"id\":\"564d03b3-0e3f-47e5-b11c-9d5ac322ede7\",\"creation_date_time\":\"2017-08-13T22:34:44.465Z\",\"acquisition_provenance\":{\"source_name\":\"Fitbit Resource API\",\"external_id\":1481609820},\"schema_id\":{\"namespace\":\"omh\",\"name\":\"step-count\",\"version\":\"2.0\"}},\"body\":{\"effective_time_frame\":{\"time_interval\":{\"start_date_time\":\"2016-12-13T06:17:00Z\",\"duration\":{\"unit\":\"min\",\"value\":1}}},\"step_count\":10}},{\"header\":{\"id\":\"5dc17abe-470c-4594-b7bf-0b19781f7f2e\",\"creation_date_time\":\"2017-08-13T22:34:44.465Z\",\"acquisition_provenance\":{\"source_name\":\"Fitbit Resource API\",\"external_id\":1481609880},\"schema_id\":{\"namespace\":\"omh\",\"name\":\"step-count\",\"version\":\"2.0\"}},\"body\":{\"effective_time_frame\":{\"time_interval\":{\"start_date_time\":\"2016-12-13T06:18:00Z\",\"duration\":{\"unit\":\"min\",\"value\":1}}},\"step_count\":23}},{\"header\":{\"id\":\"6deec32f-5dec-4a64-8561-d1f143c8194d\",\"creation_date_time\":\"2017-08-13T22:34:44.465Z\",\"acquisition_provenance\":{\"source_name\":\"Fitbit Resource API\",\"external_id\":1481609940},\"schema_id\":{\"namespace\":\"omh\",\"name\":\"step-count\",\"version\":\"2.0\"}},\"body\":{\"effective_time_frame\":{\"time_interval\":{\"start_date_time\":\"2016-12-13T06:19:00Z\",\"duration\":{\"unit\":\"min\",\"value\":1}}},\"step_count\":7}},{\"header\":{\"id\":\"7245a69d-f64d-4e62-90ae-fdff6497c29b\",\"creation_date_time\":\"2017-08-13T22:34:44.465Z\",\"acquisition_provenance\":{\"source_name\":\"Fitbit Resource API\",\"external_id\":1481610120},\"schema_id\":{\"namespace\":\"omh\",\"name\":\"step-count\",\"version\":\"2.0\"}},\"body\":{\"effective_time_frame\":{\"time_interval\":{\"start_date_time\":\"2016-12-13T06:22:00Z\",\"duration\":{\"unit\":\"min\",\"value\":1}}},\"step_count\":33}},{\"header\":{\"id\":\"5c21a86b-f732-462d-b2bf-54ce07ee503d\",\"creation_date_time\":\"2017-08-13T22:34:44.465Z\",\"acquisition_provenance\":{\"source_name\":\"Fitbit Resource API\",\"external_id\":1481610180},\"schema_id\":{\"namespace\":\"omh\",\"name\":\"step-count\",\"version\":\"2.0\"}},\"body\":{\"effective_time_frame\":{\"time_interval\":{\"start_date_time\":\"2016-12-13T06:23:00Z\",\"duration\":{\"unit\":\"min\",\"value\":1}}},\"step_count\":68}},{\"header\":{\"id\":\"adc98036-74a5-414b-9356-3f2ed977acbd\",\"creation_date_time\":\"2017-08-13T22:34:44.466Z\",\"acquisition_provenance\":{\"source_name\":\"Fitbit Resource API\",\"external_id\":1481610240},\"schema_id\":{\"namespace\":\"omh\",\"name\":\"step-count\",\"version\":\"2.0\"}},\"body\":{\"effective_time_frame\":{\"time_interval\":{\"start_date_time\":\"2016-12-13T06:24:00Z\",\"duration\":{\"unit\":\"min\",\"value\":1}}},\"step_count\":10}},{\"header\":{\"id\":\"59403bf4-97fd-42a3-a5e1-801e356bdfa5\",\"creation_date_time\":\"2017-08-13T22:34:44.466Z\",\"acquisition_provenance\":{\"source_name\":\"Fitbit Resource API\",\"external_id\":1481610300},\"schema_id\":{\"namespace\":\"omh\",\"name\":\"step-count\",\"version\":\"2.0\"}},\"body\":{\"effective_time_frame\":{\"time_interval\":{\"start_date_time\":\"2016-12-13T06:25:00Z\",\"duration\":{\"unit\":\"min\",\"value\":1}}},\"step_count\":38}},{\"header\":{\"id\":\"ed54dad5-2359-4bee-a0ba-b525e6def7cb\",\"creation_date_time\":\"2017-08-13T22:34:44.466Z\",\"acquisition_provenance\":{\"source_name\":\"Fitbit Resource API\",\"external_id\":1481610420},\"schema_id\":{\"namespace\":\"omh\",\"name\":\"step-count\",\"version\":\"2.0\"}},\"body\":{\"effective_time_frame\":{\"time_interval\":{\"start_date_time\":\"2016-12-13T06:27:00Z\",\"duration\":{\"unit\":\"min\",\"value\":1}}},\"step_count\":7}},{\"header\":{\"id\":\"f0b4e247-457b-4914-a39a-93a2f75ff5a9\",\"creation_date_time\":\"2017-08-13T22:34:44.470Z\",\"acquisition_provenance\":{\"source_name\":\"Fitbit Resource API\",\"external_id\":1481610480},\"schema_id\":{\"namespace\":\"omh\",\"name\":\"step-count\",\"version\":\"2.0\"}},\"body\":{\"effective_time_frame\":{\"time_interval\":{\"start_date_time\":\"2016-12-13T06:28:00Z\",\"duration\":{\"unit\":\"min\",\"value\":1}}},\"step_count\":20}},{\"header\":{\"id\":\"928d74da-428b-411d-974e-b44c2a15ea30\",\"creation_date_time\":\"2017-08-13T22:34:44.470Z\",\"acquisition_provenance\":{\"source_name\":\"Fitbit Resource API\",\"external_id\":1481610540},\"schema_id\":{\"namespace\":\"omh\",\"name\":\"step-count\",\"version\":\"2.0\"}},\"body\":{\"effective_time_frame\":{\"time_interval\":{\"start_date_time\":\"2016-12-13T06:29:00Z\",\"duration\":{\"unit\":\"min\",\"value\":1}}},\"step_count\":11}},{\"header\":{\"id\":\"5e2d7817-7705-47be-b295-6ef94b130b4a\",\"creation_date_time\":\"2017-08-13T22:34:44.471Z\",\"acquisition_provenance\":{\"source_name\":\"Fitbit Resource API\",\"external_id\":1481611500},\"schema_id\":{\"namespace\":\"omh\",\"name\":\"step-count\",\"version\":\"2.0\"}},\"body\":{\"effective_time_frame\":{\"time_interval\":{\"start_date_time\":\"2016-12-13T06:45:00Z\",\"duration\":{\"unit\":\"min\",\"value\":1}}},\"step_count\":10}},{\"header\":{\"id\":\"6aae383a-bf75-497e-b79c-6420e7092f2a\",\"creation_date_time\":\"2017-08-13T22:34:44.471Z\",\"acquisition_provenance\":{\"source_name\":\"Fitbit Resource API\",\"external_id\":1481612700},\"schema_id\":{\"namespace\":\"omh\",\"name\":\"step-count\",\"version\":\"2.0\"}},\"body\":{\"effective_time_frame\":{\"time_interval\":{\"start_date_time\":\"2016-12-13T07:05:00Z\",\"duration\":{\"unit\":\"min\",\"value\":1}}},\"step_count\":8}},{\"header\":{\"id\":\"b52448bf-ca78-40b8-8018-103cee112d63\",\"creation_date_time\":\"2017-08-13T22:34:44.471Z\",\"acquisition_provenance\":{\"source_name\":\"Fitbit Resource API\",\"external_id\":1481612820},\"schema_id\":{\"namespace\":\"omh\",\"name\":\"step-count\",\"version\":\"2.0\"}},\"body\":{\"effective_time_frame\":{\"time_interval\":{\"start_date_time\":\"2016-12-13T07:07:00Z\",\"duration\":{\"unit\":\"min\",\"value\":1}}},\"step_count\":16}},{\"header\":{\"id\":\"0b8cf8fd-aaae-4cf6-8060-9384bf46ba3c\",\"creation_date_time\":\"2017-08-13T22:34:44.471Z\",\"acquisition_provenance\":{\"source_name\":\"Fitbit Resource API\",\"external_id\":1481612880},\"schema_id\":{\"namespace\":\"omh\",\"name\":\"step-count\",\"version\":\"2.0\"}},\"body\":{\"effective_time_frame\":{\"time_interval\":{\"start_date_time\":\"2016-12-13T07:08:00Z\",\"duration\":{\"unit\":\"min\",\"value\":1}}},\"step_count\":45}},{\"header\":{\"id\":\"3d02a30d-8748-4377-b71f-85d50a8d0137\",\"creation_date_time\":\"2017-08-13T22:34:44.471Z\",\"acquisition_provenance\":{\"source_name\":\"Fitbit Resource API\",\"external_id\":1481612940},\"schema_id\":{\"namespace\":\"omh\",\"name\":\"step-count\",\"version\":\"2.0\"}},\"body\":{\"effective_time_frame\":{\"time_interval\":{\"start_date_time\":\"2016-12-13T07:09:00Z\",\"duration\":{\"unit\":\"min\",\"value\":1}}},\"step_count\":49}},{\"header\":{\"id\":\"5716676a-8632-4351-9452-c2df695fab7c\",\"creation_date_time\":\"2017-08-13T22:34:44.471Z\",\"acquisition_provenance\":{\"source_name\":\"Fitbit Resource API\",\"external_id\":1481613000},\"schema_id\":{\"namespace\":\"omh\",\"name\":\"step-count\",\"version\":\"2.0\"}},\"body\":{\"effective_time_frame\":{\"time_interval\":{\"start_date_time\":\"2016-12-13T07:10:00Z\",\"duration\":{\"unit\":\"min\",\"value\":1}}},\"step_count\":1}},{\"header\":{\"id\":\"77d54c9d-c6ef-421a-ada8-1c2cbb3ec6d1\",\"creation_date_time\":\"2017-08-13T22:34:44.471Z\",\"acquisition_provenance\":{\"source_name\":\"Fitbit Resource API\",\"external_id\":1481613060},\"schema_id\":{\"namespace\":\"omh\",\"name\":\"step-count\",\"version\":\"2.0\"}},\"body\":{\"effective_time_frame\":{\"time_interval\":{\"start_date_time\":\"2016-12-13T07:11:00Z\",\"duration\":{\"unit\":\"min\",\"value\":1}}},\"step_count\":5}},{\"header\":{\"id\":\"9900cf09-0241-4ccd-862a-d7eebbe8b587\",\"creation_date_time\":\"2017-08-13T22:34:44.471Z\",\"acquisition_provenance\":{\"source_name\":\"Fitbit Resource API\",\"external_id\":1481613120},\"schema_id\":{\"namespace\":\"omh\",\"name\":\"step-count\",\"version\":\"2.0\"}},\"body\":{\"effective_time_frame\":{\"time_interval\":{\"start_date_time\":\"2016-12-13T07:12:00Z\",\"duration\":{\"unit\":\"min\",\"value\":1}}},\"step_count\":9}},{\"header\":{\"id\":\"26571552-026a-45c9-9e0f-7dd2ec2ac033\",\"creation_date_time\":\"2017-08-13T22:34:44.471Z\",\"acquisition_provenance\":{\"source_name\":\"Fitbit Resource API\",\"external_id\":1481613180},\"schema_id\":{\"namespace\":\"omh\",\"name\":\"step-count\",\"version\":\"2.0\"}},\"body\":{\"effective_time_frame\":{\"time_interval\":{\"start_date_time\":\"2016-12-13T07:13:00Z\",\"duration\":{\"unit\":\"min\",\"value\":1}}},\"step_count\":14}},{\"header\":{\"id\":\"3915f0ce-bd17-4280-9113-118bcea51d3e\",\"creation_date_time\":\"2017-08-13T22:34:44.471Z\",\"acquisition_provenance\":{\"source_name\":\"Fitbit Resource API\",\"external_id\":1481627160},\"schema_id\":{\"namespace\":\"omh\",\"name\":\"step-count\",\"version\":\"2.0\"}},\"body\":{\"effective_time_frame\":{\"time_interval\":{\"start_date_time\":\"2016-12-13T11:06:00Z\",\"duration\":{\"unit\":\"min\",\"value\":1}}},\"step_count\":22}},{\"header\":{\"id\":\"4f0183b1-0582-4bcd-8068-0068caff0400\",\"creation_date_time\":\"2017-08-13T22:34:44.471Z\",\"acquisition_provenance\":{\"source_name\":\"Fitbit Resource API\",\"external_id\":1481627220},\"schema_id\":{\"namespace\":\"omh\",\"name\":\"step-count\",\"version\":\"2.0\"}},\"body\":{\"effective_time_frame\":{\"time_interval\":{\"start_date_time\":\"2016-12-13T11:07:00Z\",\"duration\":{\"unit\":\"min\",\"value\":1}}},\"step_count\":34}},{\"header\":{\"id\":\"fca98ec3-cb91-4b8c-80a1-fd465dc8a902\",\"creation_date_time\":\"2017-08-13T22:34:44.472Z\",\"acquisition_provenance\":{\"source_name\":\"Fitbit Resource API\",\"external_id\":1481627280},\"schema_id\":{\"namespace\":\"omh\",\"name\":\"step-count\",\"version\":\"2.0\"}},\"body\":{\"effective_time_frame\":{\"time_interval\":{\"start_date_time\":\"2016-12-13T11:08:00Z\",\"duration\":{\"unit\":\"min\",\"value\":1}}},\"step_count\":23}},{\"header\":{\"id\":\"e87079e8-f17f-4835-b84a-411fdcea7463\",\"creation_date_time\":\"2017-08-13T22:34:44.472Z\",\"acquisition_provenance\":{\"source_name\":\"Fitbit Resource API\",\"external_id\":1481627340},\"schema_id\":{\"namespace\":\"omh\",\"name\":\"step-count\",\"version\":\"2.0\"}},\"body\":{\"effective_time_frame\":{\"time_interval\":{\"start_date_time\":\"2016-12-13T11:09:00Z\",\"duration\":{\"unit\":\"min\",\"value\":1}}},\"step_count\":16}},{\"header\":{\"id\":\"75fdad6c-8add-42b8-a4d4-aac34bccd1de\",\"creation_date_time\":\"2017-08-13T22:34:44.472Z\",\"acquisition_provenance\":{\"source_name\":\"Fitbit Resource API\",\"external_id\":1481627400},\"schema_id\":{\"namespace\":\"omh\",\"name\":\"step-count\",\"version\":\"2.0\"}},\"body\":{\"effective_time_frame\":{\"time_interval\":{\"start_date_time\":\"2016-12-13T11:10:00Z\",\"duration\":{\"unit\":\"min\",\"value\":1}}},\"step_count\":36}},{\"header\":{\"id\":\"4a8e2cfa-fdee-4dab-8504-5d3a52954c31\",\"creation_date_time\":\"2017-08-13T22:34:44.472Z\",\"acquisition_provenance\":{\"source_name\":\"Fitbit Resource API\",\"external_id\":1481627460},\"schema_id\":{\"namespace\":\"omh\",\"name\":\"step-count\",\"version\":\"2.0\"}},\"body\":{\"effective_time_frame\":{\"time_interval\":{\"start_date_time\":\"2016-12-13T11:11:00Z\",\"duration\":{\"unit\":\"min\",\"value\":1}}},\"step_count\":30}},{\"header\":{\"id\":\"847d83f2-d7af-4e07-8f11-ef75cf8fb731\",\"creation_date_time\":\"2017-08-13T22:34:44.472Z\",\"acquisition_provenance\":{\"source_name\":\"Fitbit Resource API\",\"external_id\":1481627520},\"schema_id\":{\"namespace\":\"omh\",\"name\":\"step-count\",\"version\":\"2.0\"}},\"body\":{\"effective_time_frame\":{\"time_interval\":{\"start_date_time\":\"2016-12-13T11:12:00Z\",\"duration\":{\"unit\":\"min\",\"value\":1}}},\"step_count\":55}},{\"header\":{\"id\":\"bc1365fc-d673-49eb-b3bb-bb74c00d3005\",\"creation_date_time\":\"2017-08-13T22:34:44.472Z\",\"acquisition_provenance\":{\"source_name\":\"Fitbit Resource API\",\"external_id\":1481627580},\"schema_id\":{\"namespace\":\"omh\",\"name\":\"step-count\",\"version\":\"2.0\"}},\"body\":{\"effective_time_frame\":{\"time_interval\":{\"start_date_time\":\"2016-12-13T11:13:00Z\",\"duration\":{\"unit\":\"min\",\"value\":1}}},\"step_count\":30}},{\"header\":{\"id\":\"330bfa59-1606-431a-bb57-b52f1a575b1b\",\"creation_date_time\":\"2017-08-13T22:34:44.472Z\",\"acquisition_provenance\":{\"source_name\":\"Fitbit Resource API\",\"external_id\":1481627640},\"schema_id\":{\"namespace\":\"omh\",\"name\":\"step-count\",\"version\":\"2.0\"}},\"body\":{\"effective_time_frame\":{\"time_interval\":{\"start_date_time\":\"2016-12-13T11:14:00Z\",\"duration\":{\"unit\":\"min\",\"value\":1}}},\"step_count\":41}},{\"header\":{\"id\":\"a713ca52-3ee4-4c7f-9e8f-ca523d9ad933\",\"creation_date_time\":\"2017-08-13T22:34:44.472Z\",\"acquisition_provenance\":{\"source_name\":\"Fitbit Resource API\",\"external_id\":1481627700},\"schema_id\":{\"namespace\":\"omh\",\"name\":\"step-count\",\"version\":\"2.0\"}},\"body\":{\"effective_time_frame\":{\"time_interval\":{\"start_date_time\":\"2016-12-13T11:15:00Z\",\"duration\":{\"unit\":\"min\",\"value\":1}}},\"step_count\":83}},{\"header\":{\"id\":\"135300cc-40c6-4a89-9302-9783881a2e29\",\"creation_date_time\":\"2017-08-13T22:34:44.472Z\",\"acquisition_provenance\":{\"source_name\":\"Fitbit Resource API\",\"external_id\":1481627760},\"schema_id\":{\"namespace\":\"omh\",\"name\":\"step-count\",\"version\":\"2.0\"}},\"body\":{\"effective_time_frame\":{\"time_interval\":{\"start_date_time\":\"2016-12-13T11:16:00Z\",\"duration\":{\"unit\":\"min\",\"value\":1}}},\"step_count\":106}},{\"header\":{\"id\":\"4ff99c18-a00c-4def-82a7-34256d61c1b8\",\"creation_date_time\":\"2017-08-13T22:34:44.472Z\",\"acquisition_provenance\":{\"source_name\":\"Fitbit Resource API\",\"external_id\":1481627820},\"schema_id\":{\"namespace\":\"omh\",\"name\":\"step-count\",\"version\":\"2.0\"}},\"body\":{\"effective_time_frame\":{\"time_interval\":{\"start_date_time\":\"2016-12-13T11:17:00Z\",\"duration\":{\"unit\":\"min\",\"value\":1}}},\"step_count\":103}},{\"header\":{\"id\":\"297cfec8-e998-4fa3-82b8-d3a6176ce992\",\"creation_date_time\":\"2017-08-13T22:34:44.472Z\",\"acquisition_provenance\":{\"source_name\":\"Fitbit Resource API\",\"external_id\":1481627880},\"schema_id\":{\"namespace\":\"omh\",\"name\":\"step-count\",\"version\":\"2.0\"}},\"body\":{\"effective_time_frame\":{\"time_interval\":{\"start_date_time\":\"2016-12-13T11:18:00Z\",\"duration\":{\"unit\":\"min\",\"value\":1}}},\"step_count\":101}},{\"header\":{\"id\":\"62e38d47-acbd-4153-94bb-ccb511633f87\",\"creation_date_time\":\"2017-08-13T22:34:44.473Z\",\"acquisition_provenance\":{\"source_name\":\"Fitbit Resource API\",\"external_id\":1481627940},\"schema_id\":{\"namespace\":\"omh\",\"name\":\"step-count\",\"version\":\"2.0\"}},\"body\":{\"effective_time_frame\":{\"time_interval\":{\"start_date_time\":\"2016-12-13T11:19:00Z\",\"duration\":{\"unit\":\"min\",\"value\":1}}},\"step_count\":104}},{\"header\":{\"id\":\"ad51f0b3-afa3-4a7b-924f-5e60b63556cd\",\"creation_date_time\":\"2017-08-13T22:34:44.473Z\",\"acquisition_provenance\":{\"source_name\":\"Fitbit Resource API\",\"external_id\":1481628000},\"schema_id\":{\"namespace\":\"omh\",\"name\":\"step-count\",\"version\":\"2.0\"}},\"body\":{\"effective_time_frame\":{\"time_interval\":{\"start_date_time\":\"2016-12-13T11:20:00Z\",\"duration\":{\"unit\":\"min\",\"value\":1}}},\"step_count\":74}},{\"header\":{\"id\":\"b7183cd9-e468-4999-a641-4ea468b073a9\",\"creation_date_time\":\"2017-08-13T22:34:44.473Z\",\"acquisition_provenance\":{\"source_name\":\"Fitbit Resource API\",\"external_id\":1481628060},\"schema_id\":{\"namespace\":\"omh\",\"name\":\"step-count\",\"version\":\"2.0\"}},\"body\":{\"effective_time_frame\":{\"time_interval\":{\"start_date_time\":\"2016-12-13T11:21:00Z\",\"duration\":{\"unit\":\"min\",\"value\":1}}},\"step_count\":101}},{\"header\":{\"id\":\"b3356b70-89d6-4bb0-bbb8-b9f7090fef71\",\"creation_date_time\":\"2017-08-13T22:34:44.473Z\",\"acquisition_provenance\":{\"source_name\":\"Fitbit Resource API\",\"external_id\":1481628120},\"schema_id\":{\"namespace\":\"omh\",\"name\":\"step-count\",\"version\":\"2.0\"}},\"body\":{\"effective_time_frame\":{\"time_interval\":{\"start_date_time\":\"2016-12-13T11:22:00Z\",\"duration\":{\"unit\":\"min\",\"value\":1}}},\"step_count\":99}},{\"header\":{\"id\":\"405143e4-57b6-48bf-b756-030f6a44a64b\",\"creation_date_time\":\"2017-08-13T22:34:44.473Z\",\"acquisition_provenance\":{\"source_name\":\"Fitbit Resource API\",\"external_id\":1481628600},\"schema_id\":{\"namespace\":\"omh\",\"name\":\"step-count\",\"version\":\"2.0\"}},\"body\":{\"effective_time_frame\":{\"time_interval\":{\"start_date_time\":\"2016-12-13T11:30:00Z\",\"duration\":{\"unit\":\"min\",\"value\":1}}},\"step_count\":23}},{\"header\":{\"id\":\"0bc84052-26c1-4637-a341-ae5fb2371262\",\"creation_date_time\":\"2017-08-13T22:34:44.473Z\",\"acquisition_provenance\":{\"source_name\":\"Fitbit Resource API\",\"external_id\":1481628660},\"schema_id\":{\"namespace\":\"omh\",\"name\":\"step-count\",\"version\":\"2.0\"}},\"body\":{\"effective_time_frame\":{\"time_interval\":{\"start_date_time\":\"2016-12-13T11:31:00Z\",\"duration\":{\"unit\":\"min\",\"value\":1}}},\"step_count\":107}},{\"header\":{\"id\":\"8f2fc0bb-4b16-425f-bc60-bee707a6b15d\",\"creation_date_time\":\"2017-08-13T22:34:44.473Z\",\"acquisition_provenance\":{\"source_name\":\"Fitbit Resource API\",\"external_id\":1481628720},\"schema_id\":{\"namespace\":\"omh\",\"name\":\"step-count\",\"version\":\"2.0\"}},\"body\":{\"effective_time_frame\":{\"time_interval\":{\"start_date_time\":\"2016-12-13T11:32:00Z\",\"duration\":{\"unit\":\"min\",\"value\":1}}},\"step_count\":101}},{\"header\":{\"id\":\"fe2c804a-5b37-459f-8eb0-e4304e72aeee\",\"creation_date_time\":\"2017-08-13T22:34:44.473Z\",\"acquisition_provenance\":{\"source_name\":\"Fitbit Resource API\",\"external_id\":1481628780},\"schema_id\":{\"namespace\":\"omh\",\"name\":\"step-count\",\"version\":\"2.0\"}},\"body\":{\"effective_time_frame\":{\"time_interval\":{\"start_date_time\":\"2016-12-13T11:33:00Z\",\"duration\":{\"unit\":\"min\",\"value\":1}}},\"step_count\":99}},{\"header\":{\"id\":\"a90e0397-be75-4805-96b8-557d95ac137e\",\"creation_date_time\":\"2017-08-13T22:34:44.474Z\",\"acquisition_provenance\":{\"source_name\":\"Fitbit Resource API\",\"external_id\":1481628840},\"schema_id\":{\"namespace\":\"omh\",\"name\":\"step-count\",\"version\":\"2.0\"}},\"body\":{\"effective_time_frame\":{\"time_interval\":{\"start_date_time\":\"2016-12-13T11:34:00Z\",\"duration\":{\"unit\":\"min\",\"value\":1}}},\"step_count\":24}},{\"header\":{\"id\":\"4abf361f-d86a-4dce-ae9a-5eb2167ba00a\",\"creation_date_time\":\"2017-08-13T22:34:44.474Z\",\"acquisition_provenance\":{\"source_name\":\"Fitbit Resource API\",\"external_id\":1481628900},\"schema_id\":{\"namespace\":\"omh\",\"name\":\"step-count\",\"version\":\"2.0\"}},\"body\":{\"effective_time_frame\":{\"time_interval\":{\"start_date_time\":\"2016-12-13T11:35:00Z\",\"duration\":{\"unit\":\"min\",\"value\":1}}},\"step_count\":23}},{\"header\":{\"id\":\"b2d86dbe-4978-4273-8ff1-4248eba5ec65\",\"creation_date_time\":\"2017-08-13T22:34:44.474Z\",\"acquisition_provenance\":{\"source_name\":\"Fitbit Resource API\",\"external_id\":1481629380},\"schema_id\":{\"namespace\":\"omh\",\"name\":\"step-count\",\"version\":\"2.0\"}},\"body\":{\"effective_time_frame\":{\"time_interval\":{\"start_date_time\":\"2016-12-13T11:43:00Z\",\"duration\":{\"unit\":\"min\",\"value\":1}}},\"step_count\":14}},{\"header\":{\"id\":\"9cb9c715-0b53-443e-b8c5-e291525760d7\",\"creation_date_time\":\"2017-08-13T22:34:44.474Z\",\"acquisition_provenance\":{\"source_name\":\"Fitbit Resource API\",\"external_id\":1481629440},\"schema_id\":{\"namespace\":\"omh\",\"name\":\"step-count\",\"version\":\"2.0\"}},\"body\":{\"effective_time_frame\":{\"time_interval\":{\"start_date_time\":\"2016-12-13T11:44:00Z\",\"duration\":{\"unit\":\"min\",\"value\":1}}},\"step_count\":18}},{\"header\":{\"id\":\"35ffff86-b27f-4c9d-a838-d96b4d07a28f\",\"creation_date_time\":\"2017-08-13T22:34:44.474Z\",\"acquisition_provenance\":{\"source_name\":\"Fitbit Resource API\",\"external_id\":1481629740},\"schema_id\":{\"namespace\":\"omh\",\"name\":\"step-count\",\"version\":\"2.0\"}},\"body\":{\"effective_time_frame\":{\"time_interval\":{\"start_date_time\":\"2016-12-13T11:49:00Z\",\"duration\":{\"unit\":\"min\",\"value\":1}}},\"step_count\":8}},{\"header\":{\"id\":\"146b6d2d-ae53-4826-89fd-40818ba99e9b\",\"creation_date_time\":\"2017-08-13T22:34:44.474Z\",\"acquisition_provenance\":{\"source_name\":\"Fitbit Resource API\",\"external_id\":1481629800},\"schema_id\":{\"namespace\":\"omh\",\"name\":\"step-count\",\"version\":\"2.0\"}},\"body\":{\"effective_time_frame\":{\"time_interval\":{\"start_date_time\":\"2016-12-13T11:50:00Z\",\"duration\":{\"unit\":\"min\",\"value\":1}}},\"step_count\":7}}]}"
+						}
+					]
+				},
+				{
+					"name": "Get sleep duration data points",
+					"request": {
+						"url": {
+							"raw": "{{api-base-url}}/data/{{shim-key}}/sleep_duration?username={{username}}&normalize={{normalize}}&dateStart={{start-date}}&dateEnd={{end-date}}",
+							"host": [
+								"{{api-base-url}}"
+							],
+							"path": [
+								"data",
+								"{{shim-key}}",
+								"sleep_duration"
+							],
+							"query": [
+								{
+									"key": "username",
+									"value": "{{username}}",
+									"equals": true,
+									"description": ""
+								},
+								{
+									"key": "normalize",
+									"value": "{{normalize}}",
+									"equals": true,
+									"description": ""
+								},
+								{
+									"key": "dateStart",
+									"value": "{{start-date}}",
+									"equals": true,
+									"description": ""
+								},
+								{
+									"key": "dateEnd",
+									"value": "{{end-date}}",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"description": "supported by: Fitbit, iHealth, Jawbone, Misfit, Withings"
+					},
+					"response": [
+						{
+							"id": "b3ddf485-3814-4e0e-8c9f-b838d4cbc30e",
+							"name": "Fitbit",
+							"originalRequest": {
+								"url": {
+									"raw": "{{api-base-url}}/data/{{shim-key}}/sleep_duration?username={{username}}&normalized={{normalized}}&dateStart={{start-date}}&dateEnd={{end-date}}",
+									"host": [
+										"{{api-base-url}}"
+									],
+									"path": [
+										"data",
+										"{{shim-key}}",
+										"sleep_duration"
+									],
+									"query": [
+										{
+											"key": "username",
+											"value": "{{username}}",
+											"equals": true,
+											"description": ""
+										},
+										{
+											"key": "normalized",
+											"value": "{{normalized}}",
+											"equals": true,
+											"description": ""
+										},
+										{
+											"key": "dateStart",
+											"value": "{{start-date}}",
+											"equals": true,
+											"description": ""
+										},
+										{
+											"key": "dateEnd",
+											"value": "{{end-date}}",
+											"equals": true,
+											"description": ""
+										}
+									],
+									"variable": []
+								},
+								"method": "GET",
+								"header": [],
+								"body": {}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"_postman_previewtype": "text",
+							"header": [
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, no-store, max-age=0, must-revalidate",
+									"name": "Cache-Control",
+									"description": "Tells all caching mechanisms from server to client whether they may cache this object. It is measured in seconds"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json;charset=utf-8",
+									"name": "Content-Type",
+									"description": "The mime type of this content"
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 13 Aug 2017 22:59:21 GMT",
+									"name": "Date",
+									"description": "The date and time that the message was sent"
+								},
+								{
+									"key": "Expires",
+									"value": "0",
+									"name": "Expires",
+									"description": "Gives the date/time after which the response is considered stale"
+								},
+								{
+									"key": "Pragma",
+									"value": "no-cache",
+									"name": "Pragma",
+									"description": "Implementation-specific headers that may have various effects anywhere along the request-response chain."
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked",
+									"name": "Transfer-Encoding",
+									"description": "The form of encoding used to safely transfer the entity to the user. Currently defined methods are: chunked, compress, deflate, gzip, identity."
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff",
+									"name": "X-Content-Type-Options",
+									"description": "The only defined value, \"nosniff\", prevents Internet Explorer from MIME-sniffing a response away from the declared content-type"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "DENY",
+									"name": "X-Frame-Options",
+									"description": "Clickjacking protection: \"deny\" - no rendering within a frame, \"sameorigin\" - no rendering if origin mismatch"
+								},
+								{
+									"key": "X-XSS-Protection",
+									"value": "1; mode=block",
+									"name": "X-XSS-Protection",
+									"description": "Cross-site scripting (XSS) filter"
+								}
+							],
+							"responseTime": 1242,
+							"body": "{\"shim\":\"fitbit\",\"timeStamp\":1502665162,\"body\":[{\"header\":{\"id\":\"b429a670-6872-483f-9e46-0aba36d8b731\",\"creation_date_time\":\"2017-08-13T22:59:22.632Z\",\"acquisition_provenance\":{\"source_name\":\"Fitbit Resource API\",\"external_id\":13333748828},\"schema_id\":{\"namespace\":\"omh\",\"name\":\"sleep-duration\",\"version\":\"2.0\"}},\"body\":{\"effective_time_frame\":{\"time_interval\":{\"start_date_time\":\"2016-12-28T22:37:00Z\",\"end_date_time\":\"2016-12-29T06:01:00Z\"}},\"sleep_duration\":{\"unit\":\"min\",\"value\":425.0}}},{\"header\":{\"id\":\"505cf7f4-45e4-4e77-a00b-aeee2ba652e1\",\"creation_date_time\":\"2017-08-13T22:59:22.632Z\",\"acquisition_provenance\":{\"source_name\":\"Fitbit Resource API\",\"external_id\":13343984593},\"schema_id\":{\"namespace\":\"omh\",\"name\":\"sleep-duration\",\"version\":\"2.0\"}},\"body\":{\"effective_time_frame\":{\"time_interval\":{\"start_date_time\":\"2016-12-29T22:37:00Z\",\"end_date_time\":\"2016-12-30T05:53:00Z\"}},\"sleep_duration\":{\"unit\":\"min\",\"value\":420.0}}},{\"header\":{\"id\":\"14f3bb3d-8348-4f11-99b7-cfe786b7abc2\",\"creation_date_time\":\"2017-08-13T22:59:22.633Z\",\"acquisition_provenance\":{\"source_name\":\"Fitbit Resource API\",\"external_id\":13352244390},\"schema_id\":{\"namespace\":\"omh\",\"name\":\"sleep-duration\",\"version\":\"2.0\"}},\"body\":{\"effective_time_frame\":{\"time_interval\":{\"start_date_time\":\"2016-12-30T16:55:00Z\",\"end_date_time\":\"2016-12-30T18:16:00Z\"}},\"sleep_duration\":{\"unit\":\"min\",\"value\":80.0}}}]}"
+						}
+					]
+				},
+				{
+					"name": "Get sleep episode data points",
+					"request": {
+						"url": {
+							"raw": "{{api-base-url}}/data/{{shim-key}}/sleep_episode?username={{username}}&normalize={{normalize}}&dateStart={{start-date}}&dateEnd={{end-date}}",
+							"host": [
+								"{{api-base-url}}"
+							],
+							"path": [
+								"data",
+								"{{shim-key}}",
+								"sleep_episode"
+							],
+							"query": [
+								{
+									"key": "username",
+									"value": "{{username}}",
+									"equals": true,
+									"description": ""
+								},
+								{
+									"key": "normalize",
+									"value": "{{normalize}}",
+									"equals": true,
+									"description": ""
+								},
+								{
+									"key": "dateStart",
+									"value": "{{start-date}}",
+									"equals": true,
+									"description": ""
+								},
+								{
+									"key": "dateEnd",
+									"value": "{{end-date}}",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"description": "supported by: Fitbit"
+					},
+					"response": [
+						{
+							"id": "3b2e9712-afe0-4650-b5d9-bd0bec3154ae",
+							"name": "Fitbit",
+							"originalRequest": {
+								"url": {
+									"raw": "{{api-base-url}}/data/{{shim-key}}/sleep_episode?username={{username}}&normalize={{normalize}}&dateStart={{start-date}}&dateEnd={{end-date}}",
+									"host": [
+										"{{api-base-url}}"
+									],
+									"path": [
+										"data",
+										"{{shim-key}}",
+										"sleep_episode"
+									],
+									"query": [
+										{
+											"key": "username",
+											"value": "{{username}}",
+											"equals": true,
+											"description": ""
+										},
+										{
+											"key": "normalize",
+											"value": "{{normalize}}",
+											"equals": true,
+											"description": ""
+										},
+										{
+											"key": "dateStart",
+											"value": "{{start-date}}",
+											"equals": true,
+											"description": ""
+										},
+										{
+											"key": "dateEnd",
+											"value": "{{end-date}}",
+											"equals": true,
+											"description": ""
+										}
+									],
+									"variable": []
+								},
+								"method": "GET",
+								"header": [],
+								"body": {}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"_postman_previewtype": "text",
+							"header": [
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, no-store, max-age=0, must-revalidate",
+									"name": "Cache-Control",
+									"description": "Tells all caching mechanisms from server to client whether they may cache this object. It is measured in seconds"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json;charset=utf-8",
+									"name": "Content-Type",
+									"description": "The mime type of this content"
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 13 Aug 2017 22:33:54 GMT",
+									"name": "Date",
+									"description": "The date and time that the message was sent"
+								},
+								{
+									"key": "Expires",
+									"value": "Thu, 01 Jan 1970 00:00:00 GMT",
+									"name": "Expires",
+									"description": "Gives the date/time after which the response is considered stale"
+								},
+								{
+									"key": "Pragma",
+									"value": "no-cache",
+									"name": "Pragma",
+									"description": "Implementation-specific headers that may have various effects anywhere along the request-response chain."
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked",
+									"name": "Transfer-Encoding",
+									"description": "The form of encoding used to safely transfer the entity to the user. Currently defined methods are: chunked, compress, deflate, gzip, identity."
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff",
+									"name": "X-Content-Type-Options",
+									"description": "The only defined value, \"nosniff\", prevents Internet Explorer from MIME-sniffing a response away from the declared content-type"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "DENY",
+									"name": "X-Frame-Options",
+									"description": "Clickjacking protection: \"deny\" - no rendering within a frame, \"sameorigin\" - no rendering if origin mismatch"
+								},
+								{
+									"key": "X-XSS-Protection",
+									"value": "1; mode=block",
+									"name": "X-XSS-Protection",
+									"description": "Cross-site scripting (XSS) filter"
+								}
+							],
+							"responseTime": 1797,
+							"body": "{\"shim\":\"fitbit\",\"timeStamp\":1502663636,\"body\":[{\"header\":{\"id\":\"e99d714b-ff76-4566-b155-5a317ebe5525\",\"creation_date_time\":\"2017-08-13T22:33:56.765Z\",\"acquisition_provenance\":{\"source_name\":\"Fitbit Resource API\",\"external_id\":13214029456},\"schema_id\":{\"namespace\":\"omh\",\"name\":\"sleep-episode\",\"version\":\"1.0\"}},\"body\":{\"effective_time_frame\":{\"time_interval\":{\"start_date_time\":\"2016-12-13T09:59:00Z\",\"end_date_time\":\"2016-12-13T11:02:00Z\"}},\"latency_to_sleep_onset\":{\"unit\":\"min\",\"value\":0.0},\"latency_to_arising\":{\"unit\":\"min\",\"value\":0.0},\"total_sleep_time\":{\"unit\":\"min\",\"value\":63.0},\"sleep_maintenance_efficiency_percentage\":{\"unit\":\"%\",\"value\":100.0}}},{\"header\":{\"id\":\"78f69735-56c1-4d2b-bbc0-014d38d97db7\",\"creation_date_time\":\"2017-08-13T22:33:56.767Z\",\"acquisition_provenance\":{\"source_name\":\"Fitbit Resource API\",\"external_id\":13211507000},\"schema_id\":{\"namespace\":\"omh\",\"name\":\"sleep-episode\",\"version\":\"1.0\"}},\"body\":{\"effective_time_frame\":{\"time_interval\":{\"start_date_time\":\"2016-12-13T01:16:00Z\",\"end_date_time\":\"2016-12-13T03:14:00Z\"}},\"latency_to_sleep_onset\":{\"unit\":\"min\",\"value\":0.0},\"latency_to_arising\":{\"unit\":\"min\",\"value\":0.0},\"total_sleep_time\":{\"unit\":\"min\",\"value\":112.0},\"sleep_maintenance_efficiency_percentage\":{\"unit\":\"%\",\"value\":95.0}}}]}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Data provider-specific",
+			"description": "",
+			"item": [
+				{
+					"name": "Fitbit",
+					"description": "",
+					"item": [
+						{
+							"name": "Process Fitbit denial redirect (debugging)",
+							"request": {
+								"url": {
+									"raw": "{{api-base-url}}/authorize/{{shim-key}}/callback?error_description=The+user+denied+the+request.&state=PtFJ2N&error=access_denied#_=_",
+									"host": [
+										"{{api-base-url}}"
+									],
+									"path": [
+										"authorize",
+										"{{shim-key}}",
+										"callback"
+									],
+									"query": [
+										{
+											"key": "error_description",
+											"value": "The+user+denied+the+request.",
+											"equals": true,
+											"description": ""
+										},
+										{
+											"key": "state",
+											"value": "PtFJ2N",
+											"equals": true,
+											"description": ""
+										},
+										{
+											"key": "error",
+											"value": "access_denied",
+											"equals": true,
+											"description": ""
+										}
+									],
+									"hash": "_=_",
+									"variable": []
+								},
+								"method": "GET",
+								"header": [],
+								"body": {},
+								"description": ""
+							},
+							"response": []
+						}
+					],
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "Initiate authorization",
+					"request": {
+						"url": {
+							"raw": "{{api-base-url}}/authorize/{{shim-key}}?username={{username}}",
+							"host": [
+								"{{api-base-url}}"
+							],
+							"path": [
+								"authorize",
+								"{{shim-key}}"
+							],
+							"query": [
+								{
+									"key": "username",
+									"value": "{{username}}",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
