@@ -57,7 +57,7 @@ There are two ways to install Shimmer.
 
 ### Option 1. Download and run Docker images
 
-If you don't have Docker and Docker Compose, please set them up. ([Docker for Mac](https://docs.docker.com/docker-for-mac/), [Docker for Windows](https://docs.docker.com/docker-for-windows/).
+If you don't have Docker and Docker Compose, please set them up. ([Docker for Mac](https://docs.docker.com/docker-for-mac/), [Docker for Windows](https://docs.docker.com/docker-for-windows/)).
 
 Once you're set up, in a terminal 
 
