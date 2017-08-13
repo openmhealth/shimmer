@@ -46,7 +46,7 @@ A shim generates *data points*, which are self-contained pieces of data that not
 The *resource server* exposes an API to retrieve data points. The server handles API requests by delegating them to the correct shim. As more and more shims are developed and added to the resource server, it becomes capable of providing data points from more and more third-party APIs. The resource server also manages third-party access tokens on behalf of shims.
 
 ### Console
-The *console* provides a simple web interface that helps users interact with the resource server. It can set configuration parameters, trigger authentication flows, and request data using date pickers and drop downs.
+The *console* provides a simple web interface that helps users interact with the resource server. It can trigger authentication flows, and request data using date pickers and drop downs.
 
 ## Installation
 
