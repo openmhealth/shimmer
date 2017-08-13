@@ -63,15 +63,15 @@ Once you're set up, in a terminal
 
 1. Clone this Git repository.
 1. Download and start the containers using either
-  * `docker-compose up -d`
-    * to bring up the resource server and the console
-  * `docker-compose up -d resourceserver`
-    * to bring up only the resource server
-  * If you want to see logs and keep the containers in the foreground, omit the `-d`.
-  * This will download up to 0.5 GB of Docker images if you don't already have them, the bulk of which are the underlying MongoDB, nginx and OpenJDK images. 
+   * `docker-compose up -d resourceserver`
+     * to bring up only the resource server
+   * `docker-compose up -d`
+     * to bring up the resource server and the console
+   * This will download up to 0.5 GB of Docker images if you don't already have them, the bulk of which are the underlying MongoDB, nginx and OpenJDK images. 
+   * If you want to see logs and keep the containers in the foreground, omit the `-d`.
 1. It can take up to a minute for the containers to start up. You can check their progress using `docker-compose logs` if you started with `-d`.
 1. The console container publishes port 8083 and the resource server container publishes port 8084.
-  * The console container proxies all API requests to the resource server container, so you can send API requests to port 8083 or port 8084.
+   * The console container proxies all API requests to the resource server container, so you can send API requests to port 8083 or port 8084.
 1. Visit `http://<shimmer-host>:8083` in a browser to open the console.
 
 ### Option 2. Build the code and run it natively or in Docker
@@ -80,28 +80,26 @@ If you prefer to build the code yourself,
 
 1. You must have a Java 8 or higher JDK installed. You can use either [OpenJDK](http://openjdk.java.net/install/) or the [Oracle JDK](http://www.oracle.com/technetwork/java/javase/downloads/index.html).
 1. If you're building the optional console,
-  1. You need [Node.js](http://nodejs.org/download/).
-  1. You need [Xcode Command Line Tools](https://developer.apple.com/xcode/) if you're on a Mac.
-1. To run the code natively,
-  1. You need a running [MongoDB](http://docs.mongodb.org/manual/) instance.
-1. To run the code in Docker,
-  1. You need Docker and Docker Compose.
+   1. You need [Node.js](http://nodejs.org/download/).
+   1. You need [Xcode Command Line Tools](https://developer.apple.com/xcode/) if you're on a Mac.
+1. To run the code natively, you need a running [MongoDB](http://docs.mongodb.org/manual/) instance.
+1. To run the code in Docker, you need Docker and Docker Compose.
 
 If you want to build and run the code natively, in a terminal
  
 1. Clone this Git repository.
 1. Run the `./run-natively.sh` script and follow the instructions.
 1. When the script blocks with the message `Started Application`, the components are running.
-  * Press Ctrl-C to stop them.
-  * The script creates a WAR file which you can alternatively drop into an application server. [This issue](https://github.com/openmhealth/shimmer/issues/31) has details.
+   * Press Ctrl-C to stop them.
+   * The script creates a WAR file which you can alternatively drop into an application server. [This issue](https://github.com/openmhealth/shimmer/issues/31) has details.
 1. Visit `http://<shimmer-host>:8083` in a browser to open the console.
 
 If you want to build and run the code in Docker, in a terminal 
  
 1. Clone this Git repository.
 1. Run the `./run-dockerized.sh` script and follow the instructions.
-  * The containers should now be running on your Docker host and expose ports 8083 and 8084.
-  * It can take up to a minute for the containers to start up.
+   * The containers should now be running on your Docker host and expose ports 8083 and 8084.
+   * It can take up to a minute for the containers to start up.
 1. Visit `http://<shimmer-host>:8083` in a browser to open the console.
 
 > If you can't run the Bash scripts on your system, open them and take a look at the commands they run. The important commands are marked with a "#CMD" comment.
