@@ -1,0 +1,46 @@
+{
+  "id": "3745f9ee-ad6e-05c8-5f06-91eac90b64a4",
+  "name": "Shimmer (development)",
+  "values": [
+    {
+      "enabled": true,
+      "key": "api-base-url",
+      "value": "http://localhost:8084",
+      "type": "text"
+    },
+    {
+      "enabled": true,
+      "key": "username",
+      "value": "user1",
+      "type": "text"
+    },
+    {
+      "enabled": true,
+      "key": "shim-key",
+      "value": "fitbit",
+      "type": "text"
+    },
+    {
+      "enabled": true,
+      "key": "start-date",
+      "value": "2017-08-01",
+      "type": "text"
+    },
+    {
+      "enabled": true,
+      "key": "end-date",
+      "value": "2017-08-01",
+      "type": "text"
+    },
+    {
+      "enabled": true,
+      "key": "normalized",
+      "value": "true",
+      "type": "text"
+    }
+  ],
+  "timestamp": 1502663053032,
+  "_postman_variable_scope": "environment",
+  "_postman_exported_at": "2017-08-13T22:24:28.259Z",
+  "_postman_exported_using": "Postman/5.1.3"
+}

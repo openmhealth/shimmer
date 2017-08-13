@@ -157,7 +157,7 @@ To set up the Postman environment,
 
 1. Click the cog wheel in the top right.
 1. Choose _Manage Environments_.
-1. Click the _Import_ button and choose the file called `resources/postman/environment.json` from this repo.
+1. Click the _Import_ button and choose the file called `resources/postman/postman-environment.json` from this repo.
 1. Close the _Manage Environments_ modal.
 1. Select the environment you just created from the drop-down in the top right.
 
@@ -166,7 +166,7 @@ To set up the Postman environment,
 To import the Postman collection,
 
 1. Click the _Import_ button in the top left.
-1. In the _Import File_ tab, click _Choose Files_ and choose the file called `resources/postman/collection.json` from this repo.
+1. In the _Import File_ tab, click _Choose Files_ and choose the file called `resources/postman/postman-collection.json` from this repo.
 1. If you already have a collection with the same name, replace it.
 
 ## Authorizing access to a third-party user account
