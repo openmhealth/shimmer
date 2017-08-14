@@ -179,7 +179,7 @@ To initiate the authorization process using Postman,
 1. Click the _Environment quick look_ button in the top right of Postman and click _Edit_ to edit the environment.
 1. Set the `username` value to any unique identifier you'd like to use to identify the user.
 1. Set the `shim-key` value to one of the keys listed [below](#supported-apis-and-endpoints), e.g. `fitbit`.
-1. Run the _Authorization\Initiate Authorization` request.
+1. Run the _Authorization\Initiate authorization_ request.
 1. Find the `authorizationUrl` value in the returned JSON response and load the URL in a browser. You will land on the third-party website where you can login and authorize access to your third-party user account. You should then be automatically redirected back to Shimmer where the OAuth flow will
 complete.
 
@@ -188,9 +188,9 @@ complete.
 To initiate the authorization process programmatically,
  
 1. Make a GET request to `http://<shimmer-host>:8083/authorize/{shimKey}?username={userId}`
-  * Use port 8084 if you're not running the console container.
-  * The `shimKey` path parameter should be one of the keys listed [below](#supported-apis-and-endpoints), e.g. `fitbit`. 
-  * The `username` query parameter can be set to any unique identifier you'd like to use to identify the user. 
+   * Use port 8084 if you're not running the console container.
+   * The `shimKey` path parameter should be one of the keys listed [below](#supported-apis-and-endpoints), e.g. `fitbit`. 
+   * The `username` query parameter can be set to any unique identifier you'd like to use to identify the user. 
 1. Find the `authorizationUrl` value in the returned JSON response and redirect your user to this URL. Your user will land on the third-party website where they can login and authorize access to their third-party user account. 
 1. Once authorized, they will be redirected to `http://<<shimmer-host>:8083/authorize/{shimKey}/callback`. 
 
