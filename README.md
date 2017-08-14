@@ -24,13 +24,18 @@ This README should have everything you need to get started. If you have any ques
 - [Installation](#installation)
 	- [Option 1. Download and run Docker images](#option-1-download-and-run-docker-images)
 	- [Option 2. Build the code and run it natively or in Docker](#option-2-build-the-code-and-run-it-natively-or-in-docker)
-- [Setting up your credentials](#setting-up-your-credentials)
+- [Registering with third-party APIs](#registering-with-third-party-apis)
+- [Postman collection](#postman-collection)
+	- [Setting up the Postman environment](#setting-up-the-postman-environment)
+	- [Importing the Postman collection](#importing-the-postman-collection)
 - [Authorizing access to a third-party user account](#authorizing-access-to-a-third-party-user-account)
-	- [Authorize access from the console](#authorize-access-from-the-console)
+	- [Authorize access using Postman](#authorize-access-using-postman)
 	- [Authorize access programmatically](#authorize-access-programmatically)
+	- [Authorize access from the console](#authorize-access-from-the-console)
 - [Reading data](#reading-data)
-	- [Read data using the console](#read-data-using-the-console)
+	- [Read data using Postman](#read-data-using-postman)
 	- [Read data programmatically](#read-data-programmatically)
+	- [Read data using the console](#read-data-using-the-console)
 - [Supported APIs and endpoints](#supported-apis-and-endpoints)
 - [Contributing](#contributing)
 
@@ -250,14 +255,6 @@ To pull data from a third-party API using Postman,
 > Most requests also have sample responses you can look at by clicking the _Examples_ button in Postman.
 Please let us know if any examples you need are missing, or provide pull requests to contribute.
 
-### Read data using the console
-
-To pull data from a third-party API using the console,
- 
-1. Click the name of the connected third-party API.
-1. Fill in the date range you're interested in.
-1. Press the *Raw* button for raw data, or the *Normalized* button for data that has been converted to an Open mHealth compliant data format. 
-
 ### Read data programmatically
 
 To pull data from a third-party API programmatically, make requests in the format
@@ -272,6 +269,14 @@ The URL can be broken down as follows
 * The `normalize` parameter controls whether the shim returns data in a raw third-party API format (`false`) or in an Open mHealth compliant format (`true`).  
 
 > N.B. This API may change significantly in the future to provide greater consistency across Open mHealth applications and to improve expressivity and ease of use. The data points it returns will not be affected, only the URLs used to request data and perhaps some book-keeping information at the top level of the response.
+
+### Read data using the console
+
+To pull data from a third-party API using the console,
+ 
+1. Click the name of the connected third-party API.
+1. Fill in the date range you're interested in.
+1. Press the *Raw* button for raw data, or the *Normalized* button for data that has been converted to an Open mHealth compliant data format. 
  
 ## Supported APIs and endpoints
 
