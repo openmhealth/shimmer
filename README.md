@@ -275,7 +275,7 @@ The URL can be broken down as follows
  
 ## Supported APIs and endpoints
 
-The following is a table of the currently supported shims, their endpoints, the Open mHealth compliant data produced, and the corresponding mapper. The values in the `shimKey` and `endpoint` columns are the values for the parameters of the same names used in [programmatic access](#reading-data-programmatically) of the API.
+The following is a table of the currently supported shims, their endpoints, the Open mHealth compliant data produced, and the corresponding mapper. The values in the _shim key_ and _endpoint_ columns are the values for the parameters of the same names used in [programmatic access](#reading-data-programmatically) of the API.
 
 The currently supported shims are:
 
