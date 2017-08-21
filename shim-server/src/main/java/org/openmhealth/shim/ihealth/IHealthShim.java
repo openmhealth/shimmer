@@ -22,6 +22,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
 import org.openmhealth.shim.*;
 import org.openmhealth.shim.ihealth.mapper.*;
 import org.slf4j.Logger;
@@ -134,24 +135,29 @@ public class IHealthShim extends OAuth2Shim {
 
     public enum IHealthDataTypes implements ShimDataType {
 
-        PHYSICAL_ACTIVITY(singletonList("sport.json")),
-        BLOOD_GLUCOSE(singletonList("glucose.json")),
-        BLOOD_PRESSURE(singletonList("bp.json")),
-        BODY_WEIGHT(singletonList("weight.json")),
-        BODY_MASS_INDEX(singletonList("weight.json")),
-        HEART_RATE(newArrayList("bp.json", "spo2.json")),
-        STEP_COUNT(singletonList("activity.json")),
-        SLEEP_DURATION(singletonList("sleep.json")),
-        OXYGEN_SATURATION(singletonList("spo2.json"));
+        PHYSICAL_ACTIVITY("sport.json"),
+        BLOOD_GLUCOSE("glucose.json"),
+        BLOOD_PRESSURE("bp.json"),
+        BODY_WEIGHT("weight.json"),
+        BODY_MASS_INDEX("weight.json"),
+        HEART_RATE("bp.json", "spo2.json"),
+        STEP_COUNT("activity.json"),
+        SLEEP_DURATION("sleep.json"),
+        OXYGEN_SATURATION("spo2.json");
 
         private List<String> endPoint;
 
-        IHealthDataTypes(List<String> endPoint) {
+        IHealthDataTypes(String endpoint) {
 
-            this.endPoint = endPoint;
+            this.endPoint = singletonList(endpoint);
         }
 
-        public List<String> getEndPoint() {
+        IHealthDataTypes(String... endpoints) {
+
+            this.endPoint = Lists.newArrayList(endpoints);
+        }
+
+        public List<String> getEndpoints() {
 
             return endPoint;
         }
@@ -198,7 +204,7 @@ public class IHealthShim extends OAuth2Shim {
 
         // We iterate because one of the measures (Heart rate) comes from multiple endpoints, so we submit
         // requests to each of these endpoints, map the responses separately and then combine them
-        for (String endPoint : dataType.getEndPoint()) {
+        for (String endpoint : dataType.getEndpoints()) {
 
             UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromUriString(clientSettings.getApiBaseUrl() + "/");
 
@@ -217,7 +223,7 @@ public class IHealthShim extends OAuth2Shim {
 
             uriBuilder.path("/user/")
                     .path(userId + "/")
-                    .path(endPoint)
+                    .path(endpoint)
                     .queryParam("client_id", restTemplate.getResource().getClientId())
                     .queryParam("client_secret", restTemplate.getResource().getClientSecret())
                     .queryParam("start_time", startDate.toEpochSecond())
@@ -268,11 +274,11 @@ public class IHealthShim extends OAuth2Shim {
                         break;
                     case HEART_RATE:
                         // there are two different mappers for heart rate because the data can come from two endpoints
-                        if (endPoint == "bp.json") {
+                        if (endpoint.equals("bp.json")) {
                             mapper = new IHealthBloodPressureEndpointHeartRateDataPointMapper();
                             break;
                         }
-                        else if (endPoint == "spo2.json") {
+                        else if (endpoint.equals("spo2.json")) {
                             mapper = new IHealthBloodOxygenEndpointHeartRateDataPointMapper();
                             break;
                         }
