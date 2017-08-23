@@ -19,6 +19,7 @@ package org.openmhealth.shim.moves;
 
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import org.openmhealth.shim.*;
 import org.openmhealth.shim.moves.mapper.MovesDataPointMapper;
@@ -39,7 +40,6 @@ import org.springframework.security.oauth2.client.token.RequestEnhancer;
 import org.springframework.security.oauth2.client.token.grant.code.AuthorizationCodeAccessTokenProvider;
 import org.springframework.stereotype.Component;
 import org.springframework.util.MultiValueMap;
-import org.springframework.util.StringUtils;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -77,11 +77,13 @@ public class MovesShim extends OAuth2Shim {
 
     @Override
     public String getLabel() {
+
         return "Moves";
     }
 
     @Override
     public String getShimKey() {
+
         return SHIM_KEY;
     }
 
@@ -95,6 +97,7 @@ public class MovesShim extends OAuth2Shim {
 
     @Override
     public String getAccessTokenUrl() {
+
         return ACCESS_TOKEN_URL;
     }
 
@@ -114,16 +117,19 @@ public class MovesShim extends OAuth2Shim {
         private JsonDeserializer<ShimDataResponse> normalizer;
 
         MovesDataType(String endPoint) {
+
             this.endPoint = endPoint;
         }
 
         public String getEndPoint() {
+
             return endPoint;
         }
     }
 
 
     public AuthorizationCodeAccessTokenProvider getAuthorizationCodeAccessTokenProvider() {
+
         AuthorizationCodeAccessTokenProvider provider = new AuthorizationCodeAccessTokenProvider();
         provider.setTokenRequestEnhancer(new MovesTokenRequestEnhancer());
         return provider;
@@ -131,6 +137,7 @@ public class MovesShim extends OAuth2Shim {
 
     @Override
     public ShimDataType[] getShimDataTypes() {
+
         return MovesDataType.values();
     }
 
@@ -215,19 +222,19 @@ public class MovesShim extends OAuth2Shim {
     }
 
     @Override
-    protected String getAuthorizationUrl(UserRedirectRequiredException exception, Map<String, String> addlParameters) {
+    protected String getAuthorizationUrl(
+            UserRedirectRequiredException exception,
+            Map<String, String> additionalParameters) {
 
         final OAuth2ProtectedResourceDetails resource = getResource();
 
         UriComponentsBuilder uriBuilder = UriComponentsBuilder
                 .fromUriString(exception.getRedirectUri())
-                .queryParam("state", exception.getStateKey())
-                .queryParam("client_id", resource.getClientId())
                 .queryParam("response_type", "code")
-                .queryParam("access_type", "offline")
-                .queryParam("approval_prompt", "force")
-                .queryParam("scope", StringUtils.collectionToDelimitedString(resource.getScope(), " "))
-                .queryParam("redirect_uri", getDefaultRedirectUrl());
+                .queryParam("client_id", resource.getClientId())
+                .queryParam("redirect_uri", getDefaultRedirectUrl())
+                .queryParam("scope", Joiner.on(" ").join(resource.getScope()))
+                .queryParam("state", exception.getStateKey());
 
         return uriBuilder.build().encode().toUriString();
     }
