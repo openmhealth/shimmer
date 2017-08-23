@@ -37,6 +37,8 @@ public class MovesClientSettings extends OAuth2ClientSettings {
             "location"
     );
 
+    private boolean authorizationInitiatedFromBrowser = true;
+
     @Override
     public List<String> getScopes() {
 
@@ -46,5 +48,13 @@ public class MovesClientSettings extends OAuth2ClientSettings {
     public void setScopes(List<String> scopes) {
 
         this.scopes = scopes;
+    }
+
+    public boolean isAuthorizationInitiatedFromBrowser() {
+        return authorizationInitiatedFromBrowser;
+    }
+
+    public void setAuthorizationInitiatedFromBrowser(boolean authorizationInitiatedFromBrowser) {
+        this.authorizationInitiatedFromBrowser = authorizationInitiatedFromBrowser;
     }
 }

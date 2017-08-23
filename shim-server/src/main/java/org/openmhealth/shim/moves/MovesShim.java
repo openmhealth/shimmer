@@ -63,7 +63,8 @@ public class MovesShim extends OAuth2Shim {
 
     public static final String SHIM_KEY = "moves";
     private static final String DATA_URL = "https://api.moves-app.com/api/1.1";
-    private static final String USER_AUTHORIZATION_URL = "https://api.moves-app.com/oauth/v1/authorize";
+    private static final String WEB_BASED_USER_AUTHORIZATION_URL = "https://api.moves-app.com/oauth/v1/authorize";
+    private static final String APP_BASED_USER_AUTHORIZATION_URL = "moves://app/authorize";
     private static final String ACCESS_TOKEN_URL = "https://api.moves-app.com/oauth/v1/access_token";
 
     private static final long MAX_DURATION_IN_DAYS = 31;
@@ -86,7 +87,10 @@ public class MovesShim extends OAuth2Shim {
 
     @Override
     public String getUserAuthorizationUrl() {
-        return USER_AUTHORIZATION_URL;
+
+        return clientSettings.isAuthorizationInitiatedFromBrowser()
+                ? WEB_BASED_USER_AUTHORIZATION_URL
+                : APP_BASED_USER_AUTHORIZATION_URL;
     }
 
     @Override
