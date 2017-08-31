@@ -20,8 +20,6 @@ package org.openmhealth.shim.moves.mapper;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.Lists;
 import org.openmhealth.schema.domain.omh.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Optional;
@@ -34,15 +32,13 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.*;
 
 
 /**
- * A mapper from Moves Resource API <code>/user/storyline/daily</code> responses to data points.
+ * A mapper from activity nodes in Moves Resource API <code>/user/storyline/daily</code> responses to data points.
  *
  * @author Emerson Farrugia
  * @author Jared Sieling
  * @see <a href="https://dev.moves-app.com/docs/api_storyline">API documentation</a>
  */
-public abstract class MovesStorylineEndpointDataPointMapper<T extends SchemaSupport> extends MovesDataPointMapper<T> {
-
-    private static final Logger logger = LoggerFactory.getLogger(MovesStorylineEndpointDataPointMapper.class);
+public abstract class MovesActivityNodeDataPointMapper<T extends SchemaSupport> extends MovesDataPointMapper<T> {
 
     @Override
     public List<DataPoint<T>> asDataPoints(List<JsonNode> responseNodes) {
@@ -56,26 +52,12 @@ public abstract class MovesStorylineEndpointDataPointMapper<T extends SchemaSupp
 
         for (JsonNode segmentNode : segmentNodes) {
 
-            MovesSegmentType segmentType = MovesSegmentType.getByJsonValue(asRequiredString(segmentNode, "type"));
+            Optional<JsonNode> activityNodes = asOptionalNode(segmentNode, "activities");
+            if (activityNodes.isPresent()) {
 
-            switch (segmentType) {
-                case MOVE:
-
-                    Optional<JsonNode> activityNodes = asOptionalNode(segmentNode, "activities");
-                    if (activityNodes.isPresent()) {
-
-                        for (JsonNode activityNode : activityNodes.get()) {
-                            asDataPoint(segmentType, activityNode).ifPresent(dataPoints::add);
-                        }
-                    }
-                    break;
-
-                case PLACE:
-                    asDataPoint(segmentType, segmentNode);
-                    break;
-
-                default:
-                    logger.error("A Moves API response has unhandled segment type '{}'.", segmentType);
+                for (JsonNode activityNode : activityNodes.get()) {
+                    asDataPoint(activityNode).ifPresent(dataPoints::add);
+                }
             }
         }
 
@@ -85,13 +67,12 @@ public abstract class MovesStorylineEndpointDataPointMapper<T extends SchemaSupp
     /**
      * Creates a data point.
      *
-     * @param segmentType the type of segment the node is contained in
      * @param node a node containing all the information required to build the data point
      * @return a data point
      */
-    protected Optional<DataPoint<T>> asDataPoint(MovesSegmentType segmentType, JsonNode node) {
+    protected Optional<DataPoint<T>> asDataPoint(JsonNode node) {
 
-        Optional<T> measure = newMeasure(segmentType, node);
+        Optional<T> measure = newMeasure(node);
 
         if (!measure.isPresent()) {
             return empty();
@@ -115,26 +96,18 @@ public abstract class MovesStorylineEndpointDataPointMapper<T extends SchemaSupp
     }
 
     /**
-     * @param segmentType the type of segment the node is contained in
      * @param node a node containing all the information required to build the measure
      * @return a measure
      */
-    protected abstract Optional<T> newMeasure(MovesSegmentType segmentType, JsonNode node);
+    protected abstract Optional<T> newMeasure(JsonNode node);
 
     /**
      * @param node a node containing all the information required to construct a unique identifier
      * @return a unique identifier for this node
      */
-    protected abstract String newExternalId(JsonNode node);
+    private String newExternalId(JsonNode node) {
 
-    /**
-     * @param node a node containing all the information required to construct a unique identifier
-     * @param qualifierPath a path to a qualifier that disambiguates this node from another with the same time frame
-     * @return a unique identifier for this node
-     */
-    protected String getExternalId(JsonNode node, String qualifierPath) {
-
-        String qualifier = asRequiredString(node, qualifierPath);
+        String qualifier = asRequiredString(node, "activity");
         TimeFrame timeFrame = getTimeFrame(node);
 
         return String.format("%s-%d", qualifier, timeFrame.getTimeInterval().getStartDateTime().toEpochSecond());

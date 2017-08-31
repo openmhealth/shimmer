@@ -23,7 +23,7 @@ import java.time.ZoneOffset;
 import java.util.List;
 
 /**
- * @author Jared Sieling.
+ * @author Jared Sieling
  */
 public class MovesPhysicalActivityDataPointMapperUnitTests extends DataPointMapperUnitTests {
 

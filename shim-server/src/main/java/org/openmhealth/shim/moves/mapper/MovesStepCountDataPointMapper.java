@@ -21,7 +21,6 @@ import org.openmhealth.schema.domain.omh.StepCount2;
 
 import java.util.Optional;
 
-import static java.util.Optional.empty;
 import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asOptionalLong;
 
 
@@ -32,22 +31,12 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asOption
  * @author Emerson Farrugia
  * @see <a href="https://dev.moves-app.com/docs/api_storyline">API documentation</a>
  */
-public class MovesStorylineEndpointStepCountDataPointMapper extends MovesStorylineEndpointDataPointMapper<StepCount2> {
+public class MovesStepCountDataPointMapper extends MovesActivityNodeDataPointMapper<StepCount2> {
 
     @Override
-    protected Optional<StepCount2> newMeasure(MovesSegmentType segmentType, JsonNode node) {
-
-        if (segmentType != MovesSegmentType.MOVE) {
-            return empty();
-        }
+    protected Optional<StepCount2> newMeasure(JsonNode node) {
 
         return asOptionalLong(node, "steps")
                 .map(count -> new StepCount2.Builder(count, getTimeFrame(node)).build());
-    }
-
-    @Override
-    protected String newExternalId(JsonNode node) {
-
-        return getExternalId(node, "activity");
     }
 }
