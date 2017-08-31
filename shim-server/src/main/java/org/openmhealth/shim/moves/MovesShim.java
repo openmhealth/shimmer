@@ -17,7 +17,6 @@
 
 package org.openmhealth.shim.moves;
 
-import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
@@ -28,9 +27,7 @@ import org.openmhealth.shim.moves.mapper.MovesStepCountDataPointMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.client.OAuth2RestOperations;
 import org.springframework.security.oauth2.client.resource.OAuth2ProtectedResourceDetails;
@@ -45,10 +42,9 @@ import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.time.Duration;
-import java.time.OffsetDateTime;
+import java.time.LocalDate;
 import java.util.Map;
 
-import static java.util.Collections.singletonList;
 import static org.springframework.http.ResponseEntity.ok;
 
 
@@ -73,6 +69,7 @@ public class MovesShim extends OAuth2Shim {
     private MovesClientSettings clientSettings;
 
     private MovesStepCountDataPointMapper stepCountMapper = new MovesStepCountDataPointMapper();
+
     private MovesPhysicalActivityDataPointMapper physicalActivityMapper = new MovesPhysicalActivityDataPointMapper();
 
     @Override
@@ -109,21 +106,19 @@ public class MovesShim extends OAuth2Shim {
 
     public enum MovesDataType implements ShimDataType {
 
-        STEPS("/user/summary/daily"),
-        ACTIVITY("/user/storyline/daily");
+        PHYSICAL_ACTIVITY("/user/storyline/daily"),
+        STEP_COUNT("/user/summary/daily");
 
-        private String endPoint;
+        private String endpoint;
 
-        private JsonDeserializer<ShimDataResponse> normalizer;
+        MovesDataType(String endpoint) {
 
-        MovesDataType(String endPoint) {
-
-            this.endPoint = endPoint;
+            this.endpoint = endpoint;
         }
 
         public String getEndPoint() {
 
-            return endPoint;
+            return endpoint;
         }
     }
 
@@ -131,7 +126,7 @@ public class MovesShim extends OAuth2Shim {
     public AuthorizationCodeAccessTokenProvider getAuthorizationCodeAccessTokenProvider() {
 
         AuthorizationCodeAccessTokenProvider provider = new AuthorizationCodeAccessTokenProvider();
-        provider.setTokenRequestEnhancer(new MovesTokenRequestEnhancer());
+        provider.setTokenRequestEnhancer(new MovesAccessTokenRequestEnhancer());
         return provider;
     }
 
@@ -158,17 +153,18 @@ public class MovesShim extends OAuth2Shim {
                     + dataTypeKey + " in shimDataRequest, cannot retrieve data.");
         }
 
-        OffsetDateTime now = OffsetDateTime.now();
+        LocalDate today = LocalDate.now();
 
-        OffsetDateTime startDateTime = shimDataRequest.getStartDateTime() == null ?
-                now.minusDays(1) : shimDataRequest.getStartDateTime();
+        LocalDate startDate = shimDataRequest.getStartDateTime() == null
+                ? today
+                : shimDataRequest.getStartDateTime().toLocalDate();
 
-        OffsetDateTime endDateTime = shimDataRequest.getEndDateTime() == null ?
-                now.plusDays(1) : shimDataRequest.getEndDateTime();
+        LocalDate endDate = shimDataRequest.getEndDateTime() == null
+                ? today
+                : shimDataRequest.getEndDateTime().toLocalDate();
 
-        if (Duration.between(startDateTime, endDateTime).toDays() > MAX_DURATION_IN_DAYS) {
-            endDateTime =
-                    startDateTime.plusDays(MAX_DURATION_IN_DAYS - 1);  // TODO when refactoring, break apart queries
+        if (Duration.between(startDate, endDate).toDays() > MAX_DURATION_IN_DAYS) {
+            endDate = startDate.plusDays(MAX_DURATION_IN_DAYS);  // TODO make dynamic
         }
 
         UriComponentsBuilder uriBuilder = UriComponentsBuilder
@@ -179,21 +175,18 @@ public class MovesShim extends OAuth2Shim {
         }
 
         uriBuilder
-                .queryParam("from", startDateTime.toLocalDate())
-                .queryParam("to", endDateTime.toLocalDate())
-                .queryParam("trackPoints", false);
+                .queryParam("from", startDate)
+                .queryParam("to", endDate)
+                .queryParam("trackPoints", false); // TODO make dynamic
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Authorization", "Bearer " + restTemplate.getAccessToken().getValue());
-        HttpEntity<String> entity = new HttpEntity<String>("parameters", headers);
 
         ResponseEntity<JsonNode> responseEntity;
+
         try {
-            responseEntity =
-                    restTemplate.exchange(uriBuilder.build().encode().toUri(), HttpMethod.GET, entity, JsonNode.class);
+            responseEntity = restTemplate.getForEntity(uriBuilder.build().encode().toUri(), JsonNode.class);
         }
         catch (HttpClientErrorException | HttpServerErrorException e) {
-            // FIXME figure out how to handle this
+            // TODO figure out how to handle this
             logger.error("A request for Moves data failed.", e);
             throw e;
         }
@@ -203,18 +196,17 @@ public class MovesShim extends OAuth2Shim {
             MovesDataPointMapper<?> dataPointMapper;
 
             switch (movesDataType) {
-                case STEPS:
-                    dataPointMapper = stepCountMapper;
-                    break;
-                case ACTIVITY:
+                case PHYSICAL_ACTIVITY:
                     dataPointMapper = physicalActivityMapper;
+                    break;
+                case STEP_COUNT:
+                    dataPointMapper = stepCountMapper;
                     break;
                 default:
                     throw new UnsupportedOperationException();
             }
 
-            return ok().body(ShimDataResponse.result(SHIM_KEY,
-                    dataPointMapper.asDataPoints(singletonList(responseEntity.getBody()))));
+            return ok().body(ShimDataResponse.result(SHIM_KEY, dataPointMapper.asDataPoints(responseEntity.getBody())));
         }
         else {
             return ok().body(ShimDataResponse.result(SHIM_KEY, responseEntity.getBody()));
@@ -239,15 +231,14 @@ public class MovesShim extends OAuth2Shim {
         return uriBuilder.build().encode().toUriString();
     }
 
-    /**
-     * Adds required parameters to authorization token requests.
-     */
-    private class MovesTokenRequestEnhancer implements RequestEnhancer {
+    private class MovesAccessTokenRequestEnhancer implements RequestEnhancer {
 
         @Override
-        public void enhance(AccessTokenRequest request,
+        public void enhance(
+                AccessTokenRequest request,
                 OAuth2ProtectedResourceDetails resource,
-                MultiValueMap<String, String> form, HttpHeaders headers) {
+                MultiValueMap<String, String> form,
+                HttpHeaders headers) {
 
             form.set("client_id", resource.getClientId());
             form.set("client_secret", resource.getClientSecret());
