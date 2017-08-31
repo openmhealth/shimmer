@@ -1,104 +1,71 @@
+/*
+ * Copyright 2017 Open mHealth
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.openmhealth.shim.moves.mapper;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.google.common.collect.Lists;
-import org.openmhealth.schema.domain.omh.*;
+import org.openmhealth.schema.domain.omh.DataPointModality;
+import org.openmhealth.schema.domain.omh.SchemaSupport;
+import org.openmhealth.schema.domain.omh.TimeFrame;
 import org.openmhealth.shim.common.mapper.JsonNodeDataPointMapper;
 
-import javax.annotation.Nullable;
-import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
-import java.util.List;
+import java.time.format.DateTimeFormatter;
 import java.util.Optional;
-import java.util.UUID;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
-import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asOptionalLocalDateTime;
+import static org.openmhealth.schema.domain.omh.DataPointModality.SELF_REPORTED;
+import static org.openmhealth.schema.domain.omh.DataPointModality.SENSED;
+import static org.openmhealth.schema.domain.omh.TimeInterval.ofStartDateTimeAndEndDateTime;
+import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asOptionalBoolean;
+import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asRequiredOffsetDateTime;
+
 
 /**
  * The base class for mappers that translate Moves API responses to data points.
  *
- * @author Jared Sieling.
+ * @author Jared Sieling
+ * @author Emerson Farrugia
  */
 public abstract class MovesDataPointMapper<T extends SchemaSupport> implements JsonNodeDataPointMapper<T> {
 
     public static final String RESOURCE_API_SOURCE_NAME = "Moves Resource API";
 
-    @Override
-    public List<DataPoint<T>> asDataPoints(List<JsonNode> responseNodes) {
+    protected static final DateTimeFormatter OFFSET_DATE_TIME_FORMATTER =
+            DateTimeFormatter.ofPattern("yyyyMMddTHHmmsszzzzz");
 
-        checkNotNull(responseNodes);
-        checkArgument(responseNodes.size() == 1, "A single response node is allowed per call.");
 
-        JsonNode listNode = responseNodes.get(0);
-
-        List<DataPoint<T>> dataPoints = Lists.newArrayList();
-
-        for (JsonNode listEntryNode : listNode) {
-            asDataPoint(listEntryNode).ifPresent(dataPoints::add);
-        }
-
-        return dataPoints;
-    }
-
-     /**
-     * Creates a data point.
-     *
-     * @param measure the measure to set as the body of the data point
-     * @param externalId the identifier of the measure as recorded by the data provider
-     * @param <T> the measure type
-     * @return a data point
+    /**
+     * @param node a node containing "startTime" and "endTime" fields
+     * @return the equivalent time frame
      */
-    protected <T extends Measure> DataPoint<T> newDataPoint(T measure, @Nullable Long externalId) {
+    public TimeFrame getTimeFrame(JsonNode node) {
 
-        DataPointAcquisitionProvenance acquisitionProvenance =
-                new DataPointAcquisitionProvenance.Builder(RESOURCE_API_SOURCE_NAME).build();
+        OffsetDateTime startDateTime = asRequiredOffsetDateTime(node, "startTime", OFFSET_DATE_TIME_FORMATTER);
+        OffsetDateTime endDateTime = asRequiredOffsetDateTime(node, "endTime", OFFSET_DATE_TIME_FORMATTER);
 
-        if (externalId != null) {
-            acquisitionProvenance.setAdditionalProperty("external_id", externalId);
-        }
-
-        DataPointHeader header = new DataPointHeader.Builder(UUID.randomUUID().toString(), measure.getSchemaId())
-                .setAcquisitionProvenance(acquisitionProvenance).build();
-
-        return new DataPoint<>(header, measure);
+        return new TimeFrame(ofStartDateTimeAndEndDateTime(startDateTime, endDateTime));
     }
 
     /**
-     * FIXME this is copy-pasted from Fitbit, and it's not clear why this would apply
-     * @param node a JSON node containing <code>date</code> and <code>time</code> properties
-     * @return the equivalent OffsetDateTime
+     * @param node a node containing an optional "manual" field
+     * @return the equivalent modality, if any
      */
-    protected Optional<OffsetDateTime> combineDateTimeAndTimezone(JsonNode node) {
+    public Optional<DataPointModality> getModality(JsonNode node) {
 
-        Optional<LocalDateTime> dateTime = asOptionalLocalDateTime(node, "date", "time");
-        Optional<OffsetDateTime> offsetDateTime = null;
-
-        if (dateTime.isPresent()) {
-            offsetDateTime = Optional.of(OffsetDateTime.of(dateTime.get(), ZoneOffset.UTC));
-        }
-
-        return offsetDateTime;
+        return asOptionalBoolean(node, "manual")
+                .map(manual -> manual ? SELF_REPORTED : SENSED);
     }
-
-    /**
-     * FIXME this is copy-pasted from Fitbit, and it's not clear why this would apply
-     * Transforms a {@link LocalDateTime} object into an {@link OffsetDateTime} object with a UTC time zone
-     *
-     * @param dateTime local date and time for the Moves response JSON node
-     * @return the date and time based on the input dateTime parameter
-     */
-    protected OffsetDateTime combineDateTimeAndTimezone(LocalDateTime dateTime) {
-
-        return OffsetDateTime.of(dateTime, ZoneOffset.UTC);
-    }
-
-    /**
-     * Maps a JSON response node from the Moves API into a data point.
-     *
-     * @return the data point
-     */
-    protected abstract Optional<DataPoint<T>> asDataPoint(JsonNode node);
 }
