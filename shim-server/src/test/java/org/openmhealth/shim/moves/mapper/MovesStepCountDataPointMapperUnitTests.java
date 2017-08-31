@@ -20,9 +20,9 @@ import static org.openmhealth.schema.domain.omh.DurationUnit.DAY;
 import static org.openmhealth.shim.moves.mapper.MovesDataPointMapper.RESOURCE_API_SOURCE_NAME;
 
 /**
- * @author Jared Sieling.
+ * @author Jared Sieling
  */
-public class MovesStepCountDataPointMapperUnitTest extends DataPointMapperUnitTests {
+public class MovesStepCountDataPointMapperUnitTests extends DataPointMapperUnitTests {
 
     private final MovesStepCountDataPointMapper mapper = new MovesStepCountDataPointMapper();
     private JsonNode responseNode;
@@ -34,7 +34,7 @@ public class MovesStepCountDataPointMapperUnitTest extends DataPointMapperUnitTe
 
     @Test
     public void asDataPointsShouldReturnCorrectNumberOfDataPoints() {
-        List<DataPoint<StepCount1>> dataPoints = mapper.asDataPoints(responseNode);
+        List<DataPoint<StepCount2>> dataPoints = mapper.asDataPoints(responseNode);
 
         assertThat(dataPoints, notNullValue());
         assertThat(dataPoints.size(), equalTo(3));
@@ -53,7 +53,7 @@ public class MovesStepCountDataPointMapperUnitTest extends DataPointMapperUnitTe
 
     @Test
     public void asDataPointsShouldReturnCorrectDataPoints() {
-        List<DataPoint<StepCount1>> dataPoints = mapper.asDataPoints(responseNode);
+        List<DataPoint<StepCount2>> dataPoints = mapper.asDataPoints(responseNode);
 
         assertThat(dataPoints, notNullValue());
         assertThat(dataPoints.size(), greaterThan(0));
@@ -66,7 +66,7 @@ public class MovesStepCountDataPointMapperUnitTest extends DataPointMapperUnitTe
                 .setEffectiveTimeFrame(effectiveTimeInterval)
                 .build();
 
-        DataPoint<StepCount1> firstDataPoint = dataPoints.get(0);
+        DataPoint<StepCount2> firstDataPoint = dataPoints.get(0);
 
         assertThat(firstDataPoint.getBody(), equalTo(stepCount));
 
