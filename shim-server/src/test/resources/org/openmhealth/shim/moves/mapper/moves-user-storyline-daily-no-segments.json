@@ -1,0 +1,27 @@
+[
+    {
+        "date": "20121212",
+        "summary": [
+            {
+                "activity": "transport",
+                "group": "transport",
+                "duration": 1124,
+                "distance": 8443
+            },
+            {
+                "activity": "underground",
+                "group": "transport",
+                "duration": 1003,
+                "distance": 8058
+            },
+            {
+                "activity": "zumba",
+                "duration": 570,
+                "calories": 200
+            }
+        ],
+        "segments": null,
+        "caloriesIdle": 1785,
+        "lastUpdate": "20130317T121143Z"
+    }
+]
