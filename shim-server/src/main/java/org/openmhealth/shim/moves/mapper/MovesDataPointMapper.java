@@ -44,7 +44,7 @@ public abstract class MovesDataPointMapper<T extends SchemaSupport> implements J
     public static final String RESOURCE_API_SOURCE_NAME = "Moves Resource API";
 
     protected static final DateTimeFormatter OFFSET_DATE_TIME_FORMATTER =
-            DateTimeFormatter.ofPattern("yyyyMMddTHHmmsszzzzz");
+            DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmsszzzzz");
 
 
     /**
