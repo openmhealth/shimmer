@@ -18,17 +18,19 @@ package org.openmhealth.shim.moves.mapper;
 
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.google.common.collect.Lists;
 import org.openmhealth.schema.domain.omh.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.gdata.util.common.base.Preconditions.checkArgument;
 import static java.util.Optional.empty;
 import static java.util.UUID.randomUUID;
-import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.*;
+import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asOptionalNode;
+import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asRequiredString;
 
 
 /**
@@ -46,22 +48,17 @@ public abstract class MovesActivityNodeDataPointMapper<T extends SchemaSupport> 
         checkNotNull(responseNodes);
         checkArgument(responseNodes.size() == 1, "A single response node is allowed per call.");
 
-        List<DataPoint<T>> dataPoints = Lists.newArrayList();
+        return asStream(asOptionalNode(responseNodes.get(0), "segments"))
+                .flatMap(segmentNode -> asStream(asOptionalNode(segmentNode, "activities")))
+                .map(this::asDataPoint)
+                .flatMap(this::asStream)
+                .collect(Collectors.toList());
+    }
 
-        JsonNode segmentNodes = asRequiredNode(responseNodes.get(0), "segments");
+    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
+    private <O> Stream<O> asStream(Optional<O> optional) {
 
-        for (JsonNode segmentNode : segmentNodes) {
-
-            Optional<JsonNode> activityNodes = asOptionalNode(segmentNode, "activities");
-            if (activityNodes.isPresent()) {
-
-                for (JsonNode activityNode : activityNodes.get()) {
-                    asDataPoint(activityNode).ifPresent(dataPoints::add);
-                }
-            }
-        }
-
-        return dataPoints;
+        return optional.map(Stream::of).orElseGet(Stream::empty);
     }
 
     /**
