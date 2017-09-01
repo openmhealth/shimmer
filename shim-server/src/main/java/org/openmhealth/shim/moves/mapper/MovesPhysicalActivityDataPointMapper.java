@@ -20,9 +20,11 @@ import com.fasterxml.jackson.databind.JsonNode;
 import org.openmhealth.schema.domain.omh.KcalUnitValue;
 import org.openmhealth.schema.domain.omh.LengthUnitValue;
 import org.openmhealth.schema.domain.omh.PhysicalActivity;
+import org.openmhealth.schema.domain.omh.TimeFrame;
 
 import java.util.Optional;
 
+import static java.util.Optional.empty;
 import static org.openmhealth.schema.domain.omh.KcalUnit.KILOCALORIE;
 import static org.openmhealth.schema.domain.omh.LengthUnit.METER;
 import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asOptionalDouble;
@@ -42,10 +44,16 @@ public class MovesPhysicalActivityDataPointMapper extends MovesActivityNodeDataP
     @Override
     protected Optional<PhysicalActivity> newMeasure(JsonNode node) {
 
+        Optional<TimeFrame> timeFrame = getTimeFrame(node);
+
+        if (!timeFrame.isPresent()) {
+            return empty();
+        }
+
         String activityName = asRequiredString(node, "activity");
 
         PhysicalActivity.Builder builder = new PhysicalActivity.Builder(activityName);
-        builder.setEffectiveTimeFrame(getTimeFrame(node));
+        builder.setEffectiveTimeFrame(timeFrame.get());
 
         asOptionalDouble(node, "distance")
                 .ifPresent(distanceInM -> builder.setDistance(new LengthUnitValue(METER, distanceInM)));

@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.gdata.util.common.base.Preconditions.checkArgument;
@@ -48,8 +49,11 @@ public abstract class MovesActivityNodeDataPointMapper<T extends SchemaSupport> 
         checkNotNull(responseNodes);
         checkArgument(responseNodes.size() == 1, "A single response node is allowed per call.");
 
-        return asStream(asOptionalNode(responseNodes.get(0), "segments"))
+        return StreamSupport.stream(responseNodes.get(0).spliterator(), false)
+                .flatMap(dayNode -> asStream(asOptionalNode(dayNode, "segments")))
+                .flatMap(segmentsNode -> StreamSupport.stream(segmentsNode.spliterator(), false))
                 .flatMap(segmentNode -> asStream(asOptionalNode(segmentNode, "activities")))
+                .flatMap(activitiesNode -> StreamSupport.stream(activitiesNode.spliterator(), false))
                 .map(this::asDataPoint)
                 .flatMap(this::asStream)
                 .collect(Collectors.toList());
@@ -105,7 +109,7 @@ public abstract class MovesActivityNodeDataPointMapper<T extends SchemaSupport> 
     private String newExternalId(JsonNode node) {
 
         String qualifier = asRequiredString(node, "activity");
-        TimeFrame timeFrame = getTimeFrame(node);
+        TimeFrame timeFrame = getTimeFrame(node).orElseThrow(IllegalStateException::new);
 
         return String.format("%s-%d", qualifier, timeFrame.getTimeInterval().getStartDateTime().toEpochSecond());
     }

@@ -26,11 +26,12 @@ import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
+import static java.util.Optional.empty;
 import static org.openmhealth.schema.domain.omh.DataPointModality.SELF_REPORTED;
 import static org.openmhealth.schema.domain.omh.DataPointModality.SENSED;
 import static org.openmhealth.schema.domain.omh.TimeInterval.ofStartDateTimeAndEndDateTime;
 import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asOptionalBoolean;
-import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asRequiredOffsetDateTime;
+import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asOptionalOffsetDateTime;
 
 
 /**
@@ -44,19 +45,25 @@ public abstract class MovesDataPointMapper<T extends SchemaSupport> implements J
     public static final String RESOURCE_API_SOURCE_NAME = "Moves Resource API";
 
     protected static final DateTimeFormatter OFFSET_DATE_TIME_FORMATTER =
-            DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmssZZZZZ");
+            DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmssx");
 
 
     /**
-     * @param node a node containing "startTime" and "endTime" fields
-     * @return the equivalent time frame
+     * @param node a node containing optional "startTime" and "endTime" fields
+     * @return the equivalent time frame, if any
      */
-    public TimeFrame getTimeFrame(JsonNode node) {
+    public Optional<TimeFrame> getTimeFrame(JsonNode node) {
 
-        OffsetDateTime startDateTime = asRequiredOffsetDateTime(node, "startTime", OFFSET_DATE_TIME_FORMATTER);
-        OffsetDateTime endDateTime = asRequiredOffsetDateTime(node, "endTime", OFFSET_DATE_TIME_FORMATTER);
+        Optional<OffsetDateTime> startDateTime =
+                asOptionalOffsetDateTime(node, "startTime", OFFSET_DATE_TIME_FORMATTER);
 
-        return new TimeFrame(ofStartDateTimeAndEndDateTime(startDateTime, endDateTime));
+        Optional<OffsetDateTime> endDateTime = asOptionalOffsetDateTime(node, "endTime", OFFSET_DATE_TIME_FORMATTER);
+
+        if (!startDateTime.isPresent() || !endDateTime.isPresent()) {
+            return empty();
+        }
+
+        return Optional.of(new TimeFrame(ofStartDateTimeAndEndDateTime(startDateTime.get(), endDateTime.get())));
     }
 
     /**

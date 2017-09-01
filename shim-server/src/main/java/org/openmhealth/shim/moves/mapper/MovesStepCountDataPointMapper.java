@@ -18,9 +18,11 @@ package org.openmhealth.shim.moves.mapper;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.openmhealth.schema.domain.omh.StepCount2;
+import org.openmhealth.schema.domain.omh.TimeFrame;
 
 import java.util.Optional;
 
+import static java.util.Optional.empty;
 import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asOptionalLong;
 
 
@@ -36,7 +38,14 @@ public class MovesStepCountDataPointMapper extends MovesActivityNodeDataPointMap
     @Override
     protected Optional<StepCount2> newMeasure(JsonNode node) {
 
+        Optional<TimeFrame> timeFrame = getTimeFrame(node);
+
+        // a time frame seems to not be present for manually entered data, making it impossible to deduplicate
+        if (!timeFrame.isPresent()) {
+            return empty();
+        }
+
         return asOptionalLong(node, "steps")
-                .map(count -> new StepCount2.Builder(count, getTimeFrame(node)).build());
+                .map(count -> new StepCount2.Builder(count, timeFrame.get()).build());
     }
 }
