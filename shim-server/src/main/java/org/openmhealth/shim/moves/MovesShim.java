@@ -19,7 +19,6 @@ package org.openmhealth.shim.moves;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.base.Joiner;
-import com.google.common.base.Splitter;
 import org.openmhealth.shim.*;
 import org.openmhealth.shim.moves.mapper.MovesDataPointMapper;
 import org.openmhealth.shim.moves.mapper.MovesPhysicalActivityDataPointMapper;
@@ -41,8 +40,8 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.time.Duration;
 import java.time.LocalDate;
+import java.time.Period;
 import java.util.Map;
 
 import static org.springframework.http.ResponseEntity.ok;
@@ -163,22 +162,15 @@ public class MovesShim extends OAuth2Shim {
                 ? today
                 : shimDataRequest.getEndDateTime().toLocalDate();
 
-        if (Duration.between(startDate, endDate).toDays() > MAX_DURATION_IN_DAYS) {
+        if (Period.between(startDate, endDate).getDays() > MAX_DURATION_IN_DAYS) {
             endDate = startDate.plusDays(MAX_DURATION_IN_DAYS);  // TODO make dynamic
         }
 
-        UriComponentsBuilder uriBuilder = UriComponentsBuilder
-                .fromUriString(DATA_URL);
-
-        for (String pathSegment : Splitter.on("/").split(movesDataType.getEndPoint())) {
-            uriBuilder.pathSegment(pathSegment);
-        }
-
-        uriBuilder
+        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromUriString(DATA_URL)
+                .path(movesDataType.getEndPoint())
                 .queryParam("from", startDate)
                 .queryParam("to", endDate)
                 .queryParam("trackPoints", false); // TODO make dynamic
-
 
         ResponseEntity<JsonNode> responseEntity;
 
