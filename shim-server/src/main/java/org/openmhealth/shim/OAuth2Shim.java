@@ -274,6 +274,8 @@ public abstract class OAuth2Shim implements Shim {
                 new AccessParameterClientTokenServices(accessParametersRepo));
         restTemplate.setAccessTokenProvider(tokenProviderChain);
 
+        restTemplate.setAuthenticator(new CaseStandardizingOAuth2RequestAuthenticator());
+
         return restTemplate;
     }
 
