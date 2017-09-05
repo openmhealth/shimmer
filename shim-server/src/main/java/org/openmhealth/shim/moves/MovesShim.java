@@ -106,7 +106,7 @@ public class MovesShim extends OAuth2Shim {
     public enum MovesDataType implements ShimDataType {
 
         PHYSICAL_ACTIVITY("/user/storyline/daily"),
-        STEP_COUNT("/user/summary/daily");
+        STEP_COUNT("/user/storyline/daily");
 
         private String endpoint;
 
