@@ -46,6 +46,7 @@ public class MovesStepCountDataPointMapper extends MovesActivityNodeDataPointMap
         }
 
         return asOptionalLong(node, "steps")
+                .filter(count -> count > 0)
                 .map(count -> new StepCount2.Builder(count, timeFrame.get()).build());
     }
 }
