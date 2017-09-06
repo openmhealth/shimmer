@@ -60,7 +60,7 @@ public abstract class MovesActivityNodeDataPointMapper<T extends SchemaSupport> 
     }
 
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-    private <O> Stream<O> asStream(Optional<O> optional) {
+    protected <O> Stream<O> asStream(Optional<O> optional) {
 
         return optional.map(Stream::of).orElseGet(Stream::empty);
     }
