@@ -1,0 +1,247 @@
+[
+    {
+        "date": "20121212",
+        "summary": [
+            {
+                "activity": "walking",
+                "group": "walking",
+                "duration": 3333,
+                "distance": 3333,
+                "steps": 3333,
+                "calories": 300
+            },
+            {
+                "activity": "walking_on_treadmill",
+                "group": "walking",
+                "duration": 270,
+                "steps": 303,
+                "calories": 30
+            },
+            {
+                "activity": "transport",
+                "group": "transport",
+                "duration": 1124,
+                "distance": 8443
+            },
+            {
+                "activity": "underground",
+                "group": "transport",
+                "duration": 1003,
+                "distance": 8058
+            },
+            {
+                "activity": "zumba",
+                "duration": 570,
+                "calories": 200
+            }
+        ],
+        "segments": [
+            {
+                "type": "place",
+                "startTime": "20121212T000000+0200",
+                "endTime": "20121212T071430+0200",
+                "place": {
+                    "id": 1,
+                    "type": "unknown",
+                    "location": {
+                        "lat": 55.55555,
+                        "lon": 33.33333
+                    }
+                },
+                "lastUpdate": "20130317T121143Z"
+            },
+            {
+                "type": "move",
+                "startTime": "20121212T071430+0200",
+                "endTime": "20121212T074617+0200",
+                "activities": [
+                    {
+                        "activity": "walking",
+                        "group": "walking",
+                        "manual": false,
+                        "startTime": "20121212T071430+0200",
+                        "endTime": "20121212T072732+0200",
+                        "duration": 782,
+                        "distance": 1251,
+                        "steps": 1353,
+                        "calories": 99,
+                        "trackPoints": [ ]
+                    },
+                    {
+                        "activity": "transport",
+                        "group": "transport",
+                        "manual": false,
+                        "startTime": "20121212T072732+0200",
+                        "endTime": "20121212T074616+0200",
+                        "duration": 1124,
+                        "distance": 8443
+                    }
+                ],
+                "lastUpdate": "20130317T121143Z"
+            },
+            {
+                "type": "place",
+                "startTime": "20121212T074617+0200",
+                "endTime": "20121212T100051+0200",
+                "place": {
+                    "id": 2,
+                    "type": "unknown",
+                    "location": {
+                        "lat": 55.55555,
+                        "lon": 33.33333
+                    }
+                },
+                "activities": [
+                    {
+                        "activity": "walking_on_treadmill",
+                        "group": "walking",
+                        "manual": true,
+                        "duration": 270,
+                        "steps": 303,
+                        "calories": 30,
+                        "trackPoints": [ ]
+                    }
+                ],
+                "lastUpdate": "20130317T121143Z"
+            },
+            {
+                "type": "move",
+                "startTime": "20121212T100051+0200",
+                "endTime": "20121212T100715+0200",
+                "activities": [
+                    {
+                        "activity": "walking",
+                        "group": "walking",
+                        "manual": false,
+                        "startTime": "20121212T100051+0200",
+                        "endTime": "20121212T100715+0200",
+                        "duration": 384,
+                        "distance": 421,
+                        "steps": 488,
+                        "calories": 99
+                    }
+                ],
+                "lastUpdate": "20130317T121143Z"
+            },
+            {
+                "type": "place",
+                "startTime": "20121212T100715+0200",
+                "endTime": "20121212T110530+0200",
+                "place": {
+                    "id": 4,
+                    "name": "test",
+                    "type": "foursquare",
+                    "foursquareId": "4df0fdb17d8ba370a011d24c",
+                    "foursquareCategoryIds": [
+                        "4bf58dd8d48988d125941735"
+                    ],
+                    "location": {
+                        "lat": 55.55555,
+                        "lon": 33.33333
+                    }
+                },
+                "activities": [
+                    {
+                        "activity": "walking",
+                        "group": "walking",
+                        "manual": false,
+                        "startTime": "20121212T101215+0200",
+                        "endTime": "20121212T101255+0200",
+                        "duration": 40,
+                        "distance": 18,
+                        "steps": 37,
+                        "calories": 99
+                    }
+                ],
+                "lastUpdate": "20130317T121143Z"
+            },
+            {
+                "type": "move",
+                "startTime": "20121212T110530+0200",
+                "endTime": "20121212T111129+0200",
+                "activities": [
+                    {
+                        "activity": "walking",
+                        "group": "walking",
+                        "manual": false,
+                        "startTime": "20121212T110530+0200",
+                        "endTime": "20121212T111128+0200",
+                        "duration": 358,
+                        "distance": 493,
+                        "steps": 441,
+                        "calories": 99,
+                        "trackPoints": [ ]
+                    }
+                ],
+                "lastUpdate": "20130317T121143Z"
+            },
+            {
+                "type": "place",
+                "startTime": "20121212T111129+0200",
+                "endTime": "20121212T153638+0200",
+                "place": {
+                    "id": 2,
+                    "type": "unknown",
+                    "location": {
+                        "lat": 55.55555,
+                        "lon": 33.33333
+                    }
+                },
+                "activities": [
+                    {
+                        "activity": "zumba",
+                        "manual": true,
+                        "duration": 570,
+                        "calories": 200,
+                        "trackPoints": [ ]
+                    }
+                ],
+                "lastUpdate": "20130317T121143Z"
+            },
+            {
+                "type": "move",
+                "startTime": "20121212T153638+0200",
+                "endTime": "20121212T160744+0200",
+                "activities": [
+                    {
+                        "activity": "underground",
+                        "group": "transport",
+                        "manual": false,
+                        "startTime": "20121212T153638+0200",
+                        "endTime": "20121212T155321+0200",
+                        "duration": 1003,
+                        "distance": 8058
+                    },
+                    {
+                        "activity": "walking",
+                        "group": "walking",
+                        "manual": false,
+                        "startTime": "20121212T155322+0200",
+                        "endTime": "20121212T160744+0200",
+                        "duration": 862,
+                        "distance": 1086,
+                        "steps": 1257,
+                        "calories": 99
+                    }
+                ],
+                "lastUpdate": "20130317T121143Z"
+            },
+            {
+                "type": "place",
+                "startTime": "20121212T160744+0200",
+                "endTime": "20121212T232730+0200",
+                "place": {
+                    "id": 1,
+                    "type": "unknown",
+                    "location": {
+                        "lat": 55.55555,
+                        "lon": 33.33333
+                    }
+                },
+                "lastUpdate": "20130317T121143Z"
+            }
+        ],
+        "caloriesIdle": 1785,
+        "lastUpdate": "20130317T121143Z"
+    }
+]
