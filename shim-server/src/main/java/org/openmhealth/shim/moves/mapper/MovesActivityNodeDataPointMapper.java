@@ -18,18 +18,19 @@ package org.openmhealth.shim.moves.mapper;
 
 
 import com.fasterxml.jackson.databind.JsonNode;
-import org.openmhealth.schema.domain.omh.*;
+import org.openmhealth.schema.domain.omh.DataPoint;
+import org.openmhealth.schema.domain.omh.SchemaSupport;
+import org.openmhealth.schema.domain.omh.TimeFrame;
+import org.openmhealth.shim.OptionalStreamSupport;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.gdata.util.common.base.Preconditions.checkArgument;
-import static java.util.Optional.empty;
-import static java.util.UUID.randomUUID;
+import static org.openmhealth.shim.OptionalStreamSupport.asStream;
 import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asOptionalNode;
 import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asRequiredString;
 
@@ -55,14 +56,8 @@ public abstract class MovesActivityNodeDataPointMapper<T extends SchemaSupport> 
                 .flatMap(segmentNode -> asStream(asOptionalNode(segmentNode, "activities")))
                 .flatMap(activitiesNode -> StreamSupport.stream(activitiesNode.spliterator(), false))
                 .map(this::asDataPoint)
-                .flatMap(this::asStream)
+                .flatMap(OptionalStreamSupport::asStream)
                 .collect(Collectors.toList());
-    }
-
-    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-    protected <O> Stream<O> asStream(Optional<O> optional) {
-
-        return optional.map(Stream::of).orElseGet(Stream::empty);
     }
 
     /**
