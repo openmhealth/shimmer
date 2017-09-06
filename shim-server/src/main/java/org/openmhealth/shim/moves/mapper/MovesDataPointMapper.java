@@ -17,9 +17,7 @@
 package org.openmhealth.shim.moves.mapper;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import org.openmhealth.schema.domain.omh.DataPointModality;
-import org.openmhealth.schema.domain.omh.SchemaSupport;
-import org.openmhealth.schema.domain.omh.TimeFrame;
+import org.openmhealth.schema.domain.omh.*;
 import org.openmhealth.shim.common.mapper.JsonNodeDataPointMapper;
 
 import java.time.OffsetDateTime;
@@ -27,6 +25,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
 import static java.util.Optional.empty;
+import static java.util.UUID.randomUUID;
 import static org.openmhealth.schema.domain.omh.DataPointModality.SELF_REPORTED;
 import static org.openmhealth.schema.domain.omh.DataPointModality.SENSED;
 import static org.openmhealth.schema.domain.omh.TimeInterval.ofStartDateTimeAndEndDateTime;
@@ -74,5 +73,30 @@ public abstract class MovesDataPointMapper<T extends SchemaSupport> implements J
 
         return asOptionalBoolean(node, "manual")
                 .map(manual -> manual ? SELF_REPORTED : SENSED);
+    }
+
+    /**
+     * Creates a data point.
+     *
+     * @param node a node containing all the information required to build the data point
+     * @return a data point
+     */
+    protected DataPoint<T> asDataPoint(JsonNode node, T measure, String externalId) {
+
+        DataPointAcquisitionProvenance.Builder acquisitionProvenanceBuilder =
+                new DataPointAcquisitionProvenance.Builder(RESOURCE_API_SOURCE_NAME);
+
+        Optional<DataPointModality> modality = getModality(node);
+        modality.ifPresent(acquisitionProvenanceBuilder::setModality);
+
+        DataPointAcquisitionProvenance acquisitionProvenance = acquisitionProvenanceBuilder.build();
+
+        acquisitionProvenance.setAdditionalProperty("external_id", externalId);
+
+        DataPointHeader header = new DataPointHeader.Builder(randomUUID().toString(), measure.getSchemaId())
+                .setAcquisitionProvenance(acquisitionProvenance)
+                .build();
+
+        return new DataPoint<>(header, measure);
     }
 }

@@ -75,25 +75,7 @@ public abstract class MovesActivityNodeDataPointMapper<T extends SchemaSupport> 
 
         Optional<T> measure = newMeasure(node);
 
-        if (!measure.isPresent()) {
-            return empty();
-        }
-
-        DataPointAcquisitionProvenance.Builder acquisitionProvenanceBuilder =
-                new DataPointAcquisitionProvenance.Builder(RESOURCE_API_SOURCE_NAME);
-
-        Optional<DataPointModality> modality = getModality(node);
-        modality.ifPresent(acquisitionProvenanceBuilder::setModality);
-
-        DataPointAcquisitionProvenance acquisitionProvenance = acquisitionProvenanceBuilder.build();
-
-        acquisitionProvenance.setAdditionalProperty("external_id", newExternalId(node));
-
-        DataPointHeader header = new DataPointHeader.Builder(randomUUID().toString(), measure.get().getSchemaId())
-                .setAcquisitionProvenance(acquisitionProvenance)
-                .build();
-
-        return Optional.of(new DataPoint<>(header, measure.get()));
+        return measure.map(m -> asDataPoint(node, m, newExternalId(node)));
     }
 
     /**
