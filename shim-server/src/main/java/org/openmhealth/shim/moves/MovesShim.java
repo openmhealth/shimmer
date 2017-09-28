@@ -19,8 +19,8 @@ package org.openmhealth.shim.moves;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.base.Joiner;
+import org.openmhealth.schema.domain.omh.DataPoint;
 import org.openmhealth.shim.*;
-import org.openmhealth.shim.moves.mapper.MovesDataPointMapper;
 import org.openmhealth.shim.moves.mapper.MovesPhysicalActivityDataPointMapper;
 import org.openmhealth.shim.moves.mapper.MovesStepCountDataPointMapper;
 import org.slf4j.Logger;
@@ -42,6 +42,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.time.LocalDate;
 import java.time.Period;
+import java.util.List;
 import java.util.Map;
 
 import static org.springframework.http.ResponseEntity.ok;
@@ -62,14 +63,12 @@ public class MovesShim extends OAuth2Shim {
     private static final String APP_BASED_USER_AUTHORIZATION_URL = "moves://app/authorize";
     private static final String ACCESS_TOKEN_URL = "https://api.moves-app.com/oauth/v1/access_token";
 
-    private static final long MAX_DURATION_IN_DAYS = 31;
-
     @Autowired
     private MovesClientSettings clientSettings;
 
-    private MovesStepCountDataPointMapper stepCountMapper = new MovesStepCountDataPointMapper();
-
     private MovesPhysicalActivityDataPointMapper physicalActivityMapper = new MovesPhysicalActivityDataPointMapper();
+
+    private MovesStepCountDataPointMapper stepCountMapper = new MovesStepCountDataPointMapper();
 
     @Override
     public String getLabel() {
@@ -109,15 +108,27 @@ public class MovesShim extends OAuth2Shim {
         STEP_COUNT("/user/storyline/daily");
 
         private String endpoint;
+        private int maximumRetrievalPeriodInDays = 31;
 
         MovesDataType(String endpoint) {
 
             this.endpoint = endpoint;
         }
 
+        MovesDataType(String endpoint, int maximumRetrievalPeriodInDays) {
+
+            this.endpoint = endpoint;
+            this.maximumRetrievalPeriodInDays = maximumRetrievalPeriodInDays;
+        }
+
         public String getEndPoint() {
 
             return endpoint;
+        }
+
+        public int getMaximumRetrievalPeriodInDays() {
+
+            return maximumRetrievalPeriodInDays;
         }
     }
 
@@ -162,8 +173,8 @@ public class MovesShim extends OAuth2Shim {
                 ? today
                 : shimDataRequest.getEndDateTime().toLocalDate();
 
-        if (Period.between(startDate, endDate).getDays() > MAX_DURATION_IN_DAYS) {
-            endDate = startDate.plusDays(MAX_DURATION_IN_DAYS);  // TODO make dynamic
+        if (Period.between(startDate, endDate).getDays() > movesDataType.getMaximumRetrievalPeriodInDays()) {
+            endDate = startDate.plusDays(movesDataType.getMaximumRetrievalPeriodInDays());
         }
 
         UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromUriString(DATA_URL)
@@ -183,22 +194,25 @@ public class MovesShim extends OAuth2Shim {
             throw e;
         }
 
-        if (shimDataRequest.getNormalize()) {
 
-            MovesDataPointMapper<?> dataPointMapper;
+        List<? extends DataPoint<?>> dataPoints;
+
+        if (shimDataRequest.getNormalize()) {
 
             switch (movesDataType) {
                 case PHYSICAL_ACTIVITY:
-                    dataPointMapper = physicalActivityMapper;
+                    dataPoints = physicalActivityMapper.asDataPoints(responseEntity.getBody());
                     break;
+
                 case STEP_COUNT:
-                    dataPointMapper = stepCountMapper;
+                    dataPoints = stepCountMapper.asDataPoints(responseEntity.getBody());
                     break;
+
                 default:
                     throw new UnsupportedOperationException();
             }
 
-            return ok().body(ShimDataResponse.result(SHIM_KEY, dataPointMapper.asDataPoints(responseEntity.getBody())));
+            return ok().body(ShimDataResponse.result(SHIM_KEY, dataPoints));
         }
         else {
             return ok().body(ShimDataResponse.result(SHIM_KEY, responseEntity.getBody()));
