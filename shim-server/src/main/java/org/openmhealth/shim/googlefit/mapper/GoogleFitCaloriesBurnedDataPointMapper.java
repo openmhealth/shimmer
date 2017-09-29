@@ -44,16 +44,16 @@ public class GoogleFitCaloriesBurnedDataPointMapper extends GoogleFitDataPointMa
         // TODO isn't this just "value.fpVal"?
         double caloriesBurnedValue = asRequiredDouble(listValueNode.get(0), "fpVal");
 
-        CaloriesBurned.Builder caloriesBurnedBuilder =
+        CaloriesBurned.Builder measureBuilder =
                 new CaloriesBurned.Builder(new KcalUnitValue(KILOCALORIE, caloriesBurnedValue));
 
-        setEffectiveTimeFrameIfPresent(caloriesBurnedBuilder, listNode);
+        getOptionalTimeFrame(listNode).ifPresent(measureBuilder::setEffectiveTimeFrame);
 
-        CaloriesBurned caloriesBurned = caloriesBurnedBuilder.build();
+        CaloriesBurned caloriesBurned = measureBuilder.build();
         Optional<String> originDataSourceId = asOptionalString(listNode, "originDataSourceId");
 
         // Google Fit calories burned endpoint returns calories burned by basal metabolic rate (BMR), however these
-        // are not activity related calories burned so we do not create a datapoint for values from this source
+        // are not activity related calories burned so we do not create a data point for values from this source
         if (originDataSourceId.isPresent()) {
             if (originDataSourceId.get().contains("bmr")) {
                 return Optional.empty();

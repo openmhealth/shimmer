@@ -46,11 +46,11 @@ public class GoogleFitBodyHeightDataPointMapper extends GoogleFitDataPointMapper
             return Optional.empty();
         }
 
-        BodyHeight.Builder bodyHeightBuilder = new BodyHeight.Builder(new LengthUnitValue(METER, bodyHeightValue));
+        BodyHeight.Builder measureBuilder = new BodyHeight.Builder(new LengthUnitValue(METER, bodyHeightValue));
 
-        setEffectiveTimeFrameIfPresent(bodyHeightBuilder, listNode);
+        getOptionalTimeFrame(listNode).ifPresent(measureBuilder::setEffectiveTimeFrame);
 
-        BodyHeight bodyHeight = bodyHeightBuilder.build();
+        BodyHeight bodyHeight = measureBuilder.build();
         Optional<String> originDataSourceId = asOptionalString(listNode, "originDataSourceId");
 
         return Optional.of(newDataPoint(bodyHeight, originDataSourceId.orElse(null)));
