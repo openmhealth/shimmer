@@ -1,12 +1,14 @@
 package org.openmhealth.shim.googlefit.mapper;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import org.openmhealth.schema.domain.omh.*;
+import org.openmhealth.schema.domain.omh.DataPoint;
+import org.openmhealth.schema.domain.omh.DataPointHeader;
+import org.openmhealth.schema.domain.omh.Measure;
+import org.openmhealth.schema.domain.omh.SchemaId;
 import org.openmhealth.shim.common.mapper.DataPointMapperUnitTests;
 import org.openmhealth.shim.googlefit.common.GoogleFitTestProperties;
 
 import java.io.IOException;
-import java.time.OffsetDateTime;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -72,7 +74,7 @@ public abstract class GoogleFitDataPointMapperUnitTests<T extends Measure> exten
         GoogleFitTestProperties testProperties =
                 createTestProperties(startDateTime, endDateTime, sourceOriginId, schemaId);
 
-        testProperties.addFloatingPointProperty(fpValue);
+        testProperties.setFpValue(fpValue);
 
         return testProperties;
     }
@@ -96,7 +98,9 @@ public abstract class GoogleFitDataPointMapperUnitTests<T extends Measure> exten
      * Creates a test properties object used to generate an expected value data point to test google fit data points
      * that use strings to represent values.
      */
-    public GoogleFitTestProperties createStringTestProperties(String stringValue, String startDateTime,
+    public GoogleFitTestProperties createStringTestProperties(
+            String stringValue,
+            String startDateTime,
             String endDateTime,
             String sourceOriginId,
             SchemaId schemaId) {
@@ -109,17 +113,20 @@ public abstract class GoogleFitDataPointMapperUnitTests<T extends Measure> exten
         return testProperties;
     }
 
-    private GoogleFitTestProperties createTestProperties(String startDateTimeString, String endDateTimeString,
-            String sourceOriginId, SchemaId schemaId) {
+    private GoogleFitTestProperties createTestProperties(
+            String startDateTimeString,
+            String endDateTimeString,
+            String sourceOriginId,
+            SchemaId schemaId) {
 
         GoogleFitTestProperties testProperties = new GoogleFitTestProperties();
 
         if (startDateTimeString != null) {
-            testProperties.setStartDateTime(startDateTimeString);
+            testProperties.setEffectiveStartDateTime(startDateTimeString);
         }
 
         if (endDateTimeString != null) {
-            testProperties.setEndDateTime(endDateTimeString);
+            testProperties.setEffectiveEndDateTime(endDateTimeString);
         }
 
         if (sourceOriginId != null) {
@@ -134,21 +141,5 @@ public abstract class GoogleFitDataPointMapperUnitTests<T extends Measure> exten
         testProperties.setBodySchemaId(schemaId);
 
         return testProperties;
-    }
-
-    /**
-     * Sets the effective time frame for a data point builder given a {@link GoogleFitTestProperties} object.
-     */
-    public void setExpectedEffectiveTimeFrame(T.Builder builder, GoogleFitTestProperties testProperties) {
-
-        if (testProperties.getEndDateTime().isPresent()) {
-
-            builder.setEffectiveTimeFrame(TimeInterval.ofStartDateTimeAndEndDateTime(
-                    OffsetDateTime.parse(testProperties.getStartDateTime().get()),
-                    OffsetDateTime.parse(testProperties.getEndDateTime().get())));
-        }
-        else {
-            builder.setEffectiveTimeFrame(OffsetDateTime.parse(testProperties.getStartDateTime().get()));
-        }
     }
 }

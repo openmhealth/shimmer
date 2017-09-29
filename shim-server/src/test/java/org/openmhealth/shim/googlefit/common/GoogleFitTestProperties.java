@@ -19,16 +19,18 @@ package org.openmhealth.shim.googlefit.common;
 import org.openmhealth.schema.domain.omh.DataPointModality;
 import org.openmhealth.schema.domain.omh.SchemaId;
 
+import java.time.OffsetDateTime;
 import java.util.Optional;
 
 
 /**
  * @author Chris Schaefbauer
+ * @author Emerson Farrugia
  */
 public class GoogleFitTestProperties {
 
-    private String startDateTime;
-    private String endDateTime;
+    private OffsetDateTime effectiveStartDateTime;
+    private OffsetDateTime effectiveEndDateTime;
     private String sourceOriginId;
     private double fpValue;
     private DataPointModality modality;
@@ -36,9 +38,9 @@ public class GoogleFitTestProperties {
     private long intValue;
     private SchemaId bodySchemaId;
 
-    public void addFloatingPointProperty(double fpVal) {
+    public void setFpValue(double fpValue) {
 
-        fpValue = fpVal;
+        this.fpValue = fpValue;
     }
 
     public String getSourceOriginId() {
@@ -59,14 +61,14 @@ public class GoogleFitTestProperties {
         return fpValue;
     }
 
-    public Optional<String> getEndDateTime() {
+    public Optional<OffsetDateTime> getEffectiveEndDateTime() {
 
-        return Optional.ofNullable(endDateTime);
+        return Optional.ofNullable(effectiveEndDateTime);
     }
 
-    public Optional<String> getStartDateTime() {
+    public Optional<OffsetDateTime> getEffectiveStartDateTime() {
 
-        return Optional.ofNullable(startDateTime);
+        return Optional.ofNullable(effectiveStartDateTime);
     }
 
     public String getStringValue() {
@@ -77,12 +79,12 @@ public class GoogleFitTestProperties {
         this.stringValue = stringValue;
     }
 
-    public void setStartDateTime(String startDateTime) {
-        this.startDateTime = startDateTime;
+    public void setEffectiveStartDateTime(String effectiveStartDateTime) {
+        this.effectiveStartDateTime = OffsetDateTime.parse(effectiveStartDateTime);
     }
 
-    public void setEndDateTime(String endDateTime) {
-        this.endDateTime = endDateTime;
+    public void setEffectiveEndDateTime(String effectiveEndDateTime) {
+        this.effectiveEndDateTime = OffsetDateTime.parse(effectiveEndDateTime);
     }
 
     public void setSourceOriginId(String sourceOriginId) {
