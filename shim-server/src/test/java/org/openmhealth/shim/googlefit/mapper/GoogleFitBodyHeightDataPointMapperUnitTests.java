@@ -70,11 +70,11 @@ public class GoogleFitBodyHeightDataPointMapperUnitTests extends GoogleFitDataPo
     @Override
     public void assertThatMeasureMatches(BodyHeight testMeasure, GoogleFitTestProperties testProperties) {
 
-        BodyHeight.Builder bodyHeightBuilder =
+        BodyHeight.Builder expectedBodyHeightBuilder =
                 new BodyHeight.Builder(new LengthUnitValue(METER, testProperties.getFpValue()));
 
-        setExpectedEffectiveTimeFrame(bodyHeightBuilder, testProperties);
+        testProperties.getEffectiveTimeFrame().ifPresent(expectedBodyHeightBuilder::setEffectiveTimeFrame);
 
-        assertThat(testMeasure, equalTo(bodyHeightBuilder.build()));
+        assertThat(testMeasure, equalTo(expectedBodyHeightBuilder.build()));
     }
 }

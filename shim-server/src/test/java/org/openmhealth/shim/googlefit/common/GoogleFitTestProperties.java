@@ -18,9 +18,13 @@ package org.openmhealth.shim.googlefit.common;
 
 import org.openmhealth.schema.domain.omh.DataPointModality;
 import org.openmhealth.schema.domain.omh.SchemaId;
+import org.openmhealth.schema.domain.omh.TimeFrame;
 
 import java.time.OffsetDateTime;
 import java.util.Optional;
+
+import static java.util.Optional.empty;
+import static org.openmhealth.schema.domain.omh.TimeInterval.ofStartDateTimeAndEndDateTime;
 
 
 /**
@@ -105,5 +109,20 @@ public class GoogleFitTestProperties {
 
     public void setEffectiveStartDateTime(String effectiveStartDateTime) {
         this.effectiveStartDateTime = OffsetDateTime.parse(effectiveStartDateTime);
+    }
+
+    public Optional<TimeFrame> getEffectiveTimeFrame() {
+
+        if (getEffectiveStartDateTime().isPresent() && getEffectiveEndDateTime().isPresent()) {
+            return Optional.of(new TimeFrame(ofStartDateTimeAndEndDateTime(
+                    getEffectiveStartDateTime().get(),
+                    getEffectiveEndDateTime().get())));
+        }
+        else if (getEffectiveStartDateTime().isPresent()) {
+            return Optional.of(new TimeFrame(getEffectiveStartDateTime().get()));
+        }
+        else {
+            return empty();
+        }
     }
 }

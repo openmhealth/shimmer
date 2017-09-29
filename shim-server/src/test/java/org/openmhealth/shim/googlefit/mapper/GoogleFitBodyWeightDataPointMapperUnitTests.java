@@ -80,7 +80,7 @@ public class GoogleFitBodyWeightDataPointMapperUnitTests extends GoogleFitDataPo
         BodyWeight.Builder expectedBodyWeightBuilder =
                 new BodyWeight.Builder(new MassUnitValue(KILOGRAM, testProperties.getFpValue()));
 
-        setExpectedEffectiveTimeFrame(expectedBodyWeightBuilder, testProperties);
+        testProperties.getEffectiveTimeFrame().ifPresent(expectedBodyWeightBuilder::setEffectiveTimeFrame);
 
         assertThat(testMeasure, equalTo(expectedBodyWeightBuilder.build()));
     }

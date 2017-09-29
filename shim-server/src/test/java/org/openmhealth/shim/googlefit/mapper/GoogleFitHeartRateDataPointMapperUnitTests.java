@@ -53,7 +53,7 @@ public class GoogleFitHeartRateDataPointMapperUnitTests extends GoogleFitDataPoi
 
         HeartRate.Builder expectedHeartRateBuilder = new HeartRate.Builder(testProperties.getFpValue());
 
-        setExpectedEffectiveTimeFrame(expectedHeartRateBuilder, testProperties);
+        testProperties.getEffectiveTimeFrame().ifPresent(expectedHeartRateBuilder::setEffectiveTimeFrame);
 
         assertThat(testMeasure, equalTo(expectedHeartRateBuilder.build()));
     }

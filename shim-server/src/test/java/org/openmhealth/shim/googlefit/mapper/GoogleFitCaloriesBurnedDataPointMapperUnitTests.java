@@ -67,8 +67,6 @@ public class GoogleFitCaloriesBurnedDataPointMapperUnitTests extends GoogleFitDa
                 nullValue());
     }
 
-    /* Helper methods */
-
     @Override
     public void assertThatMeasureMatches(CaloriesBurned testMeasure, GoogleFitTestProperties testProperties) {
 
@@ -76,7 +74,7 @@ public class GoogleFitCaloriesBurnedDataPointMapperUnitTests extends GoogleFitDa
                 new CaloriesBurned.Builder(
                         new KcalUnitValue(KILOCALORIE, testProperties.getFpValue()));
 
-        setExpectedEffectiveTimeFrame(expectedCaloriesBurnedBuilder, testProperties);
+        testProperties.getEffectiveTimeFrame().ifPresent(expectedCaloriesBurnedBuilder::setEffectiveTimeFrame);
 
         assertThat(testMeasure, equalTo(expectedCaloriesBurnedBuilder.build()));
     }
