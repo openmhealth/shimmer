@@ -29,23 +29,30 @@ import java.util.Optional;
  */
 public class GoogleFitTestProperties {
 
-    private OffsetDateTime effectiveStartDateTime;
-    private OffsetDateTime effectiveEndDateTime;
     private String sourceOriginId;
-    private double fpValue;
+    private SchemaId bodySchemaId;
     private DataPointModality modality;
     private String stringValue;
     private long intValue;
-    private SchemaId bodySchemaId;
-
-    public void setFpValue(double fpValue) {
-
-        this.fpValue = fpValue;
-    }
+    private double fpValue;
+    private OffsetDateTime effectiveStartDateTime;
+    private OffsetDateTime effectiveEndDateTime;
 
     public String getSourceOriginId() {
 
         return sourceOriginId;
+    }
+
+    public void setSourceOriginId(String sourceOriginId) {
+        this.sourceOriginId = sourceOriginId;
+    }
+
+    public SchemaId getBodySchemaId() {
+        return bodySchemaId;
+    }
+
+    public void setBodySchemaId(SchemaId bodySchemaId) {
+        this.bodySchemaId = bodySchemaId;
     }
 
     public Optional<DataPointModality> getModality() {
@@ -57,20 +64,6 @@ public class GoogleFitTestProperties {
         this.modality = modality;
     }
 
-    public double getFpValue() {
-        return fpValue;
-    }
-
-    public Optional<OffsetDateTime> getEffectiveEndDateTime() {
-
-        return Optional.ofNullable(effectiveEndDateTime);
-    }
-
-    public Optional<OffsetDateTime> getEffectiveStartDateTime() {
-
-        return Optional.ofNullable(effectiveStartDateTime);
-    }
-
     public String getStringValue() {
         return stringValue;
     }
@@ -79,31 +72,38 @@ public class GoogleFitTestProperties {
         this.stringValue = stringValue;
     }
 
-    public void setEffectiveStartDateTime(String effectiveStartDateTime) {
-        this.effectiveStartDateTime = OffsetDateTime.parse(effectiveStartDateTime);
-    }
-
-    public void setEffectiveEndDateTime(String effectiveEndDateTime) {
-        this.effectiveEndDateTime = OffsetDateTime.parse(effectiveEndDateTime);
-    }
-
-    public void setSourceOriginId(String sourceOriginId) {
-        this.sourceOriginId = sourceOriginId;
+    public long getIntValue() {
+        return intValue;
     }
 
     public void setIntValue(long integerValue) {
         this.intValue = integerValue;
     }
 
-    public long getIntValue() {
-        return intValue;
+    public double getFpValue() {
+        return fpValue;
     }
 
-    public SchemaId getBodySchemaId() {
-        return bodySchemaId;
+    public void setFpValue(double fpValue) {
+
+        this.fpValue = fpValue;
     }
 
-    public void setBodySchemaId(SchemaId bodySchemaId) {
-        this.bodySchemaId = bodySchemaId;
+    public Optional<OffsetDateTime> getEffectiveEndDateTime() {
+
+        return Optional.ofNullable(effectiveEndDateTime);
+    }
+
+    public void setEffectiveEndDateTime(String effectiveEndDateTime) {
+        this.effectiveEndDateTime = OffsetDateTime.parse(effectiveEndDateTime);
+    }
+
+    public Optional<OffsetDateTime> getEffectiveStartDateTime() {
+
+        return Optional.ofNullable(effectiveStartDateTime);
+    }
+
+    public void setEffectiveStartDateTime(String effectiveStartDateTime) {
+        this.effectiveStartDateTime = OffsetDateTime.parse(effectiveStartDateTime);
     }
 }
