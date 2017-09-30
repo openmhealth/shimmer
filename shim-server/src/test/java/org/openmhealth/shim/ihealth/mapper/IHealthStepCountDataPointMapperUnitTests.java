@@ -17,18 +17,17 @@
 package org.openmhealth.shim.ihealth.mapper;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import org.hamcrest.Matchers;
 import org.openmhealth.schema.domain.omh.DataPoint;
 import org.openmhealth.schema.domain.omh.DurationUnitValue;
-import org.openmhealth.schema.domain.omh.StepCount1;
+import org.openmhealth.schema.domain.omh.StepCount2;
 import org.openmhealth.schema.domain.omh.TimeInterval;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import java.time.OffsetDateTime;
 import java.util.List;
 
+import static java.time.OffsetDateTime.parse;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -37,7 +36,8 @@ import static org.hamcrest.core.Is.is;
 import static org.openmhealth.schema.domain.omh.DataPointModality.SELF_REPORTED;
 import static org.openmhealth.schema.domain.omh.DataPointModality.SENSED;
 import static org.openmhealth.schema.domain.omh.DurationUnit.DAY;
-import static org.openmhealth.schema.domain.omh.StepCount1.SCHEMA_ID;
+import static org.openmhealth.schema.domain.omh.StepCount2.SCHEMA_ID;
+import static org.openmhealth.schema.domain.omh.TimeInterval.ofStartDateTimeAndDuration;
 
 
 /**
@@ -47,7 +47,7 @@ public class IHealthStepCountDataPointMapperUnitTests extends IHealthDataPointMa
 
     private JsonNode responseNode;
     private IHealthStepCountDataPointMapper mapper = new IHealthStepCountDataPointMapper();
-    private List<DataPoint<StepCount1>> dataPoints;
+    private List<DataPoint<StepCount2>> dataPoints;
 
 
     @BeforeClass
@@ -79,28 +79,31 @@ public class IHealthStepCountDataPointMapperUnitTests extends IHealthDataPointMa
     @Test
     public void asDataPointsShouldReturnCorrectDataPointsWhenSensed() {
 
-        StepCount1 expectedStepCount = new StepCount1.Builder(21)
-                .setEffectiveTimeFrame(
-                        TimeInterval.ofStartDateTimeAndDuration(OffsetDateTime.parse("2015-11-16T00:00:00+05:00"),
-                                new DurationUnitValue(DAY, 1)))
+        TimeInterval effectiveTimeInterval =
+                ofStartDateTimeAndDuration(parse("2015-11-16T00:00:00+05:00"),
+                        new DurationUnitValue(DAY, 1));
+
+        StepCount2 expectedStepCount = new StepCount2.Builder(21, effectiveTimeInterval)
                 .build();
 
         assertThat(dataPoints.get(0).getBody(), equalTo(expectedStepCount));
 
         testDataPointHeader(dataPoints.get(0).getHeader(), SCHEMA_ID, SENSED,
-                "ac67c4ccf64af669d92569af85d19f59", OffsetDateTime.parse("2015-11-17T19:23:21Z"));
+                "ac67c4ccf64af669d92569af85d19f59", parse("2015-11-17T19:23:21Z"));
     }
 
     @Test
     public void asDataPointsShouldReturnDataPointWithUserNoteWhenNoteIsPresent() {
 
-        StepCount1 expectedStepCount = new StepCount1.Builder(4398)
-                .setEffectiveTimeFrame(
-                        TimeInterval.ofStartDateTimeAndDuration(OffsetDateTime.parse("2015-11-18T00:00:00Z"),
-                                new DurationUnitValue(DAY, 1))).setUserNotes("Great steps")
+        TimeInterval effectiveTimeInterval =
+                ofStartDateTimeAndDuration(parse("2015-11-18T00:00:00Z"),
+                        new DurationUnitValue(DAY, 1));
+
+        StepCount2 expectedStepCount = new StepCount2.Builder(4398, effectiveTimeInterval)
+                .setUserNotes("Great steps")
                 .build();
 
-        assertThat(dataPoints.get(1).getBody(), Matchers.equalTo(expectedStepCount));
+        assertThat(dataPoints.get(1).getBody(), equalTo(expectedStepCount));
 
         assertThat(dataPoints.get(0).getBody().getUserNotes(), nullValue());
         assertThat(dataPoints.get(1).getBody().getUserNotes(), equalTo("Great steps"));
