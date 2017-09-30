@@ -19,7 +19,8 @@ package org.openmhealth.shim.ihealth.mapper;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.openmhealth.schema.domain.omh.DataPoint;
 import org.openmhealth.schema.domain.omh.DurationUnitValue;
-import org.openmhealth.schema.domain.omh.StepCount1;
+import org.openmhealth.schema.domain.omh.StepCount2;
+import org.openmhealth.schema.domain.omh.TimeInterval;
 
 import java.math.BigDecimal;
 import java.util.Optional;
@@ -30,14 +31,14 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.*;
 
 
 /**
- * A mapper that translates responses from the iHealth <code>/activity.json</code> endpoint into {@link StepCount1}
+ * A mapper that translates responses from the iHealth <code>/activity.json</code> endpoint into {@link StepCount2}
  * measures.
  *
  * @author Chris Schaefbauer
  * @see <a href="http://developer.ihealthlabs.com/dev_documentation_RequestfordataofActivityReport.htm">endpoint
  * documentation</a>
  */
-public class IHealthStepCountDataPointMapper extends IHealthDataPointMapper<StepCount1> {
+public class IHealthStepCountDataPointMapper extends IHealthDataPointMapper<StepCount2> {
 
     @Override
     protected String getListNodeName() {
@@ -50,7 +51,7 @@ public class IHealthStepCountDataPointMapper extends IHealthDataPointMapper<Step
     }
 
     @Override
-    protected Optional<DataPoint<StepCount1>> asDataPoint(JsonNode listEntryNode, Integer measureUnitMagicNumber) {
+    protected Optional<DataPoint<StepCount2>> asDataPoint(JsonNode listEntryNode, Integer measureUnitMagicNumber) {
 
         BigDecimal steps = asRequiredBigDecimal(listEntryNode, "Steps");
 
@@ -58,30 +59,21 @@ public class IHealthStepCountDataPointMapper extends IHealthDataPointMapper<Step
             return Optional.empty();
         }
 
-        StepCount1.Builder stepCountBuilder = new StepCount1.Builder(steps);
+        Long effectiveEpochSecondsInLocalTime = asRequiredLong(listEntryNode, "MDate");
+        String effectiveTimeZoneOffset = asRequiredString(listEntryNode, "TimeZone");
 
-        Optional<Long> dateTimeString = asOptionalLong(listEntryNode, "MDate");
+        /* iHealth provides daily summaries for step counts and timestamp the data point at either the end of
+           the day (23:50) or at the latest time that data point was synced. */
+        TimeInterval effectiveTimeInterval = ofStartDateTimeAndDuration(
+                getDateTimeAtStartOfDayWithCorrectOffset(effectiveEpochSecondsInLocalTime, effectiveTimeZoneOffset),
+                new DurationUnitValue(DAY, 1));
 
-        if (dateTimeString.isPresent()) {
+        StepCount2.Builder measureBuilder = new StepCount2.Builder(steps, effectiveTimeInterval);
 
-            Optional<String> timeZone = asOptionalString(listEntryNode, "TimeZone");
+        getUserNoteIfExists(listEntryNode).ifPresent(measureBuilder::setUserNotes);
 
-            if (timeZone.isPresent()) {
-
-                /* iHealth provides daily summaries for step counts and timestamp the datapoint at either the end of
-                the day (23:50) or at the latest time that datapoint was synced */
-                stepCountBuilder.setEffectiveTimeFrame(ofStartDateTimeAndDuration(
-                        getDateTimeAtStartOfDayWithCorrectOffset(dateTimeString.get(), timeZone.get()),
-                        new DurationUnitValue(DAY, 1)));
-            }
-        }
-
-        getUserNoteIfExists(listEntryNode).ifPresent(stepCountBuilder::setUserNotes);
-
-        StepCount1 stepCount = stepCountBuilder.build();
+        StepCount2 stepCount = measureBuilder.build();
 
         return Optional.of(new DataPoint<>(createDataPointHeader(listEntryNode, stepCount), stepCount));
     }
-
-
 }
