@@ -24,7 +24,6 @@ import org.openmhealth.schema.domain.omh.Measure;
 import java.math.BigDecimal;
 import java.util.Optional;
 
-import static java.util.Optional.empty;
 import static org.openmhealth.schema.domain.omh.LengthUnit.METER;
 import static org.openmhealth.shim.withings.domain.WithingsBodyMeasureType.BODY_HEIGHT;
 
@@ -41,10 +40,6 @@ public class WithingsBodyHeightDataPointMapper extends WithingsBodyMeasureDataPo
 
         Optional<BigDecimal> value = getValueForMeasureType(measuresNode, BODY_HEIGHT);
 
-        if (!value.isPresent()) {
-            return empty();
-        }
-
-        return Optional.of(new BodyHeight.Builder(new LengthUnitValue(METER, value.get())));
+        return value.map(heightInM -> new BodyHeight.Builder(new LengthUnitValue(METER, heightInM)));
     }
 }
