@@ -35,36 +35,37 @@ import static org.openmhealth.shim.misfit.mapper.MisfitDataPointMapper.RESOURCE_
 /**
  * @author Emerson Farrugia
  */
-public class MisfitSleepDurationDataPointMapperUnitTests
-        extends MisfitSleepMeasureDataPointMapperUnitTests<SleepDuration2> {
+public class MisfitSleepEpisodeDataPointMapperUnitTests
+        extends MisfitSleepMeasureDataPointMapperUnitTests<SleepEpisode> {
 
-    private final MisfitSleepDurationDataPointMapper mapper = new MisfitSleepDurationDataPointMapper();
+    private final MisfitSleepEpisodeDataPointMapper mapper = new MisfitSleepEpisodeDataPointMapper();
 
     @Override
-    protected MisfitSleepMeasureDataPointMapper<SleepDuration2> getMapper() {
+    protected MisfitSleepMeasureDataPointMapper<SleepEpisode> getMapper() {
         return mapper;
     }
 
     @Test
     public void asDataPointsShouldReturnCorrectDataPoints() {
+
         // the end time is the addition of the start time and the total duration when the last segment isn't awake
         TimeInterval effectiveTimeInterval = TimeInterval.ofStartDateTimeAndEndDateTime(
                 OffsetDateTime.of(2015, 2, 23, 21, 40, 59, 0, ZoneOffset.ofHours(-5)),
                 OffsetDateTime.of(2015, 2, 24, 0, 53, 59, 0, ZoneOffset.ofHours(-5)));
 
-        // the sleep duration is the total duration minus the sum of the awake segment durations
-        SleepDuration2 expectedSleepDuration =
-                new SleepDuration2.Builder(new DurationUnitValue(SECOND, 10140), effectiveTimeInterval)
-                        .build();
+        SleepEpisode expectedSleepEpisode = new SleepEpisode.Builder(effectiveTimeInterval)
+                // the total sleep time is total duration minus the sum of the awake segment durations
+                .setTotalSleepTime(new DurationUnitValue(SECOND, 10140))
+                .build();
 
-        List<DataPoint<SleepDuration2>> dataPoints = mapper.asDataPoints(sleepsResponseNode);
+        List<DataPoint<SleepEpisode>> dataPoints = mapper.asDataPoints(sleepsResponseNode);
 
         assertThat(dataPoints, notNullValue());
         assertThat(dataPoints.size(), greaterThan(0));
 
-        DataPoint<SleepDuration2> firstDataPoint = dataPoints.get(0);
+        DataPoint<SleepEpisode> firstDataPoint = dataPoints.get(0);
 
-        assertThat(firstDataPoint.getBody(), equalTo(expectedSleepDuration));
+        assertThat(firstDataPoint.getBody(), equalTo(expectedSleepEpisode));
 
         DataPointAcquisitionProvenance acquisitionProvenance = firstDataPoint.getHeader().getAcquisitionProvenance();
 
