@@ -56,10 +56,10 @@ import static org.openmhealth.shim.withings.WithingsShim.WithingsDataType.*;
 public class WithingsShim extends OAuth1Shim {
 
     public static final String SHIM_KEY = "withings";
-    private static final String DATA_URL = "http://wbsapi.withings.net";
-    private static final String REQUEST_TOKEN_URL = "https://oauth.withings.com/account/request_token";
-    private static final String USER_AUTHORIZATION_URL = "https://oauth.withings.com/account/authorize";
-    private static final String ACCESS_TOKEN_URL = "https://oauth.withings.com/account/access_token";
+    private static final String DATA_URL = "https://api.health.nokia.com/v2/measure";
+    private static final String REQUEST_TOKEN_URL = "https://developer.health.nokia.com/account/request_token";
+    private static final String USER_AUTHORIZATION_URL = "https://developer.health.nokia.com/account/authorize";
+    private static final String ACCESS_TOKEN_URL = "https://developer.health.nokia.com/account/access_token";
     private static final String INTRADAY_ACTIVITY_ENDPOINT = "getintradayactivity";
 
     @Autowired
