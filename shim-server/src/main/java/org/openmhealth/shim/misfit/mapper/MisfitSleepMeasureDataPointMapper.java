@@ -47,10 +47,16 @@ public abstract class MisfitSleepMeasureDataPointMapper<T extends SchemaSupport>
         for (JsonNode sleepDetailSegmentNode : sleepDetailsNode) {
 
             SleepSegment sleepSegment = new SleepSegment();
-            sleepSegments.add(sleepSegment);
 
             sleepSegment.setStartDateTime(asRequiredOffsetDateTime(sleepDetailSegmentNode, "datetime"));
             sleepSegment.setType(SleepSegmentType.getByMagicNumber(asRequiredInteger(sleepDetailSegmentNode, "value")));
+
+            sleepSegments.add(sleepSegment);
+
+            // finish constructing previous segment
+            if (previousSegment != null) {
+                previousSegment.setEndDateTime(sleepSegment.getStartDateTime());
+            }
 
             previousSegment = sleepSegment;
         }
