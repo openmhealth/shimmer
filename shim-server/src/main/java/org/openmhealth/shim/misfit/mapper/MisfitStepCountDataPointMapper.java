@@ -40,7 +40,7 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asRequir
  *
  * @author Emerson Farrugia
  * @author Eric Jain
- * @see <a href="https://build.misfit.com/docs/references#APIReferences-Summary">API documentation</a>
+ * @see <a href="https://build.misfit.com/docs/cloudapi/api_references#summary">API documentation</a>
  */
 public class MisfitStepCountDataPointMapper extends MisfitDataPointMapper<StepCount2> {
 
