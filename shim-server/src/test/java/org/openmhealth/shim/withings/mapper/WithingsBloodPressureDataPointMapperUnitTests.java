@@ -16,45 +16,46 @@
 
 package org.openmhealth.shim.withings.mapper;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import org.openmhealth.schema.domain.omh.*;
-import org.openmhealth.shim.common.mapper.DataPointMapperUnitTests;
-import org.testng.annotations.BeforeTest;
+import org.openmhealth.shim.withings.domain.WithingsBodyMeasureType;
 import org.testng.annotations.Test;
 
-import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.util.List;
 
 import static java.util.Collections.singletonList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
-import static org.openmhealth.schema.domain.omh.BloodPressure.*;
+import static org.openmhealth.schema.domain.omh.BloodPressure.SCHEMA_ID;
 import static org.openmhealth.schema.domain.omh.BloodPressureUnit.MM_OF_MERCURY;
 import static org.openmhealth.schema.domain.omh.DataPointModality.SENSED;
+import static org.openmhealth.shim.withings.domain.WithingsBodyMeasureType.DIASTOLIC_BLOOD_PRESSURE;
 import static org.openmhealth.shim.withings.mapper.WithingsDataPointMapper.RESOURCE_API_SOURCE_NAME;
 
 
 /**
  * @author Chris Schaefbauer
+ * @author Emerson Farrugia
  */
-public class WithingsBloodPressureDataPointMapperUnitTests extends DataPointMapperUnitTests {
+public class WithingsBloodPressureDataPointMapperUnitTests
+        extends WithingsBodyMeasureDataPointMapperUnitTests<BloodPressure> {
 
     private WithingsBloodPressureDataPointMapper mapper = new WithingsBloodPressureDataPointMapper();
-    private JsonNode responseNode;
 
+    @Override
+    protected WithingsBodyMeasureDataPointMapper<BloodPressure> getMapper() {
+        return mapper;
+    }
 
-    @BeforeTest
-    public void initializeResponseNode() throws IOException {
-
-        responseNode = asJsonNode("org/openmhealth/shim/withings/mapper/withings-body-measures.json");
+    @Override
+    protected WithingsBodyMeasureType getBodyMeasureType() {
+        return DIASTOLIC_BLOOD_PRESSURE;
     }
 
     @Test
     public void asDataPointsShouldReturnCorrectNumberOfDataPoints() {
 
-        List<DataPoint<BloodPressure>> dataPoints = mapper.asDataPoints(responseNode);
-        assertThat(dataPoints.size(), equalTo(1));
+        assertThat(mapper.asDataPoints(responseNode).size(), equalTo(1));
     }
 
     @Test

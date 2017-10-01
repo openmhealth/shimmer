@@ -17,8 +17,11 @@
 package org.openmhealth.shim.withings.mapper;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import org.openmhealth.schema.domain.omh.*;
-import org.openmhealth.shim.common.mapper.DataPointMapperUnitTests;
+import org.openmhealth.schema.domain.omh.BodyWeight;
+import org.openmhealth.schema.domain.omh.DataPoint;
+import org.openmhealth.schema.domain.omh.DataPointAcquisitionProvenance;
+import org.openmhealth.schema.domain.omh.MassUnitValue;
+import org.openmhealth.shim.withings.domain.WithingsBodyMeasureType;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -28,24 +31,35 @@ import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
-import static org.openmhealth.schema.domain.omh.BodyWeight.*;
+import static org.openmhealth.schema.domain.omh.BodyWeight.SCHEMA_ID;
 import static org.openmhealth.schema.domain.omh.DataPointModality.SENSED;
-import static org.openmhealth.schema.domain.omh.MassUnit.*;
+import static org.openmhealth.schema.domain.omh.MassUnit.KILOGRAM;
+import static org.openmhealth.shim.withings.domain.WithingsBodyMeasureType.BODY_WEIGHT;
 import static org.openmhealth.shim.withings.mapper.WithingsDataPointMapper.RESOURCE_API_SOURCE_NAME;
 
 
 /**
  * @author Chris Schaefbauer
  */
-public class WithingsBodyWeightDataPointMapperUnitTests extends DataPointMapperUnitTests {
+public class WithingsBodyWeightDataPointMapperUnitTests
+        extends WithingsBodyMeasureDataPointMapperUnitTests<BodyWeight> {
 
-    WithingsBodyWeightDataPointMapper mapper = new WithingsBodyWeightDataPointMapper();
-    JsonNode responseNode, responseNodeWithGoal;
+    private WithingsBodyWeightDataPointMapper mapper = new WithingsBodyWeightDataPointMapper();
+    private JsonNode responseNodeWithGoal;
+
+    @Override
+    protected WithingsBodyMeasureDataPointMapper<BodyWeight> getMapper() {
+        return mapper;
+    }
+
+    @Override
+    protected WithingsBodyMeasureType getBodyMeasureType() {
+        return BODY_WEIGHT;
+    }
 
     @BeforeTest
-    public void initializeResponseNode() throws IOException {
+    public void initializeAdditionalResponseNodes() throws IOException {
 
-        responseNode = asJsonNode("org/openmhealth/shim/withings/mapper/withings-body-measures.json");
         responseNodeWithGoal = asJsonNode("org/openmhealth/shim/withings/mapper/withings-body-measures-only-goal.json");
     }
 
@@ -70,7 +84,7 @@ public class WithingsBodyWeightDataPointMapperUnitTests extends DataPointMapperU
         assertThat(mapper.asDataPoints(responseNodeWithGoal).size(), equalTo(0));
     }
 
-    //TODO: Refactor this out with an "expectedProperties" dictionary for all the inputs and then one for all
+    // TODO: Refactor this out with an "expectedProperties" dictionary for all the inputs and then one for all
     // Withings points
     public void testDataPoint(DataPoint<BodyWeight> testDataPoint, double massValue, String offsetTimeString,
             long externalId) {
