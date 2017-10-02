@@ -61,19 +61,23 @@ public class WithingsHeartRateDataPointMapperUnitTests extends WithingsBodyMeasu
     @Test
     public void asDataPointsShouldReturnCorrectSensedDataPoint() {
 
-        assertThatDataPointMatches(mapper.asDataPoints(responseNode).get(0), 41.0, "2015-05-31T06:06:23Z", 366956482L,
+        assertThatDataPointMatches(mapper.asDataPoints(responseNode).get(0), 41.0, "2015-05-31T06:06:23Z", "366956482",
                 null, SENSED);
     }
 
     @Test
     public void asDataPointsShouldReturnCorrectSelfReportedDataPoint() {
 
-        assertThatDataPointMatches(mapper.asDataPoints(responseNode).get(2), 47.0, "2015-02-26T21:57:17Z", 321858727L,
+        assertThatDataPointMatches(mapper.asDataPoints(responseNode).get(2), 47.0, "2015-02-26T21:57:17Z", "321858727",
                 "a few minutes after a walk", SELF_REPORTED);
     }
 
-    private void assertThatDataPointMatches(DataPoint<HeartRate> actualDataPoint, double expectedHeartRateValue,
-            String expectedDateTimeAsString, long expectedExternalId, String expectedComment,
+    private void assertThatDataPointMatches(
+            DataPoint<HeartRate> actualDataPoint,
+            double expectedHeartRateValue,
+            String expectedDateTimeAsString,
+            String expectedExternalId,
+            String expectedComment,
             DataPointModality expectedModality) {
 
         HeartRate.Builder expectedHeartRateBuilder = new HeartRate.Builder(expectedHeartRateValue)

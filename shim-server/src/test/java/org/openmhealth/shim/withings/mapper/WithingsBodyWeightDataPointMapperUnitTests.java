@@ -74,8 +74,8 @@ public class WithingsBodyWeightDataPointMapperUnitTests
 
         List<DataPoint<BodyWeight>> dataPointList = mapper.asDataPoints(responseNode);
 
-        testDataPoint(dataPointList.get(0), 74.126, "2015-05-31T06:06:23Z", 366956482L);
-        testDataPoint(dataPointList.get(1), 74.128, "2015-04-20T17:13:56Z", 347186704L);
+        testDataPoint(dataPointList.get(0), 74.126, "2015-05-31T06:06:23Z", "366956482");
+        testDataPoint(dataPointList.get(1), 74.128, "2015-04-20T17:13:56Z", "347186704");
     }
 
     @Test
@@ -87,7 +87,7 @@ public class WithingsBodyWeightDataPointMapperUnitTests
     // TODO: Refactor this out with an "expectedProperties" dictionary for all the inputs and then one for all
     // Withings points
     public void testDataPoint(DataPoint<BodyWeight> testDataPoint, double massValue, String offsetTimeString,
-            long externalId) {
+            String externalId) {
 
         BodyWeight bodyWeightExpected = new BodyWeight.Builder(new MassUnitValue(KILOGRAM, massValue))
                 .setEffectiveTimeFrame(OffsetDateTime.parse(offsetTimeString))
@@ -100,10 +100,8 @@ public class WithingsBodyWeightDataPointMapperUnitTests
         assertThat(testProvenance.getSourceName(), equalTo(RESOURCE_API_SOURCE_NAME));
         assertThat(testProvenance.getModality(), equalTo(SENSED));
 
-        Long expectedExternalId = (Long) testDataPoint.getHeader().getAcquisitionProvenance().getAdditionalProperties()
-                .get("external_id");
-
-        assertThat(expectedExternalId, equalTo(externalId));
+        assertThat(testDataPoint.getHeader().getAcquisitionProvenance().getAdditionalProperties().get("external_id"),
+                equalTo(externalId));
         assertThat(testDataPoint.getHeader().getBodySchemaId(), equalTo(SCHEMA_ID));
     }
 }

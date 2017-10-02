@@ -76,6 +76,6 @@ public class WithingsBodyHeightDataPointMapperUnitTests
         assertThat(actualDataPointHeader.getAcquisitionProvenance().getModality(), equalTo(SELF_REPORTED));
         assertThat(actualDataPointHeader.getAcquisitionProvenance().getSourceName(), equalTo(RESOURCE_API_SOURCE_NAME));
         assertThat(actualDataPointHeader.getAcquisitionProvenance().getAdditionalProperties().get("external_id"),
-                equalTo(320419189L));
+                equalTo("320419189"));
     }
 }

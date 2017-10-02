@@ -74,7 +74,7 @@ public class WithingsSleepEpisodeDataPointMapperUnitTests extends DataPointMappe
 
         assertThat(acquisitionProvenance.getSourceName(), equalTo(WithingsDataPointMapper.RESOURCE_API_SOURCE_NAME));
         assertThat(acquisitionProvenance.getModality(), equalTo(SENSED));
-        assertThat(acquisitionProvenance.getAdditionalProperties().get("external_id"), equalTo(123L));
+        assertThat(acquisitionProvenance.getAdditionalProperties().get("external_id"), equalTo("123"));
         assertThat(acquisitionProvenance.getAdditionalProperties().get("device_name"), equalTo("Activity tracker"));
     }
 }

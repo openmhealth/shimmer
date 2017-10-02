@@ -76,6 +76,6 @@ public class WithingsBloodPressureDataPointMapperUnitTests
         assertThat(actualDataPointHeader.getAcquisitionProvenance().getModality(), equalTo(SENSED));
         assertThat(actualDataPointHeader.getAcquisitionProvenance().getSourceName(), equalTo(RESOURCE_API_SOURCE_NAME));
         assertThat(actualDataPointHeader.getAcquisitionProvenance().getAdditionalProperties().get("external_id"),
-                equalTo(366956482L));
+                equalTo("366956482"));
     }
 }

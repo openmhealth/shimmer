@@ -18,8 +18,7 @@ package org.openmhealth.shim.withings.mapper;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.openmhealth.schema.domain.omh.DataPoint;
-import org.openmhealth.schema.domain.omh.StepCount1;
-import org.openmhealth.schema.domain.omh.TimeInterval;
+import org.openmhealth.schema.domain.omh.StepCount2;
 import org.openmhealth.shim.common.mapper.DataPointMapperUnitTests;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -32,15 +31,14 @@ import static java.util.Collections.singletonList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.openmhealth.schema.domain.omh.DataPointModality.SENSED;
+import static org.openmhealth.schema.domain.omh.TimeInterval.ofStartDateTimeAndEndDateTime;
 import static org.openmhealth.shim.withings.mapper.WithingsDataPointMapper.RESOURCE_API_SOURCE_NAME;
-
 
 
 /**
  * @author Chris Schaefbauer
  */
 public class WithingsDailyStepCountDataPointMapperUnitTests extends DataPointMapperUnitTests {
-
 
     private JsonNode responseNode;
     private WithingsDailyStepCountDataPointMapper mapper = new WithingsDailyStepCountDataPointMapper();
@@ -60,7 +58,7 @@ public class WithingsDailyStepCountDataPointMapperUnitTests extends DataPointMap
     @Test
     public void asDataPointsReturnsCorrectDataPoints() {
 
-        List<DataPoint<StepCount1>> dataPoints = mapper.asDataPoints(responseNode);
+        List<DataPoint<StepCount2>> dataPoints = mapper.asDataPoints(responseNode);
 
         testDailyStepCountDataPoint(dataPoints.get(0), 2934, "2015-06-18T00:00:00-07:00", "2015-06-19T00:00:00-07:00");
         testDailyStepCountDataPoint(dataPoints.get(1), 2600, "2015-06-19T00:00:00-07:00", "2015-06-20T00:00:00-07:00");
@@ -68,22 +66,22 @@ public class WithingsDailyStepCountDataPointMapperUnitTests extends DataPointMap
         testDailyStepCountDataPoint(dataPoints.get(3), 1798, "2015-02-21T00:00:00-08:00", "2015-02-22T00:00:00-08:00");
     }
 
-    public void testDailyStepCountDataPoint(DataPoint<StepCount1> stepCountDataPoint, long expectedStepCountValue,
-            String expectedDateString, String expectedEndDateString) {
+    public void testDailyStepCountDataPoint(DataPoint<StepCount2> stepCountDataPoint, long expectedStepCountValue,
+            String expectedStartDateString, String expectedEndDateString) {
 
-        StepCount1 expectedStepCount = new StepCount1.Builder(expectedStepCountValue)
-                .setEffectiveTimeFrame(TimeInterval
-                        .ofStartDateTimeAndEndDateTime(OffsetDateTime.parse(expectedDateString),
-                                OffsetDateTime.parse(expectedEndDateString)))
+        StepCount2 expectedStepCount = new StepCount2.Builder(
+                expectedStepCountValue,
+                ofStartDateTimeAndEndDateTime(
+                        OffsetDateTime.parse(expectedStartDateString),
+                        OffsetDateTime.parse(expectedEndDateString)))
                 .build();
 
-        StepCount1 testStepCount = stepCountDataPoint.getBody();
+        StepCount2 stepCount = stepCountDataPoint.getBody();
 
-        assertThat(testStepCount, equalTo(expectedStepCount));
+        assertThat(stepCount, equalTo(expectedStepCount));
         assertThat(stepCountDataPoint.getHeader().getAcquisitionProvenance().getModality(), equalTo(SENSED));
-        assertThat(stepCountDataPoint.getHeader().getAcquisitionProvenance().getSourceName(), equalTo(
-                RESOURCE_API_SOURCE_NAME));
-        assertThat(stepCountDataPoint.getHeader().getBodySchemaId(), equalTo(StepCount1.SCHEMA_ID));
-
+        assertThat(stepCountDataPoint.getHeader().getAcquisitionProvenance().getSourceName(),
+                equalTo(RESOURCE_API_SOURCE_NAME));
+        assertThat(stepCountDataPoint.getHeader().getBodySchemaId(), equalTo(StepCount2.SCHEMA_ID));
     }
 }
