@@ -1,26 +1,37 @@
 {
-    "status": 0,
-    "body": {
-        "series": [
-            {
-                "id": 16616514,
-                "timezone": "Europe/Paris",
-                "model": 32,
-                "startdate": 1410521659,
-                "enddate": 1410542577,
-                "date": "2014-09-11",
-                "data": {
-                    "wakeupduration": 1800,
-                    "lightsleepduration": 18540,
-                    "deepsleepduration": 8460,
-                    "remsleepduration": 10460,
-                    "durationtosleep": 420,
-                    "durationtowakeup": 360,
-                    "wakeupcount": 3
-                },
-                "modified": 1412087110
-            }
-        ],
-        "more": false
-    }
+    "series": [
+        {
+            "id": 633480561,
+            "timezone": "Europe/London",
+            "model": 16,
+            "startdate": 1504307700,
+            "enddate": 1504319100,
+            "date": "2017-09-02",
+            "data": {
+                "wakeupduration": 0,
+                "lightsleepduration": 3360,
+                "deepsleepduration": 7800,
+                "wakeupcount": 0,
+                "durationtosleep": 240
+            },
+            "modified": 1504477126
+        },
+        {
+            "id": 633659292,
+            "timezone": "Europe/London",
+            "model": 16,
+            "startdate": 1504477140,
+            "enddate": 1504509540,
+            "date": "2017-09-04",
+            "data": {
+                "wakeupduration": 2700,
+                "lightsleepduration": 15900,
+                "deepsleepduration": 13800,
+                "wakeupcount": 4,
+                "durationtosleep": 0
+            },
+            "modified": 1504682107
+        }
+    ],
+    "more": false
 }
