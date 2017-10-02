@@ -22,12 +22,10 @@ import org.openmhealth.schema.domain.omh.Measure;
 import org.openmhealth.shim.common.mapper.DataPointMapperUnitTests;
 import org.openmhealth.shim.common.mapper.JsonNodeMappingException;
 import org.openmhealth.shim.withings.domain.WithingsBodyMeasureType;
-import org.testng.annotations.BeforeTest;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
-
-import static org.openmhealth.shim.withings.domain.WithingsBodyMeasureType.BODY_HEIGHT;
 
 
 /**
@@ -43,7 +41,7 @@ public abstract class WithingsBodyMeasureDataPointMapperUnitTests<T extends Meas
 
     protected abstract WithingsBodyMeasureType getBodyMeasureType();
 
-    @BeforeTest
+    @BeforeMethod
     public void initializeResponseNode() throws IOException {
 
         responseNode = asJsonNode("org/openmhealth/shim/withings/mapper/withings-body-measures.json");
@@ -65,6 +63,6 @@ public abstract class WithingsBodyMeasureDataPointMapperUnitTests<T extends Meas
                 "    }\n" +
                 "]");
 
-        getMapper().getValueForMeasureType(measuresNode, BODY_HEIGHT);
+        getMapper().getValueForMeasureType(measuresNode, getBodyMeasureType());
     }
 }
