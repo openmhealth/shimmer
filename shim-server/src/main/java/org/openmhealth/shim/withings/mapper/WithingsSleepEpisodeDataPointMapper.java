@@ -53,8 +53,8 @@ public class WithingsSleepEpisodeDataPointMapper extends WithingsListDataPointMa
     @Override
     Optional<DataPoint<SleepEpisode>> asDataPoint(JsonNode node) {
 
-        Long latencyToSleepOnsetInSeconds = asRequiredLong(node, "data.durationtosleep");
-        Long latencyToArisingInSeconds = asRequiredLong(node, "data.durationtosleep");
+        Long latencyToSleepOnsetInSeconds = asOptionalLong(node, "data.durationtosleep").orElse(0L);
+        Long latencyToArisingInSeconds = asOptionalLong(node, "data.durationtowakeup").orElse(0L);
         String timeZoneId = asRequiredString(node, "timezone");
 
         OffsetDateTime effectiveStartDateTime = asOffsetDateTime(asRequiredLong(node, "startdate"), timeZoneId)
@@ -68,9 +68,9 @@ public class WithingsSleepEpisodeDataPointMapper extends WithingsListDataPointMa
                         .setLatencyToSleepOnset(new DurationUnitValue(SECOND, latencyToSleepOnsetInSeconds))
                         .setLatencyToArising(new DurationUnitValue(SECOND, latencyToArisingInSeconds));
 
-        Long lightSleepDurationInSeconds = asRequiredLong(node, "data.lightsleepduration");
-        Long deepSleepDurationInSeconds = asRequiredLong(node, "data.deepsleepduration");
-        Long remSleepDurationInSeconds = asRequiredLong(node, "data.remsleepduration");
+        Long lightSleepDurationInSeconds = asOptionalLong(node, "data.lightsleepduration").orElse(0L);
+        Long deepSleepDurationInSeconds = asOptionalLong(node, "data.deepsleepduration").orElse(0L);
+        Long remSleepDurationInSeconds = asOptionalLong(node, "data.remsleepduration").orElse(0L);
 
         Long totalSleepDurationInSeconds =
                 lightSleepDurationInSeconds + deepSleepDurationInSeconds + remSleepDurationInSeconds;

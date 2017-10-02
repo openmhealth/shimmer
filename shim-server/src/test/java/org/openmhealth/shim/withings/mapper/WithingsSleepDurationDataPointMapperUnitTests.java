@@ -62,29 +62,19 @@ public class WithingsSleepDurationDataPointMapperUnitTests extends DataPointMapp
         List<DataPoint<SleepDuration2>> dataPoints = mapper.asDataPoints(responseNode);
 
         SleepDuration2 expectedSleepDuration = new SleepDuration2.Builder(
-                new DurationUnitValue(SECOND, 37460),
-                ofStartDateTimeAndEndDateTime(parse("2014-09-12T11:34:19+02:00"), parse("2014-09-12T17:22:57+02:00"))
+                new DurationUnitValue(SECOND, 11160),
+                ofStartDateTimeAndEndDateTime(parse("2017-09-02T00:19:00+01:00"), parse("2017-09-02T03:25:00+01:00"))
         )
                 .build();
 
-        assertThat(dataPoints.get(0).getBody(), equalTo(expectedSleepDuration));
-
-        expectedSleepDuration.setAdditionalProperty("wakeup_count", 3);
-        expectedSleepDuration.setAdditionalProperty("light_sleep_duration", new DurationUnitValue(SECOND, 18540));
-        expectedSleepDuration.setAdditionalProperty("deep_sleep_duration", new DurationUnitValue(SECOND, 8460));
-        expectedSleepDuration.setAdditionalProperty("rem_sleep_duration", new DurationUnitValue(SECOND, 10460));
-        expectedSleepDuration.setAdditionalProperty("duration_to_sleep", new DurationUnitValue(SECOND, 420));
-
-        assertThat(dataPoints.get(0).getBody().getAdditionalProperties(),
-                equalTo(expectedSleepDuration.getAdditionalProperties()));
-
         assertThat(dataPoints.get(0).getHeader().getBodySchemaId(), equalTo(SleepDuration2.SCHEMA_ID));
+        assertThat(dataPoints.get(0).getBody(), equalTo(expectedSleepDuration));
 
         DataPointAcquisitionProvenance acquisitionProvenance = dataPoints.get(0).getHeader().getAcquisitionProvenance();
 
         assertThat(acquisitionProvenance.getSourceName(), equalTo(WithingsDataPointMapper.RESOURCE_API_SOURCE_NAME));
         assertThat(acquisitionProvenance.getModality(), equalTo(SENSED));
-        assertThat(acquisitionProvenance.getAdditionalProperties().get("external_id"), equalTo(16616514L));
-        assertThat(acquisitionProvenance.getAdditionalProperties().get("device_name"), equalTo("Aura"));
+        assertThat(acquisitionProvenance.getAdditionalProperties().get("external_id"), equalTo(123L));
+        assertThat(acquisitionProvenance.getAdditionalProperties().get("device_name"), equalTo("Activity tracker"));
     }
 }
