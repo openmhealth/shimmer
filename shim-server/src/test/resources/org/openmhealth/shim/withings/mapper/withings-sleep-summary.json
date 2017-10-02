@@ -1,7 +1,7 @@
 {
     "series": [
         {
-            "id": 633480561,
+            "id": 123,
             "timezone": "Europe/London",
             "model": 16,
             "startdate": 1504307700,
@@ -17,7 +17,7 @@
             "modified": 1504477126
         },
         {
-            "id": 633659292,
+            "id": 124,
             "timezone": "Europe/London",
             "model": 16,
             "startdate": 1504477140,
