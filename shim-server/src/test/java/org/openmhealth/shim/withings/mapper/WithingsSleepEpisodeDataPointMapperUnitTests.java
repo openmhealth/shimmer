@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Open mHealth
+ * Copyright 2017 Open mHealth
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,10 +17,7 @@
 package org.openmhealth.shim.withings.mapper;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import org.openmhealth.schema.domain.omh.DataPoint;
-import org.openmhealth.schema.domain.omh.DataPointAcquisitionProvenance;
-import org.openmhealth.schema.domain.omh.DurationUnitValue;
-import org.openmhealth.schema.domain.omh.SleepDuration2;
+import org.openmhealth.schema.domain.omh.*;
 import org.openmhealth.shim.common.mapper.DataPointMapperUnitTests;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -37,12 +34,12 @@ import static org.openmhealth.schema.domain.omh.TimeInterval.ofStartDateTimeAndE
 
 
 /**
- * @author Chris Schaefbauer
+ * @author Emerson Farrugia
  */
-public class WithingsSleepDurationDataPointMapperUnitTests extends DataPointMapperUnitTests {
+public class WithingsSleepEpisodeDataPointMapperUnitTests extends DataPointMapperUnitTests {
 
     private JsonNode responseNode;
-    private WithingsSleepDurationDataPointMapper mapper = new WithingsSleepDurationDataPointMapper();
+    private WithingsSleepEpisodeDataPointMapper mapper = new WithingsSleepEpisodeDataPointMapper();
 
     @BeforeTest
     public void initializeResponseNode() throws IOException {
@@ -59,16 +56,19 @@ public class WithingsSleepDurationDataPointMapperUnitTests extends DataPointMapp
     @Test
     public void asDataPointsShouldReturnCorrectDataPoints() {
 
-        List<DataPoint<SleepDuration2>> dataPoints = mapper.asDataPoints(responseNode);
+        List<DataPoint<SleepEpisode>> dataPoints = mapper.asDataPoints(responseNode);
 
-        SleepDuration2 expectedSleepDuration = new SleepDuration2.Builder(
-                new DurationUnitValue(SECOND, 11160),
+        SleepEpisode expectedSleepEpisode = new SleepEpisode.Builder(
                 ofStartDateTimeAndEndDateTime(parse("2017-09-02T00:19:00+01:00"), parse("2017-09-02T03:25:00+01:00"))
         )
+                .setLatencyToSleepOnset(new DurationUnitValue(SECOND, 240))
+                .setLatencyToArising(new DurationUnitValue(SECOND, 0))
+                .setTotalSleepTime(new DurationUnitValue(SECOND, 11160))
+                .setNumberOfAwakenings(4)
                 .build();
 
-        assertThat(dataPoints.get(0).getHeader().getBodySchemaId(), equalTo(SleepDuration2.SCHEMA_ID));
-        assertThat(dataPoints.get(0).getBody(), equalTo(expectedSleepDuration));
+        assertThat(dataPoints.get(0).getHeader().getBodySchemaId(), equalTo(SleepEpisode.SCHEMA_ID));
+        assertThat(dataPoints.get(0).getBody(), equalTo(expectedSleepEpisode));
 
         DataPointAcquisitionProvenance acquisitionProvenance = dataPoints.get(0).getHeader().getAcquisitionProvenance();
 
