@@ -43,7 +43,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import static java.util.Collections.singletonList;
 import static org.openmhealth.shim.withings.WithingsShim.WithingsDataType.*;
 
 
@@ -105,8 +104,9 @@ public class WithingsShim extends OAuth1Shim {
     public ShimDataType[] getShimDataTypes() {
 
         return new ShimDataType[] {
-                BLOOD_PRESSURE,
+                BLOOD_PRESSURE, // order important for trigger call
                 BODY_HEIGHT,
+                BODY_TEMPERATURE,
                 BODY_WEIGHT,
                 CALORIES_BURNED,
                 HEART_RATE,
@@ -132,6 +132,7 @@ public class WithingsShim extends OAuth1Shim {
 
         BLOOD_PRESSURE("measure", "getmeas", true),
         BODY_HEIGHT("measure", "getmeas", true),
+        BODY_TEMPERATURE("measure", "getmeas", true),
         BODY_WEIGHT("measure", "getmeas", true),
         CALORIES_BURNED("v2/measure", "getactivity", false),
         HEART_RATE("measure", "getmeas", true),
@@ -196,50 +197,14 @@ public class WithingsShim extends OAuth1Shim {
             HttpEntity responseEntity = response.getEntity();
 
             if (shimDataRequest.getNormalize()) {
-                WithingsDataPointMapper mapper;
 
-                switch (withingsDataType) {
-
-                    case BLOOD_PRESSURE:
-                        mapper = new WithingsBloodPressureDataPointMapper();
-                        break;
-                    case BODY_HEIGHT:
-                        mapper = new WithingsBodyHeightDataPointMapper();
-                        break;
-                    case BODY_WEIGHT:
-                        mapper = new WithingsBodyWeightDataPointMapper();
-                        break;
-                    case CALORIES_BURNED:
-                        if (clientSettings.isIntradayDataAvailable()) {
-                            mapper = new WithingsIntradayCaloriesBurnedDataPointMapper();
-                        }
-                        else {
-                            mapper = new WithingsDailyCaloriesBurnedDataPointMapper();
-                        }
-                        break;
-                    case HEART_RATE:
-                        mapper = new WithingsHeartRateDataPointMapper();
-                        break;
-                    case SLEEP_DURATION:
-                        mapper = new WithingsSleepDurationDataPointMapper();
-                        break;
-                    case STEP_COUNT:
-                        if (clientSettings.isIntradayDataAvailable()) {
-                            mapper = new WithingsIntradayStepCountDataPointMapper();
-                        }
-                        else {
-                            mapper = new WithingsDailyStepCountDataPointMapper();
-                        }
-                        break;
-                    default:
-                        throw new UnsupportedOperationException();
-                }
+                WithingsDataPointMapper<?> dataPointMapper = getDataPointMapper(withingsDataType);
 
                 InputStream content = responseEntity.getContent();
                 JsonNode jsonNode = objectMapper.readValue(content, JsonNode.class);
-                List<DataPoint> dataPoints = mapper.asDataPoints(singletonList(jsonNode));
-                return ShimDataResponse.result(WithingsShim.SHIM_KEY,
-                        dataPoints);
+                List<? extends DataPoint<?>> dataPoints = dataPointMapper.asDataPoints(jsonNode);
+
+                return ShimDataResponse.result(WithingsShim.SHIM_KEY, dataPoints);
             }
             else {
                 return ShimDataResponse
@@ -251,6 +216,47 @@ public class WithingsShim extends OAuth1Shim {
         }
         finally {
             get.releaseConnection();
+        }
+    }
+
+    private WithingsDataPointMapper getDataPointMapper(WithingsDataType withingsDataType) {
+
+        switch (withingsDataType) {
+
+            case BLOOD_PRESSURE:
+                return new WithingsBloodPressureDataPointMapper();
+
+            case BODY_HEIGHT:
+                return new WithingsBodyHeightDataPointMapper();
+
+            case BODY_TEMPERATURE:
+                return new WithingsBodyTemperatureDataPointMapper();
+
+            case BODY_WEIGHT:
+                return new WithingsBodyWeightDataPointMapper();
+
+            case CALORIES_BURNED:
+                if (clientSettings.isIntradayDataAvailable()) {
+                    return new WithingsIntradayCaloriesBurnedDataPointMapper();
+                }
+
+                return new WithingsDailyCaloriesBurnedDataPointMapper();
+
+            case HEART_RATE:
+                return new WithingsHeartRateDataPointMapper();
+
+            case SLEEP_DURATION:
+                return new WithingsSleepDurationDataPointMapper();
+
+            case STEP_COUNT:
+                if (clientSettings.isIntradayDataAvailable()) {
+                    return new WithingsIntradayStepCountDataPointMapper();
+                }
+
+                return new WithingsDailyStepCountDataPointMapper();
+
+            default:
+                throw new UnsupportedOperationException();
         }
     }
 
@@ -305,9 +311,9 @@ public class WithingsShim extends OAuth1Shim {
     }
 
     /**
-     * Determines whether the request is a Withings intraday request based on the configuration
-     * setup and the data type from the Shim API request. This case requires a different endpoint and different time
-     * parameters than the standard activity endpoint.
+     * Determines whether the request is a Withings intraday request based on the configuration setup and the data type
+     * from the Shim API request. This case requires a different endpoint and different time parameters than the
+     * standard activity endpoint.
      *
      * @param withingsDataType the withings data type retrieved from the Shim API request
      */
