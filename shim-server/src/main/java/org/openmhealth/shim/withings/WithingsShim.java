@@ -30,7 +30,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
@@ -55,7 +54,7 @@ import static org.openmhealth.shim.withings.WithingsShim.WithingsDataType.*;
 public class WithingsShim extends OAuth1Shim {
 
     public static final String SHIM_KEY = "withings";
-    private static final String DATA_URL = "https://api.health.nokia.com/v2/measure";
+    private static final String DATA_URL = "https://api.health.nokia.com";
     private static final String REQUEST_TOKEN_URL = "https://developer.health.nokia.com/account/request_token";
     private static final String USER_AUTHORIZATION_URL = "https://developer.health.nokia.com/account/authorize";
     private static final String ACCESS_TOKEN_URL = "https://developer.health.nokia.com/account/access_token";
@@ -275,8 +274,10 @@ public class WithingsShim extends OAuth1Shim {
             dateTimeMap.add("enddateymd", shimDataRequest.getEndDateTime().toLocalDate().toString());
         }
 
-        UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder.fromUriString(DATA_URL).pathSegment(
-                withingsDataType.getEndpoint());
+        UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder
+                .fromUriString(DATA_URL)
+                .pathSegment(withingsDataType.getEndpoint());
+
         String measureParameter;
         if (isIntradayActivityMeasure(withingsDataType)) {
             // intraday data uses a different endpoint
@@ -285,7 +286,9 @@ public class WithingsShim extends OAuth1Shim {
         else {
             measureParameter = withingsDataType.getMeasureParameter();
         }
-        uriComponentsBuilder.queryParam("action", measureParameter).queryParam("userid", userid)
+        uriComponentsBuilder
+                .queryParam("action", measureParameter)
+                .queryParam("userid", userid)
                 .queryParams(dateTimeMap);
 
         // if it's a body measure
@@ -303,11 +306,10 @@ public class WithingsShim extends OAuth1Shim {
                 uriComponentsBuilder.queryParam("meastype", measureType.getMagicNumber());
             }
 
-            uriComponentsBuilder.queryParam("category", 1); //filter out goal datapoints
+            uriComponentsBuilder.queryParam("category", 1); // filter out goal data points
         }
 
-        UriComponents uriComponents = uriComponentsBuilder.build();
-        return uriComponents.toUri();
+        return uriComponentsBuilder.build().toUri();
     }
 
     /**
