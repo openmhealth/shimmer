@@ -110,6 +110,7 @@ public class WithingsShim extends OAuth1Shim {
                 CALORIES_BURNED,
                 HEART_RATE,
                 SLEEP_DURATION,
+                SLEEP_EPISODE,
                 STEP_COUNT
         };
     }
@@ -136,6 +137,7 @@ public class WithingsShim extends OAuth1Shim {
         CALORIES_BURNED("v2/measure", "getactivity", false),
         HEART_RATE("measure", "getmeas", true),
         SLEEP_DURATION("v2/sleep", "getsummary", false),
+        SLEEP_EPISODE("v2/sleep", "getsummary", false),
         STEP_COUNT("v2/measure", "getactivity", false);
 
         private String endpoint;
@@ -246,6 +248,9 @@ public class WithingsShim extends OAuth1Shim {
 
             case SLEEP_DURATION:
                 return new WithingsSleepDurationDataPointMapper();
+
+            case SLEEP_EPISODE:
+                return new WithingsSleepEpisodeDataPointMapper();
 
             case STEP_COUNT:
                 if (clientSettings.isIntradayDataAvailable()) {
