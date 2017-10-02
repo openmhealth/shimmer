@@ -27,7 +27,7 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asRequir
 
 
 /**
- * A mapper from Withings Activity Measures endpoint responses (/measure?action=getactivity) to {@link CaloriesBurned}
+ * A mapper from Withings Activity Measures endpoint responses (/measure?action=getactivity) to {@link CaloriesBurned1}
  * objects
  * <p>
  * <p>NOTE: This only captures calories that are burned from activity that is captured by a Withings device or
@@ -38,13 +38,13 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asRequir
  * @author Chris Schaefbauer
  * @see <a href="http://oauth.withings.com/api/doc#api-Measure-get_activity">Activity Measures API documentation</a>
  */
-public class WithingsDailyCaloriesBurnedDataPointMapper extends WithingsListDataPointMapper<CaloriesBurned> {
+public class WithingsDailyCaloriesBurnedDataPointMapper extends WithingsListDataPointMapper<CaloriesBurned1> {
 
     /**
      * Maps an individual list node from the array in the Withings activity measure endpoint response into a {@link
-     * CaloriesBurned} data point.
+     * CaloriesBurned1} data point.
      * <p>
-     * <p>Note: the start datetime and end datetime values for the mapped {@link CaloriesBurned} {@link DataPoint}
+     * <p>Note: the start datetime and end datetime values for the mapped {@link CaloriesBurned1} {@link DataPoint}
      * assume that
      * the start timezone and end time zone are the same, both equal to the "timezone" property in the Withings
      * response
@@ -52,15 +52,15 @@ public class WithingsDailyCaloriesBurnedDataPointMapper extends WithingsListData
      * timezone.</p>
      *
      * @param node activity node from the array "activites" contained in the "body" of the endpoint response
-     * @return a {@link DataPoint} object containing a {@link CaloriesBurned} measure with the appropriate values from
+     * @return a {@link DataPoint} object containing a {@link CaloriesBurned1} measure with the appropriate values from
      * the JSON node parameter, wrapped as an {@link Optional}
      */
     @Override
-    Optional<DataPoint<CaloriesBurned>> asDataPoint(JsonNode node) {
+    Optional<DataPoint<CaloriesBurned1>> asDataPoint(JsonNode node) {
 
         long caloriesBurnedValue = asRequiredLong(node, "calories");
-        CaloriesBurned.Builder caloriesBurnedBuilder =
-                new CaloriesBurned.Builder(new KcalUnitValue(KcalUnit.KILOCALORIE, caloriesBurnedValue));
+        CaloriesBurned1.Builder caloriesBurnedBuilder =
+                new CaloriesBurned1.Builder(new KcalUnitValue(KcalUnit.KILOCALORIE, caloriesBurnedValue));
 
         Optional<String> dateString = asOptionalString(node, "date");
         Optional<String> timeZoneFullName = asOptionalString(node, "timezone");
@@ -86,8 +86,8 @@ public class WithingsDailyCaloriesBurnedDataPointMapper extends WithingsListData
             caloriesBurnedBuilder.setUserNotes(userComment.get());
         }
 
-        CaloriesBurned caloriesBurned = caloriesBurnedBuilder.build();
-        DataPoint<CaloriesBurned> caloriesBurnedDataPoint =
+        CaloriesBurned1 caloriesBurned = caloriesBurnedBuilder.build();
+        DataPoint<CaloriesBurned1> caloriesBurnedDataPoint =
                 newDataPoint(caloriesBurned, null, true, null);
 
         return Optional.of(caloriesBurnedDataPoint);

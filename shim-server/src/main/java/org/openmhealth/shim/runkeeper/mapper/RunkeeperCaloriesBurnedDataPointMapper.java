@@ -17,57 +17,48 @@
 package org.openmhealth.shim.runkeeper.mapper;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import org.openmhealth.schema.domain.omh.CaloriesBurned;
+import org.openmhealth.schema.domain.omh.CaloriesBurned2;
 import org.openmhealth.schema.domain.omh.DataPoint;
-import org.openmhealth.schema.domain.omh.KcalUnit;
-import org.openmhealth.schema.domain.omh.KcalUnitValue;
 
 import java.util.Optional;
 
+import static org.openmhealth.schema.domain.omh.KcalUnit.KILOCALORIE;
 import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asOptionalDouble;
 import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asOptionalString;
 
 
 /**
  * A mapper from RunKeeper HealthGraph API application/vnd.com.runkeeper.FitnessActivityFeed+json responses to {@link
- * CaloriesBurned} objects.
+ * CaloriesBurned2} objects.
  *
  * @author Chris Schaefbauer
  * @author Emerson Farrugia
  */
-public class RunkeeperCaloriesBurnedDataPointMapper extends RunkeeperDataPointMapper<CaloriesBurned> {
-
+public class RunkeeperCaloriesBurnedDataPointMapper extends RunkeeperDataPointMapper<CaloriesBurned2> {
 
     @Override
-    protected Optional<DataPoint<CaloriesBurned>> asDataPoint(JsonNode itemNode) {
+    protected Optional<DataPoint<CaloriesBurned2>> asDataPoint(JsonNode itemNode) {
 
-        Optional<CaloriesBurned> caloriesBurned = getMeasure(itemNode);
+        Optional<CaloriesBurned2> caloriesBurned = newMeasure(itemNode);
 
-        if (caloriesBurned.isPresent()) {
-            return Optional
-                    .of(new DataPoint<>(getDataPointHeader(itemNode, caloriesBurned.get()), caloriesBurned.get()));
-        }
-        else {
-            return Optional.empty(); // return empty if there was no calories information to generate a datapoint
-        }
-
+        // return empty if there was no calories information to generate a data point
+        return caloriesBurned
+                .map(measure -> new DataPoint<>(getDataPointHeader(itemNode, measure), measure));
     }
 
-    private Optional<CaloriesBurned> getMeasure(JsonNode itemNode) {
+    private Optional<CaloriesBurned2> newMeasure(JsonNode itemNode) {
 
         Optional<Double> calorieValue = asOptionalDouble(itemNode, "total_calories");
-        if (!calorieValue.isPresent()) {  // Not all activity datapoints have the "total_calories" property
+
+        if (!calorieValue.isPresent()) {  // not all activity data points have the "total_calories" property
             return Optional.empty();
         }
-        CaloriesBurned.Builder caloriesBurnedBuilder =
-                new CaloriesBurned.Builder(new KcalUnitValue(KcalUnit.KILOCALORIE, calorieValue.get()));
 
-        setEffectiveTimeFrameIfPresent(itemNode, caloriesBurnedBuilder);
+        CaloriesBurned2.Builder caloriesBurnedBuilder =
+                new CaloriesBurned2.Builder(KILOCALORIE.newUnitValue(calorieValue.get()), getTimeFrame(itemNode));
 
-        Optional<String> activityType = asOptionalString(itemNode, "type");
-        activityType.ifPresent(at -> caloriesBurnedBuilder.setActivityName(at));
+        asOptionalString(itemNode, "type").ifPresent(caloriesBurnedBuilder::setActivityName);
 
         return Optional.of(caloriesBurnedBuilder.build());
-
     }
 }

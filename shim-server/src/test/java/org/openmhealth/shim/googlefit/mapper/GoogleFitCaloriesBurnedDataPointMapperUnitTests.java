@@ -1,8 +1,7 @@
 package org.openmhealth.shim.googlefit.mapper;
 
-import org.openmhealth.schema.domain.omh.CaloriesBurned;
+import org.openmhealth.schema.domain.omh.CaloriesBurned2;
 import org.openmhealth.schema.domain.omh.DataPoint;
-import org.openmhealth.schema.domain.omh.KcalUnitValue;
 import org.openmhealth.shim.googlefit.common.GoogleFitTestProperties;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -13,7 +12,7 @@ import java.util.List;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.nullValue;
-import static org.openmhealth.schema.domain.omh.CaloriesBurned.*;
+import static org.openmhealth.schema.domain.omh.CaloriesBurned2.SCHEMA_ID;
 import static org.openmhealth.schema.domain.omh.DataPointModality.SELF_REPORTED;
 import static org.openmhealth.schema.domain.omh.KcalUnit.KILOCALORIE;
 
@@ -21,7 +20,8 @@ import static org.openmhealth.schema.domain.omh.KcalUnit.KILOCALORIE;
 /**
  * @author Chris Schaefbauer
  */
-public class GoogleFitCaloriesBurnedDataPointMapperUnitTests extends GoogleFitDataPointMapperUnitTests<CaloriesBurned> {
+public class GoogleFitCaloriesBurnedDataPointMapperUnitTests
+        extends GoogleFitDataPointMapperUnitTests<CaloriesBurned2> {
 
     private final GoogleFitCaloriesBurnedDataPointMapper mapper = new GoogleFitCaloriesBurnedDataPointMapper();
 
@@ -41,7 +41,7 @@ public class GoogleFitCaloriesBurnedDataPointMapperUnitTests extends GoogleFitDa
     @Test
     public void asDataPointsShouldReturnCorrectDataPoints() {
 
-        List<DataPoint<CaloriesBurned>> dataPoints = mapper.asDataPoints(responseNode);
+        List<DataPoint<CaloriesBurned2>> dataPoints = mapper.asDataPoints(responseNode);
 
         assertThatDataPointMatches(dataPoints.get(0),
                 createFloatingPointTestProperties(200.0, "2015-07-07T13:30:00Z", "2015-07-07T14:00:00Z",
@@ -68,14 +68,14 @@ public class GoogleFitCaloriesBurnedDataPointMapperUnitTests extends GoogleFitDa
     }
 
     @Override
-    public void assertThatMeasureMatches(CaloriesBurned testMeasure, GoogleFitTestProperties testProperties) {
+    public void assertThatMeasureMatches(CaloriesBurned2 testMeasure, GoogleFitTestProperties testProperties) {
 
-        CaloriesBurned.Builder expectedCaloriesBurnedBuilder =
-                new CaloriesBurned.Builder(
-                        new KcalUnitValue(KILOCALORIE, testProperties.getFpValue()));
+        CaloriesBurned2 expectedCaloriesBurned = new CaloriesBurned2.Builder(
+                KILOCALORIE.newUnitValue(testProperties.getFpValue()),
+                testProperties.getEffectiveTimeFrame().get()
+        )
+                .build();
 
-        testProperties.getEffectiveTimeFrame().ifPresent(expectedCaloriesBurnedBuilder::setEffectiveTimeFrame);
-
-        assertThat(testMeasure, equalTo(expectedCaloriesBurnedBuilder.build()));
+        assertThat(testMeasure, equalTo(expectedCaloriesBurned));
     }
 }

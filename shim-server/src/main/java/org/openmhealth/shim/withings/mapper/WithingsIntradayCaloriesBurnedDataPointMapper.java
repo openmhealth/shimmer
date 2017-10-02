@@ -31,7 +31,7 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.*;
 
 
 /**
- * A mapper from Withings Intraday Activity endpoint responses (/measure?action=getactivity) to {@link CaloriesBurned}
+ * A mapper from Withings Intraday Activity endpoint responses (/measure?action=getactivity) to {@link CaloriesBurned1}
  * objects.
  * <p>
  * <p>This mapper handles responses from an API request that requires special permissions from Withings. This special
@@ -43,20 +43,20 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.*;
  * @see <a href="http://oauth.withings.com/api/doc#api-Measure-get_intraday_measure">Intrday Activity Measures API
  * documentation</a>
  */
-public class WithingsIntradayCaloriesBurnedDataPointMapper extends WithingsDataPointMapper<CaloriesBurned> {
+public class WithingsIntradayCaloriesBurnedDataPointMapper extends WithingsDataPointMapper<CaloriesBurned1> {
 
     /**
      * Maps JSON response nodes from the intraday activities endpoint (measure?action=getintradayactivity) in the
-     * Withings API into a list of {@link CaloriesBurned} {@link DataPoint} objects.
+     * Withings API into a list of {@link CaloriesBurned1} {@link DataPoint} objects.
      *
      * @param responseNodes a list of a single JSON node containing the entire response from the intraday activities
      * endpoint
-     * @return a list of DataPoint objects of type {@link CaloriesBurned} with the appropriate values mapped from the
+     * @return a list of DataPoint objects of type {@link CaloriesBurned1} with the appropriate values mapped from the
      * input
      * JSON
      */
     @Override
-    public List<DataPoint<CaloriesBurned>> asDataPoints(List<JsonNode> responseNodes) {
+    public List<DataPoint<CaloriesBurned1>> asDataPoints(List<JsonNode> responseNodes) {
 
         checkNotNull(responseNodes);
         checkNotNull(responseNodes.size() == 1, "A single response node is allowed per call.");
@@ -71,7 +71,7 @@ public class WithingsIntradayCaloriesBurnedDataPointMapper extends WithingsDataP
         //ensure the datapoints are in order of passing time (data points that are earlier in time come before data
         // points that are later)
         Collections.sort(startDateTimesInUnixEpochSeconds);
-        ArrayList<DataPoint<CaloriesBurned>> dataPoints = Lists.newArrayList();
+        ArrayList<DataPoint<CaloriesBurned1>> dataPoints = Lists.newArrayList();
         for (Long startDateTime : startDateTimesInUnixEpochSeconds) {
             asDataPoint(nodesWithCalories.get(startDateTime), startDateTime).ifPresent(dataPoints::add);
         }
@@ -82,19 +82,19 @@ public class WithingsIntradayCaloriesBurnedDataPointMapper extends WithingsDataP
 
     /**
      * Maps an individual list node from the array in the Withings activity measure endpoint response into a {@link
-     * CaloriesBurned} data point.
+     * CaloriesBurned1} data point.
      *
      * @param nodeWithCalorie activity node from the array "activites" contained in the "body" of the endpoint response
      * that has a calories field
-     * @return a {@link DataPoint} object containing a {@link CaloriesBurned} measure with the appropriate values from
+     * @return a {@link DataPoint} object containing a {@link CaloriesBurned1} measure with the appropriate values from
      * the JSON node parameter, wrapped as an {@link Optional}
      */
-    private Optional<DataPoint<CaloriesBurned>> asDataPoint(JsonNode nodeWithCalorie,
+    private Optional<DataPoint<CaloriesBurned1>> asDataPoint(JsonNode nodeWithCalorie,
             Long startDateTimeInUnixEpochSeconds) {
 
         Long caloriesBurnedValue = asRequiredLong(nodeWithCalorie, "calories");
-        CaloriesBurned.Builder caloriesBurnedBuilder =
-                new CaloriesBurned.Builder(new KcalUnitValue(KcalUnit.KILOCALORIE, caloriesBurnedValue));
+        CaloriesBurned1.Builder caloriesBurnedBuilder =
+                new CaloriesBurned1.Builder(new KcalUnitValue(KcalUnit.KILOCALORIE, caloriesBurnedValue));
 
         Optional<Long> duration = asOptionalLong(nodeWithCalorie, "duration");
         if (duration.isPresent()) {
@@ -110,7 +110,7 @@ public class WithingsIntradayCaloriesBurnedDataPointMapper extends WithingsDataP
             caloriesBurnedBuilder.setUserNotes(userComment.get());
         }
 
-        CaloriesBurned calorieBurned = caloriesBurnedBuilder.build();
+        CaloriesBurned1 calorieBurned = caloriesBurnedBuilder.build();
         return Optional.of(newDataPoint(calorieBurned, null, true,
                 null));
 

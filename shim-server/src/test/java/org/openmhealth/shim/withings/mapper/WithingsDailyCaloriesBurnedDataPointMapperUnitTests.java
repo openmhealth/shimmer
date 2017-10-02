@@ -58,7 +58,7 @@ public class WithingsDailyCaloriesBurnedDataPointMapperUnitTests extends DataPoi
     @Test
     public void asDataPointsShouldReturnCorrectDataPoints() {
 
-        List<DataPoint<CaloriesBurned>> dataPoints = mapper.asDataPoints(responseNode);
+        List<DataPoint<CaloriesBurned1>> dataPoints = mapper.asDataPoints(responseNode);
 
         testDailyCaloriesBurnedDataPoint(dataPoints.get(0), 139, "2015-06-18T00:00:00-07:00",
                 "2015-06-19T00:00:00-07:00");
@@ -70,11 +70,11 @@ public class WithingsDailyCaloriesBurnedDataPointMapperUnitTests extends DataPoi
                 "2015-02-22T00:00:00-08:00");
     }
 
-    public void testDailyCaloriesBurnedDataPoint(DataPoint<CaloriesBurned> caloriesBurnedDataPoint,
+    public void testDailyCaloriesBurnedDataPoint(DataPoint<CaloriesBurned1> caloriesBurnedDataPoint,
             long expectedCaloriesBurnedValue, String expectedDateString, String expectedEndDateString) {
 
-        CaloriesBurned expectedCaloriesBurned =
-                new CaloriesBurned.Builder(new KcalUnitValue(KILOCALORIE, expectedCaloriesBurnedValue))
+        CaloriesBurned1 expectedCaloriesBurned =
+                new CaloriesBurned1.Builder(new KcalUnitValue(KILOCALORIE, expectedCaloriesBurnedValue))
                         .setEffectiveTimeFrame(ofStartDateTimeAndEndDateTime(OffsetDateTime.parse(expectedDateString),
                                 OffsetDateTime.parse(expectedEndDateString)))
                         .build();
@@ -83,7 +83,7 @@ public class WithingsDailyCaloriesBurnedDataPointMapperUnitTests extends DataPoi
         assertThat(caloriesBurnedDataPoint.getHeader().getAcquisitionProvenance().getModality(), equalTo(SENSED));
         assertThat(caloriesBurnedDataPoint.getHeader().getAcquisitionProvenance().getSourceName(), equalTo(
                 RESOURCE_API_SOURCE_NAME));
-        assertThat(caloriesBurnedDataPoint.getHeader().getBodySchemaId(), equalTo(CaloriesBurned.SCHEMA_ID));
+        assertThat(caloriesBurnedDataPoint.getHeader().getBodySchemaId(), equalTo(CaloriesBurned1.SCHEMA_ID));
 
     }
 
