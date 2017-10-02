@@ -68,7 +68,7 @@ public class WithingsSleepDurationDataPointMapper extends WithingsListDataPointM
 
         sleepEpisode.getAdditionalProperties().forEach(sleepDuration::setAdditionalProperty);
 
-        Optional<Long> externalId = asOptionalLong(node, "id");
+        Optional<String> externalId = asOptionalLong(node, "id").map(Object::toString);
 
         WithingsDevice device = asOptionalInteger(node, "model")
                 .flatMap(WithingsDevice::findByMagicNumber)

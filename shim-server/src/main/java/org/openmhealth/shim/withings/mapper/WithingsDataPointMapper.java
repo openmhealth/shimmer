@@ -45,7 +45,7 @@ public abstract class WithingsDataPointMapper<T extends SchemaSupport> implement
      * @param device the Withings device that generated the measure, if known
      * @return the constructed data point
      */
-    protected <T extends Measure> DataPoint<T> newDataPoint(T measure, Long externalId, Boolean sensed,
+    protected <T extends Measure> DataPoint<T> newDataPoint(T measure, String externalId, Boolean sensed,
             WithingsDevice device) {
 
         DataPointAcquisitionProvenance.Builder provenanceBuilder =
