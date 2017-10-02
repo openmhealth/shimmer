@@ -16,8 +16,6 @@
 
 package org.openmhealth.shim.withings.mapper;
 
-import com.google.common.base.CaseFormat;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -29,12 +27,13 @@ import java.util.Optional;
  */
 public enum WithingsDevice {
 
-    PULSE(16),
-    AURA(32);
+    ACTIVITY_TRACKER(16, "Activity tracker"),
+    AURA(32, "Aura");
 
-    private long magicNumber;
+    private int magicNumber;
+    private String displayName;
 
-    private static Map<Long, WithingsDevice> map = new HashMap<>();
+    private static Map<Integer, WithingsDevice> map = new HashMap<>();
 
     static {
         for (WithingsDevice constant : WithingsDevice.values()) {
@@ -42,12 +41,13 @@ public enum WithingsDevice {
         }
     }
 
-    public String getDisplayName() {
-        return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, this.name());
+    WithingsDevice(int magicNumber, String displayName) {
+        this.magicNumber = magicNumber;
+        this.displayName = displayName;
     }
 
-    WithingsDevice(final long magicNumber) {
-        this.magicNumber = magicNumber;
+    public String getDisplayName() {
+        return displayName;
     }
 
     /**
