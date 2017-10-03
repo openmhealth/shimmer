@@ -17,10 +17,8 @@
 package org.openmhealth.shim.withings.mapper;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import org.openmhealth.schema.domain.omh.CaloriesBurned1;
+import org.openmhealth.schema.domain.omh.CaloriesBurned2;
 import org.openmhealth.schema.domain.omh.DataPoint;
-import org.openmhealth.schema.domain.omh.DurationUnitValue;
-import org.openmhealth.schema.domain.omh.KcalUnitValue;
 import org.openmhealth.shim.common.mapper.DataPointMapperUnitTests;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -31,7 +29,7 @@ import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
-import static org.openmhealth.schema.domain.omh.CaloriesBurned1.SCHEMA_ID;
+import static org.openmhealth.schema.domain.omh.CaloriesBurned2.SCHEMA_ID;
 import static org.openmhealth.schema.domain.omh.DataPointModality.SENSED;
 import static org.openmhealth.schema.domain.omh.DurationUnit.SECOND;
 import static org.openmhealth.schema.domain.omh.KcalUnit.KILOCALORIE;
@@ -62,7 +60,7 @@ public class WithingsIntradayCaloriesBurnedDataPointMapperUnitTests extends Data
     @Test
     public void asDataPointsShouldReturnCorrectDataPoints() {
 
-        List<DataPoint<CaloriesBurned1>> dataPoints = mapper.asDataPoints(responseNode);
+        List<DataPoint<CaloriesBurned2>> dataPoints = mapper.asDataPoints(responseNode);
 
         testIntradayCaloriesBurnedDataPoint(dataPoints.get(0), 1, "2015-06-20T00:04:00Z", 60L);
         testIntradayCaloriesBurnedDataPoint(dataPoints.get(1), 2, "2015-06-20T00:29:00Z", 60L);
@@ -70,21 +68,23 @@ public class WithingsIntradayCaloriesBurnedDataPointMapperUnitTests extends Data
         testIntradayCaloriesBurnedDataPoint(dataPoints.get(3), 7, "2015-06-20T00:41:00Z", 60L);
     }
 
-    public void testIntradayCaloriesBurnedDataPoint(DataPoint<CaloriesBurned1> caloriesBurnedDataPoint,
+    public void testIntradayCaloriesBurnedDataPoint(
+            DataPoint<CaloriesBurned2> caloriesBurnedDataPoint,
             long expectedCaloriesBurnedValue,
-            String expectedDateString, Long expectedDuration) {
+            String expectedStartDateTimeString, Long expectedDuration) {
 
-        CaloriesBurned1 expectedCaloriesBurned =
-                new CaloriesBurned1.Builder(new KcalUnitValue(KILOCALORIE, expectedCaloriesBurnedValue))
-                        .setEffectiveTimeFrame(
-                                ofStartDateTimeAndDuration(OffsetDateTime.parse(expectedDateString),
-                                        new DurationUnitValue(SECOND, expectedDuration))).build();
+        CaloriesBurned2 expectedCaloriesBurned =
+                new CaloriesBurned2.Builder(
+                        KILOCALORIE.newUnitValue(expectedCaloriesBurnedValue),
+                        ofStartDateTimeAndDuration(
+                                OffsetDateTime.parse(expectedStartDateTimeString),
+                                SECOND.newUnitValue(expectedDuration)))
+                        .build();
 
         assertThat(caloriesBurnedDataPoint.getBody(), equalTo(expectedCaloriesBurned));
-        assertThat(caloriesBurnedDataPoint.getHeader().getAcquisitionProvenance().getModality(), equalTo(SENSED));
-        assertThat(caloriesBurnedDataPoint.getHeader().getAcquisitionProvenance().getSourceName(), equalTo(
-                RESOURCE_API_SOURCE_NAME));
         assertThat(caloriesBurnedDataPoint.getHeader().getBodySchemaId(), equalTo(SCHEMA_ID));
+        assertThat(caloriesBurnedDataPoint.getHeader().getAcquisitionProvenance().getModality(), equalTo(SENSED));
+        assertThat(caloriesBurnedDataPoint.getHeader().getAcquisitionProvenance().getSourceName(),
+                equalTo(RESOURCE_API_SOURCE_NAME));
     }
-
 }

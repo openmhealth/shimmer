@@ -18,8 +18,7 @@ package org.openmhealth.shim.withings.mapper;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.openmhealth.schema.domain.omh.DataPoint;
-import org.openmhealth.schema.domain.omh.DurationUnitValue;
-import org.openmhealth.schema.domain.omh.StepCount1;
+import org.openmhealth.schema.domain.omh.StepCount2;
 import org.openmhealth.shim.common.mapper.DataPointMapperUnitTests;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -33,7 +32,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.openmhealth.schema.domain.omh.DataPointModality.SENSED;
 import static org.openmhealth.schema.domain.omh.DurationUnit.SECOND;
-import static org.openmhealth.schema.domain.omh.StepCount1.SCHEMA_ID;
 import static org.openmhealth.schema.domain.omh.TimeInterval.ofStartDateTimeAndDuration;
 import static org.openmhealth.shim.withings.mapper.WithingsDataPointMapper.RESOURCE_API_SOURCE_NAME;
 
@@ -61,7 +59,7 @@ public class WithingsIntradayStepCountDataPointMapperUnitTests extends DataPoint
     @Test
     public void asDataPointsShouldReturnCorrectDataPoints() {
 
-        List<DataPoint<StepCount1>> dataPoints = mapper.asDataPoints(responseNode);
+        List<DataPoint<StepCount2>> dataPoints = mapper.asDataPoints(responseNode);
 
         testIntradayStepCountDataPoint(dataPoints.get(0), 21, "2015-06-20T00:04:00Z", 60L);
         testIntradayStepCountDataPoint(dataPoints.get(1), 47, "2015-06-20T00:29:00Z", 60L);
@@ -69,23 +67,23 @@ public class WithingsIntradayStepCountDataPointMapperUnitTests extends DataPoint
         testIntradayStepCountDataPoint(dataPoints.get(3), 74, "2015-06-20T00:41:00Z", 60L);
     }
 
-    public void testIntradayStepCountDataPoint(DataPoint<StepCount1> stepCountDataPoint, long expectedStepCountValue,
-            String expectedDateString, Long expectedDuration) {
+    public void testIntradayStepCountDataPoint(
+            DataPoint<StepCount2> stepCountDataPoint,
+            long expectedStepCountValue,
+            String expectedStartDateTimeString, Long expectedDuration) {
 
-        StepCount1 expectedStepCount = new StepCount1.Builder(expectedStepCountValue).setEffectiveTimeFrame(
-                ofStartDateTimeAndDuration(OffsetDateTime.parse(expectedDateString),
-                        new DurationUnitValue(SECOND, expectedDuration)))
-                .build();
+        StepCount2 expectedStepCount =
+                new StepCount2.Builder(
+                        expectedStepCountValue,
+                        ofStartDateTimeAndDuration(
+                                OffsetDateTime.parse(expectedStartDateTimeString),
+                                SECOND.newUnitValue(expectedDuration)))
+                        .build();
 
-        StepCount1 testStepCount = stepCountDataPoint.getBody();
-
-        assertThat(testStepCount, equalTo(expectedStepCount));
+        assertThat(stepCountDataPoint.getBody(), equalTo(expectedStepCount));
+        assertThat(stepCountDataPoint.getHeader().getBodySchemaId(), equalTo(StepCount2.SCHEMA_ID));
         assertThat(stepCountDataPoint.getHeader().getAcquisitionProvenance().getModality(), equalTo(SENSED));
-        assertThat(stepCountDataPoint.getHeader().getAcquisitionProvenance().getSourceName(), equalTo(
-                RESOURCE_API_SOURCE_NAME));
-        assertThat(stepCountDataPoint.getHeader().getBodySchemaId(), equalTo(SCHEMA_ID));
-
+        assertThat(stepCountDataPoint.getHeader().getAcquisitionProvenance().getSourceName(),
+                equalTo(RESOURCE_API_SOURCE_NAME));
     }
-
-
 }
