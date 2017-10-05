@@ -34,7 +34,8 @@ public class GoogleFitClientSettings extends OAuth2ClientSettings {
 
     private List<String> scopes = Arrays.asList(
             "https://www.googleapis.com/auth/fitness.activity.read",
-            "https://www.googleapis.com/auth/fitness.body.read"
+            "https://www.googleapis.com/auth/fitness.body.read",
+            "https://www.googleapis.com/auth/fitness.location.read"
     );
 
     @Override
