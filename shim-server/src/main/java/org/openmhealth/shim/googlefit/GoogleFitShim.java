@@ -48,7 +48,6 @@ import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.Map;
 
-import static java.util.Collections.singletonList;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.springframework.http.ResponseEntity.ok;
 
@@ -114,8 +113,10 @@ public class GoogleFitShim extends OAuth2Shim {
                 GoogleFitDataTypes.BODY_HEIGHT,
                 GoogleFitDataTypes.BODY_WEIGHT,
                 GoogleFitDataTypes.CALORIES_BURNED,
+                GoogleFitDataTypes.GEOPOSITION,
                 GoogleFitDataTypes.HEART_RATE,
                 GoogleFitDataTypes.PHYSICAL_ACTIVITY,
+                GoogleFitDataTypes.SPEED,
                 GoogleFitDataTypes.STEP_COUNT
         };
     }
@@ -125,22 +126,21 @@ public class GoogleFitShim extends OAuth2Shim {
         BODY_HEIGHT("derived:com.google.height:com.google.android.gms:merge_height"),
         BODY_WEIGHT("derived:com.google.weight:com.google.android.gms:merge_weight"),
         CALORIES_BURNED("derived:com.google.calories.expended:com.google.android.gms:merge_calories_expended"),
+        GEOPOSITION("derived:com.google.location.sample:com.google.android.gms:merge_location_samples"),
         HEART_RATE("derived:com.google.heart_rate.bpm:com.google.android.gms:merge_heart_rate_bpm"),
         PHYSICAL_ACTIVITY("derived:com.google.activity.segment:com.google.android.gms:merge_activity_segments"),
+        SPEED("derived:com.google.speed:com.google.android.gms:merge_speed"),
         STEP_COUNT("derived:com.google.step_count.delta:com.google.android.gms:merge_step_deltas");
 
         private final String streamId;
 
         GoogleFitDataTypes(String streamId) {
-
             this.streamId = streamId;
         }
 
         public String getStreamId() {
-
             return streamId;
         }
-
     }
 
     protected ResponseEntity<ShimDataResponse> getData(OAuth2RestOperations restTemplate,
@@ -157,31 +157,34 @@ public class GoogleFitShim extends OAuth2Shim {
                     + " in shimDataRequest, cannot retrieve data.");
         }
 
-
         OffsetDateTime todayInUTC =
                 LocalDate.now().atStartOfDay().atOffset(ZoneOffset.UTC);
 
         OffsetDateTime startDateInUTC = shimDataRequest.getStartDateTime() == null ?
+
                 todayInUTC.minusDays(1) : shimDataRequest.getStartDateTime();
-        long startTimeNanos = (startDateInUTC.toEpochSecond() * 1000000000) + startDateInUTC.toInstant().getNano();
+        long startTimeNanos = (startDateInUTC.toEpochSecond() * 1_000_000_000) + startDateInUTC.toInstant().getNano();
 
         OffsetDateTime endDateInUTC = shimDataRequest.getEndDateTime() == null ?
                 todayInUTC.plusDays(1) :
                 shimDataRequest.getEndDateTime().plusDays(1);   // We are inclusive of the last day, so add 1 day to get
+
         // the end of day on the last day, which captures the
         // entire last day
-        long endTimeNanos = (endDateInUTC.toEpochSecond() * 1000000000) + endDateInUTC.toInstant().getNano();
+        long endTimeNanos = (endDateInUTC.toEpochSecond() * 1_000_000_000) + endDateInUTC.toInstant().getNano();
 
 
-        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromUriString(DATA_URL)
-                .pathSegment(googleFitDataType.getStreamId(), "datasets", "{startDate}-{endDate}");
         // TODO: Add limits back into the request once Google has fixed the 'limit' query parameter and paging
-
-        URI uriRequest = uriBuilder.buildAndExpand(startTimeNanos, endTimeNanos).encode().toUri();
+        URI uri = UriComponentsBuilder
+                .fromUriString(DATA_URL)
+                .pathSegment(googleFitDataType.getStreamId(), "datasets", "{startDate}-{endDate}")
+                .buildAndExpand(startTimeNanos, endTimeNanos)
+                .encode()
+                .toUri();
 
         ResponseEntity<JsonNode> responseEntity;
         try {
-            responseEntity = restTemplate.getForEntity(uriRequest, JsonNode.class);
+            responseEntity = restTemplate.getForEntity(uri, JsonNode.class);
         }
         catch (HttpClientErrorException | HttpServerErrorException e) {
             // TODO figure out how to handle this
@@ -190,36 +193,46 @@ public class GoogleFitShim extends OAuth2Shim {
         }
 
         if (shimDataRequest.getNormalize()) {
-            GoogleFitDataPointMapper<?> dataPointMapper;
-            switch (googleFitDataType) {
-                case BODY_WEIGHT:
-                    dataPointMapper = new GoogleFitBodyWeightDataPointMapper();
-                    break;
-                case BODY_HEIGHT:
-                    dataPointMapper = new GoogleFitBodyHeightDataPointMapper();
-                    break;
-                case PHYSICAL_ACTIVITY:
-                    dataPointMapper = new GoogleFitPhysicalActivityDataPointMapper();
-                    break;
-                case STEP_COUNT:
-                    dataPointMapper = new GoogleFitStepCountDataPointMapper();
-                    break;
-                case HEART_RATE:
-                    dataPointMapper = new GoogleFitHeartRateDataPointMapper();
-                    break;
-                case CALORIES_BURNED:
-                    dataPointMapper = new GoogleFitCaloriesBurnedDataPointMapper();
-                    break;
-                default:
-                    throw new UnsupportedOperationException();
-            }
+            GoogleFitDataPointMapper<?> dataPointMapper = getDataPointMapper(googleFitDataType);
 
-            return ok().body(ShimDataResponse.result(GoogleFitShim.SHIM_KEY, dataPointMapper.asDataPoints(
-                    singletonList(responseEntity.getBody()))));
+            return ok().body(ShimDataResponse
+                    .result(GoogleFitShim.SHIM_KEY, dataPointMapper.asDataPoints(responseEntity.getBody())));
         }
         else {
+            return ok().body(ShimDataResponse
+                    .result(GoogleFitShim.SHIM_KEY, responseEntity.getBody()));
+        }
+    }
 
-            return ok().body(ShimDataResponse.result(GoogleFitShim.SHIM_KEY, responseEntity.getBody()));
+    private GoogleFitDataPointMapper<?> getDataPointMapper(GoogleFitDataTypes googleFitDataType) {
+
+        switch (googleFitDataType) {
+            case BODY_HEIGHT:
+                return new GoogleFitBodyHeightDataPointMapper();
+
+            case BODY_WEIGHT:
+                return new GoogleFitBodyWeightDataPointMapper();
+
+            case CALORIES_BURNED:
+                return new GoogleFitCaloriesBurnedDataPointMapper();
+
+            case GEOPOSITION:
+                return new GoogleFitGeopositionDataPointMapper();
+
+            case HEART_RATE:
+                return new GoogleFitHeartRateDataPointMapper();
+
+            case PHYSICAL_ACTIVITY:
+                return new GoogleFitPhysicalActivityDataPointMapper();
+
+            case SPEED:
+                return new GoogleFitSpeedDataPointMapper();
+
+            case STEP_COUNT:
+                return new GoogleFitStepCountDataPointMapper();
+
+            default:
+                throw new UnsupportedOperationException();
         }
     }
 
