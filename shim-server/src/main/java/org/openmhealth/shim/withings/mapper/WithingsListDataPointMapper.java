@@ -21,12 +21,20 @@ import com.google.common.collect.Lists;
 import org.openmhealth.schema.domain.omh.DataPoint;
 import org.openmhealth.schema.domain.omh.Measure;
 import org.openmhealth.schema.domain.omh.SchemaSupport;
+import org.openmhealth.schema.domain.omh.TimeFrame;
 
+import java.time.LocalDate;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static java.time.LocalTime.MIDNIGHT;
+import static org.openmhealth.schema.domain.omh.TimeInterval.ofStartDateTimeAndEndDateTime;
 import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asRequiredNode;
+import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asRequiredString;
 
 
 /**
@@ -36,7 +44,7 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asRequir
  * @author Chris Schaefbauer
  * @author Emerson Farrugia
  */
-public abstract class WithingsListDataPointMapper<T extends SchemaSupport> extends WithingsDataPointMapper<T> {
+public abstract class WithingsListDataPointMapper<T extends Measure> extends WithingsDataPointMapper<T> {
 
     /**
      * Maps a JSON response with individual data points contained in a JSON array to a list of {@link DataPoint}
@@ -81,4 +89,17 @@ public abstract class WithingsListDataPointMapper<T extends SchemaSupport> exten
      * @return the name of the list node used by this mapper
      */
     abstract String getListNodeName();
+
+    protected TimeFrame getTimeFrame(JsonNode node) {
+
+        LocalDate localDate = LocalDate.parse(asRequiredString(node, "date"));
+
+        // We assume that timezone is the same for both the startdate and enddate timestamps, even though Withings only
+        // provides the enddate timezone as the "timezone" property.
+        ZoneId timeZoneId = ZoneId.of(asRequiredString(node, "timezone"));
+
+        OffsetDateTime startDateTime = ZonedDateTime.of(localDate, MIDNIGHT, timeZoneId).toOffsetDateTime();
+
+        return new TimeFrame(ofStartDateTimeAndEndDateTime(startDateTime, startDateTime.plusDays(1)));
+    }
 }

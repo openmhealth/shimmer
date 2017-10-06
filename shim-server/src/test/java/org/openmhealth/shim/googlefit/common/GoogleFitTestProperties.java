@@ -18,32 +18,45 @@ package org.openmhealth.shim.googlefit.common;
 
 import org.openmhealth.schema.domain.omh.DataPointModality;
 import org.openmhealth.schema.domain.omh.SchemaId;
+import org.openmhealth.schema.domain.omh.TimeFrame;
 
+import java.time.OffsetDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+
+import static java.util.Optional.empty;
+import static org.openmhealth.schema.domain.omh.TimeInterval.ofStartDateTimeAndEndDateTime;
 
 
 /**
  * @author Chris Schaefbauer
+ * @author Emerson Farrugia
  */
 public class GoogleFitTestProperties {
 
-    private String startDateTime;
-    private String endDateTime;
     private String sourceOriginId;
-    private double fpValue;
-    private DataPointModality modality;
-    private String stringValue;
-    private long intValue;
     private SchemaId bodySchemaId;
-
-    public void addFloatingPointProperty(double fpVal) {
-
-        fpValue = fpVal;
-    }
+    private DataPointModality modality;
+    private List<Object> values = new ArrayList<>();
+    private OffsetDateTime effectiveStartDateTime;
+    private OffsetDateTime effectiveEndDateTime;
 
     public String getSourceOriginId() {
 
         return sourceOriginId;
+    }
+
+    public void setSourceOriginId(String sourceOriginId) {
+        this.sourceOriginId = sourceOriginId;
+    }
+
+    public SchemaId getBodySchemaId() {
+        return bodySchemaId;
+    }
+
+    public void setBodySchemaId(SchemaId bodySchemaId) {
+        this.bodySchemaId = bodySchemaId;
     }
 
     public Optional<DataPointModality> getModality() {
@@ -55,53 +68,69 @@ public class GoogleFitTestProperties {
         this.modality = modality;
     }
 
-    public double getFpValue() {
-        return fpValue;
-    }
-
-    public Optional<String> getEndDateTime() {
-
-        return Optional.ofNullable(endDateTime);
-    }
-
-    public Optional<String> getStartDateTime() {
-
-        return Optional.ofNullable(startDateTime);
-    }
-
     public String getStringValue() {
-        return stringValue;
+        return getStringValue(0);
     }
 
-    public void setStringValue(String stringValue) {
-        this.stringValue = stringValue;
+    public String getStringValue(int index) {
+        return getValue(String.class, index);
     }
 
-    public void setStartDateTime(String startDateTime) {
-        this.startDateTime = startDateTime;
+    public <T> T getValue(Class<T> clazz, int index) {
+        return clazz.cast(values.get(index));
     }
 
-    public void setEndDateTime(String endDateTime) {
-        this.endDateTime = endDateTime;
+    public Long getIntValue() {
+        return getIntValue(0);
     }
 
-    public void setSourceOriginId(String sourceOriginId) {
-        this.sourceOriginId = sourceOriginId;
+    public Long getIntValue(int index) {
+        return getValue(Long.class, index);
     }
 
-    public void setIntValue(long integerValue) {
-        this.intValue = integerValue;
+    public Double getFpValue() {
+        return getFpValue(0);
     }
 
-    public long getIntValue() {
-        return intValue;
+    public Double getFpValue(int index) {
+        return getValue(Double.class, index);
     }
 
-    public SchemaId getBodySchemaId() {
-        return bodySchemaId;
+    public GoogleFitTestProperties addValue(Object value) {
+        this.values.add(value);
+        return this;
     }
 
-    public void setBodySchemaId(SchemaId bodySchemaId) {
-        this.bodySchemaId = bodySchemaId;
+    public Optional<OffsetDateTime> getEffectiveEndDateTime() {
+
+        return Optional.ofNullable(effectiveEndDateTime);
+    }
+
+    public void setEffectiveEndDateTime(String effectiveEndDateTime) {
+        this.effectiveEndDateTime = OffsetDateTime.parse(effectiveEndDateTime);
+    }
+
+    public Optional<OffsetDateTime> getEffectiveStartDateTime() {
+
+        return Optional.ofNullable(effectiveStartDateTime);
+    }
+
+    public void setEffectiveStartDateTime(String effectiveStartDateTime) {
+        this.effectiveStartDateTime = OffsetDateTime.parse(effectiveStartDateTime);
+    }
+
+    public Optional<TimeFrame> getEffectiveTimeFrame() {
+
+        if (getEffectiveStartDateTime().isPresent() && getEffectiveEndDateTime().isPresent()) {
+            return Optional.of(new TimeFrame(ofStartDateTimeAndEndDateTime(
+                    getEffectiveStartDateTime().get(),
+                    getEffectiveEndDateTime().get())));
+        }
+        else if (getEffectiveStartDateTime().isPresent()) {
+            return Optional.of(new TimeFrame(getEffectiveStartDateTime().get()));
+        }
+        else {
+            return empty();
+        }
     }
 }

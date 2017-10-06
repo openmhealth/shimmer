@@ -20,6 +20,7 @@ supports ETag header: yes
 - protocol: OAuth 2.0
 - https://dev.moves-app.com/docs/authentication
 - authorization url: https://api.moves-app.com/oauth/v1/authorize?response_type=code&client_id=<client_id>&scope=<scope>
+- also supports non-browser authorization for mobile apps
 - supports refresh token: yes
 
 # pagination
@@ -38,11 +39,49 @@ supports ETag header: yes
 
 # endpoints
 
-steps
-- raw: summaries (/user/summary/daily)
+The storyline, activities, and summaries endpoints are similar. Storyline contains a superset of activities
+data (adds track points and locations), and activities contains a superset of summary data (adds segments).
 
-activity
-- raw: storyline (/user/storyline/daily)
+## get daily storyline
+
+- endpoint: /user/storyline/daily
+- required scopes: activity, location
+- reference: https://dev.moves-app.com/docs/api_storyline
+- limited to 7 day ranges
+
+# measures
+- calories-burned: not yet mapped
+- step-count: mapped
+- geo-position: not yet mapped
+- physical-activity: mapped
+
+## get daily activities
+
+- endpoint: /user/activities/daily
+- required scopes: activity
+- reference: https://dev.moves-app.com/docs/api_activities
+- probably limited to 31 days, not explicitly mentioned
+
+# measures
+- calories-burned: use storyline instead
+- step-count: use storyline instead
+- physical-activity: use storyline instead
+
+## get daily summaries
+
+- endpoint: /user/summary/daily
+- required scopes: activity
+- reference: https://dev.moves-app.com/docs/api_activities
+- limited to 31 days
+
+# measures
+- calories-burned: use storyline instead
+- step-count: use storyline instead
+- physical-activity: use storyline instead
+
+
+
+
 
 # notifications
 

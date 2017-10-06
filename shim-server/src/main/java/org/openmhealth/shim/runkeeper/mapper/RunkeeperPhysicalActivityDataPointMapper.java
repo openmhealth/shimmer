@@ -54,7 +54,7 @@ public class RunkeeperPhysicalActivityDataPointMapper extends RunkeeperDataPoint
 
         PhysicalActivity.Builder builder = new PhysicalActivity.Builder(activityName);
 
-        setEffectiveTimeFrameIfPresent(itemNode, builder);
+        getOptionalTimeFrame(itemNode).ifPresent(builder::setEffectiveTimeFrame);
 
         asOptionalDouble(itemNode, "total_distance")
                 .ifPresent(distanceInM -> builder.setDistance(new LengthUnitValue(METER, distanceInM)));

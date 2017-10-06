@@ -35,7 +35,7 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.*;
  *
  * @author Emerson Farrugia
  * @author Eric Jain
- * @see <a href="https://build.misfit.com/docs/references#APIReferences-Session">API documentation</a>
+ * @see <a href="https://build.misfit.com/docs/cloudapi/api_references#session">API documentation</a>
  */
 public class MisfitPhysicalActivityDataPointMapper extends MisfitDataPointMapper<PhysicalActivity> {
 
@@ -53,11 +53,8 @@ public class MisfitPhysicalActivityDataPointMapper extends MisfitDataPointMapper
 
         PhysicalActivity.Builder builder = new PhysicalActivity.Builder(activityName);
 
-        Optional<Double> distance = asOptionalDouble(sessionNode, "distance");
-
-        if (distance.isPresent()) {
-            builder.setDistance(new LengthUnitValue(MILE, distance.get()));
-        }
+        asOptionalDouble(sessionNode, "distance")
+                .ifPresent(distanceInMi -> builder.setDistance(new LengthUnitValue(MILE, distanceInMi)));
 
         Optional<OffsetDateTime> startDateTime = asOptionalOffsetDateTime(sessionNode, "startTime");
         Optional<Double> durationInSec = asOptionalDouble(sessionNode, "duration");

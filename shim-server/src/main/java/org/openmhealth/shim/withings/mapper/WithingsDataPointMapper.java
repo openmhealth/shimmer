@@ -16,8 +16,15 @@
 
 package org.openmhealth.shim.withings.mapper;
 
-import org.openmhealth.schema.domain.omh.*;
+import org.openmhealth.schema.domain.omh.DataPoint;
+import org.openmhealth.schema.domain.omh.DataPointAcquisitionProvenance;
+import org.openmhealth.schema.domain.omh.DataPointHeader;
+import org.openmhealth.schema.domain.omh.Measure;
 import org.openmhealth.shim.common.mapper.JsonNodeDataPointMapper;
+
+import java.time.Instant;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
 
 import static java.util.UUID.randomUUID;
 import static org.openmhealth.schema.domain.omh.DataPointModality.SELF_REPORTED;
@@ -27,7 +34,7 @@ import static org.openmhealth.schema.domain.omh.DataPointModality.SENSED;
 /**
  * @author Chris Schaefbauer
  */
-public abstract class WithingsDataPointMapper<T extends SchemaSupport> implements JsonNodeDataPointMapper<T> {
+public abstract class WithingsDataPointMapper<T extends Measure> implements JsonNodeDataPointMapper<T> {
 
     public final static String RESOURCE_API_SOURCE_NAME = "Withings Resource API";
     protected static final String BODY_NODE_PROPERTY = "body";
@@ -38,11 +45,11 @@ public abstract class WithingsDataPointMapper<T extends SchemaSupport> implement
      * @param measure a measure
      * @param externalId the Withings identifier of the measure, if known
      * @param sensed a boolean indicating whether the measure was sensed by a device, if known
-     * @param deviceName the name of the Withings device that generated the measure, if known
+     * @param device the Withings device that generated the measure, if known
      * @return the constructed data point
      */
-    protected <T extends Measure> DataPoint<T> newDataPoint(T measure, Long externalId, Boolean sensed,
-            String deviceName) {
+    protected DataPoint<T> newDataPoint(T measure, String externalId, Boolean sensed,
+            WithingsDevice device) {
 
         DataPointAcquisitionProvenance.Builder provenanceBuilder =
                 new DataPointAcquisitionProvenance.Builder(RESOURCE_API_SOURCE_NAME);
@@ -54,8 +61,8 @@ public abstract class WithingsDataPointMapper<T extends SchemaSupport> implement
         // additional properties are always subject to change
         DataPointAcquisitionProvenance acquisitionProvenance = provenanceBuilder.build();
 
-        if (deviceName != null) {
-            acquisitionProvenance.setAdditionalProperty("device_name", deviceName);
+        if (device != null) {
+            acquisitionProvenance.setAdditionalProperty("device_name", device.getDisplayName());
         }
 
         if (externalId != null) {
@@ -68,5 +75,10 @@ public abstract class WithingsDataPointMapper<T extends SchemaSupport> implement
                 .build();
 
         return new DataPoint<>(header, measure);
+    }
+
+    protected OffsetDateTime asOffsetDateTime(long epochSeconds, String timeZoneId) {
+
+        return Instant.ofEpochSecond(epochSeconds).atZone(ZoneId.of(timeZoneId)).toOffsetDateTime();
     }
 }

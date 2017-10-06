@@ -68,13 +68,14 @@ public class GoogleFitPhysicalActivityDataPointMapper extends GoogleFitDataPoint
         }
 
         String activityName = googleFitDataTypes.get((int) activityTypeId);
-        PhysicalActivity.Builder physicalActivityBuilder = new PhysicalActivity.Builder(
-                activityName);
-        setEffectiveTimeFrameIfPresent(physicalActivityBuilder, listNode);
-        PhysicalActivity physicalActivity = physicalActivityBuilder.build();
-        Optional<String> originSourceId = asOptionalString(listNode, "originDataSourceId");
-        return Optional.of(newDataPoint(physicalActivity, originSourceId.orElse(null)));
+        PhysicalActivity.Builder measureBuilder = new PhysicalActivity.Builder(activityName);
 
+        getOptionalTimeFrame(listNode).ifPresent(measureBuilder::setEffectiveTimeFrame);
+
+        PhysicalActivity physicalActivity = measureBuilder.build();
+        Optional<String> originSourceId = asOptionalString(listNode, "originDataSourceId");
+
+        return Optional.of(newDataPoint(physicalActivity, originSourceId.orElse(null)));
     }
 
     /**
@@ -205,7 +206,7 @@ public class GoogleFitPhysicalActivityDataPointMapper extends GoogleFitDataPoint
                 .put(110, "Deep sleep")
                 .put(111, "REM sleep")
                 .put(112, "Awake (during sleep cycle)");
+
         googleFitDataTypes = activityDataTypeBuilder.build();
     }
-
 }

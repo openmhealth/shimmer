@@ -1,58 +1,52 @@
+/*
+ * Copyright 2017 Open mHealth
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.openmhealth.shim.moves.mapper;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import org.openmhealth.schema.domain.omh.DataPoint;
-import org.openmhealth.schema.domain.omh.DurationUnitValue;
-import org.openmhealth.schema.domain.omh.StepCount1;
-import org.openmhealth.schema.domain.omh.TimeInterval;
+import org.openmhealth.schema.domain.omh.StepCount2;
+import org.openmhealth.schema.domain.omh.TimeFrame;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
-import static org.openmhealth.schema.domain.omh.DurationUnit.DAY;
-import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asOptionalLocalDate;
+import static java.util.Optional.empty;
+import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asOptionalLong;
+
 
 /**
- * A mapper from Moves Resource API /user/summary/daily responses to {@link StepCount1} objects.
+ * A mapper that translates responses from the Moves Resource API <code>/user/storyline/daily</code> endpoint into
+ * {@link StepCount2} data points.
  *
- * @author Jared Sieling
- * @see <a href="https://dev.moves-app.com/docs/api_summaries">API documentation</a>
+ * @author Emerson Farrugia
+ * @see <a href="https://dev.moves-app.com/docs/api_storyline">API documentation</a>
  */
-public class MovesStepCountDataPointMapper extends MovesDataPointMapper<StepCount1>{
+public class MovesStepCountDataPointMapper extends MovesActivityNodeDataPointMapper<StepCount2> {
 
     @Override
-    protected Optional<DataPoint<StepCount1>> asDataPoint(JsonNode node) {
+    protected Optional<StepCount2> newMeasure(JsonNode node) {
 
-        // Sum steps from all individual activities
-        int stepCountValue = 0;
-        for(JsonNode activity : node.get("summary")){
-            if(activity.has("steps")){
-                stepCountValue = stepCountValue + activity.get("steps").asInt();
-            }
+        Optional<TimeFrame> timeFrame = getTimeFrame(node);
+
+        // a time frame seems to not be present for manually entered data, making it impossible to deduplicate
+        if (!timeFrame.isPresent()) {
+            return empty();
         }
 
-        if (stepCountValue == 0) {
-            return Optional.empty();
-        }
-
-        StepCount1.Builder builder = new StepCount1.Builder(stepCountValue);
-
-        Optional<LocalDate> stepDate = asOptionalLocalDate(node, "date", DateTimeFormatter.BASIC_ISO_DATE);
-
-        if (stepDate.isPresent()) {
-            LocalDateTime startDateTime = stepDate.get().atTime(0, 0, 0, 0);
-
-            // FIXME the time zone handling here is suspect; if the code is going to assume UTC, the shim should be
-            // asking for UTC in the initial request
-            builder.setEffectiveTimeFrame(
-                    TimeInterval.ofStartDateTimeAndDuration(combineDateTimeAndTimezone(startDateTime),
-                            new DurationUnitValue(DAY, 1)));
-        }
-
-        StepCount1 measure = builder.build();
-
-        return Optional.of(newDataPoint(measure, null));
+        return asOptionalLong(node, "steps")
+                .filter(count -> count > 0)
+                .map(count -> new StepCount2.Builder(count, timeFrame.get()).build());
     }
 }

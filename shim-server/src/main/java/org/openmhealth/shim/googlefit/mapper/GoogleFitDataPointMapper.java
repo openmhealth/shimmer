@@ -20,16 +20,20 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.Lists;
 import org.openmhealth.schema.domain.omh.*;
 import org.openmhealth.shim.common.mapper.JsonNodeDataPointMapper;
+import org.openmhealth.shim.common.mapper.MissingJsonNodeMappingException;
 
 import java.time.Instant;
 import java.time.OffsetDateTime;
-import java.time.ZoneId;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static java.lang.Long.parseLong;
+import static java.time.ZoneOffset.UTC;
+import static java.util.Optional.empty;
+import static org.openmhealth.schema.domain.omh.TimeInterval.ofStartDateTimeAndEndDateTime;
 import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asOptionalNode;
 import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asOptionalString;
 
@@ -42,6 +46,9 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asOption
 public abstract class GoogleFitDataPointMapper<T extends Measure> implements JsonNodeDataPointMapper<T> {
 
     public static final String RESOURCE_API_SOURCE_NAME = "Google Fit API";
+
+    private static final String EPOCH_NS_START_DATE_TIME_PATH = "startTimeNanos";
+    private static final String EPOCH_NS_END_DATE_TIME_PATH = "endTimeNanos";
 
     /**
      * Maps a JSON response from the Google Fit API containing a JSON array of data points to a list of {@link
@@ -67,7 +74,6 @@ public abstract class GoogleFitDataPointMapper<T extends Measure> implements Jso
         }
 
         return dataPoints;
-
     }
 
     /**
@@ -114,40 +120,52 @@ public abstract class GoogleFitDataPointMapper<T extends Measure> implements Jso
     }
 
     /**
-     * Converts a nanosecond timestamp from the Google Fit API into an offset datetime value.
+     * Converts a nanosecond timestamp from the Google Fit API into an offset date time value.
      *
-     * @param unixEpochNanosString the timestamp directly from the Google JSON document
+     * @param epochNanosecondString the timestamp directly from the Google JSON document
      * @return an offset datetime object representing the input timestamp
      */
-    public OffsetDateTime convertGoogleNanosToOffsetDateTime(String unixEpochNanosString) {
+    private OffsetDateTime asOffsetDateTime(String epochNanosecondString) {
 
-        return OffsetDateTime.ofInstant(Instant.ofEpochSecond(0, Long.parseLong(unixEpochNanosString)), ZoneId.of("Z"));
+        return OffsetDateTime.ofInstant(Instant.ofEpochSecond(0, parseLong(epochNanosecondString)), UTC);
     }
 
     /**
-     * @param builder a measure builder of type T
-     * @param listNode the JSON node representing an individual datapoint, which contains the start and end time
-     * properties, from within the response array
+     * @param node a JSON node optionally containing time frame properties
      */
-    public void setEffectiveTimeFrameIfPresent(T.Builder builder, JsonNode listNode) {
+    public Optional<TimeFrame> getOptionalTimeFrame(JsonNode node) {
 
-        Optional<String> startTimeNanosString = asOptionalString(listNode, "startTimeNanos");
-        Optional<String> endTimeNanosString = asOptionalString(listNode, "endTimeNanos");
+        Optional<String> startTimeNanosString = asOptionalString(node, EPOCH_NS_START_DATE_TIME_PATH);
+        Optional<String> endTimeNanosString = asOptionalString(node, EPOCH_NS_END_DATE_TIME_PATH);
 
         // When the start and end times are identical, such as for a single body weight measure, then we only need to
         // create an effective time frame with a single date time value
         if (startTimeNanosString.isPresent() && endTimeNanosString.isPresent()) {
             if (startTimeNanosString.equals(endTimeNanosString)) {
-                builder.setEffectiveTimeFrame(convertGoogleNanosToOffsetDateTime(startTimeNanosString.get()));
-
+                return Optional.of(new TimeFrame(asOffsetDateTime(startTimeNanosString.get())));
             }
             else {
-                builder.setEffectiveTimeFrame(TimeInterval.ofStartDateTimeAndEndDateTime(
-                        convertGoogleNanosToOffsetDateTime(startTimeNanosString.get()),
-                        convertGoogleNanosToOffsetDateTime(endTimeNanosString.get())));
+                return Optional.of(new TimeFrame(ofStartDateTimeAndEndDateTime(
+                        asOffsetDateTime(startTimeNanosString.get()),
+                        asOffsetDateTime(endTimeNanosString.get()))
+                ));
             }
-
         }
+
+        return empty();
+    }
+
+    public TimeFrame getTimeFrame(JsonNode node) {
+
+        return getOptionalTimeFrame(node)
+                .orElseThrow(() -> {
+                    if (!asOptionalString(node, EPOCH_NS_START_DATE_TIME_PATH).isPresent()) {
+                        return new MissingJsonNodeMappingException(node, EPOCH_NS_START_DATE_TIME_PATH);
+                    }
+                    else {
+                        return new MissingJsonNodeMappingException(node, EPOCH_NS_END_DATE_TIME_PATH);
+                    }
+                });
     }
 
     /**
@@ -163,5 +181,4 @@ public abstract class GoogleFitDataPointMapper<T extends Measure> implements Jso
     protected String getValueListNodeName() {
         return "value";
     }
-
 }

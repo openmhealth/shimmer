@@ -33,6 +33,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static java.lang.String.format;
 import static java.time.ZoneOffset.UTC;
@@ -57,7 +58,7 @@ public abstract class WithingsBodyMeasureDataPointMapper<T extends Measure> exte
     public List<DataPoint<T>> asDataPoints(List<JsonNode> responseNodes) {
 
         checkNotNull(responseNodes);
-        checkNotNull(responseNodes.size() == 1, "A single response node is allowed per call.");
+        checkArgument(responseNodes.size() == 1, "A single response node is allowed per call.");
 
         JsonNode responseNodeBody = asRequiredNode(responseNodes.get(0), BODY_NODE_PROPERTY);
         List<DataPoint<T>> dataPoints = Lists.newArrayList();
@@ -88,14 +89,11 @@ public abstract class WithingsBodyMeasureDataPointMapper<T extends Measure> exte
                 measureBuilder.setEffectiveTimeFrame(OffsetDateTime.ofInstant(dateTimeInstant, UTC));
             }
 
-            Optional<String> userComment = asOptionalString(measureGroupNode, "comment");
-            if (userComment.isPresent()) {
-                measureBuilder.setUserNotes(userComment.get());
-            }
+            asOptionalString(measureGroupNode, "comment").ifPresent(measureBuilder::setUserNotes);
 
             T measure = measureBuilder.build();
 
-            Optional<Long> externalId = asOptionalLong(measureGroupNode, "grpid");
+            Optional<String> externalId = asOptionalLong(measureGroupNode, "grpid").map(Object::toString);
 
             dataPoints.add(newDataPoint(measure, externalId.orElse(null), isSensed(measureGroupNode), null));
         }
@@ -185,7 +183,6 @@ public abstract class WithingsBodyMeasureDataPointMapper<T extends Measure> exte
         int scale = asRequiredInteger(measureNode, "unit");
 
         return BigDecimal.valueOf(unscaledValue, -1 * scale);
-
     }
 
     /**

@@ -1,7 +1,10 @@
 package org.openmhealth.shim.runkeeper.mapper;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import org.openmhealth.schema.domain.omh.*;
+import org.openmhealth.schema.domain.omh.CaloriesBurned2;
+import org.openmhealth.schema.domain.omh.DataPoint;
+import org.openmhealth.schema.domain.omh.DataPointHeader;
+import org.openmhealth.schema.domain.omh.TimeInterval;
 import org.openmhealth.shim.common.mapper.DataPointMapperUnitTests;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -12,7 +15,7 @@ import java.util.List;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.openmhealth.schema.domain.omh.CaloriesBurned.SCHEMA_ID;
+import static org.openmhealth.schema.domain.omh.CaloriesBurned2.SCHEMA_ID;
 import static org.openmhealth.schema.domain.omh.DataPointModality.SENSED;
 import static org.openmhealth.schema.domain.omh.DurationUnit.SECOND;
 import static org.openmhealth.schema.domain.omh.KcalUnit.KILOCALORIE;
@@ -43,14 +46,15 @@ public class RunkeeperCaloriesBurnedDataPointMapperUnitTests extends DataPointMa
     @Test
     public void asDataPointsShouldReturnCorrectDataPointBodies() {
 
-        List<DataPoint<CaloriesBurned>> dataPoints = mapper.asDataPoints(responseNode);
+        List<DataPoint<CaloriesBurned2>> dataPoints = mapper.asDataPoints(responseNode);
 
-        CaloriesBurned expectedCaloriesBurned =
-                new CaloriesBurned.Builder(new KcalUnitValue(KILOCALORIE, 210.796359954334))
+        TimeInterval effectiveTimeInterval = ofStartDateTimeAndDuration(
+                OffsetDateTime.parse("2014-10-19T13:17:27+02:00"),
+                SECOND.newUnitValue(4364.74158141667));
+
+        CaloriesBurned2 expectedCaloriesBurned =
+                new CaloriesBurned2.Builder(KILOCALORIE.newUnitValue(210.796359954334), effectiveTimeInterval)
                         .setActivityName("Cycling")
-                        .setEffectiveTimeFrame(ofStartDateTimeAndDuration(
-                                OffsetDateTime.parse("2014-10-19T13:17:27+02:00"),
-                                new DurationUnitValue(SECOND, 4364.74158141667)))
                         .build();
 
         assertThat(dataPoints.get(0).getBody(), equalTo(expectedCaloriesBurned));
@@ -70,6 +74,5 @@ public class RunkeeperCaloriesBurnedDataPointMapperUnitTests extends DataPointMa
 
         assertThat(firstTestHeader.getAcquisitionProvenance().getSourceName(),
                 equalTo(RESOURCE_API_SOURCE_NAME));
-
     }
 }

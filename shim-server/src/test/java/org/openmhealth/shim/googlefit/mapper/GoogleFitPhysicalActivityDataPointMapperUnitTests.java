@@ -91,7 +91,7 @@ public class GoogleFitPhysicalActivityDataPointMapperUnitTests
         PhysicalActivity.Builder physicalActivityBuilder =
                 new PhysicalActivity.Builder(testProperties.getStringValue());
 
-        setExpectedEffectiveTimeFrame(physicalActivityBuilder, testProperties);
+        testProperties.getEffectiveTimeFrame().ifPresent(physicalActivityBuilder::setEffectiveTimeFrame);
 
         assertThat(testMeasure, equalTo(physicalActivityBuilder.build()));
     }

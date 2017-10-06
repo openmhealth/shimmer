@@ -23,7 +23,6 @@ import org.openmhealth.schema.domain.omh.Measure;
 import java.math.BigDecimal;
 import java.util.Optional;
 
-import static java.util.Optional.empty;
 import static org.openmhealth.shim.withings.domain.WithingsBodyMeasureType.HEART_RATE;
 
 
@@ -39,10 +38,6 @@ public class WithingsHeartRateDataPointMapper extends WithingsBodyMeasureDataPoi
 
         Optional<BigDecimal> value = getValueForMeasureType(measuresNode, HEART_RATE);
 
-        if (!value.isPresent()) {
-            return empty();
-        }
-
-        return Optional.of(new HeartRate.Builder(value.get()));
+        return value.map(HeartRate.Builder::new);
     }
 }

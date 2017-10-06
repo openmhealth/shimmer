@@ -105,7 +105,6 @@ public abstract class IHealthDataPointMapper<T extends SchemaSupport> implements
         return new DataPointHeader.Builder(UUID.randomUUID().toString(), measure.getSchemaId())
                 .setAcquisitionProvenance(acquisitionProvenance)
                 .build();
-
     }
 
     /**
@@ -117,9 +116,9 @@ public abstract class IHealthDataPointMapper<T extends SchemaSupport> implements
      */
     protected static Optional<TimeFrame> getEffectiveTimeFrameAsDateTime(JsonNode listEntryNode) {
 
-        Optional<Long> weirdSeconds = asOptionalLong(listEntryNode, "MDate");
+        Optional<Long> epochSecondsInLocalTime = asOptionalLong(listEntryNode, "MDate");
 
-        if (!weirdSeconds.isPresent()) {
+        if (!epochSecondsInLocalTime.isPresent()) {
             return Optional.empty();
         }
 
@@ -152,14 +151,14 @@ public abstract class IHealthDataPointMapper<T extends SchemaSupport> implements
             return Optional.empty();
         }
 
-        return Optional.of(new TimeFrame(getDateTimeWithCorrectOffset(weirdSeconds.get(), zoneOffset)));
+        return Optional.of(new TimeFrame(getDateTimeWithCorrectOffset(epochSecondsInLocalTime.get(), zoneOffset)));
     }
 
     /**
-     * This method transforms a timestamp from an iHealth response (which is in the form of local time as epoch
-     * seconds) into an {@link OffsetDateTime} with the correct date/time and offset. The timestamps provided in
-     * iHealth responses are not unix epoch seconds in UTC but instead a unix epoch seconds value that is offset by the
-     * time zone of the data point.
+     * This method transforms a timestamp from an iHealth response (which is in the form of local time as epoch seconds)
+     * into an {@link OffsetDateTime} with the correct date/time and offset. The timestamps provided in iHealth
+     * responses are not unix epoch seconds in UTC but instead a unix epoch seconds value that is offset by the time
+     * zone of the data point.
      */
     protected static OffsetDateTime getDateTimeWithCorrectOffset(Long localTimeAsEpochSeconds, ZoneOffset zoneOffset) {
 
@@ -173,20 +172,19 @@ public abstract class IHealthDataPointMapper<T extends SchemaSupport> implements
     }
 
     /**
-     * @param dateTimeInUnixSecondsWithLocalTimeOffset A unix epoch timestamp in local time.
+     * @param epochSecondsInLocalTime A UNIX epoch timestamp in local time.
      * @param timeZoneString The time zone offset as a String (e.g., "+0200","-2").
      * @return The date time with the correct offset.
      */
     protected static OffsetDateTime getDateTimeAtStartOfDayWithCorrectOffset(
-            Long dateTimeInUnixSecondsWithLocalTimeOffset, String timeZoneString) {
+            Long epochSecondsInLocalTime,
+            String timeZoneString) {
 
         // Since the timestamps are in local time, we can use the local date time provided by rendering the timestamp
         // in UTC, then translating that local time to the appropriate offset.
-        OffsetDateTime dateTimeFromOffsetInstant =
-                ofInstant(ofEpochSecond(dateTimeInUnixSecondsWithLocalTimeOffset),
-                        ZoneId.of("Z"));
+        OffsetDateTime dateTimeFromInstant = ofInstant(ofEpochSecond(epochSecondsInLocalTime), ZoneId.of("Z"));
 
-        return dateTimeFromOffsetInstant.toLocalDate().atStartOfDay().atOffset(ZoneOffset.of(timeZoneString));
+        return dateTimeFromInstant.toLocalDate().atStartOfDay().atOffset(ZoneOffset.of(timeZoneString));
     }
 
     /**
@@ -207,7 +205,7 @@ public abstract class IHealthDataPointMapper<T extends SchemaSupport> implements
     }
 
     /**
-     * Sets the correct DataPointModality based on the iHealth value indicating the source of the DataPoint.
+     * Sets the correct modality based on the iHealth value indicating the source of the data point.
      *
      * @param dataSourceValue The iHealth value in the list entry node indicating the source of the DataPoint.
      * @param builder The DataPointAcquisitionProvenance builder to set the modality.

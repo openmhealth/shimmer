@@ -102,7 +102,6 @@ public abstract class RunkeeperDataPointMapper<T extends SchemaSupport> implemen
         asOptionalInteger(itemNode, "userId").ifPresent(userId -> headerBuilder.setUserId(userId.toString()));
 
         return headerBuilder.build();
-
     }
 
     /**
@@ -129,31 +128,47 @@ public abstract class RunkeeperDataPointMapper<T extends SchemaSupport> implemen
         }
 
         return Optional.empty();
-
     }
 
     /**
-     * Sets the effective time frame property for a measure builder.
-     *
-     * @param itemNode an individual datapoint from the list of datapoints returned in the API response
-     * @param builder the measure builder to have the effective date property set
+     * @param node a JSON node optionally containing time frame properties
      */
-    protected void setEffectiveTimeFrameIfPresent(JsonNode itemNode, Measure.Builder builder) {
+    protected Optional<TimeFrame> getOptionalTimeFrame(JsonNode node) {
 
         Optional<LocalDateTime> localStartDateTime =
-                asOptionalLocalDateTime(itemNode, "start_time", DATE_TIME_FORMATTER);
+                asOptionalLocalDateTime(node, "start_time", DATE_TIME_FORMATTER);
 
         // RunKeeper doesn't support fractional time zones
-        Optional<Integer> utcOffset = asOptionalInteger(itemNode, "utc_offset");
-        Optional<Double> durationInS = asOptionalDouble(itemNode, "duration");
+        Optional<Integer> utcOffset = asOptionalInteger(node, "utc_offset");
+        Optional<Double> durationInSeconds = asOptionalDouble(node, "duration");
 
-        if (localStartDateTime.isPresent() && utcOffset.isPresent() && durationInS.isPresent()) {
-
-            OffsetDateTime startDateTime = localStartDateTime.get().atOffset(ZoneOffset.ofHours(utcOffset.get()));
-            DurationUnitValue duration = new DurationUnitValue(SECOND, durationInS.get());
-
-            builder.setEffectiveTimeFrame(ofStartDateTimeAndDuration(startDateTime, duration));
+        if (!localStartDateTime.isPresent() || !utcOffset.isPresent() || !durationInSeconds.isPresent()) {
+            return Optional.empty();
         }
+
+        return Optional.of(asTimeFrame(localStartDateTime.get(), utcOffset.get(), durationInSeconds.get()));
+    }
+
+    private TimeFrame asTimeFrame(LocalDateTime localStartDateTime, int utcOffsetInHours, Double durationInSeconds) {
+
+        OffsetDateTime startDateTime = localStartDateTime.atOffset(ZoneOffset.ofHours(utcOffsetInHours));
+
+        return new TimeFrame(ofStartDateTimeAndDuration(startDateTime, SECOND.newUnitValue(durationInSeconds)));
+    }
+
+    /**
+     * @param node a JSON node containing time frame properties
+     */
+    protected TimeFrame getTimeFrame(JsonNode node) {
+
+        LocalDateTime localStartDateTime =
+                asRequiredLocalDateTime(node, "start_time", DATE_TIME_FORMATTER);
+
+        // RunKeeper doesn't support fractional time zones
+        Integer utcOffset = asRequiredInteger(node, "utc_offset");
+        Double durationInSeconds = asRequiredDouble(node, "duration");
+
+        return asTimeFrame(localStartDateTime, utcOffset, durationInSeconds);
     }
 
     /**

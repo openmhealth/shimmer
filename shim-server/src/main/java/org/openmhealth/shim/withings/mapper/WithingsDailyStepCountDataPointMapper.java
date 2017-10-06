@@ -18,73 +18,45 @@ package org.openmhealth.shim.withings.mapper;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.openmhealth.schema.domain.omh.DataPoint;
-import org.openmhealth.schema.domain.omh.StepCount1;
-import org.openmhealth.schema.domain.omh.TimeInterval;
+import org.openmhealth.schema.domain.omh.StepCount2;
 
-import java.time.*;
 import java.util.Optional;
 
-import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asOptionalString;
-import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.asRequiredLong;
+import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.*;
 
 
 /**
- * A mapper from Withings Activity Measures endpoint responses (/measure?action=getactivity) to {@link StepCount1}
+ * A mapper from Withings Activity Measures endpoint responses (/measure?action=getactivity) to {@link StepCount2}
  * objects.
- * <p>
- * <p>Note: the start datetime and end datetime values for the mapped {@link StepCount1} {@link DataPoint} assume that
- * the start timezone and end time zone are the same, both equal to the "timezone" property in the Withings response
- * datapoints. However, according to Withings, the property value they provide is specifically the end datetime
- * timezone.</p>
  *
  * @author Chris Schaefbauer
+ * @author Emerson Farrugia
  * @see <a href="http://oauth.withings.com/api/doc#api-Measure-get_activity">Activity Measures API documentation</a>
  */
-public class WithingsDailyStepCountDataPointMapper extends WithingsListDataPointMapper<StepCount1> {
-
-    /**
-     * Maps an individual list node from the array in the Withings activity measure endpoint response into a {@link
-     * StepCount1} data point.
-     *
-     * @param node activity node from the array "activites" contained in the "body" of the endpoint response
-     * @return a {@link DataPoint} object containing a {@link StepCount1} measure with the appropriate values from
-     * the JSON node parameter, wrapped as an {@link Optional}
-     */
-    @Override
-    Optional<DataPoint<StepCount1>> asDataPoint(JsonNode node) {
-
-        long stepValue = asRequiredLong(node, "steps");
-        StepCount1.Builder stepCountBuilder = new StepCount1.Builder(stepValue);
-        Optional<String> dateString = asOptionalString(node, "date");
-        Optional<String> timeZoneFullName = asOptionalString(node, "timezone");
-        // We assume that timezone is the same for both the startdate and enddate timestamps, even though Withings only
-        // provides the enddate timezone as the "timezone" property.
-        // TODO: Revisit once Withings can provide start_timezone and end_timezone
-        if (dateString.isPresent() && timeZoneFullName.isPresent()) {
-            LocalDateTime localStartDateTime = LocalDate.parse(dateString.get()).atStartOfDay();
-            ZoneId zoneId = ZoneId.of(timeZoneFullName.get());
-            ZonedDateTime zonedDateTime = ZonedDateTime.of(localStartDateTime, zoneId);
-            ZoneOffset offset = zonedDateTime.getOffset();
-            OffsetDateTime offsetStartDateTime = OffsetDateTime.of(localStartDateTime, offset);
-            LocalDateTime localEndDateTime = LocalDate.parse(dateString.get()).atStartOfDay().plusDays(1);
-            OffsetDateTime offsetEndDateTime = OffsetDateTime.of(localEndDateTime, offset);
-            stepCountBuilder.setEffectiveTimeFrame(
-                    TimeInterval.ofStartDateTimeAndEndDateTime(offsetStartDateTime, offsetEndDateTime));
-        }
-
-        Optional<String> userComment = asOptionalString(node, "comment");
-        if (userComment.isPresent()) {
-            stepCountBuilder.setUserNotes(userComment.get());
-        }
-
-        StepCount1 stepCount = stepCountBuilder.build();
-        DataPoint<StepCount1> stepCountDataPoint = newDataPoint(stepCount, null, true, null);
-
-        return Optional.of(stepCountDataPoint);
-    }
+public class WithingsDailyStepCountDataPointMapper extends WithingsListDataPointMapper<StepCount2> {
 
     @Override
     String getListNodeName() {
         return "activities";
+    }
+
+    /**
+     * Maps an individual list node from the array in the Withings activity measure endpoint response into a {@link
+     * StepCount2} data point.
+     *
+     * @param node activity node from the array "activites" contained in the "body" of the endpoint response
+     */
+    @Override
+    Optional<DataPoint<StepCount2>> asDataPoint(JsonNode node) {
+
+        long stepValue = asRequiredLong(node, "steps");
+
+        StepCount2.Builder stepCountBuilder = new StepCount2.Builder(stepValue, getTimeFrame(node));
+
+        asOptionalString(node, "comment").ifPresent(stepCountBuilder::setUserNotes);
+
+        StepCount2 stepCount = stepCountBuilder.build();
+
+        return Optional.of(newDataPoint(stepCount, asRequiredString(node, "date"), true, null));
     }
 }

@@ -16,24 +16,21 @@
 
 package org.openmhealth.shim.withings.mapper;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import org.openmhealth.schema.domain.omh.DataPoint;
 import org.openmhealth.schema.domain.omh.DataPointAcquisitionProvenance;
 import org.openmhealth.schema.domain.omh.DataPointModality;
 import org.openmhealth.schema.domain.omh.HeartRate;
-import org.openmhealth.shim.common.mapper.DataPointMapperUnitTests;
-import org.testng.annotations.BeforeTest;
+import org.openmhealth.shim.withings.domain.WithingsBodyMeasureType;
 import org.testng.annotations.Test;
 
-import java.io.IOException;
 import java.time.OffsetDateTime;
 
-import static java.util.Collections.singletonList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.openmhealth.schema.domain.omh.DataPointModality.SELF_REPORTED;
 import static org.openmhealth.schema.domain.omh.DataPointModality.SENSED;
-import static org.openmhealth.schema.domain.omh.HeartRate.*;
+import static org.openmhealth.schema.domain.omh.HeartRate.SCHEMA_ID;
+import static org.openmhealth.shim.withings.domain.WithingsBodyMeasureType.HEART_RATE;
 import static org.openmhealth.shim.withings.mapper.WithingsDataPointMapper.RESOURCE_API_SOURCE_NAME;
 
 
@@ -41,40 +38,46 @@ import static org.openmhealth.shim.withings.mapper.WithingsDataPointMapper.RESOU
  * @author Chris Schaefbauer
  * @author Emerson Farrugia
  */
-public class WithingsHeartRateDataPointMapperUnitTests extends DataPointMapperUnitTests {
+public class WithingsHeartRateDataPointMapperUnitTests extends WithingsBodyMeasureDataPointMapperUnitTests<HeartRate> {
 
     private WithingsHeartRateDataPointMapper mapper = new WithingsHeartRateDataPointMapper();
-    protected JsonNode responseNode;
 
+    @Override
+    protected WithingsBodyMeasureDataPointMapper<HeartRate> getMapper() {
+        return mapper;
+    }
 
-    @BeforeTest
-    public void initializeDataPoints() throws IOException {
-
-        responseNode = asJsonNode("/org/openmhealth/shim/withings/mapper/withings-body-measures.json");
+    @Override
+    protected WithingsBodyMeasureType getBodyMeasureType() {
+        return HEART_RATE;
     }
 
     @Test
     public void asDataPointsShouldReturnCorrectNumberOfDataPoints() {
 
-        assertThat(mapper.asDataPoints(singletonList(responseNode)).size(), equalTo(3));
+        assertThat(mapper.asDataPoints(responseNode).size(), equalTo(3));
     }
 
     @Test
     public void asDataPointsShouldReturnCorrectSensedDataPoint() {
 
-        assertThatDataPointMatches(mapper.asDataPoints(responseNode).get(0), 41.0, "2015-05-31T06:06:23Z", 366956482L,
+        assertThatDataPointMatches(mapper.asDataPoints(responseNode).get(0), 41.0, "2015-05-31T06:06:23Z", "366956482",
                 null, SENSED);
     }
 
     @Test
     public void asDataPointsShouldReturnCorrectSelfReportedDataPoint() {
 
-        assertThatDataPointMatches(mapper.asDataPoints(responseNode).get(2), 47.0, "2015-02-26T21:57:17Z", 321858727L,
+        assertThatDataPointMatches(mapper.asDataPoints(responseNode).get(2), 47.0, "2015-02-26T21:57:17Z", "321858727",
                 "a few minutes after a walk", SELF_REPORTED);
     }
 
-    private void assertThatDataPointMatches(DataPoint<HeartRate> actualDataPoint, double expectedHeartRateValue,
-            String expectedDateTimeAsString, long expectedExternalId, String expectedComment,
+    private void assertThatDataPointMatches(
+            DataPoint<HeartRate> actualDataPoint,
+            double expectedHeartRateValue,
+            String expectedDateTimeAsString,
+            String expectedExternalId,
+            String expectedComment,
             DataPointModality expectedModality) {
 
         HeartRate.Builder expectedHeartRateBuilder = new HeartRate.Builder(expectedHeartRateValue)

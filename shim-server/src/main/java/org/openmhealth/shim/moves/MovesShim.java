@@ -17,19 +17,16 @@
 
 package org.openmhealth.shim.moves;
 
-import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.google.common.base.Splitter;
+import com.google.common.base.Joiner;
+import org.openmhealth.schema.domain.omh.DataPoint;
 import org.openmhealth.shim.*;
-import org.openmhealth.shim.moves.mapper.MovesDataPointMapper;
 import org.openmhealth.shim.moves.mapper.MovesPhysicalActivityDataPointMapper;
 import org.openmhealth.shim.moves.mapper.MovesStepCountDataPointMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.client.OAuth2RestOperations;
 import org.springframework.security.oauth2.client.resource.OAuth2ProtectedResourceDetails;
@@ -39,16 +36,15 @@ import org.springframework.security.oauth2.client.token.RequestEnhancer;
 import org.springframework.security.oauth2.client.token.grant.code.AuthorizationCodeAccessTokenProvider;
 import org.springframework.stereotype.Component;
 import org.springframework.util.MultiValueMap;
-import org.springframework.util.StringUtils;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.time.Duration;
-import java.time.OffsetDateTime;
+import java.time.LocalDate;
+import java.time.Period;
+import java.util.List;
 import java.util.Map;
 
-import static java.util.Collections.singletonList;
 import static org.springframework.http.ResponseEntity.ok;
 
 
@@ -63,34 +59,40 @@ public class MovesShim extends OAuth2Shim {
 
     public static final String SHIM_KEY = "moves";
     private static final String DATA_URL = "https://api.moves-app.com/api/1.1";
-    private static final String USER_AUTHORIZATION_URL = "https://api.moves-app.com/oauth/v1/authorize";
+    private static final String WEB_BASED_USER_AUTHORIZATION_URL = "https://api.moves-app.com/oauth/v1/authorize";
+    private static final String APP_BASED_USER_AUTHORIZATION_URL = "moves://app/authorize";
     private static final String ACCESS_TOKEN_URL = "https://api.moves-app.com/oauth/v1/access_token";
-
-    private static final long MAX_DURATION_IN_DAYS = 31;
 
     @Autowired
     private MovesClientSettings clientSettings;
 
-    private MovesStepCountDataPointMapper stepCountMapper = new MovesStepCountDataPointMapper();
     private MovesPhysicalActivityDataPointMapper physicalActivityMapper = new MovesPhysicalActivityDataPointMapper();
+
+    private MovesStepCountDataPointMapper stepCountMapper = new MovesStepCountDataPointMapper();
 
     @Override
     public String getLabel() {
+
         return "Moves";
     }
 
     @Override
     public String getShimKey() {
+
         return SHIM_KEY;
     }
 
     @Override
     public String getUserAuthorizationUrl() {
-        return USER_AUTHORIZATION_URL;
+
+        return clientSettings.isAuthorizationInitiatedFromBrowser()
+                ? WEB_BASED_USER_AUTHORIZATION_URL
+                : APP_BASED_USER_AUTHORIZATION_URL;
     }
 
     @Override
     public String getAccessTokenUrl() {
+
         return ACCESS_TOKEN_URL;
     }
 
@@ -102,31 +104,45 @@ public class MovesShim extends OAuth2Shim {
 
     public enum MovesDataType implements ShimDataType {
 
-        STEPS("/user/summary/daily"),
-        ACTIVITY("/user/storyline/daily");
+        PHYSICAL_ACTIVITY("/user/storyline/daily"),
+        STEP_COUNT("/user/storyline/daily");
 
-        private String endPoint;
+        private String endpoint;
+        private int maximumRetrievalPeriodInDays = 31;
 
-        private JsonDeserializer<ShimDataResponse> normalizer;
+        MovesDataType(String endpoint) {
 
-        MovesDataType(String endPoint) {
-            this.endPoint = endPoint;
+            this.endpoint = endpoint;
+        }
+
+        MovesDataType(String endpoint, int maximumRetrievalPeriodInDays) {
+
+            this.endpoint = endpoint;
+            this.maximumRetrievalPeriodInDays = maximumRetrievalPeriodInDays;
         }
 
         public String getEndPoint() {
-            return endPoint;
+
+            return endpoint;
+        }
+
+        public int getMaximumRetrievalPeriodInDays() {
+
+            return maximumRetrievalPeriodInDays;
         }
     }
 
 
     public AuthorizationCodeAccessTokenProvider getAuthorizationCodeAccessTokenProvider() {
+
         AuthorizationCodeAccessTokenProvider provider = new AuthorizationCodeAccessTokenProvider();
-        provider.setTokenRequestEnhancer(new MovesTokenRequestEnhancer());
+        provider.setTokenRequestEnhancer(new MovesAccessTokenRequestEnhancer());
         return provider;
     }
 
     @Override
     public ShimDataType[] getShimDataTypes() {
+
         return MovesDataType.values();
     }
 
@@ -147,63 +163,56 @@ public class MovesShim extends OAuth2Shim {
                     + dataTypeKey + " in shimDataRequest, cannot retrieve data.");
         }
 
-        OffsetDateTime now = OffsetDateTime.now();
+        LocalDate today = LocalDate.now();
 
-        OffsetDateTime startDateTime = shimDataRequest.getStartDateTime() == null ?
-                now.minusDays(1) : shimDataRequest.getStartDateTime();
+        LocalDate startDate = shimDataRequest.getStartDateTime() == null
+                ? today
+                : shimDataRequest.getStartDateTime().toLocalDate();
 
-        OffsetDateTime endDateTime = shimDataRequest.getEndDateTime() == null ?
-                now.plusDays(1) : shimDataRequest.getEndDateTime();
+        LocalDate endDate = shimDataRequest.getEndDateTime() == null
+                ? today
+                : shimDataRequest.getEndDateTime().toLocalDate();
 
-        if (Duration.between(startDateTime, endDateTime).toDays() > MAX_DURATION_IN_DAYS) {
-            endDateTime =
-                    startDateTime.plusDays(MAX_DURATION_IN_DAYS - 1);  // TODO when refactoring, break apart queries
+        if (Period.between(startDate, endDate).getDays() > movesDataType.getMaximumRetrievalPeriodInDays()) {
+            endDate = startDate.plusDays(movesDataType.getMaximumRetrievalPeriodInDays());
         }
 
-        UriComponentsBuilder uriBuilder = UriComponentsBuilder
-                .fromUriString(DATA_URL);
-
-        for (String pathSegment : Splitter.on("/").split(movesDataType.getEndPoint())) {
-            uriBuilder.pathSegment(pathSegment);
-        }
-
-        uriBuilder
-                .queryParam("from", startDateTime.toLocalDate())
-                .queryParam("to", endDateTime.toLocalDate())
-                .queryParam("trackPoints", false);
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Authorization", "Bearer " + restTemplate.getAccessToken().getValue());
-        HttpEntity<String> entity = new HttpEntity<String>("parameters", headers);
+        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromUriString(DATA_URL)
+                .path(movesDataType.getEndPoint())
+                .queryParam("from", startDate)
+                .queryParam("to", endDate)
+                .queryParam("trackPoints", false); // TODO make dynamic
 
         ResponseEntity<JsonNode> responseEntity;
+
         try {
-            responseEntity =
-                    restTemplate.exchange(uriBuilder.build().encode().toUri(), HttpMethod.GET, entity, JsonNode.class);
+            responseEntity = restTemplate.getForEntity(uriBuilder.build().encode().toUri(), JsonNode.class);
         }
         catch (HttpClientErrorException | HttpServerErrorException e) {
-            // FIXME figure out how to handle this
+            // TODO figure out how to handle this
             logger.error("A request for Moves data failed.", e);
             throw e;
         }
 
+
+        List<? extends DataPoint<?>> dataPoints;
+
         if (shimDataRequest.getNormalize()) {
 
-            MovesDataPointMapper<?> dataPointMapper;
-
             switch (movesDataType) {
-                case STEPS:
-                    dataPointMapper = stepCountMapper;
+                case PHYSICAL_ACTIVITY:
+                    dataPoints = physicalActivityMapper.asDataPoints(responseEntity.getBody());
                     break;
-                case ACTIVITY:
-                    dataPointMapper = physicalActivityMapper;
+
+                case STEP_COUNT:
+                    dataPoints = stepCountMapper.asDataPoints(responseEntity.getBody());
                     break;
+
                 default:
                     throw new UnsupportedOperationException();
             }
 
-            return ok().body(ShimDataResponse.result(SHIM_KEY,
-                    dataPointMapper.asDataPoints(singletonList(responseEntity.getBody()))));
+            return ok().body(ShimDataResponse.result(SHIM_KEY, dataPoints));
         }
         else {
             return ok().body(ShimDataResponse.result(SHIM_KEY, responseEntity.getBody()));
@@ -211,32 +220,31 @@ public class MovesShim extends OAuth2Shim {
     }
 
     @Override
-    protected String getAuthorizationUrl(UserRedirectRequiredException exception, Map<String, String> addlParameters) {
+    protected String getAuthorizationUrl(
+            UserRedirectRequiredException exception,
+            Map<String, String> additionalParameters) {
 
         final OAuth2ProtectedResourceDetails resource = getResource();
 
         UriComponentsBuilder uriBuilder = UriComponentsBuilder
                 .fromUriString(exception.getRedirectUri())
-                .queryParam("state", exception.getStateKey())
-                .queryParam("client_id", resource.getClientId())
                 .queryParam("response_type", "code")
-                .queryParam("access_type", "offline")
-                .queryParam("approval_prompt", "force")
-                .queryParam("scope", StringUtils.collectionToDelimitedString(resource.getScope(), " "))
-                .queryParam("redirect_uri", getDefaultRedirectUrl());
+                .queryParam("client_id", resource.getClientId())
+                .queryParam("redirect_uri", getDefaultRedirectUrl())
+                .queryParam("scope", Joiner.on(" ").join(resource.getScope()))
+                .queryParam("state", exception.getStateKey());
 
         return uriBuilder.build().encode().toUriString();
     }
 
-    /**
-     * Adds required parameters to authorization token requests.
-     */
-    private class MovesTokenRequestEnhancer implements RequestEnhancer {
+    private class MovesAccessTokenRequestEnhancer implements RequestEnhancer {
 
         @Override
-        public void enhance(AccessTokenRequest request,
+        public void enhance(
+                AccessTokenRequest request,
                 OAuth2ProtectedResourceDetails resource,
-                MultiValueMap<String, String> form, HttpHeaders headers) {
+                MultiValueMap<String, String> form,
+                HttpHeaders headers) {
 
             form.set("client_id", resource.getClientId());
             form.set("client_secret", resource.getClientSecret());

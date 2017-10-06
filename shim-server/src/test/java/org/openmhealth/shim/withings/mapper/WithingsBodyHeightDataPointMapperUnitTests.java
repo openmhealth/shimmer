@@ -16,23 +16,21 @@
 
 package org.openmhealth.shim.withings.mapper;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.openmhealth.schema.domain.omh.*;
-import org.openmhealth.shim.common.mapper.DataPointMapperUnitTests;
-import org.openmhealth.shim.common.mapper.JsonNodeMappingException;
-import org.testng.annotations.BeforeTest;
+import org.openmhealth.schema.domain.omh.BodyHeight;
+import org.openmhealth.schema.domain.omh.DataPoint;
+import org.openmhealth.schema.domain.omh.DataPointHeader;
+import org.openmhealth.schema.domain.omh.LengthUnitValue;
+import org.openmhealth.shim.withings.domain.WithingsBodyMeasureType;
 import org.testng.annotations.Test;
 
-import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
-import static org.openmhealth.schema.domain.omh.BodyHeight.*;
+import static org.openmhealth.schema.domain.omh.BodyHeight.SCHEMA_ID;
 import static org.openmhealth.schema.domain.omh.DataPointModality.SELF_REPORTED;
-import static org.openmhealth.schema.domain.omh.LengthUnit.*;
+import static org.openmhealth.schema.domain.omh.LengthUnit.METER;
 import static org.openmhealth.shim.withings.domain.WithingsBodyMeasureType.BODY_HEIGHT;
 import static org.openmhealth.shim.withings.mapper.WithingsDataPointMapper.RESOURCE_API_SOURCE_NAME;
 
@@ -41,37 +39,19 @@ import static org.openmhealth.shim.withings.mapper.WithingsDataPointMapper.RESOU
  * @author Chris Schaefbauer
  * @author Emerson Farrugia
  */
-public class WithingsBodyHeightDataPointMapperUnitTests extends DataPointMapperUnitTests {
+public class WithingsBodyHeightDataPointMapperUnitTests
+        extends WithingsBodyMeasureDataPointMapperUnitTests<BodyHeight> {
 
-    private static final ObjectMapper objectMapper = new ObjectMapper();
     private WithingsBodyHeightDataPointMapper mapper = new WithingsBodyHeightDataPointMapper();
-    private JsonNode responseNode;
 
-
-    @BeforeTest
-    public void initializeResponseNode() throws IOException {
-
-        responseNode = asJsonNode("org/openmhealth/shim/withings/mapper/withings-body-measures.json");
+    @Override
+    protected WithingsBodyMeasureDataPointMapper<BodyHeight> getMapper() {
+        return mapper;
     }
 
-    // this is included in only one mapper for brevity, can be rinsed and repeated in others if necessary
-    @Test(expectedExceptions = JsonNodeMappingException.class)
-    public void getValueForMeasureTypeShouldThrowExceptionOnDuplicateMeasureTypes() throws Exception {
-
-        JsonNode measuresNode = objectMapper.readTree("[\n" +
-                "    {\n" +
-                "        \"type\": 4,\n" + // WithingsBodyMeasureType.BODY_HEIGHT
-                "        \"unit\": 0,\n" +
-                "        \"value\": 68\n" +
-                "    },\n" +
-                "    {\n" +
-                "        \"type\": 4,\n" +
-                "        \"unit\": 0,\n" +
-                "        \"value\": 104\n" +
-                "    }\n" +
-                "]");
-
-        mapper.getValueForMeasureType(measuresNode, BODY_HEIGHT);
+    @Override
+    protected WithingsBodyMeasureType getBodyMeasureType() {
+        return BODY_HEIGHT;
     }
 
     @Test
@@ -96,6 +76,6 @@ public class WithingsBodyHeightDataPointMapperUnitTests extends DataPointMapperU
         assertThat(actualDataPointHeader.getAcquisitionProvenance().getModality(), equalTo(SELF_REPORTED));
         assertThat(actualDataPointHeader.getAcquisitionProvenance().getSourceName(), equalTo(RESOURCE_API_SOURCE_NAME));
         assertThat(actualDataPointHeader.getAcquisitionProvenance().getAdditionalProperties().get("external_id"),
-                equalTo(320419189L));
+                equalTo("320419189"));
     }
 }

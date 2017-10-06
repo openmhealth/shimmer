@@ -19,22 +19,22 @@ package org.openmhealth.shim.ihealth.mapper;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.openmhealth.schema.domain.omh.DataPoint;
 import org.openmhealth.schema.domain.omh.DurationUnitValue;
-import org.openmhealth.schema.domain.omh.SleepDuration1;
+import org.openmhealth.schema.domain.omh.SleepDuration2;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.List;
 
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
 import static org.openmhealth.schema.domain.omh.DataPointModality.SELF_REPORTED;
 import static org.openmhealth.schema.domain.omh.DataPointModality.SENSED;
 import static org.openmhealth.schema.domain.omh.DurationUnit.MINUTE;
-import static org.openmhealth.schema.domain.omh.SleepDuration1.SCHEMA_ID;
+import static org.openmhealth.schema.domain.omh.SleepDuration2.SCHEMA_ID;
 import static org.openmhealth.schema.domain.omh.TimeInterval.ofStartDateTimeAndEndDateTime;
 
 
@@ -45,7 +45,7 @@ public class IHealthSleepDurationDataPointMapperUnitTests extends IHealthDataPoi
 
     private JsonNode responseNode;
     private IHealthSleepDurationDataPointMapper mapper = new IHealthSleepDurationDataPointMapper();
-    private List<DataPoint<SleepDuration1>> dataPoints;
+    private List<DataPoint<SleepDuration2>> dataPoints;
 
     @BeforeClass
     public void initializeResponse() {
@@ -68,9 +68,9 @@ public class IHealthSleepDurationDataPointMapperUnitTests extends IHealthDataPoi
     @Test
     public void asDataPointsShouldReturnCorrectDataPointsWhenSensed() {
 
-        SleepDuration1 expectedSleepDuration = new SleepDuration1.Builder(new DurationUnitValue(
-                MINUTE, 345))
-                .setEffectiveTimeFrame(ofStartDateTimeAndEndDateTime(
+        SleepDuration2 expectedSleepDuration = new SleepDuration2.Builder(
+                new DurationUnitValue(MINUTE, 345),
+                ofStartDateTimeAndEndDateTime(
                         OffsetDateTime.parse("2015-11-15T01:51:00-07:00"),
                         OffsetDateTime.parse("2015-11-15T09:16:00-07:00")))
                 .build();
@@ -82,28 +82,17 @@ public class IHealthSleepDurationDataPointMapperUnitTests extends IHealthDataPoi
     }
 
     @Test
-    public void asDataPointsShouldMapAwakenAsAdditionalProperty() {
-
-        assertThat(((BigDecimal) dataPoints.get(0).getBody().getAdditionalProperties().get("wakeup_count")).intValue(),
-                equalTo(13));
-
-        assertThat(((BigDecimal) dataPoints.get(2).getBody().getAdditionalProperties().get("wakeup_count")).intValue(),
-                equalTo(0));
-    }
-
-    @Test
     public void asDataPointsShouldReturnDataPointWithUserNoteWhenNoteIsPresent() {
 
-        SleepDuration1 expectedSleepDuration = new SleepDuration1.Builder(new DurationUnitValue(MINUTE, 195))
-                .setEffectiveTimeFrame(ofStartDateTimeAndEndDateTime(
+        SleepDuration2 expectedSleepDuration = new SleepDuration2.Builder(
+                new DurationUnitValue(MINUTE, 195),
+                ofStartDateTimeAndEndDateTime(
                         OffsetDateTime.parse("2015-11-15T13:51:00+01:00"),
                         OffsetDateTime.parse("2015-11-15T17:16:00+01:00")))
                 .setUserNotes("Best sleep ever")
                 .build();
 
         assertThat(dataPoints.get(1).getBody(), equalTo(expectedSleepDuration));
-
-        assertThat(dataPoints.get(0).getBody().getUserNotes(), nullValue());
         assertThat(dataPoints.get(1).getBody().getUserNotes(), equalTo("Best sleep ever"));
     }
 

@@ -24,7 +24,6 @@ import org.openmhealth.schema.domain.omh.Measure;
 import java.math.BigDecimal;
 import java.util.Optional;
 
-import static java.util.Optional.empty;
 import static org.openmhealth.schema.domain.omh.MassUnit.KILOGRAM;
 import static org.openmhealth.shim.withings.domain.WithingsBodyMeasureType.BODY_WEIGHT;
 
@@ -41,10 +40,6 @@ public class WithingsBodyWeightDataPointMapper extends WithingsBodyMeasureDataPo
 
         Optional<BigDecimal> value = getValueForMeasureType(measuresNode, BODY_WEIGHT);
 
-        if (!value.isPresent()) {
-            return empty();
-        }
-
-        return Optional.of(new BodyWeight.Builder(new MassUnitValue(KILOGRAM, value.get())));
+        return value.map(weightInKg -> new BodyWeight.Builder(new MassUnitValue(KILOGRAM, weightInKg)));
     }
 }

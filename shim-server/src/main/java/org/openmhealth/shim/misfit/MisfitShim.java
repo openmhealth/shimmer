@@ -21,10 +21,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import org.openmhealth.shim.*;
-import org.openmhealth.shim.misfit.mapper.MisfitDataPointMapper;
-import org.openmhealth.shim.misfit.mapper.MisfitPhysicalActivityDataPointMapper;
-import org.openmhealth.shim.misfit.mapper.MisfitSleepDurationDataPointMapper;
-import org.openmhealth.shim.misfit.mapper.MisfitStepCountDataPointMapper;
+import org.openmhealth.shim.misfit.mapper.*;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -71,6 +68,7 @@ public class MisfitShim extends OAuth2Shim {
 
     private MisfitPhysicalActivityDataPointMapper physicalActivityMapper = new MisfitPhysicalActivityDataPointMapper();
     private MisfitSleepDurationDataPointMapper sleepDurationMapper = new MisfitSleepDurationDataPointMapper();
+    private MisfitSleepEpisodeDataPointMapper sleepEpisodeMapper = new MisfitSleepEpisodeDataPointMapper();
     private MisfitStepCountDataPointMapper stepCountMapper = new MisfitStepCountDataPointMapper();
 
     @Override
@@ -121,6 +119,7 @@ public class MisfitShim extends OAuth2Shim {
 
         PHYSICAL_ACTIVITY("activity/sessions"),
         SLEEP_DURATION("activity/sleeps"),
+        SLEEP_EPISODE("activity/sleeps"),
         STEP_COUNT("activity/summary");
 
         private String endPoint;
@@ -195,6 +194,9 @@ public class MisfitShim extends OAuth2Shim {
                     break;
                 case SLEEP_DURATION:
                     dataPointMapper = sleepDurationMapper;
+                    break;
+                case SLEEP_EPISODE:
+                    dataPointMapper = sleepEpisodeMapper;
                     break;
                 case STEP_COUNT:
                     dataPointMapper = stepCountMapper;

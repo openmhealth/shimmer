@@ -1,0 +1,33 @@
+{
+    "minStartTimeNs": "1506816000000000000",
+    "maxEndTimeNs": "1509494399000000000",
+    "dataSourceId": "derived:com.google.speed:com.google.android.gms:merge_speed",
+    "point": [
+        {
+            "modifiedTimeMillis": "1507127495124",
+            "startTimeNanos": "1507125356000000000",
+            "endTimeNanos": "1507125356000000000",
+            "value": [
+                {
+                    "mapVal": [ ],
+                    "fpVal": 0.75
+                }
+            ],
+            "dataTypeName": "com.google.speed",
+            "originDataSourceId": "derived:com.google.speed:com.google.android.gms:LGE:Nexus 5:foo:live_gps_speed"
+        },
+        {
+            "modifiedTimeMillis": "1507127495124",
+            "startTimeNanos": "1507125953000000000",
+            "endTimeNanos": "1507125953000000000",
+            "value": [
+                {
+                    "mapVal": [ ],
+                    "fpVal": 2.25
+                }
+            ],
+            "dataTypeName": "com.google.speed",
+            "originDataSourceId": "derived:com.google.speed:com.google.android.gms:LGE:Nexus 5:bar:live_gps_speed"
+        }
+    ]
+}

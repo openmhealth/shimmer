@@ -47,12 +47,13 @@ public class GoogleFitBodyWeightDataPointMapper extends GoogleFitDataPointMapper
             return Optional.empty();
         }
 
-        BodyWeight.Builder bodyWeightBuilder = new BodyWeight.Builder(new MassUnitValue(KILOGRAM, bodyWeightValue));
-        setEffectiveTimeFrameIfPresent(bodyWeightBuilder, listNode);
+        BodyWeight.Builder measureBuilder = new BodyWeight.Builder(new MassUnitValue(KILOGRAM, bodyWeightValue));
+
+        getOptionalTimeFrame(listNode).ifPresent(measureBuilder::setEffectiveTimeFrame);
 
         Optional<String> originDataSourceId = asOptionalString(listNode, "originDataSourceId");
 
-        BodyWeight bodyWeight = bodyWeightBuilder.build();
+        BodyWeight bodyWeight = measureBuilder.build();
         return Optional.of(newDataPoint(bodyWeight, originDataSourceId.orElse(null)));
     }
 }

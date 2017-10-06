@@ -17,24 +17,29 @@
 package org.openmhealth.shim.ihealth.mapper;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import org.openmhealth.schema.domain.omh.*;
+import org.openmhealth.schema.domain.omh.DataPoint;
+import org.openmhealth.schema.domain.omh.DurationUnitValue;
+import org.openmhealth.schema.domain.omh.SleepDuration2;
+import org.openmhealth.schema.domain.omh.TimeInterval;
 
 import java.time.ZoneOffset;
 import java.util.Optional;
 
-import static org.openmhealth.schema.domain.omh.TimeInterval.*;
+import static org.openmhealth.schema.domain.omh.DurationUnit.MINUTE;
+import static org.openmhealth.schema.domain.omh.TimeInterval.ofStartDateTimeAndEndDateTime;
 import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.*;
 
 
 /**
- * A mapper that translates responses from the iHealth <code>/sleep.json</code> endpoint into {@link SleepDuration1}
+ * A mapper that translates responses from the iHealth <code>/sleep.json</code> endpoint into {@link SleepDuration2}
  * measures.
  *
  * @author Chris Schaefbauer
+ * @author Emerson Farrugia
  * @see <a href="http://developer.ihealthlabs.com/dev_documentation_RequestfordataofSleepReport.htm">endpoint
  * documentation</a>
  */
-public class IHealthSleepDurationDataPointMapper extends IHealthDataPointMapper<SleepDuration1> {
+public class IHealthSleepDurationDataPointMapper extends IHealthDataPointMapper<SleepDuration2> {
 
     @Override
     protected String getListNodeName() {
@@ -47,32 +52,24 @@ public class IHealthSleepDurationDataPointMapper extends IHealthDataPointMapper<
     }
 
     @Override
-    protected Optional<DataPoint<SleepDuration1>> asDataPoint(JsonNode listEntryNode, Integer measureUnitMagicNumber) {
+    protected Optional<DataPoint<SleepDuration2>> asDataPoint(JsonNode listEntryNode, Integer measureUnitMagicNumber) {
 
-        SleepDuration1.Builder sleepDurationBuilder = new SleepDuration1.Builder(
-                new DurationUnitValue(DurationUnit.MINUTE, asRequiredBigDecimal(listEntryNode, "HoursSlept")));
+        Long effectiveStartEpochSecondsInLocalTime = asRequiredLong(listEntryNode, "StartTime");
+        Long effectiveEndEpochSecondsInLocalTime = asRequiredLong(listEntryNode, "EndTime");
+        ZoneOffset effectiveTimeZoneOffset = ZoneOffset.of(asRequiredString(listEntryNode, "TimeZone"));
 
-        Optional<Long> startTime = asOptionalLong(listEntryNode, "StartTime");
-        Optional<Long> endTime = asOptionalLong(listEntryNode, "EndTime");
+        TimeInterval effectiveTimeInterval = ofStartDateTimeAndEndDateTime(
+                getDateTimeWithCorrectOffset(effectiveStartEpochSecondsInLocalTime, effectiveTimeZoneOffset),
+                getDateTimeWithCorrectOffset(effectiveEndEpochSecondsInLocalTime, effectiveTimeZoneOffset));
 
-        if (startTime.isPresent() && endTime.isPresent()) {
-
-            Optional<String> timeZone = asOptionalString(listEntryNode, "TimeZone");
-
-            if (timeZone.isPresent()) {
-
-                sleepDurationBuilder.setEffectiveTimeFrame(ofStartDateTimeAndEndDateTime(
-                        getDateTimeWithCorrectOffset(startTime.get(), ZoneOffset.of(timeZone.get())),
-                        getDateTimeWithCorrectOffset(endTime.get(), ZoneOffset.of(timeZone.get()))));
-            }
-        }
+        SleepDuration2.Builder sleepDurationBuilder = new SleepDuration2.Builder(
+                // property is called HoursSlept but it's in minutes
+                new DurationUnitValue(MINUTE, asRequiredBigDecimal(listEntryNode, "HoursSlept")),
+                effectiveTimeInterval);
 
         getUserNoteIfExists(listEntryNode).ifPresent(sleepDurationBuilder::setUserNotes);
 
-        SleepDuration1 sleepDuration = sleepDurationBuilder.build();
-
-        asOptionalBigDecimal(listEntryNode, "Awaken")
-                .ifPresent(awaken -> sleepDuration.setAdditionalProperty("wakeup_count", awaken));
+        SleepDuration2 sleepDuration = sleepDurationBuilder.build();
 
         return Optional.of(new DataPoint<>(createDataPointHeader(listEntryNode, sleepDuration), sleepDuration));
     }

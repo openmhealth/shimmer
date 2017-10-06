@@ -17,9 +17,8 @@
 package org.openmhealth.shim.googlefit.mapper;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import org.openmhealth.schema.domain.omh.CaloriesBurned;
+import org.openmhealth.schema.domain.omh.CaloriesBurned2;
 import org.openmhealth.schema.domain.omh.DataPoint;
-import org.openmhealth.schema.domain.omh.KcalUnitValue;
 
 import java.util.Optional;
 
@@ -28,32 +27,29 @@ import static org.openmhealth.shim.common.mapper.JsonNodeMappingSupport.*;
 
 
 /**
- * A mapper from Google Fit "merged calories expended" endpoint responses
- * (derived:com.google.calories.expended:com.google.android.gms:merge_calories_expended) to {@link CaloriesBurned}
- * objects.
+ * A mapper from Google Fit "merged calories expended" endpoint responses (derived:com.google.calories.expended:com.google.android.gms:merge_calories_expended)
+ * to {@link CaloriesBurned2} objects.
  *
  * @author Chris Schaefbauer
  * @see <a href="https://developers.google.com/fit/rest/v1/data-types">Google Fit Data Type Documentation</a>
  */
-public class GoogleFitCaloriesBurnedDataPointMapper extends GoogleFitDataPointMapper<CaloriesBurned> {
+public class GoogleFitCaloriesBurnedDataPointMapper extends GoogleFitDataPointMapper<CaloriesBurned2> {
 
     @Override
-    protected Optional<DataPoint<CaloriesBurned>> asDataPoint(JsonNode listNode) {
+    protected Optional<DataPoint<CaloriesBurned2>> asDataPoint(JsonNode listNode) {
 
         JsonNode listValueNode = asRequiredNode(listNode, "value");
-        // TODO isn't this just "value.fpVal"?
         double caloriesBurnedValue = asRequiredDouble(listValueNode.get(0), "fpVal");
 
-        CaloriesBurned.Builder caloriesBurnedBuilder =
-                new CaloriesBurned.Builder(new KcalUnitValue(KILOCALORIE, caloriesBurnedValue));
+        CaloriesBurned2.Builder measureBuilder =
+                new CaloriesBurned2.Builder(KILOCALORIE.newUnitValue(caloriesBurnedValue), getTimeFrame(listNode));
 
-        setEffectiveTimeFrameIfPresent(caloriesBurnedBuilder, listNode);
+        CaloriesBurned2 caloriesBurned = measureBuilder.build();
 
-        CaloriesBurned caloriesBurned = caloriesBurnedBuilder.build();
         Optional<String> originDataSourceId = asOptionalString(listNode, "originDataSourceId");
 
         // Google Fit calories burned endpoint returns calories burned by basal metabolic rate (BMR), however these
-        // are not activity related calories burned so we do not create a datapoint for values from this source
+        // are not activity related calories burned so we do not create a data point for values from this source
         if (originDataSourceId.isPresent()) {
             if (originDataSourceId.get().contains("bmr")) {
                 return Optional.empty();
