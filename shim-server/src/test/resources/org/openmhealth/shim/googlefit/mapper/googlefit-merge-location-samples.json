@@ -1,0 +1,53 @@
+{
+    "minStartTimeNs": "1506816000000000000",
+    "maxEndTimeNs": "1509494399000000000",
+    "dataSourceId": "derived:com.google.location.sample:com.google.android.gms:merge_location_samples",
+    "point": [
+        {
+            "modifiedTimeMillis": "1507028376296",
+            "startTimeNanos": "1507027899615000000",
+            "endTimeNanos": "1507027899615000000",
+            "value": [
+                {
+                    "mapVal": [ ],
+                    "fpVal": 51.211826373291016
+                },
+                {
+                    "mapVal": [ ],
+                    "fpVal": -0.57192360877990723
+                },
+                {
+                    "mapVal": [ ],
+                    "fpVal": 20.0
+                }
+            ],
+            "dataTypeName": "com.google.location.sample",
+            "originDataSourceId": "raw:com.google.location.sample:com.google.android.gms:LGE:Nexus 5:foo:live_location"
+        },
+        {
+            "modifiedTimeMillis": "1507127495556",
+            "startTimeNanos": "1507124754000000000",
+            "endTimeNanos": "1507124754000000000",
+            "value": [
+                {
+                    "mapVal": [ ],
+                    "fpVal": 51.233600616455078
+                },
+                {
+                    "mapVal": [ ],
+                    "fpVal": -0.57613241672515869
+                },
+                {
+                    "mapVal": [ ],
+                    "fpVal": 43.0
+                },
+                {
+                    "mapVal": [ ],
+                    "fpVal": 50.0
+                }
+            ],
+            "dataTypeName": "com.google.location.sample",
+            "originDataSourceId": "raw:com.google.location.sample:com.google.android.gms:LGE:Nexus 5:bar:live_location"
+        }
+    ]
+}

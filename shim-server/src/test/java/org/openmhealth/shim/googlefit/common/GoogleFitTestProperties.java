@@ -21,6 +21,8 @@ import org.openmhealth.schema.domain.omh.SchemaId;
 import org.openmhealth.schema.domain.omh.TimeFrame;
 
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static java.util.Optional.empty;
@@ -36,9 +38,7 @@ public class GoogleFitTestProperties {
     private String sourceOriginId;
     private SchemaId bodySchemaId;
     private DataPointModality modality;
-    private String stringValue;
-    private long intValue;
-    private double fpValue;
+    private List<Object> values = new ArrayList<>();
     private OffsetDateTime effectiveStartDateTime;
     private OffsetDateTime effectiveEndDateTime;
 
@@ -69,28 +69,36 @@ public class GoogleFitTestProperties {
     }
 
     public String getStringValue() {
-        return stringValue;
+        return getStringValue(0);
     }
 
-    public void setStringValue(String stringValue) {
-        this.stringValue = stringValue;
+    public String getStringValue(int index) {
+        return getValue(String.class, index);
     }
 
-    public long getIntValue() {
-        return intValue;
+    public <T> T getValue(Class<T> clazz, int index) {
+        return clazz.cast(values.get(index));
     }
 
-    public void setIntValue(long integerValue) {
-        this.intValue = integerValue;
+    public Long getIntValue() {
+        return getIntValue(0);
     }
 
-    public double getFpValue() {
-        return fpValue;
+    public Long getIntValue(int index) {
+        return getValue(Long.class, index);
     }
 
-    public void setFpValue(double fpValue) {
+    public Double getFpValue() {
+        return getFpValue(0);
+    }
 
-        this.fpValue = fpValue;
+    public Double getFpValue(int index) {
+        return getValue(Double.class, index);
+    }
+
+    public GoogleFitTestProperties addValue(Object value) {
+        this.values.add(value);
+        return this;
     }
 
     public Optional<OffsetDateTime> getEffectiveEndDateTime() {

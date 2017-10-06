@@ -52,7 +52,7 @@ public class GoogleFitSpeedDataPointMapperUnitTests extends GoogleFitDataPointMa
     }
 
     @Test
-    public void asDataPointsShouldReturnCorrectDataPointsForSingleTimePoint() {
+    public void asDataPointsShouldReturnCorrectDataPoints() {
 
         List<DataPoint<Speed>> dataPoints = mapper.asDataPoints(responseNode);
 

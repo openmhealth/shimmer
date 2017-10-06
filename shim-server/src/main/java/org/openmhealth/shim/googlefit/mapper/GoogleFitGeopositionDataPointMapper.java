@@ -43,8 +43,7 @@ public class GoogleFitGeopositionDataPointMapper extends GoogleFitDataPointMappe
         double latitude = asRequiredDouble(listValueNode.get(0), "fpVal");
         double longitude = asRequiredDouble(listValueNode.get(1), "fpVal");
         // TODO add accuracy to geoposition
-        Optional<Double> accuracyInM = asOptionalDouble(listValueNode.get(2), "fpVal");
-        Optional<Double> altitudeInM = asOptionalDouble(listValueNode.get(3), "fpVal");
+         Optional<Double> accuracyInM = asOptionalDouble(listValueNode.get(2), "fpVal");
 
         Geoposition.Builder measureBuilder =
                 new Geoposition.Builder(
@@ -52,7 +51,9 @@ public class GoogleFitGeopositionDataPointMapper extends GoogleFitDataPointMappe
                         DEGREE_OF_ARC.newUnitValue(longitude),
                         getTimeFrame(listNode));
 
-        altitudeInM.ifPresent((a) -> measureBuilder.setElevation(METER.newUnitValue(a)));
+        if (listValueNode.size() >= 4) {
+            measureBuilder.setElevation(METER.newUnitValue(asRequiredDouble(listValueNode.get(3), "fpVal")));
+        }
 
         Geoposition geoposition = measureBuilder.build();
 

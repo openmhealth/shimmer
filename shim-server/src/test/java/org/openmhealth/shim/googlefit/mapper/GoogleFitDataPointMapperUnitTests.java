@@ -9,6 +9,7 @@ import org.openmhealth.shim.common.mapper.DataPointMapperUnitTests;
 import org.openmhealth.shim.googlefit.common.GoogleFitTestProperties;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -55,7 +56,8 @@ public abstract class GoogleFitDataPointMapperUnitTests<T extends Measure> exten
 
         if (testProperties.getModality().isPresent()) {
 
-            assertThat(dataPointHeader.getAcquisitionProvenance().getModality(),
+            assertThat(
+                    dataPointHeader.getAcquisitionProvenance().getModality(),
                     equalTo(testProperties.getModality().get()));
         }
         else {
@@ -67,36 +69,34 @@ public abstract class GoogleFitDataPointMapperUnitTests<T extends Measure> exten
     /**
      * Creates a test properties object used to generate an expected value data point to test google fit data points
      * that use floating point values in their response.
+     *
+     * @deprecated use varargs instead
      */
+    @Deprecated
     public GoogleFitTestProperties createFloatingPointTestProperties(double fpValue, String startDateTime,
             String endDateTime, String sourceOriginId, SchemaId schemaId) {
 
-        GoogleFitTestProperties testProperties =
-                createTestProperties(startDateTime, endDateTime, sourceOriginId, schemaId);
-
-        testProperties.setFpValue(fpValue);
-
-        return testProperties;
+        return createTestProperties(startDateTime, endDateTime, sourceOriginId, schemaId, fpValue);
     }
 
     /**
      * Creates a test properties object used to generate an expected value data point to test google fit data points
      * that use integer values in their response.
+     *
+     * @deprecated use varargs instead
      */
+    @Deprecated
     public GoogleFitTestProperties createIntegerTestProperties(long intValue, String startDateTime, String endDateTime,
             String sourceOriginId, SchemaId schemaId) {
 
-        GoogleFitTestProperties testProperties =
-                createTestProperties(startDateTime, endDateTime, sourceOriginId, schemaId);
-
-        testProperties.setIntValue(intValue);
-
-        return testProperties;
+        return createTestProperties(startDateTime, endDateTime, sourceOriginId, schemaId, intValue);
     }
 
     /**
      * Creates a test properties object used to generate an expected value data point to test google fit data points
      * that use strings to represent values.
+     *
+     * @deprecated use varargs instead
      */
     public GoogleFitTestProperties createStringTestProperties(
             String stringValue,
@@ -105,19 +105,15 @@ public abstract class GoogleFitDataPointMapperUnitTests<T extends Measure> exten
             String sourceOriginId,
             SchemaId schemaId) {
 
-        GoogleFitTestProperties testProperties =
-                createTestProperties(startDateTime, endDateTime, sourceOriginId, schemaId);
-
-        testProperties.setStringValue(stringValue);
-
-        return testProperties;
+        return createTestProperties(startDateTime, endDateTime, sourceOriginId, schemaId, stringValue);
     }
 
-    private GoogleFitTestProperties createTestProperties(
+    public GoogleFitTestProperties createTestProperties(
             String startDateTimeString,
             String endDateTimeString,
             String sourceOriginId,
-            SchemaId schemaId) {
+            SchemaId schemaId,
+            Object... values) {
 
         GoogleFitTestProperties testProperties = new GoogleFitTestProperties();
 
@@ -139,6 +135,8 @@ public abstract class GoogleFitDataPointMapperUnitTests<T extends Measure> exten
         }
 
         testProperties.setBodySchemaId(schemaId);
+
+        Arrays.stream(values).forEach(testProperties::addValue);
 
         return testProperties;
     }
