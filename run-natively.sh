@@ -45,7 +45,7 @@ if echo "$answer" | grep -iq "^y" ;then
     grunt build #CMD
 
     cd ${BASEDIR}/shim-server/src/main/resources #CMD
-    ln -sfh ../../../../shim-server-ui/docker/assets public
+    ln -sf ../../../../shim-server-ui/docker/assets public
     #CMD create a symlink called shim-server/src/main/resources/public to the Grunt output directory
 fi
 
