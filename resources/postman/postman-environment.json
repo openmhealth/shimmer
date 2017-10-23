@@ -34,7 +34,7 @@
     },
     {
       "enabled": true,
-      "key": "normalized",
+      "key": "normalize",
       "value": "true",
       "type": "text"
     }
