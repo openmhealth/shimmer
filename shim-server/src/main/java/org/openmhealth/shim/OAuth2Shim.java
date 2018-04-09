@@ -115,7 +115,8 @@ public abstract class OAuth2Shim implements Shim {
             authRequestParams.setSerializedRequest(SerializationUtils.serialize(accessTokenRequest));
             authRequestParams.setStateKey(stateKey);
             authRequestParams.setRequestParams(additionalParameters);
-
+            // the url to custom page.
+            authRequestParams.setClientRedirectUrl(deploymentSettings.getClientRedirectUrl());
             return authorizationRequestParametersRepo.save(authRequestParams);
         }
     }
