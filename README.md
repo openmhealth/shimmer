@@ -8,9 +8,7 @@ We currently support the following APIs
 * [Fitbit](https://www.fitbit.com/)
 * [Google Fit](https://developers.google.com/fit/?hl=en)
 * [iHealth](http://www.ihealthlabs.com/)
-* [Jawbone UP](https://jawbone.com/up)
 * [Misfit](http://misfit.com/)
-* [Moves](https://www.moves-app.com/)
 * [RunKeeper](https://runkeeper.com/index)
 * [Withings](http://www.withings.com/)
 
