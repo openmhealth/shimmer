@@ -1,7 +1,7 @@
 ### still a scratch pad for now...
 
 # general
-docs main page: https://http://developer.runkeeper.com/healthgraph/overview/
+docs main page: https://runkeeper.com/developer/healthgraph/ (sign-in first)
 
 # getting started on RunKeeper
 
