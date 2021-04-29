@@ -862,7 +862,7 @@
 							"name": "Fitbit",
 							"originalRequest": {
 								"url": {
-									"raw": "{{api-base-url}}/data/{{shim-key}}/sleep_duration?username={{username}}&normalized={{normalized}}&dateStart={{start-date}}&dateEnd={{end-date}}",
+									"raw": "{{api-base-url}}/data/{{shim-key}}/sleep_duration?username={{username}}&normalize={{normalize}}&dateStart={{start-date}}&dateEnd={{end-date}}",
 									"host": [
 										"{{api-base-url}}"
 									],
@@ -879,8 +879,8 @@
 											"description": ""
 										},
 										{
-											"key": "normalized",
-											"value": "{{normalized}}",
+											"key": "normalize",
+											"value": "{{normalize}}",
 											"equals": true,
 											"description": ""
 										},
