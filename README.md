@@ -130,7 +130,7 @@ API                                                               | requires TLS
 [Misfit](https://build.misfit.com/)                               | ?                  | ?                        | ?                   | ?                | ?                 | http://localhost:8083/authorize/misfit/callback
 [Moves](https://dev.moves-app.com/)                               | ?                  | ?                        | ?                   | ?                | ?                 | http://localhost:8083/authorize/moves/callback
 [RunKeeper](http://runkeeper.com/partner)                         | ?                  | ?                        | ?                   | ?                | ?                 | http://localhost:8083/authorize/runkeeper/callback
-[Withings](http://oauth.withings.com/api)                         | ?                  | ?                        | ?                   | ?                | ?                 | http://localhost:8083/authorize/withings/callback
+[Withings](http://oauth.withings.com/api)                         | ?                  | true                        | ?                   | true                | ?                 | http://localhost:8083/authorize/withings/callback
 
 <sup>1</sup> *Fitbit has deprecated OAuth 1.0a authorization in favour of OAuth 2.0. You will need OAuth 2.0 credentials.*
 
