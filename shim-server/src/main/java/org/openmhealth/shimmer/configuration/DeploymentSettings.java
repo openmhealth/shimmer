@@ -17,6 +17,7 @@
 package org.openmhealth.shimmer.configuration;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -28,10 +29,18 @@ import static org.springframework.web.util.UriComponentsBuilder.fromUriString;
  * @author Emerson Farrugia
  */
 @Component
+@ConfigurationProperties("openmhealth.shimmer")
 public class DeploymentSettings {
 
-    @Value("${openmhealth.shimmer.data-provider-redirect-base-url}")
+    /**
+     * this url will be used to create the callback url which the shim provider will call after authentication.
+     */
     private String dataProviderRedirectBaseUrl;
+
+    /**
+     * Redirect url called from callback to redirect user to a custom page
+     */
+    private String clientRedirectUrl;
 
     /**
      * @return the base of the URL that data providers redirect user-agents to after an authorization
@@ -65,5 +74,13 @@ public class DeploymentSettings {
                 .path("/authorize/{shimKey}/callback")
                 .buildAndExpand(singletonMap("shimKey", shimKey))
                 .toUriString();
+    }
+
+    public String getClientRedirectUrl() {
+        return clientRedirectUrl;
+    }
+
+    public void setClientRedirectUrl(String clientRedirectUrl) {
+        this.clientRedirectUrl = clientRedirectUrl;
     }
 }

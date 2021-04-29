@@ -20,8 +20,8 @@ logging:
 
 openmhealth:
   shimmer:
-    data-provider-redirect-base-url: http://localhost:8083
-
+  data-provider-redirect-base-url: http://localhost:8083
+  client-redirect-url: http://localhost:8083
   shim:
    # uncomment and fill in the corresponding values
    # fitbit:
